@@ -39,7 +39,12 @@
   .faq-head p{color:var(--text-secondary); font-size:var(--text-lg); max-width:70ch; margin:var(--s-3) 0 0;}
 
   /* ============ reusable FAQ component (.faq-*) ============ */
-  .faq-chips{display:flex; flex-wrap:wrap; gap:var(--s-2); margin:var(--s-8) 0 var(--s-6);}
+  /* audience toggle */
+  .faq-aud{display:inline-flex; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; margin:var(--s-8) 0 var(--s-2);}
+  .faq-aud button{padding:.5rem 1.15rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); transition:color .12s, background .12s;}
+  .faq-aud button.active{background:var(--text-primary); color:#fff;}
+
+  .faq-chips{display:flex; flex-wrap:wrap; gap:var(--s-2); margin:var(--s-3) 0 var(--s-6);}
   .faq-chip{display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .9rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); background:var(--surface-canvas); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); transition:border-color .12s, color .12s, background .12s;}
   .faq-chip:hover{border-color:#cdcdcd; color:var(--text-primary);}
   .faq-chip.active{background:var(--text-primary); color:#fff; border-color:var(--text-primary);}
@@ -62,7 +67,21 @@
   .faq-a{max-height:0; overflow:hidden; transition:max-height .22s ease;}
   .faq-a .inner{padding:0 var(--s-6) var(--s-5); color:var(--text-secondary); font-size:var(--text-base); max-width:74ch;}
   .faq-a .inner strong{color:var(--text-primary); font-weight:700;}
-  .faq-item.open .faq-a{max-height:600px;}
+  .faq-item.open .faq-a{max-height:640px;}
+  .faq-a .inner code, .faq-as code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.88em; background:var(--surface-canvas-deep); padding:1px 5px; border-radius:4px; color:var(--text-primary);}
+
+  /* static pre-rendered fallback — visible if JS is blocked; the component replaces it when JS runs */
+  .faq-static .faq-cat{margin-top:var(--s-8);}
+  .faq-static .faq-cat:first-child{margin-top:var(--s-6);}
+  .faq-static h2{font-size:var(--text-2xl); display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-4);}
+  .faq-static .faq-card{padding:var(--s-2) var(--s-6);}
+  .faq-aud-head{font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-3xl); margin:var(--s-12) 0 var(--s-2); padding-top:var(--s-6); border-top:2px solid var(--border-strong);}
+  .faq-qa{padding:var(--s-5) 0; border-top:1px solid var(--border-soft);}
+  .faq-qa:first-child{border-top:0;}
+  .faq-qs{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-lg); color:var(--text-primary); margin:0 0 .4rem; line-height:1.4;}
+  .faq-qs .wip{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--stage-draft); background:rgba(245,158,11,.14); border-radius:var(--r-pill); padding:2px 8px; margin-left:.4rem; vertical-align:middle;}
+  .faq-as{color:var(--text-secondary); font-size:var(--text-base); max-width:74ch;}
+  .faq-as strong{color:var(--text-primary); font-weight:700;}
 
   /* help / contact card with character */
   .faq-help{display:flex; align-items:center; gap:var(--s-6); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8); margin-top:var(--s-12);}
@@ -100,11 +119,106 @@
     <div class="faq-head">
       <div class="eyebrow">Help · Toko</div>
       <h1>Frequently asked questions.</h1>
-      <p>How Toko works — for collectors and creators. Items tagged <strong>WIP</strong> are still being built and may change. Filter by topic below.</p>
+      <p>Switch between the <strong>collector</strong> and <strong>creator</strong> views, then filter by topic. The creator view goes deeper into how Toko is designed. Items tagged <strong>WIP</strong> are still being built and may change.</p>
     </div>
 
-    <!-- The reusable FAQ component renders here from faq-data.js -->
-    <div id="faq" data-faq></div>
+    <!-- The reusable FAQ component renders here from faq-data.js.
+         The static markup below is a no-JS / SEO fallback grouped by audience; the
+         component wipes and replaces it when JS runs. Regenerate from faq-data.js
+         when content changes. -->
+    <div id="faq" data-faq>
+     <div class="faq-static">
+      <!-- STATIC FALLBACK START -->
+
+      <section class="faq-cat"><h2>About Toko</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What is Toko?</h3><div class="faq-as">Toko is a digital asset platform on the Internet Computer. It brings together a <strong>Generator</strong> for building collectibles from layered artwork, a <strong>Wallet</strong> for holding them, a <strong>Launchpad</strong> for launching and claiming new collections, and a secondary <strong>Marketplace</strong> for peer-to-peer trading.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How is Toko structured — Project, Collection, Vendor?</h3><div class="faq-as">Three layers. A <strong>Project</strong> is the top-level creator workspace (team, media, whitelists, beneficiaries, and vendors). A <strong>Collection</strong> is the policy boundary for one set of tokens — its attributes, rarity, and supply. A <strong>Vendor</strong> is the “stall” that distributes tokens. The <strong>Generator</strong> sits beside the collection: its job is the art, while the collection owns the rules.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Do I need to sign in?</h3><div class="faq-as">Public surfaces (Launchpad, collection pages) are browsable, but wallet routes (“My Tokens”) are protected — you sign in with your Internet Computer identity, and ownership always resolves against your principal.</div></div>
+      </div></section>
+
+      <div class="faq-aud-head">For collectors</div>
+
+      <section class="faq-cat"><h2>Wallet</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">Where do I see what I own?</h3><div class="faq-as">In <strong>My Tokens</strong>, from the authenticated sidebar. It shows the tokens currently owned by your principal, your fungible balances (ICRC1 and NNS), and a transaction history — all in one place.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What can I do with a token I own? <span class="wip">WIP</span></h3><div class="faq-as">Today: <strong>Transfer</strong> it to another principal, or <strong>Burn</strong> it, both with a confirmation step. Selling actions (list for sale / auction) and stack operations (split, unstack, merge, combine, compact) are designed but not finalized.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Is burning reversible?</h3><div class="faq-as">No. A burn is permanent and the token can't be recovered. The record is kept in ledger history (status Burned) so supply accounting and provenance stay intact.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What are the balances in my wallet?</h3><div class="faq-as">Your fungible token balances — ICRC1 and NNS — shown with symbol/name and amount. In this version balances are <strong>view-only</strong>; sending and swapping fungibles is out of scope for now.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What's in the transaction history?</h3><div class="faq-as">Recent transfers for both your NFTs and fungible balances: type (sent, received, mint, burn), amount, from/to principal, timestamp, and a transaction reference where available. View everything together or filter to NFT-only or fungible-only.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">I just claimed a token — when does it appear?</h3><div class="faq-as">On claim, ownership moves to your principal in the ledger and the token shows up in My Tokens on refresh/reload (or via live update where available).</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Why might an action be blocked? <span class="wip">WIP</span></h3><div class="faq-as">Before any wallet action, Toko re-checks current ownership, status, and lock state. If something changed since the page loaded, the action fails safely with “Token state changed. Refresh and try again.” A token listed for sale is also locked against transfer/burn until you cancel the listing.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Buying</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What is the Launchpad?</h3><div class="faq-as">The public place to discover and claim drops. The default view is a gallery of all live vendor drops, plus a Coming Soon rail and a Recently Ended rail. It's intentionally editorial and collectible-first, not a dense trading screen.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What do the labels mean (Live, Coming soon, Ending soon, Sold out, Ended)?</h3><div class="faq-as">They're derived from the vendor's real state: <strong>Coming soon</strong> (scheduled, before start), <strong>Live</strong> (claimable now), <strong>Ending soon</strong> (running with roughly ≤2 hours left), <strong>Sold out</strong> (inventory exhausted), and <strong>Ended</strong> (shown only during a short retention window after it finishes). Paused and faulted vendors are hidden.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How do I claim a token?</h3><div class="faq-as">From a vendor's Launchpad detail page. If you're eligible and the drop is live with inventory, the button reads <strong>Claim now</strong>; the claim is explicit, shows your wallet/payment context before you confirm, and consumes inventory atomically. If you're not eligible it reads <strong>View requirements</strong>.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Why can't I claim — what are “requirements”?</h3><div class="faq-as">Creators can attach programmable conditions to a drop: token-holding requirements, staking, an allowlist, or a per-person claim limit. If you don't meet them, the button shows View requirements instead of Claim. Eligibility is checked again live at claim time.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What ranking and discovery sections exist? <span class="wip">WIP</span></h3><div class="faq-as">Live vendors, Coming Soon, and Recently Ended are available today. Featured, Trending, Newest, and Recently Claimed are planned and the curation tooling isn't built yet.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Trading <span class="faq-catnote">WIP · subject to change</span></h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What is the Marketplace? <span class="wip">WIP</span></h3><div class="faq-as">Toko's peer-to-peer trading layer for already-minted tokens: collector-to-collector sales, offers, auctions, and price/provenance transparency. It's a projection over ownership and listing state, not a separate ownership system.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Is it custodial — do I hand over my token to list it? <span class="wip">WIP</span></h3><div class="faq-as">No. It's <strong>non-custodial</strong>: ownership stays with you until a sale settles. While listed, the token is locked against conflicting actions; cancel the listing to act on it again. Settlement is atomic — it executes fully or fails fully.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What selling formats are planned? <span class="wip">WIP</span></h3><div class="faq-as">Fixed price (Buy Now), Auction (starting bid, duration, increment, optional buy-now), and Offers (make/accept/refuse/counter). A vendor buyback is modeled as an offer in the same system. If a listing ends unsold, the seller chooses whether it returns to the wallet or burns.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How is this different from the Launchpad? <span class="wip">WIP</span></h3><div class="faq-as">The <strong>Launchpad</strong> is how you participate in a drop (primary distribution). The <strong>Marketplace</strong> is how you buy/trade existing tokens (secondary). The <strong>Collection Hub</strong> is the context page that summarizes a collection and links out, rather than duplicating either interface.</div></div>
+      </div></section>
+
+      <div class="faq-aud-head">For creators</div>
+
+      <section class="faq-cat"><h2>Generator</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What is the Generator for?</h3><div class="faq-as">It builds the artwork. You give it ordered <strong>layers</strong> (background, body, accessories…) each holding <strong>parts</strong>, set compatibility rules, weighting and caps, then run a batch to assemble unique tokens. When you're happy, you <strong>pin</strong> the keepers and <strong>export</strong> them into a collection. The Generator deliberately does not assign rarity or score — those are collection policy.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What does “deterministic / replayable” mean, exactly?</h3><div class="faq-as">Output is a pure function of <code>configHash</code>, <code>seed</code>, batch type, target count and any CSV input. The same inputs always reproduce the same tokens, and if any input changes the output changes. No duplicate part-combinations occur within a batch, and every export carries a <strong>locked snapshot</strong> (batch id, seed, config hash, layers/parts, weights, compatibility rules, caps, asset versions) so a result can always be audited or replayed.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How does weighting work, and is weighting the same as rarity?</h3><div class="faq-as">No — this is the key distinction. Generator <strong>weighting</strong> only controls how often a part is picked (composition/frequency). Collection <strong>rarity</strong> is a separate policy about how rare a finished token is. Part weights use presets — Very Infrequent (1), Infrequent (2), <strong>Balanced (3, the default)</strong>, Frequent (5), Very Frequent (8) — or custom numbers. Per-part caps are batch-scoped only, never collection-wide scarcity.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What can the Generator produce in one run, and how do parts combine?</h3><div class="faq-as">Three batch types: a limited number, a single token, or generate from a CSV (download a template, fill it in, upload and validate). Assembly evaluates each layer's inclusion (<code>always</code> or <code>optional_with_probability</code>), picks parts by weighted choice, then validates compatibility (requires/excludes part or layer) and caps, rejecting invalid candidates until the target count of valid, unique tokens is reached.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How do tokens get from the Generator into a collection?</h3><div class="faq-as">Only through the Generator's export path — there's no separate import wizard. You preview, pin the keepers, and export the pinned set. Imported tokens arrive in <strong>Draft</strong> with composition/provenance attached. A collection links to a single generator source; once linked, imports from other generators are rejected. The export hands over composition evidence the attribute system can later map into derived values.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Collections</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What are the collection stages, and what changes between them?</h3><div class="faq-as"><strong>Draft → Review → Live.</strong> Draft is creator configuration (freely editable). Review is publicly reviewable but still editable. Live is production: core policy locks. A token can only go Live after its collection is Live.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What freezes when a collection goes Live?</h3><div class="faq-as">At go-live the budget basis and policy lock: <strong>Max Supply</strong>, rarity type, ratio/accelerator, the unlocked tier set, any definition-count cap, guardian permissions, supply caps, and attributes. Only aesthetic fields stay editable (description, thumbnail, banner) plus issue/copy-number display defaults for future vendors. There's no post-live “expand supply” — set it right before go-live. The roster stays open, though: new definitions can still be authored and set Live against the already-frozen budgets.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What is the Guardian?</h3><div class="faq-as">A set of collection-scoped, buyer-facing promises: whether the collection allows duplicate tokens, token destruction, transfer restrictions, and sale restrictions. They're guarantees collectors can rely on, locked at Live. (Today these are largely UI configuration + warnings; full backend enforcement of the invariants is still being completed.)</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How do supply and issue numbering work?</h3><div class="faq-as">Supply policy sets a total cap, a max number of unique tokens, and max copies per token. <strong>Issue numbers</strong> belong to the token definition (not each copy), are assigned in live-order at <strong>Review → Live</strong>, then locked and never reused. Each copy also gets an immutable <code>copy_sequence</code>. Display options: Hidden (default), Show issue only, or Show issue and supply when capped — non-stackable multi-copy tokens can additionally show a copy number.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Can I delete a collection?</h3><div class="faq-as">Only if no token has been minted yet (with an explicit confirmation). Once any token is minted, deletion is blocked.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Attributes</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What are attributes, token types, and traits?</h3><div class="faq-as">Attributes are the schema of properties tokens can have, authored at the <strong>collection</strong> level (not in the Generator). A <strong>token type</strong> groups tokens that share an attribute set; traits are the specific values. Generator composition is <em>evidence</em> the attribute system maps into derived attribute values via the Generator Mapping surface — the Generator itself never stores attributes on parts.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How do attributes become a token's score?</h3><div class="faq-as">On the Attributes page you map attribute values to numbers (Apply Values) and choose a calculation method — <strong>Add Values</strong>, <strong>Multiply</strong>, or <strong>Highest</strong>. Missing/unmapped values are excluded (not treated as 0 unless you map them to 0). That produces the attribute score, which feeds the final token score. Whether the score is shown to collectors is a separate per-collection visibility setting.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Rarity</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What rarity models are there?</h3><div class="faq-as">Three, set at the collection level; every collection starts in <strong>Uniform</strong>. <strong>Uniform</strong> treats all tokens equally. <strong>Tiered</strong> lets you define your own tiers (names + colours fully custom) and assign manually — the system shows Final Score and Score Rank as non-binding guidance but offers no “suggested tier”. <strong>Weighted</strong> uses Toko's fixed official tiers (Common, Uncommon, Rare by default; Epic and Legendary unlockable) and assigns deterministically by score. Switching models requires explicit confirmation and resets rarity outputs.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How is the Weighted distribution decided?</h3><div class="faq-as">By a <strong>ratio</strong> (how much scarcer each rarer tier is than the one below) and an <strong>accelerator</strong> (curve steepness). Per-tier quotas are computed read-only from those over Max Supply — you tune the curve, not raw quotas. Defaults the moment you choose Weighted: <strong>Max Supply 1,000, ratio 3, accelerator 1.0</strong>, giving roughly Common 69% / Uncommon 23% / Rare 8% on the 3-tier set.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What does a Weighted tier quota actually limit, and when is it enforced?</h3><div class="faq-as">A quota is a <strong>mint budget</strong> — a cap on how many <em>copies</em> across the whole tier may ever be minted, not a cap on how many definitions carry that tier. Each definition gets exactly one tier and its own supply. Oversubscription is allowed: you can author more “Rare” definitions than the Rare budget can mint. The budget is drawn down and enforced <strong>only at mint</strong>, first-come, in one atomic transaction; it's frozen at collection go-live. The Live view shows budget · minted · remaining and a per-definition “mintable now”.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Will my tiers change on their own?</h3><div class="faq-as">No. There's no silent background re-tiering. On <code>Draft → Review</code> only the transitioning token is auto-assigned; collection-wide redistribution happens only when you run an explicit <strong>Rebalance</strong>. A manual per-row override pins a token to a tier (and excludes it from rebalance) until you undo it, and is frozen as the token's <code>locked_tier</code> at go-live.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Token score</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">How is a token's score calculated?</h3><div class="faq-as"><code>final_score = attribute_score × layer_multiplier</code>. The attribute score comes from the numbers you mapped to attributes, combined by the collection's method (Add Values / Multiply / Highest). The layer multiplier scales by generator-layer weighting authored on the Layer Multipliers tab (it's 1.0 when no generator is linked). Adding more tokens never changes an existing token's score unless that token's own inputs changed.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Is score the same as rank?</h3><div class="faq-as">No. <strong>Score Rank</strong> is always computed within a single token type, never across the whole collection — a type with five scoring attributes would otherwise systematically outscore one with a single attribute. Multi-type collections get a token-type filter on the assignment/scoring tables, and the copy spells out the scope (“Score Rank is within Character · 312 tokens”).</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What is a “stale score” and why does it block go-live?</h3><div class="faq-as">Every token is <code>fresh</code> or <code>stale_score</code>. A score goes stale when an input changes — composition or attribute values (while Draft), the value→number mapping, the layer-weight config, or the calculation method. The UI flags it, and a token <strong>can't move Review → Live while stale</strong> (or while a recompute runs), so live tokens always reflect their current inputs. A bulk Refresh all stale exists; it can partially fail and reports per-token results.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Is the score always visible to collectors?</h3><div class="faq-as">No — score visibility is a separate per-collection setting, orthogonal to the rarity model.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Vendors</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">What is a vendor?</h3><div class="faq-as">A distribution mechanism — the configured “shop” that hands tokens to collectors, with its own storefront, lifecycle, inventory, costs, rules, and revenue. Its inventory is backed by <strong>minted</strong> tokens, not draft definitions.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Are vendors per-collection or per-project?</h3><div class="faq-as">Vendors are <strong>project-scoped</strong>: a single vendor can distribute minted tokens from several of a project's collections. Revenue templates are project-level and claim defaults are collection-level. Each vendor settles and holds buyback proceeds from its own subaccount.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What vendor types are there?</h3><div class="faq-as"><strong>Market</strong> vendors (sell specific tokens) launch first. <strong>Gacha</strong> and GachaRwa (randomized “mystery pull”) are designed but deferred and feature-gated off until a later release — so at launch, expect Market vendors only.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How do Gacha vendors work? <span class="wip">WIP</span></h3><div class="faq-as">A claim returns a randomly selected reward from the vendor's prize pool. Two draw modes: <strong>uniform lucky dip</strong> (equal chance per available unit) or <strong>weighted</strong> (odds from <code>configured_weight × available_quantity</code>, so they shift as inventory changes). The full prize pool — including sold-out entries — is always visible, draws are deterministic and fully audited (replayable from the recorded seed inputs), with optional reveal moments. Not in the first launch.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How do I control who can claim, and how much?</h3><div class="faq-as">Vendors support claim costs (by tier), requirements (holdings, staking, allowlist — evaluated per tier), restrictions, and rewards, plus per-principal limits. Tier rules inherit from lower tiers where higher entries are missing, and allowlists come from your project whitelists.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What is the vendor lifecycle?</h3><div class="faq-as">Two axes: a stage (Draft / Review / Live) and a runtime status (setup, running, paused, empty, ended, faulted). You can start, pause, resume, restart, or stop a vendor. There's no separate vendor approval gate — go-live validation happens per token at Review → Live. When a vendor stops, unclaimed inventory either <strong>returns</strong> to inventory or is <strong>burned</strong>, per its termination policy.</div></div>
+      </div></section>
+
+      <section class="faq-cat"><h2>Revenue</h2><div class="faq-card">
+        <div class="faq-qa"><h3 class="faq-qs">How does revenue work?</h3><div class="faq-as">Through <strong>Revenue Presets</strong> — named, project-level split templates authored in <em>Project → Revenue presets</em>. A vendor <strong>must select a Live preset</strong> at creation, which copies the values onto the vendor as a snapshot; editing the preset later doesn't change vendors already using it. Claim presets ship first; Sale presets are a future tab.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What's in a revenue split?</h3><div class="faq-as">Fees off the top — <strong>Project / cycles funding</strong> (required, ~1–10%, funds your project canister) and an optional <strong>Toko contribution</strong> (0–10%) — plus optional <strong>royalties</strong> to your <strong>beneficiaries</strong>. Per-royalty cap ~10%, total royalties ≤ ~20%, and non-project allocations ≤ ~40%. Only <strong>Live beneficiaries</strong> can receive royalties; to pay yourself, add yourself as a beneficiary. (Percentages are current design values.)</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">Can royalties change over time?</h3><div class="faq-as">Yes. Each royalty runs <strong>Forever</strong> or for a <strong>fixed period</strong> (1/3/6/9/12/24 months) with a <strong>taper</strong> — No taper, Cliff, Linear, or Curve — that changes the effective percent across the period. The taper clock starts when the vendor first goes Running.</div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What is a buyback?</h3><div class="faq-as">An offer from a vendor to buy a token back, configured at the <strong>vendor</strong> level (not in the revenue preset) — a vendor percentage in roughly the 1–20% range over a set duration. It runs through the same shared offer system as marketplace offers, and proceeds are held in the vendor subaccount until release.</div></div>
+      </div></section>
+
+      <!-- STATIC FALLBACK END -->
+     </div>
+    </div>
 
     <div class="faq-help">
       <img src="style-guide/bot-images/question/IMG_5522.png" alt="" onerror="this.style.display='none'">
@@ -122,7 +236,8 @@
   <script>
   /* ============================================================
      Reusable FAQ component. Renders TOKO_FAQ (from faq-data.js)
-     into any element with [data-faq]. To reuse elsewhere: include
+     into any element with [data-faq]. Audience toggle (collectors /
+     creators) + per-topic chips. To reuse elsewhere: include
      faq-data.js + this script and add <div data-faq></div>.
      Search is intentionally omitted — add it here when the list
      grows past ~30–50 questions (filter `data.items` by `q`/`a`).
@@ -132,20 +247,38 @@
       if (!mount || !data) return;
       var cats = data.categories || [];
       var items = data.items || [];
-      var catById = {};
-      cats.forEach(function (c) { catById[c.id] = c; });
+      var auds = data.audiences || [{ id: "collector", label: "For collectors" }, { id: "creator", label: "For creators" }];
+      var state = { audience: auds[0].id, active: "all" };
+      var uid = 0;
 
-      // only categories that actually have items, in declared order
-      var used = cats.filter(function (c) {
-        return items.some(function (it) { return it.cat === c.id; });
+      // initial audience from #hash or saved choice
+      try {
+        var hint = (location.hash.replace(/^#/, "") || localStorage.getItem("toko-faq-aud") || "").toLowerCase();
+        if (/creator/.test(hint)) state.audience = "creator";
+        else if (/collector/.test(hint)) state.audience = "collector";
+      } catch (e) {}
+
+      // ---- audience toggle ----
+      var audBar = document.createElement("div");
+      audBar.className = "faq-aud";
+      auds.forEach(function (au) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = au.label;
+        b.dataset.aud = au.id;
+        b.className = (au.id === state.audience ? "active" : "");
+        b.addEventListener("click", function () { setAudience(au.id); });
+        audBar.appendChild(b);
       });
 
-      var uid = 0;
-      var state = { active: "all" };
-
-      // ---- category filter chips ----
       var chips = document.createElement("div");
       chips.className = "faq-chips";
+      var sections = document.createElement("div");
+
+      function itemsForAudience() {
+        return items.filter(function (it) { return it.aud === state.audience || it.aud === "both"; });
+      }
+
       function chip(id, label, wip) {
         var b = document.createElement("button");
         b.className = "faq-chip" + (id === state.active ? " active" : "");
@@ -155,96 +288,92 @@
         b.addEventListener("click", function () { setActive(id); });
         return b;
       }
-      chips.appendChild(chip("all", "All", false));
-      used.forEach(function (c) { chips.appendChild(chip(c.id, c.label, c.wip)); });
 
-      // ---- category sections ----
-      var sections = document.createElement("div");
-      used.forEach(function (c) {
-        var sec = document.createElement("section");
-        sec.className = "faq-cat";
-        sec.dataset.cat = c.id;
+      function itemEl(it) {
+        uid++;
+        var pid = "faq-a-" + uid;
+        var item = document.createElement("div");
+        item.className = "faq-item";
 
-        var h = document.createElement("h2");
-        h.textContent = c.label;
-        if (c.wip) {
-          var n = document.createElement("span");
-          n.className = "faq-catnote";
-          n.textContent = "WIP · subject to change";
-          h.appendChild(n);
-        }
-        sec.appendChild(h);
+        var q = document.createElement("button");
+        q.className = "faq-q"; q.type = "button";
+        q.setAttribute("aria-expanded", "false");
+        q.setAttribute("aria-controls", pid);
+        var qt = document.createElement("span");
+        qt.className = "qtext";
+        qt.textContent = it.q;
+        if (it.wip) { var w = document.createElement("span"); w.className = "wip"; w.textContent = "WIP"; qt.appendChild(w); }
+        q.appendChild(qt);
+        q.insertAdjacentHTML("beforeend",
+          '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
 
-        var card = document.createElement("div");
-        card.className = "faq-card";
-        items.filter(function (it) { return it.cat === c.id; })
-          .forEach(function (it) {
-            uid++;
-            var pid = "faq-a-" + uid;
-            var item = document.createElement("div");
-            item.className = "faq-item";
+        var a = document.createElement("div");
+        a.className = "faq-a"; a.id = pid; a.setAttribute("role", "region");
+        var inner = document.createElement("div");
+        inner.className = "inner";
+        inner.innerHTML = it.a;
+        a.appendChild(inner);
 
-            var q = document.createElement("button");
-            q.className = "faq-q";
-            q.type = "button";
-            q.setAttribute("aria-expanded", "false");
-            q.setAttribute("aria-controls", pid);
-            var qt = document.createElement("span");
-            qt.className = "qtext";
-            qt.textContent = it.q;
-            if (it.wip) {
-              var w = document.createElement("span");
-              w.className = "wip";
-              w.textContent = "WIP";
-              qt.appendChild(w);
-            }
-            q.appendChild(qt);
-            q.insertAdjacentHTML("beforeend",
-              '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+        q.addEventListener("click", function () {
+          var open = item.classList.toggle("open");
+          q.setAttribute("aria-expanded", open ? "true" : "false");
+        });
 
-            var a = document.createElement("div");
-            a.className = "faq-a";
-            a.id = pid;
-            a.setAttribute("role", "region");
-            var inner = document.createElement("div");
-            inner.className = "inner";
-            inner.innerHTML = it.a;
-            a.appendChild(inner);
+        item.appendChild(q); item.appendChild(a);
+        return item;
+      }
 
-            q.addEventListener("click", function () {
-              var open = item.classList.toggle("open");
-              q.setAttribute("aria-expanded", open ? "true" : "false");
-            });
+      function build() {
+        var its = itemsForAudience();
+        var used = cats.filter(function (c) {
+          return its.some(function (it) { return it.cat === c.id; });
+        });
 
-            item.appendChild(q);
-            item.appendChild(a);
-            card.appendChild(item);
-          });
-        sec.appendChild(card);
-        sections.appendChild(sec);
-      });
+        chips.innerHTML = "";
+        chips.appendChild(chip("all", "All", false));
+        used.forEach(function (c) { chips.appendChild(chip(c.id, c.label, c.wip)); });
+
+        sections.innerHTML = "";
+        used.forEach(function (c) {
+          var sec = document.createElement("section");
+          sec.className = "faq-cat";
+          sec.dataset.cat = c.id;
+          var h = document.createElement("h2");
+          h.textContent = c.label;
+          if (c.wip) { var n = document.createElement("span"); n.className = "faq-catnote"; n.textContent = "WIP · subject to change"; h.appendChild(n); }
+          sec.appendChild(h);
+          var card = document.createElement("div");
+          card.className = "faq-card";
+          its.filter(function (it) { return it.cat === c.id; }).forEach(function (it) { card.appendChild(itemEl(it)); });
+          sec.appendChild(card);
+          sections.appendChild(sec);
+        });
+        state.active = "all";
+      }
 
       function setActive(id) {
         state.active = id;
-        chips.querySelectorAll(".faq-chip").forEach(function (b) {
-          b.classList.toggle("active", b.dataset.cat === id);
-        });
-        sections.querySelectorAll(".faq-cat").forEach(function (s) {
-          s.style.display = (id === "all" || s.dataset.cat === id) ? "" : "none";
-        });
-        if (id !== "all") {
-          window.scrollTo({ top: mount.offsetTop - 16, behavior: "smooth" });
-        }
+        chips.querySelectorAll(".faq-chip").forEach(function (b) { b.classList.toggle("active", b.dataset.cat === id); });
+        sections.querySelectorAll(".faq-cat").forEach(function (s) { s.style.display = (id === "all" || s.dataset.cat === id) ? "" : "none"; });
+        if (id !== "all") window.scrollTo({ top: mount.offsetTop - 16, behavior: "smooth" });
       }
 
+      function setAudience(id) {
+        if (id === state.audience) return;
+        state.audience = id;
+        audBar.querySelectorAll("button").forEach(function (b) { b.classList.toggle("active", b.dataset.aud === id); });
+        build();
+        try { localStorage.setItem("toko-faq-aud", id); } catch (e) {}
+      }
+
+      build();
       mount.innerHTML = "";
+      mount.appendChild(audBar);
       mount.appendChild(chips);
       mount.appendChild(sections);
     }
 
-    document.querySelectorAll("[data-faq]").forEach(function (el) {
-      renderFAQ(el, window.TOKO_FAQ);
-    });
+    document.querySelectorAll("[data-faq]").forEach(function (el) { renderFAQ(el, window.TOKO_FAQ); });
   })();
   </script>
 </body>
