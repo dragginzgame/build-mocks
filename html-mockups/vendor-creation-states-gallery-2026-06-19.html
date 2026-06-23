@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Vendors · Creation states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .sb { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .sb .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sb--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .sb--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .sb--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .sb--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .sb--grey { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .axes { display:flex; gap:var(--s-5); flex-wrap:wrap; }
+  .axis { display:flex; flex-direction:column; gap:.35rem; }
+  .axis .al { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  textarea.input { resize:vertical; min-height:72px; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .search { position:relative; flex:1; min-width:200px; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .progress { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .progress .fill { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .choice.disabled { opacity:.55; }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .choice .desc { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.25rem; }
+  .type-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--s-4); }
+  @media (max-width:680px){ .type-grid { grid-template-columns:1fr; } }
+  .type-card { text-align:left; border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-3); min-height:200px; }
+  .type-card:not(.disabled):hover { border-color:var(--border-strong); }
+  .type-card.sel { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .type-card.disabled { opacity:.55; }
+  .type-card .tc-ic { width:44px; height:44px; border-radius:var(--r-2); background:var(--surface-canvas-deep); display:inline-flex; align-items:center; justify-content:center; font-size:1.375rem; flex:none; }
+  .type-card .tc-ttl { font-family:var(--font-display); font-size:var(--text-xl); text-transform:uppercase; letter-spacing:.02em; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .type-card .tc-desc { color:var(--text-secondary); font-size:var(--text-sm); }
+  .type-card .tc-foot { margin-top:auto; }
+  .dgroup { border:1px solid var(--border-soft); border-left:3px solid var(--dg,var(--border-soft)); border-radius:var(--r-3); padding:var(--s-4) var(--s-5) var(--s-5); }
+  .dgroup + .dgroup { margin-top:var(--s-4); }
+  .dgroup__head { display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-4); }
+  .dgroup__n { width:22px; height:22px; border-radius:50%; background:var(--dg,var(--text-muted)); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); flex:none; }
+  .dgroup__t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .stepper { display:flex; align-items:center; flex-wrap:wrap; gap:var(--s-2); }
+  .stepper .step { display:flex; align-items:center; gap:var(--s-2); color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .stepper .step .n { width:24px; height:24px; border-radius:50%; background:var(--surface-canvas-deep); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; font-size:var(--text-2xs); }
+  .stepper .step.active { color:var(--text-primary); }
+  .stepper .step.active .n { background:var(--text-primary); color:#fff; }
+  .stepper .step.done .n { background:var(--stage-live); color:#fff; }
+  .stepper .sepl { width:20px; height:1px; background:var(--border-soft); flex:none; }
+  @media (max-width:760px){ .stepper .step .lbl { display:none; } }
+  .coll-card--new { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); text-align:center; color:var(--text-secondary); min-height:200px; padding:var(--s-6); cursor:pointer; }
+  .media-zones { display:flex; gap:var(--s-4); align-items:stretch; flex-wrap:wrap; }
+  .dropzone { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.25rem; color:var(--text-secondary); text-align:center; cursor:pointer; padding:var(--s-4); }
+  .dropzone:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .dropzone .dz-plus { font-size:1.5rem; line-height:1; }
+  .dropzone .dz-lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .media-thumb { width:120px; height:120px; flex:none; }
+  .media-banner { flex:1; min-width:260px; min-height:200px; }
+  .acc { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; background:var(--surface-canvas); }
+  .acc + .acc { margin-top:var(--s-3); }
+  .acc__head { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); background:var(--surface-canvas-alt); }
+  .acc__head .acc-ttl { font-family:var(--font-display); font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; }
+  .acc__head .chev { margin-left:auto; color:var(--text-muted); }
+  .acc__body { padding:0 var(--s-5) var(--s-3); }
+  .tier-row { display:flex; align-items:center; gap:var(--s-3); padding:.7rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .tier-row:first-child { border-top:0; }
+  .tier-row .tr-tier { font-family:var(--font-emphasis); font-weight:700; min-width:120px; }
+  .tier-row .tr-cost { width:96px; }
+  .tier-row .tr-reqs { flex:1; display:flex; gap:.35rem; flex-wrap:wrap; min-width:160px; }
+  .tier-row .tr-actions { display:flex; gap:var(--s-2); margin-left:auto; }
+  .single-modal .modal-card.wide { max-width:640px; }
+  .splitbar { height:14px; border-radius:var(--r-pill); overflow:hidden; display:flex; }
+  .splitbar > i { display:block; height:100%; }
+  .splitlegend { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); }
+  .splitlegend span { display:inline-flex; align-items:center; gap:.375rem; }
+  .splitlegend i { width:9px; height:9px; border-radius:3px; }
+  .bene-head, .bene-row { display:grid; grid-template-columns:1fr 84px 1fr 36px; gap:var(--s-2); align-items:center; }
+  .bene-head span { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  @media (max-width:620px){ .bene-head, .bene-row { grid-template-columns:1fr 64px 1fr 32px; } }
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:var(--s-3); }
+  .tk-card { background:var(--surface-canvas); border:2px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; position:relative; }
+  .tk-card.rar-common { border-color:#B8B8B8; } .tk-card.rar-uncommon { border-color:#15803D; } .tk-card.rar-rare { border-color:#1e40af; } .tk-card.rar-epic { border-color:#6D28D9; } .tk-card.rar-legendary { border-color:#B45309; }
+  .tk-card .art { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2rem; background:linear-gradient(135deg,#f59e0b,#b45309); }
+  .tk-card .stackn { position:absolute; top:6px; right:6px; background:rgba(10,10,10,.72); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .tk-card .meta { padding:.45rem .55rem .6rem; }
+  .tk-card .nm { font-family:var(--font-display); font-size:var(--text-sm); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-card .rn { font-size:var(--text-3xs); font-weight:700; font-family:var(--font-emphasis); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); margin-top:.1rem; }
+  .controls { display:flex; gap:var(--s-3); flex-wrap:wrap; }
+  .tk-card.pick { cursor:pointer; }
+  .tk-card .pick-box { position:absolute; top:6px; left:6px; width:20px; height:20px; border-radius:6px; border:2px solid #fff; background:rgba(10,10,10,.4); display:inline-flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .tk-card .pick-box svg { width:13px; height:13px; opacity:0; }
+  .tk-card.sel { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary); }
+  .tk-card.sel .pick-box { background:var(--text-primary); border-color:var(--text-primary); }
+  .tk-card.sel .pick-box svg { opacity:1; }
+  .cbx { width:18px; height:18px; border-radius:5px; border:2px solid var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; color:#fff; }
+  .cbx svg { width:12px; height:12px; opacity:0; }
+  .cbx.on { background:var(--text-primary); border-color:var(--text-primary); }
+  .cbx.on svg { opacity:1; }
+  .cbx.some { background:var(--text-primary); border-color:var(--text-primary); }
+  .selectall { display:inline-flex; align-items:center; gap:var(--s-2); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-primary); cursor:pointer; }
+  .pickscroll { max-height:340px; overflow:auto; margin:0 calc(-1 * var(--s-2)); padding:0 var(--s-2); }
+  .modal-empty { text-align:center; padding:var(--s-8) var(--s-4); display:flex; flex-direction:column; align-items:center; gap:var(--s-2); }
+  .modal-empty .me-ttl { font-family:var(--font-display); font-size:var(--text-2xl); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .empty-state strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state p { margin:0; font-size:var(--text-sm); max-width:52ch; }
+  .andstack { display:flex; flex-direction:column; }
+  .andreq { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.65rem .85rem; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .andreq .rq-t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .andreq .rq-d { color:var(--text-secondary); font-size:var(--text-xs); margin-left:auto; }
+  .andsep { display:flex; align-items:center; gap:var(--s-3); padding:.3rem 0 .3rem .85rem; }
+  .andsep b { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; color:var(--text-secondary); background:var(--surface-canvas-deep); border-radius:var(--r-pill); padding:2px 9px; }
+  .andsep i { flex:1; height:1px; background:var(--border-soft); }
+  .input.is-error { border-color:var(--notify-error); }
+  .input.is-ok { border-color:var(--stage-live); }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .field-ok { color:var(--stage-live); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .field-checking { color:var(--text-muted); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .req-plus { color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); font-size:var(--text-sm); padding:0 1px; }
+  .acc.disabled-acc { opacity:.55; }
+  .acc.disabled-acc .acc__head { cursor:not-allowed; }
+  .acc__head.clickable { cursor:pointer; }
+  .acc__head .acc-note { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .vcheck { display:flex; gap:var(--s-3); align-items:flex-start; padding:.65rem 0; border-top:1px solid var(--border-soft); }
+  .vcheck:first-child { border-top:0; }
+  .vcheck .vi { flex:none; margin-top:1px; }
+  .vcheck .vi.err { color:var(--notify-error); } .vcheck .vi.ok { color:var(--stage-live); }
+  .vcheck .vt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .vcheck .vd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:1px; }
+  .vcheck .vfix { margin-left:auto; color:var(--info); font-weight:700; font-size:var(--text-xs); white-space:nowrap; align-self:center; }
+  .lockpill { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:4px; }
+  .lockpill--lock { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .lockpill--edit { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:var(--s-6); width:100%; max-width:1040px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .step-actions { display:flex; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; }
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin:var(--s-2) calc(-1 * var(--s-8)) calc(-1 * var(--s-8)); padding:var(--s-4) var(--s-8); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.5rem 0 .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-xs); font-weight:700; }
+  @media (max-width:620px){ .listbar { justify-content:center; } .results-count, .perpage { display:none; } }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); align-self:flex-start; }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-link { color:var(--info,#2563EB); font-weight:700; font-size:var(--text-sm); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Vendors — Creation.</h1>
+      <p>The create-a-vendor wizard for <strong>Market</strong> vendors — Type → Storefront → Lifecycle → Inventory → Costs &amp; rules → Revenue → Summary — plus its modals, empty states, and the Draft → Review → Live stage transitions. The running/management side (vendor list, detail, lifecycle controls, runtime states) lives in <strong>vendor-management-states-gallery</strong>; gacha-only states live in <strong>gacha-vendor-states-gallery</strong>.</p>
+      <div class="navlinks">Steps keep their original numbers (03–09) to match the management gallery's numbering. Sub-frames are labelled "0X ·".</div>
+    </header>
+
+    <!-- 03 · Create — vendor type (card chooser) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Create — vendor type</span><span class="d">Step 1 of the create stepper — the <strong>sale mechanism</strong>. <strong>Market</strong> is the only type available at launch and is <strong>collection-agnostic</strong>: it can sell tokens from one or several of your collections (no single/multi toggle — its inventory just spans whatever collections you stage). The price-override types — <strong>Gacha</strong>, <strong>Tombola</strong>, <strong>Gacha-RWA</strong> — are <strong>single-collection</strong> (one draw price + one weighted pool only make sense within one rarity system) and stay disabled for now. Whatever collections a vendor is created with become its fixed set — it can only ever hold tokens from those. Cards use the gallery's own selection convention (strong border + hairline ring). The stepper rail replaces a redundant page header on working steps (style-guide rule).</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step active"><span class="n">1</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">2</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">3</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Choose a vendor type</h3></div>
+            <p class="card__intro" style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-5)">This sets how the vendor distributes tokens and can't be changed later — the rest of setup adapts to your choice.</p>
+            <div class="type-grid">
+              <button class="type-card sel">
+                <span class="tc-ic">🏪</span>
+                <div class="tc-ttl">Market <span class="tag tag--green">Available</span></div>
+                <div class="tc-desc">Sell tokens at a set cost and/or rule — from <strong>one or more</strong> of your collections. The standard distribution vendor.</div>
+                <div class="tc-foot"><span class="sb sb--grey"><span class="dot"></span>Selected</span></div>
+              </button>
+              <div class="type-card disabled">
+                <span class="tc-ic">🎁</span>
+                <div class="tc-ttl">Gacha <span class="tag">Coming later</span></div>
+                <div class="tc-desc">Randomised draw from a weighted prize pool with computable odds and a reveal moment. <strong>Single collection.</strong></div>
+              </div>
+              <div class="type-card disabled">
+                <span class="tc-ic">🎟️</span>
+                <div class="tc-ttl">Tombola <span class="tag">Coming later</span></div>
+                <div class="tc-desc">Raffle-style draw where every ticket wins from a graded pool. <strong>Single collection.</strong></div>
+              </div>
+              <div class="type-card disabled">
+                <span class="tc-ic">💎</span>
+                <div class="tc-ttl">Gacha-RWA <span class="tag">Coming later</span></div>
+                <div class="tc-desc">Gacha draw backed by real-world-asset prizes with extra custody &amp; redemption rules. <strong>Single collection.</strong></div>
+              </div>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Cancel</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Storefront</button></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Create — storefront -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Create — storefront</span><span class="d">Step 2: the public presentation a collector sees on Launchpad — name, blurb, media, and the claim CTA label.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">2</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">3</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Customise your storefront</h3><span class="lockpill lockpill--edit">Editable on Live</span></div></div>
+            <p class="card__intro" style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-5)">How buyers see this vendor on its public page and in Launchpad.</p>
+            <div><label class="flabel">Vendor name <span class="tag tag--red">required</span></label><input class="input" value="Spring Launch"></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Tagline</label><input class="input" placeholder="One line that sells the drop"></div>
+            <div style="margin-top:var(--s-4)">
+              <label class="flabel">Thumbnail &amp; banner</label>
+              <div class="media-zones">
+                <button class="dropzone media-thumb"><span class="dz-plus">+</span><span class="dz-lbl">Thumbnail</span></button>
+                <button class="dropzone media-banner"><span class="dz-plus">+</span><span class="dz-lbl">Banner</span></button>
+              </div>
+              <div class="hint">Square thumbnail (min 512×512) and a wide banner — same as the collection storefront.</div>
+            </div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Description</label><textarea class="input">The first public release of Spring Foxes — claim a fox for 1.5 ICP.</textarea></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Claim button label</label><input class="input" value="Claim a Fox"></div>
+            <div style="margin-top:var(--s-4)">
+              <label class="flabel">Social links</label>
+              <div class="row" style="gap:var(--s-2);flex-wrap:nowrap">
+                <select class="input" style="max-width:170px;flex:none"><option>X (Twitter)</option><option>Website</option><option>Discord</option><option>Instagram</option></select>
+                <input class="input" style="flex:1" placeholder="@handle or URL">
+                <button class="btn btn--ghost btn--sm" aria-label="Remove">✕</button>
+              </div>
+              <div class="row" style="margin-top:var(--s-3)"><button class="btn btn--ghost btn--sm">+ Add social</button></div>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Lifecycle</button></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Create — lifecycle policy -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Create — lifecycle policy</span><span class="d">Step 3: how the vendor starts and ends. Activation (open immediately / start manually / schedule), control mode (autonomous vs admin-controlled with an earliest-stop), and what happens to unclaimed inventory when it stops.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">3</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Lifecycle policy</h3><span class="lockpill lockpill--lock">Locks on Live</span></div></div>
+            <div class="dgroup" style="--dg:var(--stage-draft)">
+              <div class="dgroup__head"><span class="dgroup__n">1</span><span class="dgroup__t">Activation — how it opens</span></div>
+              <div class="choice sel"><span class="radio"></span><div><div class="ttl">Start manually</div><div class="desc">You press Start once it's Live and stocked.</div></div></div>
+              <div class="choice"><span class="radio"></span><div><div class="ttl">Open immediately</div><div class="desc">Runs as soon as it's Live and has inventory.</div></div></div>
+              <div class="choice"><span class="radio"></span><div><div class="ttl">Schedule</div><div class="desc">Starts automatically at a set date/time.</div></div></div>
+            </div>
+            <div class="dgroup" style="--dg:var(--stage-review)">
+              <div class="dgroup__head"><span class="dgroup__n">2</span><span class="dgroup__t">Control mode — how it runs</span></div>
+              <div class="choice sel"><span class="radio"></span><div><div class="ttl">Autonomous</div><div class="desc">Runs until sold out or you stop it.</div></div></div>
+              <div class="choice"><span class="radio"></span><div><div class="ttl">Admin controlled</div><div class="desc">Supports an earliest-stop time — set a date the vendor can't be stopped before. The date field appears here when this option is selected.</div></div></div>
+            </div>
+            <div class="dgroup" style="--dg:var(--stage-live)">
+              <div class="dgroup__head"><span class="dgroup__n">3</span><span class="dgroup__t">When it stops — unclaimed inventory…</span></div>
+              <div class="choice sel"><span class="radio"></span><div><div class="ttl">Returns to the collection</div><div class="desc">Unclaimed copies go back to held inventory.</div></div></div>
+              <div class="choice"><span class="radio"></span><div><div class="ttl">Is burned</div><div class="desc">Unclaimed copies are permanently destroyed.</div></div></div>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Inventory</button></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Create — inventory -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Create — inventory</span><span class="d">Step 4: choose how stock can change (locked / additive / flexible) and allocate minted copies from the collection's held inventory into the vendor. Inventory is backed by minted tokens, never draft definitions.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+            <div class="row" style="justify-content:space-between;gap:var(--s-4)">
+              <div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3 style="font-size:var(--text-xl)">Inventory policy</h3><span class="lockpill lockpill--lock">Locks on Live</span></div>
+              <div class="seg" role="tablist" aria-label="Inventory policy"><button class="active">Additive</button><button>Flexible</button><button>Locked</button></div>
+            </div>
+            <p class="hint" style="margin-top:var(--s-3)"><strong style="color:var(--text-primary)">Additive</strong> — You can add new inventory while the vendor is running.</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Add inventory</h3><span class="lockpill lockpill--edit">Editable on Live · additive</span></div><span class="tag">184 staged · 3 collections</span></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">Move minted tokens from <strong>Spring Foxes, Night Market + Winter Tales</strong> into this vendor. Browse, filter and bulk-pick in the inventory manager — built for 10,000+ tokens with pagination. Rarity is shown by the card border.</p>
+            <div class="row" style="justify-content:space-between;margin-bottom:var(--s-3)"><span class="tag">184 tokens staged</span><div class="row"><button class="btn btn--ghost btn--sm">Filter</button><button class="btn btn--primary btn--sm">+ Add tokens</button></div></div>
+            <div class="tk-grid">
+              <div class="tk-card rar-common"><div class="art">🏮</div><div class="meta"><div class="nm">#0001</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🎭</div><div class="meta"><div class="nm">#0042</div><div class="rn">Uncommon</div></div></div>
+              <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🧧</div><span class="stackn">×6</span><div class="meta"><div class="nm">Lucky Charm</div><div class="rn">Rare · stack</div></div></div>
+              <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">#0099</div><div class="rn">Epic</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🏮</div><div class="meta"><div class="nm">#0517</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🦊</div><div class="meta"><div class="nm">#0623</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🍜</div><div class="meta"><div class="nm">#0701</div><div class="rn">Uncommon</div></div></div>
+              <div class="tk-card rar-legendary"><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">🦊</div><span class="stackn">×3</span><div class="meta"><div class="nm">Golden Fox</div><div class="rn">Legendary · stack</div></div></div>
+              <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🏮</div><div class="meta"><div class="nm">#0820</div><div class="rn">Rare</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🎐</div><div class="meta"><div class="nm">#0844</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🐉</div><div class="meta"><div class="nm">#0901</div><div class="rn">Epic</div></div></div>
+              <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🥮</div><div class="meta"><div class="nm">#1002</div><div class="rn">Uncommon</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🏮</div><div class="meta"><div class="nm">#1105</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🏮</div><span class="stackn">×4</span><div class="meta"><div class="nm">Night Lantern</div><div class="rn">Rare · stack</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🎏</div><div class="meta"><div class="nm">#1230</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🪭</div><div class="meta"><div class="nm">#1310</div><div class="rn">Uncommon</div></div></div>
+              <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎇</div><div class="meta"><div class="nm">#1402</div><div class="rn">Epic</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🧨</div><div class="meta"><div class="nm">#1500</div><div class="rn">Common</div></div></div>
+            </div>
+            <p class="hint" style="margin-top:var(--s-3)">For a <strong>Gacha</strong> vendor this step is the <strong>prize pool</strong> instead — same cards, plus weight &amp; odds per prize.</p>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Staging moves these copies into the vendor's inventory account — they leave the collection-held lists until claimed or returned. A vendor can mix tokens from any of the project's collections.</div></div>
+            <div class="listbar">
+              <span class="results-count">Showing <strong>1–18</strong> of <strong>184</strong> staged</span>
+              <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button>2</button><button>3</button><button>…</button><button>11</button><button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+              <span class="perpage"><label>Per page</label><select><option>18</option><option>36</option><option>72</option></select></span>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Costs &amp; rules</button></span></div>
+        </div>
+      </div>
+
+      <!-- 06 · Inventory — locked policy (stock final on Live) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">06 ·</span><span class="t">Inventory — locked policy (stock final on Live)</span><span class="d">How a <strong>Locked</strong> inventory vendor is set up. Unlike additive/flexible, a Locked policy means the staged quantity is final once the vendor goes Live — no top-ups or pull-backs afterwards. The Add inventory card therefore reads "Locks on Live" (not "Editable on Live"), and a warning makes clear you must stage the exact stock now.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+            <div class="row" style="justify-content:space-between;gap:var(--s-4)">
+              <div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3 style="font-size:var(--text-xl)">Inventory policy</h3><span class="lockpill lockpill--lock">Locks on Live</span></div>
+              <div class="seg" role="tablist" aria-label="Inventory policy"><button>Additive</button><button>Flexible</button><button class="active">Locked</button></div>
+            </div>
+            <p class="hint" style="margin-top:var(--s-3)"><strong style="color:var(--text-primary)">Locked</strong> — The vendor's inventory cannot be adjusted once it starts running.</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Add inventory</h3><span class="lockpill lockpill--lock">Stock locks on Live</span></div><span class="tag">120 staged · 1 collection</span></div>
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">This vendor's stock is final once it goes Live.</strong> With a Locked policy you can't add or remove copies after launch — stage the exact quantity you want to sell now. Change the policy to Additive or Flexible if you need to top up later.</div></div>
+            <div class="row" style="justify-content:space-between;margin:var(--s-3) 0"><span class="tag">120 tokens staged</span><div class="row"><button class="btn btn--ghost btn--sm">Filter</button><button class="btn btn--primary btn--sm">+ Add tokens</button></div></div>
+            <div class="tk-grid">
+              <div class="tk-card rar-common"><div class="art">🏮</div><div class="meta"><div class="nm">#0001</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🎭</div><div class="meta"><div class="nm">#0042</div><div class="rn">Uncommon</div></div></div>
+              <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🧧</div><span class="stackn">×6</span><div class="meta"><div class="nm">Lucky Charm</div><div class="rn">Rare · stack</div></div></div>
+              <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">#0099</div><div class="rn">Epic</div></div></div>
+              <div class="tk-card rar-common"><div class="art">🦊</div><div class="meta"><div class="nm">#0517</div><div class="rn">Common</div></div></div>
+              <div class="tk-card rar-legendary"><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">🦊</div><span class="stackn">×3</span><div class="meta"><div class="nm">Golden Fox</div><div class="rn">Legendary</div></div></div>
+            </div>
+            <div class="listbar">
+              <span class="results-count">Showing <strong>1–6</strong> of <strong>120</strong> staged</span>
+              <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button>2</button><button>…</button><button>20</button><button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+              <span class="perpage"><label>Per page</label><select><option>6</option><option>18</option><option>36</option></select></span>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Costs &amp; rules</button></span></div>
+        </div>
+      </div>
+
+      <!-- 06 · Inventory policy — three states -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">06 ·</span><span class="t">Inventory policy — three states</span><span class="d">The compact policy control in each of its three selections. The segmented control sets the policy and the caption beneath swaps to describe the active choice, keeping the alternatives visible in muted text.</span></div>
+      <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+          <div class="row" style="justify-content:space-between;gap:var(--s-4)">
+            <h3 style="font-size:var(--text-xl)">Inventory policy</h3>
+            <div class="seg" role="tablist" aria-label="Inventory policy"><button class="active">Additive</button><button>Flexible</button><button>Locked</button></div>
+          </div>
+          <p class="hint" style="margin-top:var(--s-3)"><strong style="color:var(--text-primary)">Additive</strong> — You can add new inventory while the vendor is running.</p>
+        </div>
+        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+          <div class="row" style="justify-content:space-between;gap:var(--s-4)">
+            <h3 style="font-size:var(--text-xl)">Inventory policy</h3>
+            <div class="seg" role="tablist" aria-label="Inventory policy"><button>Additive</button><button class="active">Flexible</button><button>Locked</button></div>
+          </div>
+          <p class="hint" style="margin-top:var(--s-3)"><strong style="color:var(--text-primary)">Flexible</strong> — You can add and remove items from the vendor's inventory while it is running.</p>
+        </div>
+        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+          <div class="row" style="justify-content:space-between;gap:var(--s-4)">
+            <h3 style="font-size:var(--text-xl)">Inventory policy</h3>
+            <div class="seg" role="tablist" aria-label="Inventory policy"><button>Additive</button><button>Flexible</button><button class="active">Locked</button></div>
+          </div>
+          <p class="hint" style="margin-top:var(--s-3)"><strong style="color:var(--text-primary)">Locked</strong> — The vendor's inventory cannot be adjusted once it starts running.</p>
+        </div>
+      </div>
+
+      <!-- 06 · Inventory — first load (no tokens staged) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">06 ·</span><span class="t">Inventory — first load (no tokens staged)</span><span class="d">What the step looks like before anything is added. Policy can still be chosen, but the Add inventory section shows a compact, no-hero empty (matching the rarity gallery's "No tokens to assign" pattern) — a dashed panel, one line of guidance, and the primary "+ Add tokens" action that opens the picker modal. No pagination bar until there's stock to page through.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+            <div class="row" style="justify-content:space-between;gap:var(--s-4)">
+              <div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3 style="font-size:var(--text-xl)">Inventory policy</h3><span class="lockpill lockpill--lock">Locks on Live</span></div>
+              <div class="seg" role="tablist" aria-label="Inventory policy"><button class="active">Additive</button><button>Flexible</button><button>Locked</button></div>
+            </div>
+            <p class="hint" style="margin-top:var(--s-3)"><strong style="color:var(--text-primary)">Additive</strong> — You can add new inventory while the vendor is running.</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Add inventory</h3><span class="lockpill lockpill--edit">Editable on Live · additive</span></div><span class="tag tag--amber">No tokens staged</span></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">Move minted tokens that a collection holds into this vendor. Nothing's staged yet.</p>
+            <div class="empty-state">
+              <strong>No inventory staged yet</strong>
+              <p>Pick minted copies from any of the project's collections to stock this vendor. Only minted tokens a collection currently holds can be staged — if a collection has none, mint copies first.</p>
+              <button class="btn btn--primary">+ Add tokens</button>
+            </div>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Staging moves copies into the vendor's inventory account — they leave the collection-held lists until claimed or returned. A vendor can mix tokens from any of the project's collections.</div></div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary" disabled>Continue · Costs &amp; rules</button></span></div>
+        </div>
+      </div>
+
+      <!-- 06 modal · Add tokens — minted tokens available -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">06 ·</span><span class="t">Add tokens modal — minted tokens available</span><span class="d">Opened from "+ Add tokens". Pick a source collection, then multi-select from the <strong>minted copies the collection holds</strong> — select-all on the page, per-card checkboxes, and pagination for large collections. Only minted, collection-held tokens appear; unminted definitions and externally-held copies can't be staged. The primary button counts the selection.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card" style="max-width:780px">
+          <header><h4>Add tokens to Spring Launch</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0">Move <strong>minted tokens held by a collection</strong> in <strong>Vault One</strong> into this vendor. Only minted copies the collection currently holds can be added — unminted definitions and externally-held tokens can't.</p>
+            <div class="row" style="justify-content:space-between;gap:var(--s-4);align-items:flex-end">
+              <div style="flex:1;min-width:220px"><label class="flabel">Source collection</label>
+                <select class="input"><option>Night Market — 620 held</option><option>Spring Foxes — 184 held</option><option>Winter Tales — 0 held</option></select>
+              </div>
+              <div style="text-align:right"><label class="flabel">Selected</label><div style="font-family:var(--font-emphasis);font-weight:700">3 of 620</div></div>
+            </div>
+            <div class="row" style="justify-content:space-between">
+              <label class="selectall"><span class="cbx some"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg></span>Select all on this page</label>
+              <button class="btn btn--ghost btn--sm">Filter</button>
+            </div>
+            <div class="pickscroll">
+              <div class="tk-grid">
+                <div class="tk-card pick sel rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🎭</div><div class="meta"><div class="nm">Festival Mask #001</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #006</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🎭</div><div class="meta"><div class="nm">Festival Mask #011</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick sel rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic</div></div></div>
+                <div class="tk-card pick rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #021</div><div class="rn">Epic</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #026</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #031</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #036</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick sel rar-rare"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🧧</div><span class="stackn">×4</span><div class="meta"><div class="nm">Lucky Charm #041</div><div class="rn">Rare · stack</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #046</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🎭</div><div class="meta"><div class="nm">Festival Mask #051</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #056</div><div class="rn">Epic</div></div></div>
+                <div class="tk-card pick rar-uncommon"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🥮</div><div class="meta"><div class="nm">Moon Cake #061</div><div class="rn">Uncommon</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #066</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-uncommon"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🪭</div><div class="meta"><div class="nm">Paper Fan #071</div><div class="rn">Uncommon</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🎭</div><div class="meta"><div class="nm">Festival Mask #076</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎇</div><div class="meta"><div class="nm">Sky Firework #081</div><div class="rn">Epic</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🧨</div><div class="meta"><div class="nm">Firecracker #086</div><div class="rn">Common</div></div></div>
+              </div>
+            </div>
+            <div class="row" style="justify-content:space-between;border-top:1px solid var(--border-soft);padding-top:var(--s-3);margin-top:var(--s-1)">
+              <span class="results-count">Showing <strong>1–18</strong> of <strong>620</strong> held</span>
+              <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button>2</button><button>3</button><button>…</button><button>35</button><button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Move 3 tokens</button></div>
+        </div>
+      </div>
+
+      <!-- 06 modal · Add tokens — no minted tokens (empty) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">06 ·</span><span class="t">Add tokens modal — no minted tokens</span><span class="d">Same modal when the chosen collection holds no minted tokens to stage — reuses the "no minted tokens" empty from Minted token management. The action stays disabled until a collection with held inventory is chosen or more copies are minted.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card" style="max-width:780px">
+          <header><h4>Add tokens to Spring Launch</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0">Move <strong>minted tokens held by a collection</strong> in <strong>Vault One</strong> into this vendor. Only minted copies the collection currently holds can be added — unminted definitions and externally-held tokens can't.</p>
+            <div class="row" style="justify-content:space-between;gap:var(--s-4);align-items:flex-end">
+              <div style="flex:1;min-width:220px"><label class="flabel">Source collection</label>
+                <select class="input"><option>Winter Tales — 0 held</option><option>Night Market — 620 held</option><option>Spring Foxes — 184 held</option></select>
+              </div>
+              <div style="text-align:right"><label class="flabel">Selected</label><div style="font-family:var(--font-emphasis);font-weight:700">0 of 0</div></div>
+            </div>
+            <div class="modal-empty">
+              <img src="../style-guide/bot-images/inspect/IMG_5593.png" alt="" style="width:140px;margin:0 auto;display:block" onerror="this.style.display='none'">
+              <div class="me-ttl">No minted tokens to add</div>
+              <p class="tiny" style="max-width:44ch">Only <strong>minted copies the collection holds</strong> can be staged into a vendor. <strong>Winter Tales</strong> holds no minted tokens yet — mint some, or pick another collection.</p>
+              <button class="btn btn--ghost" style="margin-top:var(--s-2)">Open minting</button>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled>Move 0 tokens</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Create — costs & rules -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Create — costs &amp; rules · as loaded (all from defaults)</span><span class="d">Step 5, on first load. Costs &amp; rules are organised per collection in a concertina — each shows that collection's own tiers: Weighted (fixed set), Tiered (custom names), or a single row for Uniform. Every tier is pre-filled from that collection's <strong>Claim defaults</strong> (the "From claim defaults" tag) — cost, requirements, restrictions and rewards copied in — so nothing is empty. Editing a tier here overrides the copied default for this vendor only. Each row only offers "Edit" here — "Reset to default" appears once a tier has been overridden (next frame). "Edit" opens the requirements editor (modals, shown below).</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Market requires a cost on every tier.</strong> Every tier must select a cost — <strong>free, ICP, or any ICRC-1 token</strong> — or the vendor can't go Live ("free" is an explicit choice, copied from the collection's claim defaults). Costs &amp; rules are set per collection — each collection brings its own tiers (even two Tiered collections can differ), and a Uniform collection has a single cost for the whole collection.</div></div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Every requirement narrows your audience.</strong> Requirements on a tier are additive (AND) — the more you add, the fewer collectors qualify to claim it. A tier with no requirements is open to everyone.</div></div>
+          <div class="row" style="justify-content:flex-end"><span class="lockpill lockpill--lock">Costs &amp; rules lock on Live</span></div>
+
+          <div class="acc">
+            <div class="acc__head"><span class="acc-ttl">Spring Foxes</span><span class="sb sb--green">Weighted</span><span class="tag tag--indigo">From claim defaults</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            <div class="acc__body">
+              <div class="tier-row"><span class="tr-tier" style="color:#475569">Common</span><span class="tr-cost"><span class="tag tag--green">Free</span></span><span class="tr-reqs"><span class="tag">None</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier" style="color:#15803D">Uncommon</span><span class="tr-cost">3 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier" style="color:#1e40af">Rare</span><span class="tr-cost">8 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span><span class="req-plus">+</span><span class="tag tag--indigo">Whitelist</span><span class="req-plus">+</span><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+            </div>
+          </div>
+
+          <div class="acc">
+            <div class="acc__head"><span class="acc-ttl">Night Market</span><span class="sb sb--indigo">Tiered</span><span class="tag tag--indigo">From claim defaults</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            <div class="acc__body">
+              <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-cost">2 ICP</span><span class="tr-reqs"><span class="tag">None</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier">Merchant</span><span class="tr-cost">5 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-cost">25 ckUSDC</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <p class="hint" style="margin-top:.5rem">Custom tier names come from this collection's Tiered rarity — they won't match another collection's tiers. Each tier sets its own cost token — here Founder is priced in an ICRC-1 token (ckUSDC) rather than ICP.</p>
+            </div>
+          </div>
+
+          <div class="acc">
+            <div class="acc__head"><span class="acc-ttl">Winter Tales</span><span class="sb sb--grey">Uniform</span><span class="tag tag--indigo">From claim defaults</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            <div class="acc__body">
+              <div class="tier-row"><span class="tr-tier">All tokens</span><span class="tr-cost">4 ICP</span><span class="tr-reqs"><span class="tag">None</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <p class="hint" style="margin-top:.5rem">Uniform collections have no tiers — set one cost &amp; rule for the whole collection. Costs stay per collection so you can add tokens from a non-uniform collection later, each with its own tiers.</p>
+            </div>
+          </div>
+
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Revenue</button></span></div>
+        </div>
+      </div>
+
+      <!-- 07 · Costs & rules — some overridden -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Costs &amp; rules — some overridden</span><span class="d">After editing a few tiers away from their defaults. Overridden tiers show an <span class="mono">Edited</span> badge and gain a "Reset to default" action; untouched tiers still only offer "Edit". A collection's head tag flips from "From claim defaults" to "Edited" when any of its tiers differ. Here Spring Foxes (Rare) and Winter Tales are edited; Night Market is untouched.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+
+          <div class="acc">
+            <div class="acc__head"><span class="acc-ttl">Spring Foxes</span><span class="sb sb--green">Weighted</span><span class="tag tag--amber">Edited</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            <div class="acc__body">
+              <div class="tier-row"><span class="tr-tier" style="color:#475569">Common</span><span class="tr-cost"><span class="tag tag--green">Free</span></span><span class="tr-reqs"><span class="tag">None</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier" style="color:#15803D">Uncommon</span><span class="tr-cost">3 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier" style="color:#1e40af">Rare</span><span class="tr-cost">12 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span><span class="req-plus">+</span><span class="tag tag--indigo">ICRC-1 Neuron</span><span class="req-plus">+</span><span class="tag tag--indigo">Whitelist</span><span class="req-plus">+</span><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><span class="tag tag--amber">Edited</span><button class="btn btn--ghost btn--sm">Edit</button><button class="btn btn--ghost btn--sm">Reset</button></span></div>
+            </div>
+          </div>
+
+          <div class="acc">
+            <div class="acc__head"><span class="acc-ttl">Night Market</span><span class="sb sb--indigo">Tiered</span><span class="tag tag--indigo">From claim defaults</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            <div class="acc__body">
+              <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-cost">2 ICP</span><span class="tr-reqs"><span class="tag">None</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier">Merchant</span><span class="tr-cost">5 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+              <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-cost">25 ckUSDC</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+            </div>
+          </div>
+
+          <div class="acc">
+            <div class="acc__head"><span class="acc-ttl">Winter Tales</span><span class="sb sb--grey">Uniform</span><span class="tag tag--amber">Edited</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            <div class="acc__body">
+              <div class="tier-row"><span class="tr-tier">All tokens</span><span class="tr-cost">6 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><span class="tag tag--amber">Edited</span><button class="btn btn--ghost btn--sm">Edit</button><button class="btn btn--ghost btn--sm">Reset</button></span></div>
+            </div>
+          </div>
+
+          <div class="row" style="justify-content:flex-end"><button class="btn btn--ghost btn--sm">Reset all to claim defaults</button></div>
+
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Revenue</button></span></div>
+        </div>
+      </div>
+
+      <!-- 07 · Costs & rules — no inventory added yet -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Costs &amp; rules — no inventory yet</span><span class="d">When the vendor has no inventory, there are no collections to price, so this step has nothing to configure. You can still continue setting up — but a warning makes clear that inventory must be added before the vendor can go Live, or there'll be nothing to sell. Continue stays enabled; the go-Live gate is enforced later at Review.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">4</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">5</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">No inventory yet — nothing to sell.</strong> Costs &amp; rules are set per collection, drawn from the tokens you stage in Inventory. You can finish setting up and save as a draft, but <strong>the vendor can't go Live until you add inventory</strong> — without it there's nothing for collectors to claim.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Costs &amp; rules</h3><span class="tag tag--amber">No collections</span></div>
+            <div class="empty-state">
+              <strong>Add inventory to set costs &amp; rules</strong>
+              <p>This vendor has no inventory, so there are no collections to price here yet. Stage some minted tokens in the Inventory step and each of their collections will appear here, ready to price.</p>
+              <button class="btn btn--primary">← Back to inventory</button>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Revenue</button></span></div>
+        </div>
+      </div>
+
+      <!-- 07 modal · Requirement editor — accordions (configured) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same four-concept editor as the collection's Claim defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free / ICP / ICRC-1); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors. TokoToken (hold from a collection), Restrictions and Rewards are disabled teasers (coming soon). Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card wide">
+          <header><h4>Edit · Spring Foxes · Rare</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div><label class="flabel">Claim cost <span class="tag tag--red">required</span></label>
+              <div class="row" style="gap:var(--s-2);align-items:flex-start">
+                <select class="input" style="width:135px;flex:none"><option>Free claim</option><option>ICP</option><option selected>ICRC-1 token</option></select>
+                <input class="input" value="25" style="width:84px;flex:none">
+                <div style="flex:1;min-width:180px">
+                  <select class="input"><option>ckBTC</option><option>ckUSDC</option><option>ckETH</option><option>GLDT</option><option selected>Custom — add ledger…</option></select>
+                  <input class="input is-ok" style="margin-top:var(--s-2)" value="xevnm-gaaaa-aaaar-qafnq-cai" aria-label="ICRC-1 ledger canister ID">
+                  <div class="field-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Resolved · ckUSDC — added to this vendor's token list</div>
+                </div>
+              </div>
+              <p class="hint" style="margin-top:.4rem">Pick ICP, or ICRC-1 then a common token. The ledger box appears only for <strong>Custom</strong> — a canister ID validated on entry; the resolved token is then added to this vendor's dropdown.</p>
+            </div>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Requirements combine with AND.</strong> A collector must satisfy every active requirement below — the more you add, the fewer people can claim this tier.</div></div>
+            <label class="flabel">Requirements</label>
+
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">ICP Neuron</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+              <div class="acc__body">
+                <div class="grid2">
+                  <div><label class="flabel">Min stake</label><div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><input class="input" value="10" style="flex:1"><span class="tiny" style="white-space:nowrap;font-family:var(--font-emphasis);font-weight:700">ICP</span></div></div>
+                  <div><label class="flabel">Min dissolve delay</label><input class="input" value="6 months"></div>
+                </div>
+                <p class="hint" style="margin-top:.4rem">One ICP neuron (NNS) requirement per tier — stake is in ICP.</p>
+              </div>
+            </div>
+
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">ICRC-1 Neuron</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+              <div class="acc__body">
+                <div><label class="flabel">SNS DAO</label>
+                  <select class="input"><option selected>Dragginz</option><option>Kong SNS</option><option>OpenChat SNS</option><option>Custom — add governance canister…</option></select>
+                </div>
+                <div class="grid2" style="margin-top:var(--s-3)">
+                  <div><label class="flabel">Min stake</label><div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><input class="input" value="5" style="flex:1"><span class="tiny" style="white-space:nowrap;font-family:var(--font-emphasis);font-weight:700">$DKP</span></div></div>
+                  <div><label class="flabel">Min dissolve delay</label><input class="input" value="3 months"></div>
+                </div>
+                <p class="hint" style="margin-top:.4rem">One ICRC-1 neuron (SNS) per tier (<span class="mono">vendor_v1</span>). Min stake is in the DAO's own token — <strong>Dragginz</strong> uses <strong>$DKP</strong>. Same pattern as the cost picker: pick a common SNS DAO, or <strong>Custom</strong> to add a governance canister by ID — the ID box appears only for Custom and is validated on entry; one that doesn't resolve is flagged inline and blocks save: <span class="field-err" style="display:inline-flex">No SNS found at this canister ID.</span></p>
+              </div>
+            </div>
+
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">Whitelists</span><span class="tag tag--green">2 selected</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+              <div class="acc__body">
+                <label class="selectall" style="margin-bottom:var(--s-2)"><span class="cbx some"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg></span>2 of 3 Live whitelists selected</label>
+                <div class="tier-row" style="gap:var(--s-3)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><span class="tr-tier" style="min-width:0;flex:1">Spring OG</span><span class="tiny">420 addresses</span><span class="sb sb--green">Live</span></div>
+                <div class="tier-row" style="gap:var(--s-3)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><span class="tr-tier" style="min-width:0;flex:1">Allowlist 2</span><span class="tiny">1,200 addresses</span><span class="sb sb--green">Live</span></div>
+                <div class="tier-row" style="gap:var(--s-3)"><span class="cbx"></span><span class="tr-tier" style="min-width:0;flex:1">Founders</span><span class="tiny">88 addresses</span><span class="sb sb--green">Live</span></div>
+                <p class="hint" style="margin-top:.4rem">Only the project's <strong>Live</strong> whitelists appear here — Draft and Review lists aren't shown. Add as many as you need; manage them in Project Studio.</p>
+              </div>
+            </div>
+
+            <div class="acc disabled-acc">
+              <div class="acc__head"><span class="acc-ttl">TokoToken — hold from a collection</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+            </div>
+
+            <label class="flabel" style="margin-top:var(--s-3)">Restrictions — how often/much you can claim</label>
+            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">Maximum claims per human</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+
+            <label class="flabel" style="margin-top:var(--s-3)">Rewards — extra payout for claiming</label>
+            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">ICP payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+            <div class="acc disabled-acc" style="margin-top:var(--s-3)"><div class="acc__head"><span class="acc-ttl">ICRC-1 token payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+          </div>
+          <div class="footer-row" style="justify-content:space-between"><button class="btn btn--ghost">Reset tier to claim defaults</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save</button></span></div>
+        </div>
+      </div>
+
+      <!-- 07 modal · Requirement editor — default open/closed behaviour -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — default open / closed</span><span class="d">The same editor when only some requirements are set. Accordions with a selection open on load (ICP Neuron, Whitelists); empty ones stay collapsed with a "Not set" hint (ICRC-1 Neuron). TokoToken, Restrictions and Rewards stay disabled (coming soon).</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card wide">
+          <header><h4>Edit · Spring Foxes · Uncommon</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div><label class="flabel">Claim cost <span class="tag tag--red">required</span></label>
+              <div class="row" style="gap:var(--s-2);align-items:flex-start">
+                <select class="input" style="width:135px;flex:none"><option>Free claim</option><option>ICP</option><option selected>ICRC-1 token</option></select>
+                <input class="input" value="3" style="width:84px;flex:none">
+                <select class="input" style="flex:1;min-width:180px"><option selected>ckUSDC</option><option>ckBTC</option><option>ckETH</option><option>GLDT</option><option>Custom — add ledger…</option></select>
+              </div>
+              <p class="hint" style="margin-top:.4rem">A common token is picked straight from the list — no canister ID needed (the ledger box only appears for Custom).</p>
+            </div>
+            <label class="flabel">Requirements</label>
+
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">ICP Neuron</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+              <div class="acc__body">
+                <div class="grid2">
+                  <div><label class="flabel">Min stake</label><div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><input class="input" value="5" style="flex:1"><span class="tiny" style="white-space:nowrap;font-family:var(--font-emphasis);font-weight:700">ICP</span></div></div>
+                  <div><label class="flabel">Min dissolve delay</label><input class="input" value="None"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">ICRC-1 Neuron</span><span class="acc-note">Not set</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+            </div>
+
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">Whitelists</span><span class="tag tag--green">1 selected</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+              <div class="acc__body">
+                <label class="selectall" style="margin-bottom:var(--s-2)"><span class="cbx some"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg></span>1 of 3 Live whitelists selected</label>
+                <div class="tier-row" style="gap:var(--s-3)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><span class="tr-tier" style="min-width:0;flex:1">Spring OG</span><span class="tiny">420 addresses</span><span class="sb sb--green">Live</span></div>
+                <div class="tier-row" style="gap:var(--s-3)"><span class="cbx"></span><span class="tr-tier" style="min-width:0;flex:1">Allowlist 2</span><span class="tiny">1,200 addresses</span><span class="sb sb--green">Live</span></div>
+                <div class="tier-row" style="gap:var(--s-3)"><span class="cbx"></span><span class="tr-tier" style="min-width:0;flex:1">Founders</span><span class="tiny">88 addresses</span><span class="sb sb--green">Live</span></div>
+              </div>
+            </div>
+
+            <div class="acc disabled-acc">
+              <div class="acc__head"><span class="acc-ttl">TokoToken — hold from a collection</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+            </div>
+
+            <label class="flabel" style="margin-top:var(--s-3)">Restrictions — how often/much you can claim</label>
+            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">Maximum claims per human</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+
+            <label class="flabel" style="margin-top:var(--s-3)">Rewards — extra payout for claiming</label>
+            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">ICP payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+            <div class="acc disabled-acc" style="margin-top:var(--s-3)"><div class="acc__head"><span class="acc-ttl">ICRC-1 token payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+          </div>
+          <div class="footer-row" style="justify-content:space-between"><button class="btn btn--ghost">Reset tier to claim defaults</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save</button></span></div>
+        </div>
+      </div>
+
+      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — explore: project-level custom ICRC-1 tokens &amp; SNS DAOs</span><span class="d">Two places now take a custom canister by ID: the <strong>cost picker</strong> (an ICRC-1 ledger) and the <strong>ICRC-1 Neuron gate</strong> (an SNS governance canister). As drawn, each is entered at the point of use and cached in this vendor's dropdown. Worth exploring before build: <strong>persist both at the project level</strong> — validated once, then reusable across every vendor and tier — instead of re-entering canister IDs per vendor. Benefits: fewer lookups, less risk of a wrong/unsafe canister, a friendlier picker. Feasibility looks good — ICRC-1 ledgers expose symbol/decimals via standard metadata (the wallet already supports ICRC1) and SNS governance canisters are resolvable to a DAO name, so resolved entries + labels can be stored on the project and refreshed. Open questions: where they're managed (Project Studio › Tokens / DAOs?), who can add/remove them, and how to flag a canister that later changes or goes unreachable. Flagged here on the grey, outside the modal, per the style guide (design guidance never sits inside the UI).</span></div>
+
+      <!-- 07 · Cost picker — three states -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Cost picker — three states</span><span class="d">The claim-cost token control in each state. A cost type must be chosen — <strong>Free claim</strong> is the fourth option and shows no amount or token control. <strong>ICP</strong>: just the amount and the token select. <strong>Known token</strong>: ICRC-1 chosen, then a common token picked from the second dropdown — no canister box. <strong>Custom</strong>: the second dropdown set to "Custom — add ledger…" reveals the ledger canister-ID box, validated on entry. (The ICRC-1 Neuron DAO picker follows the same list-or-custom pattern.)</span></div>
+      <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+          <label class="flabel">Claim cost · ICP</label>
+          <div class="row" style="gap:var(--s-2);align-items:flex-start">
+            <input class="input" value="8" style="width:84px;flex:none">
+            <select class="input" style="width:140px;flex:none"><option selected>ICP</option><option>ICRC-1 token</option></select>
+          </div>
+        </div>
+        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+          <label class="flabel">Claim cost · ICRC-1 · known token</label>
+          <div class="row" style="gap:var(--s-2);align-items:flex-start">
+            <input class="input" value="3" style="width:84px;flex:none">
+            <select class="input" style="width:140px;flex:none"><option>ICP</option><option selected>ICRC-1 token</option></select>
+            <select class="input" style="flex:1;min-width:180px"><option selected>ckUSDC</option><option>ckBTC</option><option>ckETH</option><option>GLDT</option><option>Custom — add ledger…</option></select>
+          </div>
+          <p class="hint" style="margin-top:.4rem">A common token is picked from the list — no canister ID needed.</p>
+        </div>
+        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
+          <label class="flabel">Claim cost · ICRC-1 · custom ledger</label>
+          <div class="row" style="gap:var(--s-2);align-items:flex-start">
+            <input class="input" value="25" style="width:84px;flex:none">
+            <select class="input" style="width:140px;flex:none"><option>ICP</option><option selected>ICRC-1 token</option></select>
+            <div style="flex:1;min-width:180px">
+              <select class="input"><option>ckBTC</option><option>ckUSDC</option><option>ckETH</option><option>GLDT</option><option selected>Custom — add ledger…</option></select>
+              <input class="input is-ok" style="margin-top:var(--s-2)" value="xevnm-gaaaa-aaaar-qafnq-cai" aria-label="ICRC-1 ledger canister ID">
+              <div class="field-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Resolved · ckUSDC — added to this vendor's token list</div>
+            </div>
+          </div>
+          <p class="hint" style="margin-top:.4rem">The ledger box appears only for Custom; the canister ID is validated on entry.</p>
+        </div>
+      </div>
+
+      <!-- 07 · ICRC-1 Neuron — custom canister states -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">ICRC-1 Neuron — custom canister states</span><span class="d">The ICRC-1 Neuron accordion when "Custom — add governance canister…" is chosen. <strong>Resolved</strong>: a valid governance canister ID resolves to the DAO name and is added to the vendor's list. <strong>Error</strong>: an ID that doesn't resolve is flagged inline and blocks save. (Picking a common SNS DAO from the list — e.g. Dragginz — needs no canister ID.)</span></div>
+      <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+        <div class="card">
+          <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>ICRC-1 Neuron · custom · resolved</h3><span class="tag tag--green">Active</span></div></div>
+          <div><label class="flabel">SNS DAO</label>
+            <select class="input"><option>Dragginz</option><option>Kong SNS</option><option>OpenChat SNS</option><option selected>Custom — add governance canister…</option></select>
+            <input class="input is-ok" style="margin-top:var(--s-2)" value="3e3x2-xyaaa-aaaaq-aaalq-cai" aria-label="ICRC-1 governance canister ID">
+            <div class="field-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Resolved · Catalyze SNS — added to this vendor's list</div>
+          </div>
+          <div class="grid2" style="margin-top:var(--s-3)">
+            <div><label class="flabel">Min stake</label><div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><input class="input" value="10" style="flex:1"><span class="tiny" style="white-space:nowrap;font-family:var(--font-emphasis);font-weight:700">CAT</span></div></div>
+            <div><label class="flabel">Min dissolve delay</label><input class="input" value="None"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>ICRC-1 Neuron · custom · error</h3><span class="tag tag--red">Won't save</span></div></div>
+          <div><label class="flabel">SNS DAO</label>
+            <select class="input"><option>Dragginz</option><option>Kong SNS</option><option>OpenChat SNS</option><option selected>Custom — add governance canister…</option></select>
+            <input class="input is-error" style="margin-top:var(--s-2)" value="abcde-fake-id-cai" aria-label="ICRC-1 governance canister ID">
+            <div class="field-err"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>No SNS found at this canister ID.</div>
+          </div>
+          <div class="grid2" style="margin-top:var(--s-3)">
+            <div><label class="flabel">Min stake</label><input class="input" placeholder="0"></div>
+            <div><label class="flabel">Min dissolve delay</label><input class="input" placeholder="None"></div>
+          </div>
+          <p class="hint" style="margin-top:.4rem">The tier can't be saved while the canister ID is unresolved — fix or remove it.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 · Create — revenue & buyback -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Create — revenue (select a preset)</span><span class="d">Step 6: revenue is set by a project-level <strong>revenue preset</strong> — a vendor <strong>must use one</strong> (there's no free-style split editing here). Select an existing <strong>Live</strong> preset; its fees and royalties are <strong>copied onto the vendor and shown read-only</strong>, locking on Live. Presets aren't created from this step — they're created and edited in <strong>Project · Revenue presets</strong>. Selecting a preset is required to continue. Buyback below is a separate vendor policy: its fee always covers beneficiary costs and fees, so it can never cost the project money — only the margin is the creator's to set; a bought-back token returns to this vendor's inventory to resell while running; and proceeds are held until the vendor has ended and every buyback window has expired.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Revenue preset</h3><span class="tag tag--red">required</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">Revenue is defined by a project-level <strong>revenue preset</strong> and copied onto this vendor. Select an existing <strong>Live</strong> preset — there's no free-style split editing here, and presets aren't created from this step.</p>
+            <div><label class="flabel">Revenue preset</label><select class="input" style="max-width:340px"><option selected>Standard Claim</option><option>Founders Split</option><option>Charity Drop</option></select></div>
+            <div class="splitbar" style="margin-top:var(--s-5)">
+              <i style="width:81.5%;background:var(--text-primary)"></i>
+              <i style="width:14%;background:#6366F1"></i>
+              <i style="width:2.5%;background:#06B0E6"></i>
+              <i style="width:2%;background:#10B981"></i>
+            </div>
+            <div class="splitlegend">
+              <span><i style="background:var(--text-primary)"></i>Creator · 81.5%</span>
+              <span><i style="background:#6366F1"></i>Royalties · 14%</span>
+              <span><i style="background:#06B0E6"></i>Toko · 2.5%</span>
+              <span><i style="background:#10B981"></i>Project / cycles · 2%</span>
+            </div>
+            <div class="row" style="justify-content:space-between;margin-top:var(--s-5);padding-bottom:var(--s-2);border-bottom:1px solid var(--border-soft)"><span class="flabel" style="margin:0">From the preset <span class="tag tag--indigo">Read-only</span></span><span class="lockpill lockpill--lock">Locks on Live</span></div>
+            <div class="kv"><span>Project / cycles funding</span><span class="v">2%</span></div>
+            <div class="kv"><span>Toko contribution</span><span class="v">2.5%</span></div>
+            <div class="kv"><span>Community Treasury</span><span class="v">8% · forever</span></div>
+            <div class="kv"><span>Ocean Cleanup <span class="tiny">charity</span></span><span class="v">6% · taper to 0 · 90 days</span></div>
+            <div class="kv"><span>Royalties total</span><span class="v">14% / 20% max</span></div>
+            <p class="hint" style="margin-top:.5rem">Copied from <strong>Standard Claim</strong> when the vendor is created; locks on Live. To change fees or royalties, edit the preset in <strong>Project · Revenue presets</strong> — not here.</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Buyback <span class="tag">optional</span></h3><div class="seg"><button>Off</button><button class="active">On</button></div></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">Your vendor can offer to buy a newly claimed token back from the purchaser, for a fee. The On / Off toggle reveals these options. A buyback always recovers the beneficiary and fee shares first — so the project never loses money — then adds your margin.</p>
+            <div><label class="flabel">Buy back window</label><input class="input" value="24 hours" style="max-width:220px"><div class="hint">How long the buy back offer stays open after each claim · 3 minutes – 1 week</div></div>
+            <label class="flabel" style="margin-top:var(--s-5)">Buy back fee</label>
+            <div class="row" style="justify-content:space-between;gap:var(--s-3);align-items:flex-start;padding:.7rem 0;border-top:1px solid var(--border-soft)">
+              <div style="flex:1;min-width:200px"><div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm)">Beneficiary costs <span class="tag" style="margin-left:.25rem">Always recovered</span></div><div class="hint">The beneficiary share of the original claim — refunded to the project so it isn't out of pocket.</div></div>
+              <span class="tag">14%</span>
+            </div>
+            <div class="row" style="justify-content:space-between;gap:var(--s-3);align-items:flex-start;padding:.7rem 0;border-top:1px solid var(--border-soft)">
+              <div style="flex:1;min-width:200px"><div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm)">Fees <span class="tag" style="margin-left:.25rem">Always recovered</span></div><div class="hint">The Toko share of the original claim.</div></div>
+              <span class="tag">2.5%</span>
+            </div>
+            <div class="row" style="justify-content:space-between;gap:var(--s-3);align-items:flex-start;padding:.7rem 0;border-top:1px solid var(--border-soft)">
+              <div style="flex:1;min-width:200px"><div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm)">Additional profit margin <span class="tiny" style="font-weight:400">(0–20%)</span></div><div class="hint">Extra the vendor keeps on top of what it recovers. Set <strong>0%</strong> to buy back at cost.</div></div>
+              <div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><input class="input" value="1.5" style="width:72px"><span class="tiny" style="font-family:var(--font-emphasis);font-weight:700">%</span></div>
+            </div>
+            <div class="row" style="justify-content:space-between;gap:var(--s-3);padding:.8rem 0 0;border-top:2px solid var(--border-strong);margin-top:var(--s-2)"><span style="font-family:var(--font-emphasis);font-weight:700">Total buy back fee</span><span style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-lg)">18%</span></div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Summary</button></span></div>
+        </div>
+      </div>
+
+      <!-- 08 · Revenue — no beneficiaries (default) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">08 ·</span><span class="t">Revenue — no preset selected (required)</span><span class="d">A vendor must use a revenue preset. Until one is selected the split is empty and <strong>Continue is disabled</strong>. You select an existing <strong>Live</strong> preset — presets are created in <strong>Project · Revenue presets</strong> (and must be Live before they appear here), not from this step. Buyback can still be toggled, but its always-recovered amounts come from the chosen preset.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Revenue preset</h3><span class="tag tag--red">required</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
+            <div class="empty-state">
+              <strong>Select a revenue preset</strong>
+              <p>Revenue is defined by a project-level preset and copied onto this vendor. Choose a Live preset to continue.</p>
+              <div class="row" style="justify-content:center;gap:var(--s-3)"><select class="input" style="max-width:320px"><option selected>— Choose a Live preset —</option><option>Standard Claim</option><option>Founders Split</option></select></div>
+            </div>
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A revenue preset is required.</strong> The vendor can't continue until one is selected. No Live presets yet? Create one in <strong>Project · Revenue presets</strong> — it must reach Live before it appears here.</div></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Buyback <span class="tag">optional</span></h3><div class="seg"><button class="active">Off</button><button>On</button></div></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0">Off by default — your vendor makes no offer to buy tokens back. Turn it on to offer to buy a newly claimed token back from the purchaser for a fee, then set the buy back window and the percentage fee the vendor keeps.</p>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3);align-items:center"><span class="tiny">Select a revenue preset to continue</span><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary" disabled>Continue · Summary</button></span></div>
+        </div>
+      </div>
+
+      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — show buy back terms on the public vendor page</span><span class="d">Because beneficiary costs and fees are always recovered, a buyback never costs the project money — the only variable is the <strong>additional profit margin</strong> (0% = buy back at cost, up to 20% margin). When we build the <strong>public vendor page on Launchpad</strong>, surface the buyback terms to collectors: whether a buyback is offered, the window length, and whether it's at cost or at a margin (and the effective buyback price). Logged here for the public-page work. <strong>Also to document:</strong> a bought-back token returns to the vendor's inventory (ownership transfers to the vendor via the offer settlement) and can be re-sold while the vendor runs — the current spec leaves the post-buyback destination unstated, so confirm and write it into vendor-system-design / secondary-marketplace-design.</span></div>
+
+      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — buyback + no-end vendor = locked funds</span><span class="d">Edge case to guard. With buyback enabled, proceeds release only after the vendor ends and all windows expire. A vendor that never ends therefore locks its funds: today Autonomous ("runs until sold out or you stop it") and Admin-controlled (stoppable after the earliest-stop date) both keep a manual-stop lever, so funds are recoverable — but if any config ever lacked a stop path (e.g. an unbounded mode, or admin-stop set far in the future / never reached), buyback would lock the funds <strong>permanently</strong>. Required guarantee: <strong>every vendor must always retain a way to be stopped</strong>; never allow a no-end, no-stop vendor — especially with buyback on. Consider also warning at go-Live when buyback is on and the vendor has no scheduled end, so the creator knows funds stay locked until they actively stop it.</span></div>
+    </section>
+
+    <!-- 09 · Summary -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Summary</span><span class="d">Step 7: a summary of every section with a validation check. From here you Save as Draft or <strong>Submit to Review</strong> — Submit to Review is the required step before a vendor can go Live (you Set Live from the Review stage, not here). Submitting requires all required fields to validate; the tokens themselves are checked individually at their own go-live.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Spring Launch · summary</h3><span class="tag tag--green">Ready to go Live</span></div>
+            <div class="kv"><span>Type</span><span class="v">Market</span></div>
+            <div class="kv"><span>Storefront</span><span class="v">Spring Launch · "Claim a Fox"</span></div>
+            <div class="kv"><span>Activation</span><span class="v">Start manually</span></div>
+            <div class="kv"><span>Control mode</span><span class="v">Admin controlled · earliest stop 12 Jul 2026</span></div>
+            <div class="kv"><span>When it stops</span><span class="v">Return unclaimed to collection</span></div>
+            <div class="kv"><span>Inventory policy</span><span class="v">Additive · locks on Live</span></div>
+            <div class="kv"><span>Inventory</span><span class="v">420 copies · 3 collections</span></div>
+            <div class="kv"><span>Costs &amp; rules</span><span class="v">Set per collection (3)</span></div>
+            <div class="kv"><span>Revenue</span><span class="v">Preset · Standard Claim</span></div>
+            <div class="info-note ok-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>All required fields valid. <strong>Submit to Review</strong> to lock the config for a final check — you then Set Live from the Review stage (Draft → Review → Live; you can return to Draft to edit). Inventory <strong>policy</strong> locks on Live; the inventory <strong>quantity</strong> can still change afterwards (additive allows top-ups).</div></div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Save as Draft</button><button class="btn btn--primary">Submit to Review</button></div>
+        </div>
+      </div>
+
+      <!-- 09 · Summary — validation errors -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">09 ·</span><span class="t">Summary — validation errors</span><span class="d">The summary when things don't validate. Every blocking issue is listed with a jump-to-fix link, and <strong>Submit to Review</strong> is disabled until all clear; Save as Draft stays available. This shows the full set of things that can block progressing toward go-Live. Note costs &amp; rules can't appear as a blocker here — a cost is required to save every tier (pre-filled from the collection's claim defaults) and custom ledgers / SNS canisters are validated on entry, so those failures are caught before this step.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
+        <div class="section">
+          <div class="eyebrow">Project · New vendor</div>
+          <div class="stepper">
+            <span class="step done"><span class="n">✓</span><span class="lbl">Type</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Storefront</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Lifecycle</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Inventory</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Costs &amp; rules</span></span><span class="sepl"></span>
+            <span class="step done"><span class="n">✓</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
+            <span class="step active"><span class="n">7</span><span class="lbl">Summary</span></span>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Spring Launch · summary</h3><span class="sb sb--red"><span class="dot"></span>Can't submit · 3 issues</span></div>
+            <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Fix these before this vendor can go Live.</strong> Each issue links to the step that owns it. You can still save everything as a Draft.</div></div>
+            <div style="margin-top:var(--s-4)">
+              <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Storefront — vendor name is required</div><div class="vd">A public vendor must have a name before it can publish to Launchpad.</div></div><a class="vfix">Fix in Storefront</a></div>
+              <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Lifecycle — earliest-stop date is in the past</div><div class="vd">Admin-controlled vendors need an earliest-stop date in the future.</div></div><a class="vfix">Fix in Lifecycle</a></div>
+              <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Inventory — no tokens staged</div><div class="vd">A vendor can't go Live with nothing to sell. Stage minted tokens first.</div></div><a class="vfix">Fix in Inventory</a></div>
+              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Costs &amp; rules — valid</div><div class="vd">Costs &amp; rules can't fail here — a cost is required to save each tier (pre-filled from claim defaults), and custom ledgers/SNS canisters are validated on entry, so an unresolved one can't be added.</div></div></div>
+              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Revenue &amp; buyback — valid</div><div class="vd">A <strong>Live revenue preset</strong> is selected and copied onto the vendor (no free-style edits). Buyback margin (0–20%) is range-checked as you edit. A vendor can't be submitted to Review without a preset.</div></div></div>
+              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Type &amp; storefront media — valid</div><div class="vd">Market type set; thumbnail and banner present.</div></div></div>
+            </div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Save as Draft</button><button class="btn btn--primary" disabled>Submit to Review</button></div>
+        </div>
+      </div>
+
+      <!-- 09 · Stage: Review — go Live caution (buyback on, no scheduled end) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">09 ·</span><span class="t">Stage: Review — go Live caution (buyback, no end)</span><span class="d">Setting Live from the Review stage when buyback is on and the vendor has no scheduled end. A non-blocking caution flags that proceeds stay locked until it's manually stopped and the last window expires. The creator acknowledges and proceeds; this warns, it doesn't block.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">Spring Launch</span></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Vendor</div><h2>Spring Launch.</h2><p class="lede">Market vendor · in Review. Configuration is locked for a final check — edit the storefront if needed, then set it Live.</p></div>
+            <div class="head-actions"><button class="btn btn--ghost">Edit storefront</button></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>State</h3><div class="row" style="gap:var(--s-2)"><span class="sb sb--indigo"><span class="dot"></span>Review</span><span class="sb sb--grey">Setup</span></div></div>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong style="color:var(--text-primary)">Locked for review.</strong> Costs &amp; rules, lifecycle, inventory policy and revenue are read-only at this stage. Only the storefront (aesthetic) fields can still be edited. Return to Draft to change anything else.</div></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Configuration</h3><span class="lockpill lockpill--lock">Locked at Review</span></div><span class="tag tag--indigo">Read-only</span></div>
+            <div class="kv"><span>Storefront</span><span class="v" style="display:flex;align-items:center;gap:var(--s-3)">Spring Launch · "Claim a Fox" <span class="lockpill lockpill--edit">Editable</span></span></div>
+            <div class="kv"><span>Activation</span><span class="v">Open immediately</span></div>
+            <div class="kv"><span>Control mode</span><span class="v">Autonomous · no scheduled end</span></div>
+            <div class="kv"><span>When it stops</span><span class="v">Return unclaimed to collection</span></div>
+            <div class="kv"><span>Inventory policy</span><span class="v">Additive</span></div>
+            <div class="kv"><span>Inventory</span><span class="v">420 copies · 3 collections</span></div>
+            <div class="kv"><span>Costs &amp; rules</span><span class="v">Set per collection (3)</span></div>
+            <div class="kv"><span>Revenue</span><span class="v">Preset · Standard Claim · 14% royalties</span></div>
+            <div class="kv"><span>Buyback</span><span class="v">On · 24h window · 18% fee</span></div>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Buyback is on and this vendor has no scheduled end.</strong> Proceeds stay locked until you stop the vendor and the last buy back window expires — a vendor left running keeps its funds locked indefinitely. You can stop it any time (Autonomous), or set a schedule / earliest-stop on the Lifecycle step. Going Live is still fine.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Stage</h3></div>
+            <label class="selectall" style="margin-bottom:var(--s-4)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>I understand proceeds are locked until I stop this vendor</label>
+            <div class="controls"><button class="btn btn--ghost">Return to Draft</button><button class="btn btn--primary">Set Live</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 09 · Stage: Review — read-only (aesthetic only), then go Live -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">09 ·</span><span class="t">Stage: Review — read-only, then go Live</span><span class="d">A vendor that's been submitted to Review. The config is <strong>locked and read-only</strong> — only aesthetic storefront fields stay editable (name, tagline, media, claim label). From here you <strong>Set Live</strong> to publish to Launchpad, or <strong>Return to Draft</strong> to unlock and edit. (Draft → Review → Live; there's no separate approval gate.)</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">Spring Launch</span></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Vendor</div><h2>Spring Launch.</h2><p class="lede">Market vendor · in Review. Configuration is locked for a final check — edit the storefront if needed, then set it Live.</p></div>
+            <div class="head-actions"><button class="btn btn--ghost">Edit storefront</button></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>State</h3><div class="row" style="gap:var(--s-2)"><span class="sb sb--indigo"><span class="dot"></span>Review</span><span class="sb sb--grey">Setup</span></div></div>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong style="color:var(--text-primary)">Locked for review.</strong> Costs &amp; rules, lifecycle, inventory policy and revenue are read-only at this stage. Only the storefront (aesthetic) fields can still be edited. Return to Draft to change anything else.</div></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Configuration</h3><span class="lockpill lockpill--lock">Locked at Review</span></div><span class="tag tag--indigo">Read-only</span></div>
+            <div class="kv"><span>Storefront</span><span class="v" style="display:flex;align-items:center;gap:var(--s-3)">Spring Launch · "Claim a Fox" <span class="lockpill lockpill--edit">Editable</span></span></div>
+            <div class="kv"><span>Activation</span><span class="v">Start manually</span></div>
+            <div class="kv"><span>Control mode</span><span class="v">Admin controlled · earliest stop 12 Jul 2026</span></div>
+            <div class="kv"><span>When it stops</span><span class="v">Return unclaimed to collection</span></div>
+            <div class="kv"><span>Inventory policy</span><span class="v">Additive</span></div>
+            <div class="kv"><span>Inventory</span><span class="v">420 copies · 3 collections</span></div>
+            <div class="kv"><span>Costs &amp; rules</span><span class="v">Set per collection (3)</span></div>
+            <div class="kv"><span>Revenue</span><span class="v">Preset · Standard Claim · 14% royalties</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Stage</h3></div>
+            <div class="controls">
+              <button class="btn btn--ghost">Return to Draft</button>
+              <button class="btn btn--primary">Set Live</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 Storefront media · cycle check (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Storefront media · cycle check (balance OK)</span><span class="d">Saving a vendor thumbnail or banner (Create · storefront, step 2) stores it in blob storage, funded from project cycles. Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload (see the Cycles &amp; uploads gallery). With headroom, it saves normally.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-launch-banner.png staged · 2.8 MB · uploaded &amp; held</span>
+            <div class="cyc-est">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.03 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">2.040 T</div></div>
+              <div class="e ok"><div class="k">After upload</div><div class="v">~2.01 T</div></div>
+            </div>
+            <div class="cyc-note cyc-note--ok"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>Enough cycles to store this image and keep your reserve. Toko moves project cycles into blob storage automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload assets</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 Storefront media · low balance -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Storefront media · low balance</span><span class="d">The estimate exceeds the balance. The image stays staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-launch-banner.png staged · 2.8 MB · uploaded &amp; held</span>
+            <div class="cyc-est">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.03 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.010 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.02 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="cyc-note cyc-note--warn"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not quite enough cycles to store this image.</strong> It stays staged — top up and it saves straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 Top up to continue · image staged -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, it saves automatically.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-launch-banner.png staged · 2.8 MB · ready to save</span>
+            <div>
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.03 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.010 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div>
+              <span class="cyc-flabel">Top up amount</span>
+              <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="cyc-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged image saves automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

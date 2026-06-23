@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Hero Carousel (component prototype)</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  /* ===================================================================
+     Toko Hero Carousel — self-contained prototype
+     Fonts & colors per CLAUDE.md. Save at project root so the relative
+     font paths below resolve against /Fonts.
+     -------------------------------------------------------------------
+     HOW TO EDIT SLIDES: scroll to the <script> block at the bottom and
+     edit the SLIDES array + CONFIG object. Everything is driven from there.
+     =================================================================== */
+
+  /* Two fonts only: Anton (headers) + Mona Sans (everything else) */
+  :root {
+    --eclipse: #000000;
+    --moonlight: #ffffff;
+    --slate-1: #fafafa;
+    --slate-2: #ececec;
+    --slate-5: #757575;
+    --slate-8: #1d1d1d;
+    --amber: #f59e0b;
+    --radius-card: 14px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #f1f1f1;
+    color: var(--slate-8);
+    font-family: "Mona Sans", system-ui, sans-serif;
+    font-weight: 500;
+    padding: 24px;
+  }
+
+  /* page scaffolding just for the prototype preview */
+  .page { max-width: 1300px; margin: 0 auto; }
+  .page > .note {
+    font-size: 13px; color: var(--slate-5); margin: 0 4px 14px;
+  }
+
+  /* ===================== CAROUSEL ===================== */
+  .carousel {
+    position: relative;
+    width: 100%;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--slate-8);
+    /* responsive height: tall enough on mobile, banner-ish on desktop */
+    aspect-ratio: 16 / 6;
+    min-height: 300px;
+    box-shadow: 0 10px 40px -12px rgba(0,0,0,0.35);
+    user-select: none;
+  }
+  @media (max-width: 720px) {
+    .carousel { aspect-ratio: 3 / 4; min-height: 460px; }
+  }
+
+  .track {
+    position: absolute; inset: 0;
+    display: flex;
+    transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  .slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+  }
+  /* readability scrim — stronger on the text side */
+  .slide::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+      rgba(0,0,0,0.62) 0%,
+      rgba(0,0,0,0.42) 38%,
+      rgba(0,0,0,0.05) 70%,
+      rgba(0,0,0,0) 100%);
+  }
+  @media (max-width: 720px) {
+    .slide { align-items: flex-end; }
+    .slide::before {
+      background: linear-gradient(0deg,
+        rgba(0,0,0,0.75) 0%,
+        rgba(0,0,0,0.45) 45%,
+        rgba(0,0,0,0.05) 100%);
+    }
+  }
+
+  .slide-content {
+    position: relative;
+    z-index: 1;
+    color: var(--moonlight);
+    padding: clamp(24px, 5vw, 64px);
+    max-width: 620px;
+  }
+  .slide-eyebrow {
+    font-family: "Mona Sans", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: clamp(11px, 1.2vw, 13px);
+    color: var(--amber);
+    margin: 0 0 10px;
+  }
+  .slide-title {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: clamp(34px, 5.5vw, 64px);
+    margin: 0 0 12px;
+    text-shadow: 0 2px 18px rgba(0,0,0,0.35);
+  }
+  .slide-body {
+    font-size: clamp(14px, 1.5vw, 18px);
+    line-height: 1.45;
+    max-width: 46ch;
+    margin: 0 0 22px;
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 10px rgba(0,0,0,0.4);
+  }
+  .slide-cta {
+    display: inline-block;
+    background: var(--moonlight);
+    color: var(--eclipse);
+    font-family: "Mona Sans", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 999px;
+    transition: transform 150ms ease, box-shadow 150ms ease;
+  }
+  .slide-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(0,0,0,0.5); }
+
+  /* placeholder visual for slides without a real image */
+  .slide.is-placeholder::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 18px; bottom: 16px;
+    z-index: 1;
+    font-family: "Mona Sans", monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.35);
+    border: 1px dashed rgba(255,255,255,0.4);
+    padding: 5px 9px;
+    border-radius: 6px;
+  }
+
+  /* ---- arrows ---- */
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px; height: 44px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.9);
+    color: var(--eclipse);
+    cursor: pointer;
+    display: grid; place-items: center;
+    font-size: 20px;
+    transition: background 150ms ease, transform 150ms ease;
+    box-shadow: 0 4px 14px -4px rgba(0,0,0,0.4);
+  }
+  .nav-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.06); }
+  .nav-arrow.prev { left: 16px; }
+  .nav-arrow.next { right: 16px; }
+  @media (max-width: 720px) {
+    .nav-arrow { width: 38px; height: 38px; top: auto; bottom: 60px; transform: none; }
+    .nav-arrow:hover { transform: scale(1.06); }
+    .nav-arrow.prev { left: 12px; }
+    .nav-arrow.next { right: 12px; }
+  }
+
+  /* ---- dots ---- */
+  .dots {
+    position: absolute;
+    z-index: 3;
+    right: 22px; bottom: 18px;
+    display: flex; gap: 8px;
+  }
+  @media (max-width: 720px) {
+    .dots { left: 0; right: 0; bottom: 18px; justify-content: center; }
+  }
+  .dot {
+    width: 9px; height: 9px; padding: 0;
+    border: none; border-radius: 999px;
+    background: rgba(255,255,255,0.45);
+    cursor: pointer;
+    transition: width 250ms ease, background 250ms ease;
+  }
+  .dot.active { width: 26px; background: var(--amber); }
+
+  /* ---- progress bar (autoplay) ---- */
+  .progress {
+    position: absolute; left: 0; bottom: 0; z-index: 3;
+    height: 3px; width: 100%;
+    background: rgba(255,255,255,0.12);
+  }
+  .progress > span {
+    display: block; height: 100%; width: 0%;
+    background: var(--amber);
+  }
+  .progress.hidden { display: none; }
+
+  /* respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .track { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <p class="note">Toko hero carousel — prototype. Edit the <code>SLIDES</code> array and <code>CONFIG</code> at the bottom of this file to swap images, text, and autoplay behavior.</p>
+
+    <div class="carousel" id="carousel" aria-roledescription="carousel" aria-label="Featured collections">
+      <div class="track" id="track"></div>
+
+      <button class="nav-arrow prev" id="prev" aria-label="Previous slide">&#8249;</button>
+      <button class="nav-arrow next" id="next" aria-label="Next slide">&#8250;</button>
+
+      <div class="dots" id="dots"></div>
+      <div class="progress" id="progress"><span id="progressBar"></span></div>
+    </div>
+  </div>
+
+<script>
+  /* ===================================================================
+     EDIT HERE
+     -------------------------------------------------------------------
+     Each slide:
+       bg     : an image path/URL  OR  a CSS background value (gradient).
+                Anything containing "gradient" or a file extension works.
+       label  : optional caption shown on placeholder slides (remove `bg`
+                image and it shows the gradient + this label).
+       eyebrow: small uppercase line above the title (optional).
+       title  : the big Anton headline.
+       body   : supporting text.
+       cta    : { label, href }  (optional — omit to hide the button)
+     =================================================================== */
+  const SLIDES = [
+    {
+      bg: "linear-gradient(120deg, #3b2c8f 0%, #5b3fb0 45%, #7d5fd6 100%)",
+      label: "Replace with banner image",
+      eyebrow: "Featured Collection",
+      title: "Mixer Bots",
+      body: "Universal Pictures. Sony. Netflix. Microsoft. Samsung. Wall Street Journal. DOW Jones. Nike. Honda.",
+      cta: { label: "View Collection", href: "#" }
+    },
+    {
+      bg: "linear-gradient(120deg, #0f5d52 0%, #0e8a6e 50%, #16a34a 100%)",
+      label: "Replace with banner image",
+      eyebrow: "Now on the Launchpad",
+      title: "Genesis Drop",
+      body: "Be first to mint the inaugural release. Deterministic generation, fully on-chain provenance.",
+      cta: { label: "Go to Launchpad", href: "#" }
+    },
+    {
+      bg: "linear-gradient(120deg, #7a1f4f 0%, #b8295f 50%, #f59e0b 120%)",
+      label: "Replace with banner image",
+      eyebrow: "Secondary Marketplace",
+      title: "Trade Your Tokens",
+      body: "Buy, sell, and discover issued tokens peer-to-peer with transparent pricing and history.",
+      cta: { label: "Browse Market", href: "#" }
+    }
+  ];
+
+  const CONFIG = {
+    autoplay: true,        // master switch for auto-advance
+    interval: 6000,        // ms per slide
+    pauseOnHover: true,    // pause autoplay while the cursor is over the carousel
+    loop: true,            // wrap from last -> first and back
+    showArrows: true,
+    showDots: true,
+    showProgressBar: true, // thin amber timer along the bottom
+    enableSwipe: true,     // touch / drag to change slides
+    enableKeyboard: true   // left/right arrow keys when focused
+  };
+  /* =================== END EDIT SECTION =================== */
+
+  (function () {
+    const carousel = document.getElementById('carousel');
+    const track    = document.getElementById('track');
+    const dotsWrap = document.getElementById('dots');
+    const prevBtn  = document.getElementById('prev');
+    const nextBtn  = document.getElementById('next');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progressBar');
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let timer = null;
+    let rafId = null;
+    let startTime = 0;
+    let paused = false;
+
+    const isImage = (s) => /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i.test(s) ||
+                           /^(https?:|\/|data:)/i.test(s) && !/gradient/i.test(s);
+
+    // ---- build slides ----
+    SLIDES.forEach((s, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'slide');
+      slide.setAttribute('aria-label', (i + 1) + ' of ' + SLIDES.length);
+
+      if (s.bg && isImage(s.bg)) {
+        slide.style.backgroundImage = "url('" + s.bg + "')";
+      } else if (s.bg) {
+        slide.style.background = s.bg;       // gradient or color
+        slide.classList.add('is-placeholder');
+        if (s.label) slide.setAttribute('data-label', s.label);
+      }
+
+      const content = document.createElement('div');
+      content.className = 'slide-content';
+      content.innerHTML =
+        (s.eyebrow ? '<p class="slide-eyebrow">' + s.eyebrow + '</p>' : '') +
+        '<h2 class="slide-title">' + (s.title || '') + '</h2>' +
+        (s.body ? '<p class="slide-body">' + s.body + '</p>' : '') +
+        (s.cta ? '<a class="slide-cta" href="' + (s.cta.href || '#') + '">' + s.cta.label + '</a>' : '');
+      slide.appendChild(content);
+      track.appendChild(slide);
+    });
+
+    // ---- dots ----
+    const dots = [];
+    if (CONFIG.showDots) {
+      SLIDES.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'dot';
+        d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        d.addEventListener('click', () => { goTo(i); restart(); });
+        dotsWrap.appendChild(d);
+        dots.push(d);
+      });
+    } else {
+      dotsWrap.style.display = 'none';
+    }
+
+    if (!CONFIG.showArrows) { prevBtn.style.display = nextBtn.style.display = 'none'; }
+    if (!CONFIG.showProgressBar || !CONFIG.autoplay) { progress.classList.add('hidden'); }
+
+    // ---- core ----
+    function render() {
+      track.style.transform = 'translateX(' + (-index * 100) + '%)';
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    }
+    function goTo(i) {
+      const n = SLIDES.length;
+      index = CONFIG.loop ? (i + n) % n : Math.max(0, Math.min(n - 1, i));
+      render();
+    }
+    function next() { goTo(index + 1); }
+    function prev() { goTo(index - 1); }
+
+    prevBtn.addEventListener('click', () => { prev(); restart(); });
+    nextBtn.addEventListener('click', () => { next(); restart(); });
+
+    // ---- autoplay with progress bar ----
+    function tick(now) {
+      if (paused) { startTime = now - elapsed(); rafId = requestAnimationFrame(tick); return; }
+      const pct = Math.min(1, (now - startTime) / CONFIG.interval);
+      progressBar.style.width = (pct * 100) + '%';
+      if (pct >= 1) { next(); startTime = now; }
+      rafId = requestAnimationFrame(tick);
+    }
+    let _elapsed = 0;
+    function elapsed() { return _elapsed; }
+    function start() {
+      if (!CONFIG.autoplay || reduceMotion || SLIDES.length < 2) return;
+      stop();
+      startTime = performance.now();
+      rafId = requestAnimationFrame(tick);
+    }
+    function stop() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      progressBar.style.width = '0%';
+    }
+    function restart() { stop(); start(); }
+
+    if (CONFIG.pauseOnHover) {
+      carousel.addEventListener('mouseenter', () => paused = true);
+      carousel.addEventListener('mouseleave', () => paused = false);
+    }
+    // pause when tab not visible
+    document.addEventListener('visibilitychange', () => { paused = document.hidden; });
+
+    // ---- keyboard ----
+    if (CONFIG.enableKeyboard) {
+      carousel.tabIndex = 0;
+      carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft')  { prev(); restart(); }
+        if (e.key === 'ArrowRight') { next(); restart(); }
+      });
+    }
+
+    // ---- swipe / drag ----
+    if (CONFIG.enableSwipe) {
+      let x0 = null;
+      const down = (x) => { x0 = x; paused = true; };
+      const up = (x) => {
+        if (x0 === null) return;
+        const dx = x - x0;
+        if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); restart(); }
+        x0 = null; paused = false;
+      };
+      carousel.addEventListener('touchstart', (e) => down(e.touches[0].clientX), { passive: true });
+      carousel.addEventListener('touchend',   (e) => up(e.changedTouches[0].clientX));
+      carousel.addEventListener('mousedown',  (e) => down(e.clientX));
+      window.addEventListener('mouseup',      (e) => { if (x0 !== null) up(e.clientX); });
+    }
+
+    render();
+    start();
+  })();
+</script>
+</body>
+</html>

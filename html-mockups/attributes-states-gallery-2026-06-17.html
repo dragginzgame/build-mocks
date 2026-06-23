@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Attributes · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* ---- Chrome: breadcrumb bar ---- */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb a:hover { color:var(--text-primary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .notif-bell:hover { background:var(--surface-canvas-alt); border-color:var(--border-strong); }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+
+  /* ---- Header on grey ---- */
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head .eyebrow { margin-bottom:.375rem; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:none; }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .stage-badge--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .card__intro { color:var(--text-secondary); font-size:var(--text-sm); margin:0 0 var(--s-5); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); }
+  .warn-note .ic { color:var(--stage-draft); }
+
+  .locked { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .locked__head { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); padding:var(--s-4) var(--s-5); }
+  .locked .r { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.875rem var(--s-5); border-top:1px solid var(--border-soft); font-size:var(--text-base); color:var(--text-secondary); }
+  .locked .r .v { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+
+  /* ---- Score-visibility card ---- */
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; }
+  .seg button { border:0; background:transparent; padding:.45rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .score-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); display:flex; align-items:center; gap:var(--s-5); flex-wrap:wrap; }
+  .score-card .sc-main { flex:1; min-width:240px; }
+  .score-card .sc-ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .score-card .sc-sub { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.25rem; max-width:70ch; }
+
+  /* ---- Sub-tab bar (Attributes' own tabs) ---- */
+  .subtabs { display:inline-flex; flex-wrap:wrap; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; }
+  .subtabs button { border:0; background:transparent; padding:.5rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .subtabs button.active { background:var(--text-primary); color:#fff; }
+
+  /* ---- Token-type chips ---- */
+  .chips { display:flex; flex-wrap:wrap; gap:var(--s-2); }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:var(--r-pill); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); font-size:var(--text-sm); font-weight:600; }
+  .chip.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .chip .ct { font-size:var(--text-2xs); opacity:.7; }
+
+  /* ---- Attribute list ---- */
+  .attr-list { display:flex; flex-direction:column; }
+  .attr-row { display:flex; align-items:center; gap:var(--s-4); padding:.875rem 0; border-top:1px solid var(--border-soft); }
+  .attr-row:first-child { border-top:0; }
+  .attr-row .a-main { flex:1; min-width:0; }
+  .attr-row .a-lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .attr-row .a-key { color:var(--text-muted); font-size:var(--text-xs); margin-top:.125rem; }
+  .attr-row .a-right { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; justify-content:flex-end; }
+  .badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; border:1px solid var(--border-soft); color:var(--text-secondary); background:var(--surface-canvas); }
+  .badge--req { color:var(--stage-review); border-color:rgba(99,102,241,.3); background:rgba(99,102,241,.08); }
+  .badge--opt { color:var(--text-secondary); }
+  .icon-btn { width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .icon-btn:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .add-row { display:flex; align-items:center; justify-content:center; gap:.5rem; padding:.75rem; margin-top:var(--s-4); border:1.5px dashed var(--border-soft); border-radius:var(--r-2); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; background:transparent; width:100%; }
+  .add-row:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  /* shared "add" affordance: a dashed pill echo of the item it creates (attributes, token types) */
+  .add-chip { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:var(--r-pill); border:1.5px dashed var(--border-soft); background:transparent; color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); cursor:pointer; }
+  .add-chip:hover { border-color:var(--border-strong); color:var(--text-primary); }
+
+  /* ---- Radio choice cards (calculation mode) ---- */
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .choice .desc { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.25rem; line-height:1.45; }
+  .choice .formula { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); background:var(--surface-canvas-deep); color:var(--text-secondary); padding:2px 8px; border-radius:var(--r-1); }
+
+  /* ---- Mapping rows ---- */
+  .map-row { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-4); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); flex-wrap:wrap; }
+  .map-row + .map-row { margin-top:var(--s-2); }
+  .map-row .src { display:inline-flex; align-items:center; gap:.5rem; font-weight:700; font-size:var(--text-sm); }
+  .map-row .sw { width:14px; height:14px; border-radius:4px; background:var(--text-muted); flex:none; }
+  .map-row .arrow { color:var(--text-muted); }
+  .map-row .trait { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .map-row .meta { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+
+  /* ---- Apply-values rows ---- */
+  .val-card { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .val-card .vh { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.75rem var(--s-4); background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .val-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.625rem var(--s-4); border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .val-row input { width:96px; text-align:center; border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .5rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+
+  /* ---- Modal ---- */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:var(--s-6); width:100%; max-width:1000px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  /* ---- Pagination (used when a list exceeds 10 rows) ---- */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-top:var(--s-5); margin-top:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:34px; height:34px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); font-family:var(--font-body); font-size:var(--text-sm); color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-gap { min-width:24px; text-align:center; color:var(--text-muted); }
+  /* ---- Sub-tab segmented control reused for Layer / Part mapping ---- */
+  .map-sub { margin-bottom:var(--s-5); }
+  /* tabs attached to the top of the mapping container */
+  .card--tabbed { padding-top:0; overflow:hidden; }
+  .card-tabs { display:flex; margin:0 calc(-1 * var(--s-8)) var(--s-6); border-bottom:1px solid var(--border-soft); background:var(--surface-canvas-alt); }
+  .card-tabs button { padding:.85rem var(--s-6); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); border:0; background:transparent; border-bottom:2px solid transparent; }
+  .card-tabs button.active { color:var(--text-primary); background:var(--surface-canvas); border-bottom-color:var(--text-primary); }
+  /* ---- Generic tab empty / unavailable state ---- */
+  .tab-empty { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .tab-empty > strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .tab-empty p { margin:0; font-size:var(--text-sm); max-width:54ch; }
+  .tab-empty .acts { display:flex; gap:var(--s-3); flex-wrap:wrap; justify-content:center; margin-top:var(--s-1); }
+
+  /* ---- Gallery scaffold ---- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+
+  /* ---- empty attributes (first-run) ---- */
+  .empty-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-3xl); }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-base); max-width:58ch; margin:0; }
+  .starter-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:var(--s-3); }
+  .starter { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas-alt); cursor:pointer; transition:border-color .15s; }
+  .starter:hover { border-color:var(--border-strong); }
+  .starter h4 { font-size:var(--text-lg); }
+  .starter p { color:var(--text-secondary); font-size:var(--text-xs); margin:.375rem 0 var(--s-3); line-height:1.45; }
+  .starter .add { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-primary); }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } .starter-grid { grid-template-columns:1fr; } }
+
+  /* ---- schema & token-type tables ---- */
+  .tbl-wrap { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .tbl { width:100%; border-collapse:collapse; }
+  .tbl th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); padding:.75rem var(--s-5); background:var(--surface-canvas-alt); border-bottom:1px solid var(--border-soft); white-space:nowrap; }
+  .tbl td { padding:.85rem var(--s-5); border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .tbl tr:last-child td { border-bottom:0; }
+  .tbl .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .pill-v { display:inline-flex; align-items:center; padding:3px 12px; border-radius:var(--r-pill); border:1px solid var(--border-soft); background:var(--surface-canvas); font-family:var(--font-emphasis); font-weight:600; font-size:var(--text-xs); color:var(--text-secondary); }
+  .req-badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:rgba(239,68,68,.1); color:#b91c1c; }
+  .opt-txt { color:var(--text-secondary); font-size:var(--text-sm); }
+  .row-acts { display:flex; gap:.375rem; justify-content:flex-end; }
+  .icon-btn--danger:hover { border-color:var(--notify-error); color:var(--notify-error); }
+  .matrix-sel { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.3rem .5rem; background:var(--surface-canvas); font:inherit; font-size:var(--text-sm); }
+  .val-edit { display:flex; flex-direction:column; gap:.5rem; }
+  .val-edit .vi { display:flex; align-items:center; gap:var(--s-3); padding:.3rem .35rem .3rem .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
+  .val-edit .vi input { flex:1; border:0; background:transparent; font:inherit; font-size:var(--text-base); }
+  .assign-rows { display:flex; flex-direction:column; gap:.5rem; }
+  .assign-rows .ar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem .75rem; border:1px solid var(--border-soft); border-radius:var(--r-2); }
+  .assign-rows .ar-t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  /* token-type tabs + per-type assignment list (scales to many types, mobile-friendly) */
+  .tt-tabs { display:flex; flex-wrap:wrap; gap:var(--s-2); border-bottom:1px solid var(--border-soft); padding-bottom:var(--s-4); margin-bottom:var(--s-5); }
+  .tt-tabs button { padding:.5rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); border:1px solid var(--border-soft); background:var(--surface-canvas); white-space:nowrap; }
+  .tt-tabs button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .tt-tabs .add { border-style:dashed; }
+  .tt-panel-head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); margin-bottom:var(--s-2); flex-wrap:wrap; }
+  .tt-panel-head .tph-nm { font-family:var(--font-display); font-size:var(--text-xl); text-transform:uppercase; letter-spacing:.02em; }
+  .tt-panel-head .tph-sub { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.125rem; }
+  .assign-list { display:flex; flex-direction:column; }
+  .assign-list .al-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.75rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .assign-list .al-row:first-child { border-top:0; }
+  .assign-list .al-nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .assign-list .al-sub { color:var(--text-muted); font-size:var(--text-xs); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Attributes — states &amp; stages.</h1>
+      <p>The collection's attribute schema and scoring. Four fixed V1 sub-tabs — Manage Attributes, Calculation, Generator Mapping, Apply Values — plus a collection-level "Show Score?" toggle. Schema and score visibility lock at Live. Framed on the studio page shell: breadcrumb on white, header on grey.</p>
+    </header>
+
+    <!-- 01 ATTRIBUTES · Manage Attributes · first run (empty) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Attributes · first run (empty)</span><span class="d">No attributes yet — hero empty state with Add-attribute &amp; Add-token-type CTAs and common-starter presets. Show-Score stays hidden until at least one attribute exists.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes.</h2>
+              <p class="lede">Define the attributes your tokens can have. Add your first attribute or start from a common preset — values get assigned to individual tokens later.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="subtabs"><button class="active">Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button>Apply Values</button></div>
+
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_attributes.jpg" alt="Attributes — none yet" onerror="this.parentElement.style.display='none'"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">Add your first attribute</h3>
+              <p class="empty-hero__sub">Attributes are the attributes that make each token unique — Strength, Class, Tags, Description. Define them once here, then assign values to individual tokens later. Pick a quick-start below, or build your own.</p>
+              <button class="btn btn--primary">+ Add attribute</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>Token types <span class="tag tag--green">Editable in Draft</span></h3></div>
+            <p class="card__intro">Each token references exactly one token type. Your collection starts with a <strong>Default</strong> type, so you can get going without configuring this — new attributes auto-assign to Default as Optional. Add a second type later if the collection mixes fundamentally different kinds of tokens (e.g. Characters and Consumables).</p>
+            <div class="chips">
+              <span class="chip active">Default <span class="ct">· 0 tokens</span></span>
+              <button class="add-chip">+ Add token type</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 ATTRIBUTES · Manage Attributes (populated) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Attributes · Manage Attributes (populated)</span><span class="d">Schema source of truth: token types, the attribute list with required/optional states, and the Show-Score toggle (shown once attributes exist).</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes.</h2>
+              <p class="lede">Define the trait schema, decide which attributes each token type requires, and choose whether a token's score is shown to collectors.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="sc-main">
+              <div class="sc-ttl">Show Score? <span class="tag tag--amber">Locks at Live</span></div>
+              <div class="sc-sub">Each token can be given a score based on its attributes. Choose whether that score is visible to collectors in the token preview and edit views.</div>
+            </div>
+            <div class="seg"><button class="active">Show score</button><button>Hide score</button></div>
+          </div>
+
+          <div class="subtabs"><button class="active">Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button>Apply Values</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Attribute schema</h3><span class="tag tag--amber">Locks at Live</span></div>
+            <p class="card__intro">The master list of attributes for this collection — each attribute is defined once here. An attribute has a name and a number of values (one or many). Whether it's <strong>required</strong> is not a property of the attribute itself; it's set <strong>per token type</strong>. With a single token type, new attributes auto-assign to <strong>Default</strong> as Optional — the column below shows that assignment. Once the collection goes Live the schema is immutable.</p>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Name</th><th>Kind</th><th>On Default type</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td class="nm">Strength</td><td><span class="pill-v">Number</span></td><td><span class="req-badge">Required</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Class</td><td><span class="pill-v">Category</span></td><td><span class="req-badge">Required</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Tags</td><td><span class="pill-v">Flags</span></td><td><span class="opt-txt">Optional</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Signed by</td><td><span class="pill-v">Principal</span></td><td><span class="opt-txt">Optional</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Holographic</td><td><span class="pill-v">Boolean</span></td><td><span class="opt-txt">Optional</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Cooldown</td><td><span class="pill-v">Duration</span></td><td><span class="opt-txt">Optional</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Description</td><td><span class="pill-v">Text</span></td><td><span class="opt-txt">Optional</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="add-chip" style="margin-top:var(--s-4)">+ Add attribute</button>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>Token types</h3><span class="tag">1 type</span></div>
+            <p class="card__intro">Each token references exactly one token type. This collection has a single <strong>Default</strong> type, so every attribute's requirement is set right here in the schema's "On Default type" column — there's no assignment matrix. Add a second type if the collection mixes fundamentally different kinds of tokens.</p>
+            <div class="chips">
+              <span class="chip active">Default <span class="ct">· 80 tokens</span></span>
+              <button class="add-chip">+ Add token type</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 ATTRIBUTES · Calculation -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Attributes · Calculation</span><span class="d">Pick the score method. Affects score output only; visibility is controlled by the Show-Score toggle.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes.</h2>
+              <p class="lede">Choose how the per-token attribute score is calculated from the mapped numeric values.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="subtabs"><button>Manage Attributes</button><button class="active">Calculation</button><button>Generator Mapping</button><button>Apply Values</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Score method</h3><span class="tag tag--amber">Affects every token's score</span></div>
+            <p class="card__intro">Only values that are actually mapped contribute — unmapped values are skipped, not treated as zero.</p>
+            <div class="choice sel">
+              <span class="radio"></span>
+              <div><div class="ttl">Add Values <span class="tag">Default</span> <span class="formula">score = Σ values</span></div><div class="desc">Sum all mapped numeric values. The most common, predictable method.</div></div>
+            </div>
+            <div class="choice">
+              <span class="radio"></span>
+              <div><div class="ttl">Multiply <span class="formula">score = Π values</span></div><div class="desc">Multiply the mapped values together — rewards tokens that hit several high attributes at once.</div></div>
+            </div>
+            <div class="choice">
+              <span class="radio"></span>
+              <div><div class="ttl">Highest <span class="formula">score = max(values)</span></div><div class="desc">Take only the single highest mapped value. Good when one standout trait should define the token.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 ATTRIBUTES · Generator Mapping -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Attributes · Generator Mapping (Layer)</span><span class="d">Sub-tabbed into Layer mapping and Part mapping. Layer rules are the fallback; a part rule overrides its layer for the same attribute. Mapping is added via a modal (frame 18).</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes.</h2>
+              <p class="lede">Turn generator composition into attribute metadata. A selected part's mapping wins over its layer's mapping for the same attribute.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button class="active">Generator Mapping</button><button>Apply Values</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Precedence: a <strong>part-level</strong> mapping overrides the <strong>layer-level</strong> mapping for the same attribute. Each trait resolves to at most one value per token — conflicting configs are rejected on save.</div></div>
+
+          <div class="card card--tabbed">
+            <div class="card-tabs"><button class="active">Layer mapping</button><button>Part mapping</button></div>
+            <div class="card__head"><span class="tag tag--indigo">Generator: Lorem Drop No. 1</span><button class="btn btn--ghost btn--sm">+ Map layer</button></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Background</span><span class="arrow">→</span><span class="trait">Background</span><span class="meta"><span class="tag">Layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Body</span><span class="arrow">→</span><span class="trait">Body</span><span class="meta"><span class="tag">Layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Headwear</span><span class="arrow">→</span><span class="trait">Headwear</span><span class="meta"><span class="tag">Layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Eyes</span><span class="arrow">→</span><span class="trait">Eyes</span><span class="meta"><span class="tag">Layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></span></div>
+            <p class="card__intro" style="margin:var(--s-4) 0 0">Per-part overrides live under <strong>Part mapping</strong>. A part rule wins over its layer rule for the same attribute.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 ATTRIBUTES · Apply Values -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Attributes · Apply Values</span><span class="d">Assign numeric values to non-numeric trait values so they can feed the score. Numeric attributes feed directly.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes.</h2>
+              <p class="lede">Give each non-numeric trait value a number so the calculation can score it. Values left blank simply don't contribute.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button class="active">Apply Values</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Numeric value mapping</h3><span class="tag">Method: Add Values</span></div>
+            <p class="card__intro">Only non-numeric attributes appear here — numbers like <span class="mono">power</span> feed the score directly. Map an attribute's values to numbers in a modal; each row shows its status. Required attributes must be fully mapped before Review.</p>
+            <div class="attr-list">
+              <div class="attr-row">
+                <div class="a-main"><div class="a-lbl">Background</div><div class="a-key">Category · 3 values</div></div>
+                <div class="a-right"><span class="badge badge--req">Required</span><span class="tag tag--green">All values mapped</span><button class="icon-btn" title="Edit mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Clear mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+              </div>
+              <div class="attr-row">
+                <div class="a-main"><div class="a-lbl">Eyes</div><div class="a-key">Category · 3 values</div></div>
+                <div class="a-right"><span class="badge badge--opt">Optional</span><span class="tag tag--amber">2 of 3 mapped</span><button class="btn btn--ghost btn--sm">Map values</button></div>
+              </div>
+              <div class="attr-row">
+                <div class="a-main"><div class="a-lbl">Class</div><div class="a-key">Category · 4 values</div></div>
+                <div class="a-right"><span class="badge badge--req">Required</span><span class="req-badge">Needs values</span><button class="btn btn--primary btn--sm">Map values</button></div>
+              </div>
+            </div>
+            <div class="info-note warn-note" style="margin-top:var(--s-5)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Class is required but not fully mapped.</strong> A required attribute with unmapped values blocks Review. Optional values left blank simply contribute no score.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 ATTRIBUTES · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Attributes · Live (read-only)</span><span class="d">Schema and score visibility lock at Live. The configuration stays visible for reference.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes. <span class="tag tag--green">Locked at Live</span></h2>
+              <p class="lede">The schema buyers' tokens were validated against — locked when the collection went Live.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+              <button class="btn btn--ghost">View public page</button>
+            </div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live. The attribute schema and the Show-Score setting are locked. Required-field edits are blocked; draft-only normalization no longer applies.</div></div>
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Token types</span><span class="v">Standard</span></div>
+            <div class="r"><span>Attributes</span><span class="v">5 (2 required)</span></div>
+            <div class="r"><span>Calculation method</span><span class="v">Add Values</span></div>
+            <div class="r"><span>Show score</span><span class="v">Shown to collectors</span></div>
+            <div class="r"><span>Generator mappings</span><span class="v">4 (2 part overrides)</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 ATTRIBUTES · Modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Attributes · Add modals</span><span class="d">Create a new attribute (key, label, kind, arity, required) or a new token type.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Add attribute</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Name</label><input class="input" placeholder="e.g. Headwear"></div>
+              <div><label class="flabel">Kind</label><select class="input"><option>Text</option><option>Number</option><option>Decimal</option><option>Boolean</option><option>Duration</option><option>Principal</option><option selected>Category</option><option>Flags</option><option>Fields</option></select><div class="hint">Category = single-select (pick one) · Flags = multi-select (pick any) · Fields = nested record. You define the values for Category and Flags.</div></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>With one token type, this attribute auto-assigns to <strong>Standard</strong> as <strong>optional</strong>. Make it required from the attribute row.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add attribute</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Add token type</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Name</label><input class="input" placeholder="e.g. Legendary"></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Adding a second token type turns off auto-assignment. From then on, every attribute must be assigned to each type explicitly as required, optional, or unused.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add token type</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 ATTRIBUTES · Delete modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Attributes · Delete modals</span><span class="d">Deleting an attribute — the destructive confirm, and the blocked state when the attribute is locked by non-draft tokens.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Delete attribute "Eyes"?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0">This removes the <span class="mono">eyes</span> trait from the schema, along with its numeric value mapping and any generator mappings that target it. Affected token scores will be recomputed.</p>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Only possible while every token that uses this attribute is in <strong>Draft</strong>. This can't be undone.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete attribute</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Can't delete "Background"</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0"><span class="mono">background</span> is referenced by tokens in <strong>Review</strong> or <strong>Live</strong>, so it's locked. <span class="badge" style="margin:0 .25rem"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Used by non-draft tokens</span></p>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Return the referencing tokens to Draft to edit or delete this attribute. Required-field edits and deletions are blocked while any token is in Review or Live.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">View tokens</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 ATTRIBUTES · Manage · multiple token types -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Attributes · multiple token types</span><span class="d">Master schema kept separate; the Token types panel is tabbed — pick a type to manage which attributes apply and how (required / optional / unused). Scales to many types and reflows on mobile, unlike a wide matrix.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Mythic Realms</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes.</h2>
+              <p class="lede">This collection mixes more than one kind of token. The attribute schema is shared; each type's requirements are managed in its own tab below.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="sc-main">
+              <div class="sc-ttl">Show Score? <span class="tag tag--amber">Locks at Live</span></div>
+              <div class="sc-sub">Each token can be given a score based on its attributes. Choose whether that score is visible to collectors.</div>
+            </div>
+            <div class="seg"><button class="active">Show score</button><button>Hide score</button></div>
+          </div>
+
+          <div class="subtabs"><button class="active">Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button>Apply Values</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Attribute schema</h3><span class="tag tag--amber">Locks at Live</span></div>
+            <p class="card__intro">The master list of attributes — defined once and shared by every token type. Whether each is required is set <strong>per token type</strong> in the Token types panel below, not here.</p>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Name</th><th>Kind</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td class="nm">Strength</td><td><span class="pill-v">Number</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Class</td><td><span class="pill-v">Category</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Tags</td><td><span class="pill-v">Flags</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Cooldown</td><td><span class="pill-v">Duration</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                  <tr><td class="nm">Description</td><td><span class="pill-v">Text</span></td><td><div class="row-acts"><button class="icon-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="add-chip" style="margin-top:var(--s-4)">+ Add attribute</button>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>Token types <span class="tag tag--green">Editable in Draft</span></h3><span class="tag">6 types</span></div>
+            <p class="card__intro">Each token references exactly one type. Pick a type to manage which attributes apply and how. Add, rename or delete types while in Draft; types lock at Live. This scales to any number of types and stacks cleanly on mobile.</p>
+            <div class="tt-tabs">
+              <button class="active">Character</button><button>Creature</button><button>Item</button><button>Vehicle</button><button>Location</button><button>Relic</button>
+              <button class="add">+ Add token type</button>
+            </div>
+            <div class="tt-panel-head">
+              <div><div class="tph-nm">Character</div><div class="tph-sub">62 tokens · 2 required · 2 optional · 1 unused</div></div>
+              <div class="row-acts"><button class="icon-btn" title="Rename type"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete type"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            </div>
+            <div class="assign-list">
+              <div class="al-row"><div><div class="al-nm">Strength</div><div class="al-sub">Number</div></div><div class="seg"><button class="active">Required</button><button>Optional</button><button>Unused</button></div></div>
+              <div class="al-row"><div><div class="al-nm">Class</div><div class="al-sub">Category</div></div><div class="seg"><button class="active">Required</button><button>Optional</button><button>Unused</button></div></div>
+              <div class="al-row"><div><div class="al-nm">Tags</div><div class="al-sub">Flags</div></div><div class="seg"><button>Required</button><button class="active">Optional</button><button>Unused</button></div></div>
+              <div class="al-row"><div><div class="al-nm">Cooldown</div><div class="al-sub">Duration</div></div><div class="seg"><button>Required</button><button class="active">Optional</button><button>Unused</button></div></div>
+              <div class="al-row"><div><div class="al-nm">Description</div><div class="al-sub">Text</div></div><div class="seg"><button>Required</button><button>Optional</button><button class="active">Unused</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 ATTRIBUTES · Edit attribute & multi-type assignment modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Attributes · Edit &amp; assign modals</span><span class="d">Opened from the schema table's edit icon: editing an attribute under one token type vs. multiple types (per-type assignment), and adding under multiple types. The delete confirm and its blocked state are in 08.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+
+          <div class="modal-card">
+            <header><h4>Edit attribute · Class</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="grid2">
+                <div><label class="flabel">Name</label><input class="input" value="Class"></div>
+                <div><label class="flabel">Kind</label><select class="input"><option>Text</option><option>Number</option><option>Decimal</option><option>Boolean</option><option>Duration</option><option>Principal</option><option selected>Category</option><option>Flags</option><option>Fields</option></select></div>
+              </div>              <div>
+                <label class="flabel">Values</label>
+                <div class="val-edit">
+                  <div class="vi"><input value="Knight"><button class="icon-btn icon-btn--danger" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="vi"><input value="Mage"><button class="icon-btn icon-btn--danger" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="vi"><input value="Ranger"><button class="icon-btn icon-btn--danger" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                </div>
+                <button class="add-row" style="margin-top:.5rem">+ Add value</button>
+              </div>
+              <div>
+                <label class="flabel">Is attribute required?</label>
+                <div class="seg"><button class="active">Required</button><button>Optional</button></div>
+                <div class="hint">Requirement is set per token type. With one type it's set here.</div>
+              </div>
+            </div>
+            <div class="footer-row" style="justify-content:space-between"><button class="btn btn--danger">Delete</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></span></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Edit attribute · Class <span class="tag">3 types</span></h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="grid2">
+                <div><label class="flabel">Name</label><input class="input" value="Class"></div>
+                <div><label class="flabel">Kind</label><select class="input"><option>Text</option><option>Number</option><option>Decimal</option><option>Boolean</option><option>Duration</option><option>Principal</option><option selected>Category</option><option>Flags</option><option>Fields</option></select></div>
+              </div>              <div>
+                <label class="flabel">Values</label>
+                <div class="val-edit">
+                  <div class="vi"><input value="Knight"><button class="icon-btn icon-btn--danger" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="vi"><input value="Mage"><button class="icon-btn icon-btn--danger" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                </div>
+                <button class="add-row" style="margin-top:.5rem">+ Add value</button>
+              </div>
+              <div>
+                <label class="flabel">Assignment · per token type</label>
+                <div class="assign-rows">
+                  <div class="ar"><span class="ar-t">Character</span><select class="matrix-sel"><option selected>Required</option><option>Optional</option><option>Unused</option></select></div>
+                  <div class="ar"><span class="ar-t">Creature</span><select class="matrix-sel"><option>Required</option><option selected>Optional</option><option>Unused</option></select></div>
+                  <div class="ar"><span class="ar-t">Item</span><select class="matrix-sel"><option>Required</option><option>Optional</option><option selected>Unused</option></select></div>
+                </div>
+                <div class="hint">With more than one token type, set whether this attribute is required, optional or unused for each.</div>
+              </div>
+            </div>
+            <div class="footer-row" style="justify-content:space-between"><button class="btn btn--danger">Delete</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></span></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Add attribute <span class="tag">3 types</span></h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="grid2">
+                <div><label class="flabel">Name</label><input class="input" placeholder="e.g. Armour"></div>
+                <div><label class="flabel">Kind</label><select class="input"><option>Text</option><option selected>Number</option><option>Decimal</option><option>Boolean</option><option>Duration</option><option>Principal</option><option>Category</option><option>Flags</option><option>Fields</option></select></div>
+              </div>              <div>
+                <label class="flabel">Assignment · per token type</label>
+                <div class="assign-rows">
+                  <div class="ar"><span class="ar-t">Character</span><select class="matrix-sel"><option>Required</option><option>Optional</option><option selected>Unused</option></select></div>
+                  <div class="ar"><span class="ar-t">Creature</span><select class="matrix-sel"><option>Required</option><option>Optional</option><option selected>Unused</option></select></div>
+                  <div class="ar"><span class="ar-t">Item</span><select class="matrix-sel"><option>Required</option><option>Optional</option><option selected>Unused</option></select></div>
+                </div>
+                <div class="info-note warn-note" style="margin-top:var(--s-3)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>More than one token type, so there's <strong>no auto-assign</strong> — choose this attribute's requirement for each type before adding.</div></div>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add attribute</button></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 ATTRIBUTES · multiple token types · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Attributes · multiple token types — Live (read-only)</span><span class="d">A multi-type collection after launch. The shared schema, the Show-Score setting and every per-type requirement are locked. The Token types panel stays tabbed for reference, but read-only — no edit, no segments, no add.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Mythic Realms</a><span class="sep">/</span><span class="here">Attributes</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Attributes</div>
+              <h2>Attributes. <span class="tag tag--green">Locked at Live</span></h2>
+              <p class="lede">A collection with several token types, now Live. The shared schema and each type's requirements are locked exactly as buyers' tokens were validated against them.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+              <button class="btn btn--ghost">View public page</button>
+            </div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live. The attribute schema, the token types, every per-type requirement and the Show-Score setting are read-only. Types can't be added, renamed or deleted, and requirements can't change.</div></div>
+
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Token types</span><span class="v">6 — Character · Creature · Item · Vehicle · Location · Relic</span></div>
+            <div class="r"><span>Attributes</span><span class="v">5 (shared schema)</span></div>
+            <div class="r"><span>Calculation method</span><span class="v">Add Values</span></div>
+            <div class="r"><span>Show score</span><span class="v">Shown to collectors</span></div>
+            <div class="r"><span>Generator mappings</span><span class="v">5 (1 part override)</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>Per-type requirements</h3><span class="tag tag--green">Locked · read-only</span></div>
+            <p class="card__intro">Each token type's attribute requirements as they were at launch. Switch tabs to inspect a type — nothing here can be changed while the collection is Live.</p>
+            <div class="tt-tabs">
+              <button class="active">Character</button><button>Creature</button><button>Item</button><button>Vehicle</button><button>Location</button><button>Relic</button>
+            </div>
+            <div class="tt-panel-head">
+              <div><div class="tph-nm">Character</div><div class="tph-sub">62 tokens · 2 required · 2 optional · 1 unused</div></div>
+            </div>
+            <div class="assign-list">
+              <div class="al-row"><div><div class="al-nm">Strength</div><div class="al-sub">Number</div></div><span class="tag tag--indigo">Required</span></div>
+              <div class="al-row"><div><div class="al-nm">Class</div><div class="al-sub">Category</div></div><span class="tag tag--indigo">Required</span></div>
+              <div class="al-row"><div><div class="al-nm">Tags</div><div class="al-sub">Flags</div></div><span class="tag">Optional</span></div>
+              <div class="al-row"><div><div class="al-nm">Cooldown</div><div class="al-sub">Duration</div></div><span class="tag">Optional</span></div>
+              <div class="al-row"><div><div class="al-nm">Description</div><div class="al-sub">Text</div></div><span class="tag" style="opacity:.5">Unused</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ADDED 2026-06-18: per-tab Live, Generator Mapping & Apply Values states ===================== -->
+
+    <!-- 12 ATTRIBUTES · Calculation · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Calculation · Live (read-only)</span><span class="d">The score method, locked at Live. The chosen method is shown; the options can't change.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes. <span class="tag tag--green">Locked at Live</span></h2><p class="lede">How the attribute score was calculated for this collection — fixed when it went Live.</p></div><div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button class="active">Calculation</button><button>Generator Mapping</button><button>Apply Values</button></div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live, so the score method is read-only — it can't change without altering scores buyers already saw.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Score method</h3><span class="tag tag--green">Locked · read-only</span></div>
+            <div class="choice sel"><span class="radio"></span><div><div class="ttl">Add Values <span class="tag tag--green">In use</span> <span class="formula">score = Σ values</span></div><div class="desc">Sum all mapped numeric values.</div></div></div>
+            <div class="choice" style="opacity:.5"><span class="radio"></span><div><div class="ttl">Multiply <span class="formula">score = Π values</span></div></div></div>
+            <div class="choice" style="opacity:.5"><span class="radio"></span><div><div class="ttl">Highest <span class="formula">score = max(values)</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 ATTRIBUTES · Generator Mapping · Part mapping (paginated) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">13</span><span class="t">Generator Mapping · Part mapping</span><span class="d">The Part sub-tab. Per-part overrides, each beating its layer rule for the same attribute. Paginated when there are more than 10.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes.</h2><p class="lede">Override a layer's trait for specific parts. A part rule wins over its layer rule for the same attribute.</p></div><div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button class="active">Generator Mapping</button><button>Apply Values</button></div>
+          <div class="card card--tabbed">
+            <div class="card-tabs"><button>Layer mapping</button><button class="active">Part mapping</button></div>
+            <div class="card__head"><span class="tag tag--indigo">Generator: Lorem Drop No. 1</span><button class="btn btn--ghost btn--sm">+ Map part</button></div>
+            <div class="map-row"><span class="src"><span class="sw" style="background:#d6356d"></span>Part · Gold Crown</span><span class="arrow">→</span><span class="trait">Headwear</span><span class="meta"><span class="tag tag--amber">Overrides layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw" style="background:#6366F1"></span>Part · Laser Eyes</span><span class="arrow">→</span><span class="trait">Eyes</span><span class="meta"><span class="tag tag--amber">Overrides layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw" style="background:#0EA5E9"></span>Part · Frost Aura</span><span class="arrow">→</span><span class="trait">Aura</span><span class="meta"><span class="tag tag--amber">Overrides layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw" style="background:#F59E0B"></span>Part · Gilded Wings</span><span class="arrow">→</span><span class="trait">Wings</span><span class="meta"><span class="tag tag--amber">Overrides layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw" style="background:#10B981"></span>Part · Vine Crown</span><span class="arrow">→</span><span class="trait">Headwear</span><span class="meta"><span class="tag tag--amber">Overrides layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            <div class="map-row"><span class="src"><span class="sw" style="background:#9333EA"></span>Part · Void Eyes</span><span class="arrow">→</span><span class="trait">Eyes</span><span class="meta"><span class="tag tag--amber">Overrides layer</span><button class="icon-btn" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            <div class="listbar">
+              <span class="results-count">Showing <strong>1–10</strong> of <strong>14</strong> part mappings</span>
+              <nav class="pg" aria-label="Pagination"><button disabled aria-label="Previous"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button><button aria-current="page">1</button><button>2</button><button aria-label="Next"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button></nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 ATTRIBUTES · Generator Mapping · no generator linked -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14</span><span class="t">Generator Mapping · no generator linked</span><span class="d">No linked Toko generator, so there are no layers or parts to map — the tab is unavailable.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Hand-Drawn Owls</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes.</h2><p class="lede">Generator Mapping turns generator composition into attribute metadata. This collection isn't using a generator.</p></div><div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button class="active">Generator Mapping</button><button>Apply Values</button></div>
+          <div class="card">
+            <div class="card__head"><h3>Layer &amp; part mappings</h3><span class="tag tag--amber">Unavailable</span></div>
+            <div class="tab-empty">
+              <strong>No generator linked</strong>
+              <p>Generator Mapping converts a generator's layers and parts into attribute metadata. This collection isn't built with a Toko generator, so there's nothing to map — tokens carry only the attributes you set by hand.</p>
+              <button class="btn btn--primary">Link a generator →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 ATTRIBUTES · Generator Mapping · linked, no mappings yet -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">15</span><span class="t">Generator Mapping · linked, no mappings yet</span><span class="d">A generator is linked but nothing's mapped. Mapping is optional — map your first layer or part to add metadata.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes.</h2><p class="lede">A generator is linked. Mapping its layers and parts to attributes is optional — unmapped composition just won't produce metadata.</p></div><div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button class="active">Generator Mapping</button><button>Apply Values</button></div>
+          <div class="card card--tabbed">
+            <div class="card-tabs"><button class="active">Layer mapping</button><button>Part mapping</button></div>
+            <div class="card__head"><span class="tag tag--indigo">Generator: Lorem Drop No. 1</span></div>
+            <div class="tab-empty">
+              <strong>Map your first layer or part</strong>
+              <p>Nothing is mapped yet. Mapping is <strong>optional</strong> — map a layer or part to a trait to add metadata to tokens. Anything you leave unmapped simply won't produce a trait.</p>
+              <div class="acts"><button class="btn btn--primary">+ Map a layer</button><button class="btn btn--ghost">+ Map a part</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 ATTRIBUTES · Generator Mapping · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">16</span><span class="t">Generator Mapping · Live (read-only)</span><span class="d">Mappings locked at Live. Both sub-tabs stay browsable, read-only — no Add / Edit / Remove.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes. <span class="tag tag--green">Locked at Live</span></h2><p class="lede">The generator mappings tokens were derived from — locked when the collection went Live.</p></div><div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button class="active">Generator Mapping</button><button>Apply Values</button></div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live. Layer and part mappings are read-only — the attribute metadata buyers' tokens carry can't shift underneath them.</div></div>
+          <div class="card card--tabbed">
+            <div class="card-tabs"><button class="active">Layer mapping</button><button>Part mapping</button></div>
+            <div class="card__head"><h3>Layer mappings</h3><span class="tag tag--green">Locked · read-only</span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Background</span><span class="arrow">→</span><span class="trait">Background</span><span class="meta"><span class="tag">Layer</span></span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Body</span><span class="arrow">→</span><span class="trait">Body</span><span class="meta"><span class="tag">Layer</span></span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Headwear</span><span class="arrow">→</span><span class="trait">Headwear</span><span class="meta"><span class="tag">Layer</span></span></div>
+            <div class="map-row"><span class="src"><span class="sw"></span>Layer · Eyes</span><span class="arrow">→</span><span class="trait">Eyes</span><span class="meta"><span class="tag">Layer</span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 ATTRIBUTES · Generator Mapping · Live — no generator linked -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17</span><span class="t">Generator Mapping · Live — no generator linked</span><span class="d">A collection that launched without a generator, now Live. The tab is read-only and was never used — no layers or parts to map.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Hand-Drawn Owls</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes. <span class="tag tag--green">Locked at Live</span></h2><p class="lede">This collection launched without a generator — there were never any mappings to lock.</p></div><div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button class="active">Generator Mapping</button><button>Apply Values</button></div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live and launched <strong>without a linked generator</strong>, so Generator Mapping was never used. The tab is read-only.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Layer &amp; part mappings</h3><span class="tag tag--green">Locked · read-only</span></div>
+            <div class="tab-empty">
+              <strong>No generator — nothing was mapped</strong>
+              <p>This collection didn't use a Toko generator, so no layer or part mappings were ever created. Its tokens carry only the attributes set by hand.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 ATTRIBUTES · Generator Mapping · Map / remove modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">18</span><span class="t">Generator Mapping · Map &amp; remove modals</span><span class="d">Add, edit or remove a mapping. The Value field matches the target attribute's kind — Category, Boolean, Number, Text or Duration. A part rule overrides the layer rule for the same attribute.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Map layer</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Layer</label><select class="input"><option>Background</option><option selected>Body</option><option>Headwear</option><option>Eyes</option></select></div>
+              <div><label class="flabel">Maps to attribute</label><select class="input"><option selected>Body · Category</option><option>Background · Category</option><option>+ New attribute…</option></select></div>
+              <div><label class="flabel">Value</label><select class="input"><option selected>Use the selected part's name</option><option>Set a fixed value…</option></select><div class="hint">A layer covers many parts, so each token takes the value of whichever part it has. For a Category attribute, part names should match the attribute's values.</div></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>A layer rule is the fallback for every part in that layer. A part rule can override it.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Map layer</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Map part · Category attribute</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="grid2">
+                <div><label class="flabel">Layer</label><select class="input"><option selected>Headwear</option><option>Eyes</option><option>Aura</option></select></div>
+                <div><label class="flabel">Part</label><select class="input"><option selected>Gold Crown</option><option>Vine Crown</option><option>Top Hat</option></select></div>
+              </div>
+              <div><label class="flabel">Maps to attribute</label><select class="input"><option selected>Headwear · Category</option><option>Rarity · Category</option><option>+ New attribute…</option></select></div>
+              <div><label class="flabel">Value</label><select class="input"><option>None</option><option>Cap</option><option selected>Crown</option><option>Halo</option></select><div class="hint">Category attribute — pick one of its defined values.</div></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>This <strong>part rule overrides</strong> the <span class="mono">Headwear</span> layer rule for tokens that include Gold Crown.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Map part</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Map part · Boolean attribute</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="grid2">
+                <div><label class="flabel">Layer</label><select class="input"><option selected>Eyes</option><option>Aura</option></select></div>
+                <div><label class="flabel">Part</label><select class="input"><option selected>Laser Eyes</option><option>Void Eyes</option></select></div>
+              </div>
+              <div><label class="flabel">Maps to attribute</label><select class="input"><option selected>Has Laser Eyes · Boolean</option><option>Animated · Boolean</option><option>+ New attribute…</option></select></div>
+              <div><label class="flabel">Value</label><div class="seg"><button class="active">Yes</button><button>No</button></div><div class="hint">Boolean attribute — the value is a flag.</div></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>The <strong>Value</strong> field matches the attribute's kind: <strong>Category</strong> → pick a value · <strong>Boolean</strong> → Yes or No · <strong>Number / Decimal</strong> → a number · <strong>Text</strong> → free text or part name · <strong>Duration</strong> → a duration.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Map part</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Remove mapping?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0">This removes the mapping <strong>Part · Gold Crown → Headwear</strong>. Tokens that relied on it fall back to the <span class="mono">Headwear</span> layer rule — or carry no value for that attribute if there's no layer rule. Affected attribute metadata and scores are recomputed.</p>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Only possible while every token that uses this mapping is in <strong>Draft</strong>. This can't be undone.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove mapping</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 ATTRIBUTES · Apply Values · no attributes yet -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">19</span><span class="t">Apply Values · no attributes yet</span><span class="d">Nothing to map because no attributes exist. Points back to Manage Attributes.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes.</h2><p class="lede">Apply Values gives non-numeric trait values a number for scoring.</p></div><div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button class="active">Apply Values</button></div>
+          <div class="card">
+            <div class="card__head"><h3>Numeric value mapping</h3><span class="tag tag--amber">No attributes</span></div>
+            <div class="tab-empty">
+              <strong>No attributes yet</strong>
+              <p>There's nothing to map until you've added some attributes. Create them on <strong>Manage Attributes</strong> first; any non-numeric values will appear here for scoring.</p>
+              <button class="btn btn--primary">Go to Manage Attributes →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 ATTRIBUTES · Apply Values · nothing to map (all numeric) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">20</span><span class="t">Apply Values · nothing to map</span><span class="d">All attributes are already numbers that feed the score directly — no non-numeric values to assign.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes.</h2><p class="lede">Numeric attributes feed the score directly and need no mapping.</p></div><div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button class="active">Apply Values</button></div>
+          <div class="card">
+            <div class="card__head"><h3>Numeric value mapping</h3><span class="tag tag--green">Nothing to do</span></div>
+            <div class="tab-empty">
+              <strong>Nothing to assign</strong>
+              <p>All of your attributes are already numbers — <span class="mono">power</span>, <span class="mono">speed</span>, <span class="mono">armour</span> — so they feed the score directly. There are no non-numeric values to map here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 ATTRIBUTES · Apply Values · many attributes (paginated) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">21</span><span class="t">Apply Values · many attributes (paginated)</span><span class="d">With more than 10 mappable attributes, values are paged 10 at a time. Same &gt;10 rule as Generator Mapping.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes.</h2><p class="lede">A trait-heavy collection. Map each non-numeric value to a number; the list pages 10 attributes at a time.</p></div><div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button class="active">Apply Values</button></div>
+          <div class="card">
+            <div class="card__head"><h3>Numeric value mapping</h3><span class="tag">Method: Add Values</span></div>
+            <p class="card__intro">This collection has more than 10 mappable attributes, so they're paged 10 at a time. Each row shows its status; a required attribute with missing values blocks Review.</p>
+            <div class="attr-list">
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Background</div><div class="a-key">Category · 3 values</div></div><div class="a-right"><span class="badge badge--req">Required</span><span class="tag tag--green">All values mapped</span><button class="icon-btn" title="Edit mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Clear mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Eyes</div><div class="a-key">Category · 3 values</div></div><div class="a-right"><span class="badge badge--opt">Optional</span><span class="tag tag--green">All values mapped</span><button class="icon-btn" title="Edit mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Clear mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Headwear</div><div class="a-key">Category · 4 values</div></div><div class="a-right"><span class="badge badge--req">Required</span><span class="tag tag--green">All values mapped</span><button class="icon-btn" title="Edit mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Clear mapping"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Aura</div><div class="a-key">Category · 3 values</div></div><div class="a-right"><span class="badge badge--opt">Optional</span><span class="tag tag--amber">2 of 3 mapped</span><button class="btn btn--ghost btn--sm">Map values</button></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Class</div><div class="a-key">Category · 4 values</div></div><div class="a-right"><span class="badge badge--req">Required</span><span class="req-badge">Needs values</span><button class="btn btn--primary btn--sm">Map values</button></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Material</div><div class="a-key">Category · 5 values</div></div><div class="a-right"><span class="badge badge--opt">Optional</span><span class="tag">Not mapped</span><button class="btn btn--ghost btn--sm">Map values</button></div></div>
+            </div>
+            <div class="listbar">
+              <span class="results-count">Showing <strong>1–10</strong> of <strong>22</strong> attributes</span>
+              <nav class="pg" aria-label="Pagination"><button disabled aria-label="Previous"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button><button aria-current="page">1</button><button>2</button><button>3</button><button aria-label="Next"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button></nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21 ATTRIBUTES · Apply Values · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">22</span><span class="t">Apply Values · Live (read-only)</span><span class="d">Value mappings locked at Live. Numbers stay visible for reference; inputs are disabled.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Collection · Attributes</div><h2>Attributes. <span class="tag tag--green">Locked at Live</span></h2><p class="lede">The numeric value mappings scores were built from — locked when the collection went Live.</p></div><div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span></div></div>
+          <div class="subtabs"><button>Manage Attributes</button><button>Calculation</button><button>Generator Mapping</button><button class="active">Apply Values</button></div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live, so value mappings are read-only — changing them would change scores buyers already saw.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Numeric value mapping</h3><span class="tag tag--green">Locked · read-only</span></div>
+            <p class="card__intro">Each non-numeric attribute and its mapping status as it launched. Read-only at Live.</p>
+            <div class="attr-list">
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Background</div><div class="a-key">Category · 3 values</div></div><div class="a-right"><span class="badge badge--req">Required</span><span class="tag tag--green">All values mapped</span></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Eyes</div><div class="a-key">Category · 3 values</div></div><div class="a-right"><span class="badge badge--opt">Optional</span><span class="tag tag--green">All values mapped</span></div></div>
+              <div class="attr-row"><div class="a-main"><div class="a-lbl">Class</div><div class="a-key">Category · 4 values</div></div><div class="a-right"><span class="badge badge--req">Required</span><span class="tag tag--green">All values mapped</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23 ATTRIBUTES · Apply Values · Map values modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">23</span><span class="t">Apply Values · Map values modal</span><span class="d">Opened from a row's Map values / Edit. Give each of the attribute's values a number; required attributes must have every value set before Review.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Map values · Eyes</h4><span class="badge badge--opt" style="margin-left:.5rem;margin-right:auto">Optional</span><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p class="card__intro" style="margin:0">Give each value a number for scoring (method: Add Values). Optional attribute — values left blank contribute nothing.</p>
+              <div class="val-card">
+                <div class="vh"><span>Eyes <span class="tag tag--indigo">Category</span></span><span class="tiny">3 values</span></div>
+                <div class="val-row"><span>Plain</span><input type="number" value="0"></div>
+                <div class="val-row"><span>Glow</span><input type="number" value="25"></div>
+                <div class="val-row"><span>Laser</span><input type="number" placeholder="—"></div>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save values</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Map values · Class</h4><span class="req-badge" style="margin-left:.5rem;margin-right:auto">Required</span><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p class="card__intro" style="margin:0">Required attribute — every value must have a number before the collection can go to Review.</p>
+              <div class="val-card">
+                <div class="vh"><span>Class <span class="tag tag--indigo">Category</span></span><span class="tiny">4 values</span></div>
+                <div class="val-row"><span>Knight</span><input type="number" value="20"></div>
+                <div class="val-row"><span>Mage</span><input type="number" value="40"></div>
+                <div class="val-row"><span>Ranger</span><input type="number" placeholder="—" style="border-color:rgba(239,68,68,.55)"></div>
+                <div class="val-row"><span>Rogue</span><input type="number" placeholder="—" style="border-color:rgba(239,68,68,.55)"></div>
+              </div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">2 of 4 values still need a number.</strong> You can save progress, but Review is blocked until every value is set.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save values</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

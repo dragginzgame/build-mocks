@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Projects · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:64ch; }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-3xl); }
+  .section-head .row { flex-wrap:wrap; justify-content:flex-end; }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .dash-link { color:var(--text-secondary); font-size:var(--text-sm); }
+
+  /* project cards */
+  .projects-grid { display:grid; gap:var(--s-5); grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); }
+  .project-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .project-card .banner { aspect-ratio:16/8; }
+  .project-card .meta { padding:var(--s-4) var(--s-5); }
+  .project-card .meta .ttl { font-family:var(--font-display); font-weight:400; font-size:1.0625rem; }
+  .project-card .meta .sub { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.125rem; }
+  .project-card .stats { display:flex; gap:var(--s-4); margin-top:var(--s-4); padding-top:var(--s-3); border-top:1px solid var(--border-soft); }
+  .project-card .stats .n { font-family:var(--font-display); font-size:var(--text-xl); }
+  .project-card .stats .l { font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.1em; color:var(--text-secondary); }
+  .new-proj-tile { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-4); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:var(--s-8); gap:var(--s-3); color:var(--text-secondary); min-height:260px; }
+  .new-proj-tile .plus { width:56px; height:56px; border-radius:50%; background:var(--surface-canvas); border:1px solid currentColor; display:inline-flex; align-items:center; justify-content:center; }
+
+  /* empty-state hero */
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } }
+
+  /* empty-state info (facts + what's inside) */
+  .fact-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); margin-top:var(--s-6); }
+  .fact-strip .fact { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .fact-strip .fact .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .fact-strip .fact h4 { font-size:var(--text-lg); margin:.5rem 0; letter-spacing:0; text-transform:none; font-family:var(--font-body); font-weight:700; }
+  .fact-strip .fact p { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.5; margin:0; }
+  @media (max-width:680px){ .fact-strip { grid-template-columns:1fr; } }
+  .inside-row { margin-top:var(--s-8); text-align:center; }
+  .inside-row .lbl { margin-bottom:var(--s-4); }
+  .inside-row .items { display:inline-flex; align-items:center; gap:1rem; flex-wrap:wrap; justify-content:center; font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .inside-row .items > span { display:flex; flex-direction:column; align-items:center; gap:.375rem; }
+  .inside-row .items .sw { width:44px; height:44px; border-radius:10px; }
+  .inside-row .items .plus { color:var(--text-muted); }
+
+  /* modal */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:space-between; align-items:center; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .m-field + .m-field { margin-top:var(--s-5); }
+  .dropzone { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); color:var(--text-secondary); font-size:var(--text-base); text-align:center; display:flex; align-items:center; justify-content:center; padding:var(--s-5); }
+  .dropzone strong { color:var(--text-primary); font-weight:700; }
+  .thumb-pick { display:flex; gap:var(--s-4); flex-wrap:wrap; }
+  .thumb-opt { aspect-ratio:1/1; width:150px; border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.375rem; text-align:center; color:var(--text-secondary); cursor:pointer; padding:var(--s-3); }
+  .thumb-opt:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .thumb-opt svg { color:var(--text-muted); }
+  .thumb-opt:hover svg { color:var(--text-primary); }
+  .thumb-opt strong { color:var(--text-primary); font-weight:700; font-size:var(--text-sm); }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .art1{background:linear-gradient(135deg,#3b2c8f,#7d5fd6);} .art2{background:linear-gradient(135deg,#0f5d52,#16a34a);}
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Projects — states &amp; stages.</h1>
+      <p>The all-projects studio entry — the top-level workspace picker. A project is the workspace for everything you make on Toko. Populated with the New-project tile and project cards, plus the first-run empty state.</p>
+    </header>
+
+    <!-- 01 PROJECTS · populated -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Projects · populated</span><span class="d">Header on grey, white New-project tile first, project cards with collection / generator / vendor counts.</span></div>
+      <div class="screen">
+        <div class="section" style="padding-bottom:0">
+          <div class="section-head">
+            <div><div class="eyebrow">Studio · all projects</div><h2>Your projects.</h2><p class="lede">A project is the top-level workspace for everything you make on Toko.</p></div>
+          </div>
+        </div>
+        <div class="section" style="padding-top:0">
+          <div class="projects-grid">
+            <button class="new-proj-tile"><span class="plus"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><div style="text-align:center"><div class="ttl" style="font-family:var(--font-display);font-size:var(--text-2xl)">New project</div><div class="tiny" style="margin-top:.375rem">Start from scratch or duplicate one</div></div></button>
+            <div class="project-card"><div class="banner art1"></div><div class="meta"><div class="ttl">Ipsum Studio</div><div class="sub">Spring 2026 · You're the Creator</div><div class="stats"><div><div class="n">5</div><div class="l">Collections</div></div><div><div class="n">4</div><div class="l">Generators</div></div><div><div class="n">7</div><div class="l">Vendors</div></div></div></div></div>
+            <div class="project-card"><div class="banner art2"></div><div class="meta"><div class="ttl">Dolor Labs</div><div class="sub">2025 · Admin</div><div class="stats"><div><div class="n">2</div><div class="l">Collections</div></div><div><div class="n">1</div><div class="l">Generators</div></div><div><div class="n">3</div><div class="l">Vendors</div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 PROJECTS · empty -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Projects · empty</span><span class="d">First-run, no projects yet — page title + intro, then the hero, then the message and CTA.</span></div>
+      <div class="screen"><div class="section">
+        <div class="section-head"><div><div class="eyebrow">Studio · all projects</div><h2>Your projects.</h2><p class="lede">A project is the top-level workspace for everything you make on Toko.</p></div></div>
+        <div class="empty-hero">
+          <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_projects.jpg" alt="Studio entry — no projects yet"></div>
+          <div class="empty-hero__body">
+            <h3 class="empty-hero__ttl">Let's start with a project.</h3>
+            <p class="empty-hero__sub">A project is your workspace on Toko — everything you make lives inside one. Collections, generators, vendors, media, team access, royalties.</p>
+            <div class="empty-hero__cta"><button class="btn btn--primary">Create your first project</button><button class="btn btn--ghost">Browse examples →</button></div>
+          </div>
+        </div>
+        <div class="fact-strip">
+          <div class="fact"><div class="num">01</div><h4>One project, many collections</h4><p>Most studios run several themed drops under one project — spring, summer, special editions. Team, beneficiaries, and whitelists are shared across them.</p></div>
+          <div class="fact"><div class="num">02</div><h4>Bring your team in early</h4><p>Add collaborators by principal. Roles like Super Admin, Treasurer, Admin, and Maintainer decide what each person can do.</p></div>
+          <div class="fact"><div class="num">03</div><h4>You can ship without code</h4><p>Define a collection, set up a generator or upload tokens, configure a vendor, and you're live on the Launchpad — no contracts to deploy.</p></div>
+        </div>
+        <div class="inside-row">
+          <div class="eyebrow lbl">What's inside a project</div>
+          <div class="items">
+            <span><span class="sw" style="background:linear-gradient(135deg,#FDE68A,#F472B6)"></span>Collections</span>
+            <span class="plus">+</span>
+            <span><span class="sw" style="background:linear-gradient(135deg,#1D1D1D,#6366F1)"></span>Generators</span>
+            <span class="plus">+</span>
+            <span><span class="sw" style="background:linear-gradient(135deg,#6EE7B7,#38BDF8)"></span>Vendors</span>
+            <span class="plus">+</span>
+            <span><span class="sw" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></span>Media</span>
+            <span class="plus">+</span>
+            <span><span class="sw" style="background:linear-gradient(135deg,#A78BFA,#10B981)"></span>Team</span>
+            <span class="plus">+</span>
+            <span><span class="sw" style="background:linear-gradient(135deg,#6366F1,#10B981)"></span>Beneficiaries</span>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- 03 NEW PROJECT · modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">New project · modal</span><span class="d">Name, description, and a square thumbnail (drop an image or pick from the media library).</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>New project</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><label class="flabel">Project name</label><input class="input" placeholder="e.g. Ipsum Studio"></div>
+            <div class="m-field"><label class="flabel">Description</label><textarea class="input" style="min-height:84px;resize:vertical" placeholder="What is this project about?"></textarea></div>
+            <div class="m-field"><label class="flabel">Thumbnail</label>
+              <div class="thumb-pick">
+                <button class="thumb-opt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><strong>Upload</strong><span class="tiny">Drop or browse</span></button>
+                <button class="thumb-opt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><strong>Media library</strong><span class="tiny">Pick a thumbnail</span></button>
+              </div>
+              <div class="tiny" style="margin-top:.375rem">Square image — shown as the project avatar. The library picker shows square thumbnails.</div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Create &amp; open</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

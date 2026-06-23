@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Access · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:64ch; }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-3xl); }
+  .section-head h3 { margin-top:.375rem; font-size:var(--text-2xl); }
+  .dash-link { color:var(--text-secondary); font-size:var(--text-sm); }
+  .dash-link:hover { color:var(--text-primary); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); }
+  .icon-btn:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .icon-btn--danger { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+  .chip { display:inline-flex; align-items:center; padding:2px 8px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-alt); color:var(--text-secondary); border:1px solid var(--border-soft); }
+
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .access-layout { display:grid; grid-template-columns:1fr 320px; gap:var(--s-6); align-items:start; }
+  @media (max-width:880px){ .access-layout { grid-template-columns:1fr; } }
+
+  /* members table */
+  .members-table { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .members-table .row { display:grid; grid-template-columns:40px 1.6fr 1fr 1fr auto; gap:var(--s-4); align-items:center; padding:.875rem var(--s-5); }
+  .members-table .row + .row { border-top:1px solid var(--border-soft); }
+  .members-table .row.head { background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-size:var(--text-3xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; }
+  .members-table .av { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#FCA5A5,#B91C1C); }
+  .members-table .nm { font-weight:600; font-size:var(--text-base); }
+  .members-table .em { font-size:var(--text-xs); color:var(--text-secondary); font-family:ui-monospace,monospace; }
+  .members-table .acts { display:flex; gap:.375rem; }
+  @media (max-width:680px){ .members-table .row { grid-template-columns:32px 1fr auto; } .members-table .c-hide { display:none; } }
+
+  /* role pills */
+  .role-pill { display:inline-flex; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.1em; text-transform:uppercase; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); color:var(--text-secondary); }
+  .role-pill--creator{background:var(--text-primary);color:#fff;border-color:transparent;}
+  .role-pill--superadmin{background:rgba(99,102,241,.18);color:var(--stage-review);border-color:transparent;}
+  .role-pill--treasurer{background:rgba(245,158,11,.16);color:var(--stage-draft);border-color:transparent;}
+  .role-pill--admin{background:rgba(37,99,235,.12);color:#2563EB;border-color:transparent;}
+  .role-pill--maintainer{background:rgba(16,185,129,.14);color:var(--stage-live);border-color:transparent;}
+  .role-pill--trusted{background:rgba(244,114,182,.16);color:#BE185D;border-color:transparent;}
+  .role-pill--reviewer{background:var(--surface-canvas-alt);color:var(--text-secondary);}
+
+  /* role reference */
+  .role-ref { display:grid; gap:var(--s-5); }
+  .role-ref .grp-label { font-family:var(--font-emphasis); font-size:var(--text-3xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:var(--s-3); }
+  .role-ref .role-def { display:grid; grid-template-columns:140px 1fr; gap:var(--s-3); padding:.625rem 0; border-top:1px solid var(--border-soft); align-items:start; }
+  .role-ref .role-def:first-of-type { border-top:0; }
+  .role-ref .role-def .desc { font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; }
+  @media (max-width:640px){ .role-ref .role-def { grid-template-columns:1fr; gap:.25rem; } }
+  .wl-role-row { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.875rem var(--s-5); }
+  .wl-role-row + .wl-role-row { border-top:1px solid var(--border-soft); }
+  .wl-role-row .info { display:flex; align-items:center; gap:.75rem; }
+  .wl-role-row .info .nm { font-weight:600; }
+
+  /* empty-state: section-head (title+text) → hero → body + extras underneath */
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+  .explainer { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-8); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8); margin-top:var(--s-8); }
+  .explainer h3 { margin-bottom:var(--s-3); font-size:var(--text-2xl); }
+  .explainer p { color:var(--text-secondary); font-size:var(--text-base); line-height:1.6; }
+  .explainer .visual { background:var(--surface-canvas-alt); border-radius:var(--r-3); padding:var(--s-5); display:flex; align-items:center; justify-content:center; }
+  @media (max-width:760px){ .explainer { grid-template-columns:1fr; } }
+  .fact-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); margin-top:var(--s-6); }
+  .fact-strip .fact { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .fact-strip .fact .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .fact-strip .fact h4 { font-size:var(--text-lg); margin:.5rem 0; letter-spacing:0; text-transform:none; font-family:var(--font-body); font-weight:700; }
+  .fact-strip .fact p { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.5; margin:0; }
+  @media (max-width:680px){ .fact-strip { grid-template-columns:1fr; } }
+
+  /* modals */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-8); display:flex; flex-wrap:wrap; gap:var(--s-5); align-items:flex-start; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:space-between; align-items:center; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .fhint { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.375rem; line-height:1.5; }
+  .m-field + .m-field { margin-top:var(--s-5); }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border-radius:var(--r-pill); padding:4px; border:1px solid var(--border-soft); }
+  .seg button { border:0; background:transparent; padding:.375rem .875rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); }
+  .seg button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .btn--danger-solid { background:var(--notify-error); color:#fff; border-color:var(--notify-error); }
+
+  /* concertina (native <details>) */
+  details.acc { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; background:var(--surface-canvas); }
+  details.acc + details.acc { margin-top:var(--s-3); }
+  details.acc > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); }
+  details.acc > summary::-webkit-details-marker { display:none; }
+  details.acc > summary .s-ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); display:inline-flex; align-items:center; gap:.5rem; }
+  details.acc > summary .count { margin-left:auto; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); }
+  details.acc > summary .chev { color:var(--text-secondary); transition:transform .15s; flex:none; }
+  details.acc[open] > summary .chev { transform:rotate(180deg); }
+  details.acc .acc-body { border-top:1px solid var(--border-soft); padding:var(--s-5); }
+  details.acc .acc-body.flush { padding:0; }
+  /* bulk-assignment rows (whitelist or individual target) */
+  .ba-row { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.75rem var(--s-5); }
+  .ba-row + .ba-row { border-top:1px solid var(--border-soft); }
+  .ba-row .who { display:flex; align-items:center; gap:.75rem; min-width:0; }
+  .ba-row .tgt-ic { width:32px; height:32px; border-radius:8px; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); flex:none; }
+  .ba-row .nm { font-weight:600; }
+  .ba-row .tgt-chip { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:1px 7px; margin-left:.375rem; }
+  .ba-row .sub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.0625rem; }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Access — states &amp; stages.</h1>
+      <p>Project-scoped access: members and their roles, the default-role reference, roles assigned in bulk to whitelists, and the first-run empty state. Add a principal once and they can work on any collection inside the project.</p>
+    </header>
+
+    <!-- 01 MEMBERS -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Access · populated</span><span class="d">One page — members table with row actions and going-live / managing-access notes, the default-role reference, and roles assigned to whitelists.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Access</span><div class="actions"><a class="dash-link" href="#">Preview empty state →</a><button class="btn btn--primary btn--sm">+ Add member</button></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Access</div><h2>Members.</h2><p class="lede">Members of this project, the roles they have, and what each role can do. Access is project-scoped — add a principal once and they can work on any collection inside it.</p></div></div>
+          <div class="access-layout">
+            <div class="members-table">
+              <div class="row head"><div></div><div>Member</div><div>Role</div><div class="c-hide">Last active</div><div></div></div>
+              <div class="row"><span class="av"></span><div><div class="nm">Mara Okafor <span class="chip" style="margin-left:.25rem">You</span></div><div class="em">p2x9…hb4q</div></div><div><span class="role-pill role-pill--creator">Creator</span></div><div class="c-hide tiny">Active now</div><div class="acts"><button class="icon-btn" title="Transfer ownership"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M21 3l-7 7"/><path d="M8 21H3v-5"/><path d="M3 21l7-7"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#6366F1,#10B981)"></span><div><div class="nm">Kai Nguyen</div><div class="em">b8x4…aaae</div></div><div><span class="role-pill role-pill--superadmin">Super Admin</span></div><div class="c-hide tiny">2 h ago</div><div class="acts"><button class="icon-btn" title="Edit role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove member"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></span><div><div class="nm">Renée Okafor</div><div class="em">k1m9…7uvw</div></div><div><span class="role-pill role-pill--admin">Admin</span></div><div class="c-hide tiny">5 h ago</div><div class="acts"><button class="icon-btn" title="Edit role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove member"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#F472B6,#6366F1)"></span><div><div class="nm">Jamie Lin</div><div class="em">q9y7…aaae</div></div><div><span class="role-pill role-pill--maintainer">Maintainer</span></div><div class="c-hide tiny">Yesterday</div><div class="acts"><button class="icon-btn" title="Edit role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove member"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#10B981,#1E3A8A)"></span><div><div class="nm">Mateus Silva</div><div class="em">z3v6…mn2p</div></div><div><span class="role-pill role-pill--treasurer">Treasurer</span></div><div class="c-hide tiny">3 d ago</div><div class="acts"><button class="icon-btn" title="Edit role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove member"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#A78BFA,#F472B6)"></span><div><div class="nm">Avery Hong</div><div class="em">h7c4…tt8w</div></div><div><span class="role-pill role-pill--maintainer">Maintainer</span></div><div class="c-hide tiny">1 w ago</div><div class="acts"><button class="icon-btn" title="Edit role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove member"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            </div>
+            <aside>
+              <div class="panel"><h4 style="font-size:var(--text-sm);margin-bottom:var(--s-2)">Going Live</h4><p class="tiny" style="line-height:1.6">Admin and above — <strong>Admin</strong>, <strong>Treasurer</strong>, <strong>Super Admin</strong>, and the <strong>Creator</strong> — can set a token, collection, or vendor Live. Maintainers can build everything but can't take it Live.</p></div>
+              <div class="panel" style="margin-top:var(--s-4)"><h4 style="font-size:var(--text-sm);margin-bottom:var(--s-2)">Managing access</h4><p class="tiny" style="line-height:1.6">Only the <strong>Creator</strong> and <strong>Super Admin</strong> can change who has access. The Creator role is unique: only the Creator can hand it to someone else, and they're demoted to Super Admin when they do.</p></div>
+            </aside>
+          </div>
+          <div class="section-head" style="margin-top:var(--s-10)"><div><div class="eyebrow">Roles</div><h2 style="font-size:var(--text-2xl)">Roles &amp; assignments.</h2><p class="tiny">What each role can do, and who holds the bulk roles. Sections collapse so the page stays short as assignments grow.</p></div><div class="row"><button class="btn btn--ghost btn--sm">+ Assign bulk role</button></div></div>
+          <details class="acc">
+            <summary><span class="s-ttl">What each role can do</span><span class="count">7 roles</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body">
+              <div class="role-ref">
+                <div>
+                  <div class="grp-label">Administrative roles · assigned to people</div>
+                  <div class="role-def"><div><span class="role-pill role-pill--creator">Creator</span></div><div class="desc">Project owner with full rights, and the only role that can transfer ownership. Unique — passing it on demotes the Creator to Super Admin.</div></div>
+                  <div class="role-def"><div><span class="role-pill role-pill--superadmin">Super Admin</span></div><div class="desc">Full project admin rights, and can manage user access for everyone except the Creator.</div></div>
+                  <div class="role-def"><div><span class="role-pill role-pill--treasurer">Treasurer</span></div><div class="desc">Full project admin rights plus funding permissions, including withdrawals.</div></div>
+                  <div class="role-def"><div><span class="role-pill role-pill--admin">Admin</span></div><div class="desc">Full project admin rights, but can't manage users.</div></div>
+                  <div class="role-def"><div><span class="role-pill role-pill--maintainer">Maintainer</span></div><div class="desc">Can edit tokens, assets, and generators — set everything up, but can't set anything Live.</div></div>
+                </div>
+                <div>
+                  <div class="grp-label">Bulk roles · assigned to a whitelist or individual</div>
+                  <div class="role-def"><div><span class="role-pill role-pill--trusted">Trusted</span></div><div class="desc">Can use live generators and pin assets for review — e.g. fans you let create tokens with one of your generators.</div></div>
+                  <div class="role-def"><div><span class="role-pill role-pill--reviewer">Reviewer</span></div><div class="desc">Read-only access to unreleased collections, tokens, and assets — e.g. a press sneak peek. View-only; it does not grant approval permissions.</div></div>
+                </div>
+              </div>
+            </div>
+          </details>
+          <div class="eyebrow" style="margin:var(--s-6) 0 var(--s-3)">Bulk role assignments · Trusted &amp; Reviewer</div>
+          <details class="acc" open>
+            <summary><span class="s-ttl"><span class="role-pill role-pill--reviewer">Reviewer</span></span><span class="count">3 assignments</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body flush">
+              <div class="ba-row"><div class="who"><span class="tgt-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><div class="nm">Newsletter alpha <span class="tgt-chip">Whitelist · 88</span></div><div class="sub">read-only preview of unreleased work</div></div></div><div class="row"><button class="icon-btn" title="Change role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove assignment"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="ba-row"><div class="who"><span class="tgt-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><div class="nm">Press preview <span class="tgt-chip">Whitelist · 12</span></div><div class="sub">read-only preview of unreleased work</div></div></div><div class="row"><button class="icon-btn" title="Change role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove assignment"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="ba-row"><div class="who"><span class="tgt-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><div><div class="nm">Jordan Lee <span class="tgt-chip">Individual</span></div><div class="sub">x7p2…m4qd</div></div></div><div class="row"><button class="icon-btn" title="Change role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove assignment"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            </div>
+          </details>
+          <details class="acc">
+            <summary><span class="s-ttl"><span class="role-pill role-pill--trusted">Trusted</span></span><span class="count">2 assignments</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body flush">
+              <div class="ba-row"><div class="who"><span class="tgt-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><div class="nm">Team-only <span class="tgt-chip">Whitelist · 6</span></div><div class="sub">use live generators &amp; pin assets for review</div></div></div><div class="row"><button class="icon-btn" title="Change role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove assignment"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="ba-row"><div class="who"><span class="tgt-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><div><div class="nm">Sam Rivera <span class="tgt-chip">Individual</span></div><div class="sub">q4w8…7yht</div></div></div><div class="row"><button class="icon-btn" title="Change role"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Remove assignment"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 EMPTY (new layout) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Empty</span><span class="d">Page title + intro, then the hero, then the message, CTA, and the two-groups-of-roles explainer &amp; facts underneath.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Access</span></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Access</div><h2>Members.</h2><p class="lede">Members of this project, their roles, and what each role can do.</p></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_access.jpg" alt="Access — no members yet"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">Bring your team in.</h3>
+              <p class="empty-hero__sub">Permissions decide who can do what in this project. Add a collaborator by principal and pick a role — they'll inherit access to everything inside the project.</p>
+              <div class="empty-hero__cta"><button class="btn btn--primary">Add a member</button></div>
+            </div>
+          </div>
+          <div class="explainer">
+            <div>
+              <div class="eyebrow" style="color:var(--stage-review)">Two groups of roles</div>
+              <h3 style="margin-top:.5rem">Administrative &amp; bulk roles.</h3>
+              <p><strong>Administrative roles</strong> are assigned to people. <strong>Creator</strong> is the unique project owner with full rights and the only one who can transfer ownership. <strong>Super Admin</strong> manages access; <strong>Treasurer</strong> adds funding and withdrawals; <strong>Admin</strong> has full admin rights but can't manage users; <strong>Maintainer</strong> builds tokens, assets, and generators.</p>
+              <p style="margin-top:var(--s-3)"><strong>Bulk roles</strong> attach to a whitelist, not individuals. <strong>Trusted</strong> can use live generators and pin assets for review; <strong>Reviewer</strong> gets a read-only preview of unreleased work. Roles are fixed for now and apply to the whole project.</p>
+            </div>
+            <div class="visual">
+              <div style="width:100%;display:grid;gap:.875rem">
+                <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);padding:1rem;border-radius:var(--r-3)">
+                  <div style="font-family:var(--font-emphasis);font-size:var(--text-3xs);letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary);font-weight:700;margin-bottom:.625rem">Administrative · people</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:.375rem"><span class="role-pill role-pill--creator">Creator</span><span class="role-pill role-pill--superadmin">Super Admin</span><span class="role-pill role-pill--treasurer">Treasurer</span><span class="role-pill role-pill--admin">Admin</span><span class="role-pill role-pill--maintainer">Maintainer</span></div>
+                </div>
+                <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);padding:1rem;border-radius:var(--r-3)">
+                  <div style="font-family:var(--font-emphasis);font-size:var(--text-3xs);letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary);font-weight:700;margin-bottom:.625rem">Bulk · whitelists</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:.375rem"><span class="role-pill role-pill--trusted">Trusted</span><span class="role-pill role-pill--reviewer">Reviewer</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fact-strip">
+            <div class="fact"><div class="num">01</div><h4>Creator is unique</h4><p>Full project rights and the only role that can transfer ownership — handing it over demotes you to Super Admin. Not assignable through the normal add-member flow.</p></div>
+            <div class="fact"><div class="num">02</div><h4>Admin &amp; above go Live</h4><p>Admin, Treasurer, Super Admin, and the Creator can set tokens, collections, and vendors Live. Maintainers build, but can't take it Live.</p></div>
+            <div class="fact"><div class="num">03</div><h4>Bulk roles for groups</h4><p>Trusted and Reviewer attach to a whitelist — let fans use a generator, or give a group a read-only preview before launch.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 ADD MEMBER · individual -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Add member · core role (individual)</span><span class="d">Administrative roles only — added by principal, access is immediate. Bulk roles aren't offered here.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Add member</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><label class="flabel">Principal</label><input class="input" value="p2x9-hcvz-7uvw-kx9m-hb4q-aaae-q" style="font-family:ui-monospace,monospace;font-size:var(--text-sm)"><div class="fhint">Members are added by principal — they get access immediately, no email invite.</div></div>
+            <div class="m-field"><label class="flabel">Role</label><select class="input"><option>Creator — transfers ownership (you become Super Admin)</option><option>Super Admin — full admin, can manage users</option><option>Treasurer — admin plus funding &amp; withdrawals</option><option>Admin — full admin, can't manage users</option><option selected>Maintainer — edit tokens, assets &amp; generators</option></select><div class="fhint">Trusted and Reviewer are bulk roles — assign them to a whitelist, not to an individual. Only the Creator can hand off the Creator role.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add member</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 ASSIGN BULK ROLE · whitelist or individual -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Assign a bulk role · whitelist or individual</span><span class="d">Bulk roles (Trusted / Reviewer) can target a whole whitelist or a single principal — note the new "Assign to" toggle.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Assign a bulk role</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><label class="flabel">Assign to</label><div class="seg"><button aria-pressed="true">Whitelist</button><button>Individual</button></div><div class="fhint">A whitelist grants the role to everyone on the list; Individual grants it to a single principal.</div></div>
+            <div class="m-field"><label class="flabel">Whitelist</label><select class="input"><option>Newsletter alpha · 88</option><option>Genesis holders · 412</option><option>Team-only · 6</option></select><div class="fhint">Everyone on the list gets the role across the project. <span style="color:var(--text-muted)">(Switch to Individual to enter a single principal instead.)</span></div></div>
+            <div class="m-field"><label class="flabel">Role</label><select class="input"><option selected>Trusted — use live generators &amp; pin assets for review</option><option>Reviewer — read-only preview of unreleased work</option></select></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Assign role</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 TRANSFER OWNERSHIP · creator only -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Transfer ownership · Creator only</span><span class="d">Hands the Creator role to a member or a new principal; the current Creator is demoted to Super Admin.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Transfer ownership</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0 0 var(--s-5);font-size:var(--text-sm);line-height:1.6">Hand the <strong>Creator</strong> role to someone else. They get full project rights, including the ability to transfer ownership again — and you'll be demoted to <strong>Super Admin</strong>. Only the Creator can do this.</p>
+            <div class="m-field"><label class="flabel">New creator — existing member</label><select class="input"><option>Select a member…</option><option>Kai Nguyen · Super Admin</option><option>Renée Okafor · Admin</option><option>Mateus Silva · Treasurer</option></select></div>
+            <div class="m-field"><label class="flabel">…or a new principal</label><input class="input" value="p2x9-hcvz-7uvw-kx9m-hb4q-aaae-q" style="font-family:ui-monospace,monospace;font-size:var(--text-sm)"><div class="fhint">Enter a principal to add and promote them straight to Creator.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Transfer ownership</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 EDIT ROLE · member & bulk assignment -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Edit role · member &amp; bulk assignment</span><span class="d">Change an individual member's role, or change the role assigned to a whitelist.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Edit member</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0 0 var(--s-5);font-size:var(--text-sm)">Change the role for <strong>Kai Nguyen</strong>.</p>
+            <div class="m-field"><label class="flabel">Role</label><select class="input"><option selected>Super Admin — full admin, can manage users</option><option>Treasurer — admin plus funding &amp; withdrawals</option><option>Admin — full admin, can't manage users</option><option>Maintainer — edit tokens, assets &amp; generators</option></select><div class="fhint">Trusted and Reviewer are bulk roles — assign them to a whitelist, not to an individual. To hand off the Creator role, use Transfer ownership.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Change role</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0 0 var(--s-5);font-size:var(--text-sm)">Change the bulk role for <strong>Newsletter alpha</strong>.</p>
+            <div class="m-field"><label class="flabel">Role</label><select class="input"><option>Trusted — use live generators &amp; pin assets for review</option><option selected>Reviewer — read-only preview of unreleased work</option></select></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 REMOVE · member & role assignment -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Remove · member &amp; role assignment</span><span class="d">Remove an individual from the project, or remove a bulk role from a whitelist — the list itself stays.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Remove member?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0;font-size:var(--text-sm);line-height:1.6">You're about to remove <strong>"Kai Nguyen"</strong> from the project. They'll lose access immediately. You can add them back later by principal.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid">Remove member</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Remove role assignment?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0;font-size:var(--text-sm);line-height:1.6">Remove the <strong>Reviewer</strong> role from <strong>Newsletter alpha</strong>? Everyone on that whitelist loses Reviewer access. The whitelist itself stays.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid">Remove role</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Project · Revenue presets</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:none; }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { opacity:.45; cursor:not-allowed; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .sb { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .sb .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sb--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .sb--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .sb--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .sb--grey { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); flex-wrap:wrap; }
+  .card__head h3 { font-size:var(--text-xl); }
+  .card__head .sub { font-size:var(--text-xs); color:var(--text-muted); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:12px 14px; font:inherit; color:var(--text-primary); }
+  .input:focus { outline:2px solid var(--text-primary); outline-offset:1px; }
+  .input::placeholder { color:var(--text-muted); }
+  select.input { appearance:auto; }
+  textarea.input { resize:vertical; min-height:92px; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .seg button[disabled] { opacity:.5; cursor:not-allowed; }
+  .search { position:relative; flex:1; min-width:200px; }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .info-note strong { color:var(--text-primary); }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .lock-note { background:var(--surface-canvas-deep); } .lock-note .ic { color:var(--text-muted); }
+  .lockpill { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; padding:3px 10px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:5px; }
+  .lockpill--lock { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .lockpill--locked { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; } .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+
+  /* ---- preset list cards (Vendor-like, no thumbnail) ---- */
+  .pgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:var(--s-4); }
+  .preset-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-3); }
+  .preset-card .ph { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-3); }
+  .preset-card .pname { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-lg); line-height:1.1; }
+  .preset-card .pdesc { font-size:var(--text-sm); color:var(--text-secondary); }
+  .preset-card .pstats { display:flex; flex-wrap:wrap; gap:.35rem; }
+  .preset-card .pfoot { display:flex; gap:var(--s-2); justify-content:flex-end; align-items:center; margin-top:auto; padding-top:var(--s-3); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .card--new { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); text-align:center; color:var(--text-secondary); min-height:172px; padding:var(--s-6); cursor:pointer; }
+  .card--new:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .card--new .plus { font-size:1.875rem; line-height:1; }
+  .card--new .lbl { font-family:var(--font-display); font-size:var(--text-lg); letter-spacing:.04em; text-transform:uppercase; color:var(--text-primary); }
+  .ico-btn { width:34px; height:34px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .ico-btn:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .ico-btn--danger:hover { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+
+  /* ---- percentage fields (fees) ---- */
+  .pct-grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:620px){ .pct-grid { grid-template-columns:1fr; } }
+  .pct-input { display:inline-flex; align-items:center; gap:.25rem; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:0 14px; max-width:128px; }
+  .pct-input:focus-within { outline:2px solid var(--text-primary); outline-offset:1px; }
+  .pct-input input { border:0; background:transparent; width:54px; font:inherit; color:var(--text-primary); text-align:left; padding:12px 0; }
+  .pct-input .sign { font:inherit; color:var(--text-secondary); }
+  .pct-field .range { display:flex; align-items:center; gap:var(--s-3); margin-top:var(--s-3); }
+  .pct-field .range input[type=range] { flex:1; accent-color:var(--text-primary); }
+
+  /* ---- royalty rows ---- */
+  .roy-row { display:flex; align-items:center; gap:var(--s-3); padding:.75rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .roy-row:first-child { border-top:0; }
+  .roy-row .r-ben { font-family:var(--font-emphasis); font-weight:700; min-width:150px; }
+  .roy-row .r-ben small { display:block; font-weight:400; color:var(--text-muted); font-size:var(--text-xs); }
+  .roy-row .r-pct { width:64px; font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-md); }
+  .roy-row .r-meta { display:flex; gap:.35rem; flex-wrap:wrap; align-items:center; flex:1; min-width:170px; }
+  .roy-row .r-act { margin-left:auto; display:flex; gap:var(--s-2); }
+  .add-chip { display:inline-flex; align-items:center; gap:.4rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); padding:.45rem .9rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); margin-top:var(--s-4); }
+  .add-chip:hover { border-color:var(--text-primary); color:var(--text-primary); }
+
+  /* ---- cap meter ---- */
+  .cap-meter { margin-top:var(--s-5); }
+  .cap-meter .cap-line { display:flex; align-items:baseline; justify-content:space-between; font-size:var(--text-sm); margin-bottom:.4rem; }
+  .cap-meter .cap-line .v { font-family:var(--font-emphasis); font-weight:800; }
+  .cap-meter .bar { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cap-meter .bar .fill { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cap-meter .bar .fill.over { background:var(--notify-error); }
+
+  /* ---- choice cards (duration / taper) ---- */
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); cursor:pointer; background:var(--surface-canvas); }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:inset 0 0 0 1px var(--border-strong); }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); }
+  .choice .desc { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.2rem; }
+  .taper-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr)); gap:var(--s-3); }
+  .taper-card { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); cursor:pointer; background:var(--surface-canvas); }
+  .taper-card.sel { border-color:var(--border-strong); box-shadow:inset 0 0 0 1px var(--border-strong); }
+  .taper-card .tc-h { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); margin-top:var(--s-2); }
+  .taper-card .tc-d { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.2rem; }
+  .taper-card svg { display:block; }
+
+  /* ---- management bar ---- */
+  .mngbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-4) var(--s-6); flex-wrap:wrap; }
+  .mngbar .mb-actions { display:flex; gap:var(--s-3); flex-wrap:wrap; }
+
+  /* ---- empty hero ---- */
+  .empty-state { border:1.5px dashed var(--border-soft); border-radius:var(--r-4); padding:var(--s-10) var(--s-6); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); background:var(--surface-canvas); }
+  .empty-state strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-2xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state p { margin:0; font-size:var(--text-sm); max-width:54ch; }
+  /* empty-state hero (image banner) — same pattern as the other galleries */
+  .empty-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); max-width:56ch; margin:0; }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } }
+
+  /* ---- list bar ---- */
+  .listbar { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3) var(--s-5); display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-xs); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .pg { display:flex; gap:var(--s-1); align-items:center; }
+  .pg button { min-width:34px; height:34px; border-radius:var(--r-2); border:0; background:transparent; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-primary); }
+  .pg button[aria-current=page] { background:var(--text-primary); color:#fff; }
+  .pg button[disabled] { color:var(--text-muted); opacity:.45; }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+
+  /* ---- modal ---- */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+
+  /* ---- gallery scaffold ---- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Project — Revenue presets.</h1>
+      <p>A project-level library of reusable <strong>revenue presets</strong> — how claim (and later, sale) proceeds are split. Laid out like Vendors: a list of named presets, each with a <strong>Draft / Review / Live</strong> status and Edit / Delete. A preset sets the <strong>fees</strong> (project/cycles funding and an optional Toko contribution) and optional <strong>royalties</strong> (a live beneficiary, a percent, and how it runs over time). Vendors pick a Live preset at creation. <strong>Claim</strong> presets ship first; <strong>Sale</strong> presets are a future tab.</p>
+    </header>
+
+    <!-- 01 · List — Claim presets (populated) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Revenue presets — list (populated)</span><span class="d">Vendor-style list, project-scoped. The Claim / Sale tab switches preset type — Sale is coming soon. Each preset card shows its status, a one-line summary of the split, and Edit / Delete. Live presets are the ones a vendor can select; Draft/Review presets are still being configured.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Revenue presets</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Reusable splits a vendor can apply at creation — fees and royalties for claim proceeds. Set one Live to make it selectable.</p></div>
+          </div>
+          <div class="row" style="justify-content:space-between">
+            <div class="seg"><button class="active">Claim presets · 3</button><button disabled>Sale presets · Coming soon</button></div>
+            <div class="row"><div class="search"><input class="input" placeholder="Search presets…"></div><div class="seg"><button class="active">All · 3</button><button>Live · 1</button><button>Review · 1</button><button>Draft · 1</button></div></div>
+          </div>
+          <div class="pgrid">
+            <button class="card--new"><span class="plus">+</span><span class="lbl">New preset</span><span class="tiny">Configure a claim revenue split</span></button>
+            <div class="preset-card">
+              <div class="ph"><div><div class="pname">Standard Claim</div><div class="pdesc">Default split for most drops</div></div><span class="sb sb--green"><span class="dot"></span>Live</span></div>
+              <div class="pstats"><span class="tag">Cycles 2%</span><span class="tag">Toko 1%</span><span class="tag tag--indigo">2 royalties · 12%</span></div>
+              <div class="pfoot"><button class="btn btn--ghost btn--sm">View</button><button class="ico-btn ico-btn--danger" disabled title="A Live preset in use can't be deleted" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
+            </div>
+            <div class="preset-card">
+              <div class="ph"><div><div class="pname">Founders Split</div><div class="pdesc">Higher artist share, tapering</div></div><span class="sb sb--indigo"><span class="dot"></span>Review</span></div>
+              <div class="pstats"><span class="tag">Cycles 3%</span><span class="tag">Toko 0%</span><span class="tag tag--indigo">3 royalties · 18%</span></div>
+              <div class="pfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="ico-btn ico-btn--danger" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
+            </div>
+            <div class="preset-card">
+              <div class="ph"><div><div class="pname">Preset 3</div><div class="pdesc tiny" style="font-style:italic;color:var(--text-muted)">No description</div></div><span class="sb sb--amber"><span class="dot"></span>Draft</span></div>
+              <div class="pstats"><span class="tag tag--amber">Incomplete</span><span class="tag">Cycles 1%</span><span class="tag">No royalties</span></div>
+              <div class="pfoot"><button class="btn btn--ghost btn--sm">Continue setup</button><button class="ico-btn ico-btn--danger" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
+            </div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–3</strong> of <strong>3</strong></span>
+            <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button class="pg-arrow" aria-label="Next page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+            <span class="tiny">Per page 24</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · List — empty -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Revenue presets — empty</span><span class="d">First run, no presets yet. A vendor can still be created without one (proceeds default to the project treasury), but a preset makes splits reusable across drops.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Revenue presets</span></div></div>
+        <div class="section">
+          <div class="section-head"><div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Reusable splits a vendor can apply at creation — fees and royalties for claim proceeds.</p></div></div>
+          <div class="row" style="justify-content:space-between"><div class="seg"><button class="active">Claim presets · 0</button><button disabled>Sale presets · Coming soon</button></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_revenue_presets.jpg" alt="Revenue presets — none yet" onerror="this.parentElement.style.display='none'"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">No revenue presets yet.</h3>
+              <p class="empty-hero__sub">Create a claim revenue preset — set the project/cycles funding, an optional Toko contribution, and any royalties to live beneficiaries. Vendors pick a Live preset at creation.</p>
+              <button class="btn btn--primary" style="margin-top:var(--s-2)">Create your first preset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Sale tab — coming soon -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Sale presets tab — coming soon</span><span class="d">The Sale tab is present but parked — sale revenue presets ship later. Same list shell; a single coming-soon state in place of the grid.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Revenue presets</span></div></div>
+        <div class="section">
+          <div class="section-head"><div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Reusable splits a vendor can apply at creation.</p></div></div>
+          <div class="row" style="justify-content:space-between"><div class="seg"><button>Claim presets · 3</button><button class="active">Sale presets</button></div></div>
+          <div class="empty-state">
+            <span class="tag tag--indigo">Coming soon</span>
+            <strong>Sale presets aren't available yet</strong>
+            <p>Sale revenue presets — for secondary-market and fixed-price sale proceeds — will live here. For now, configure Claim presets in the other tab.</p>
+            <button class="btn btn--ghost" disabled>Create sale preset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Preset editor — Claim (Draft, editable) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Preset editor — Claim (Draft, editable)</span><span class="d">The preset's own page. Name (defaults to "Preset N") and an optional description, then two sections: <strong>Fees</strong> (project/cycles funding 1–10%, optional Toko contribution 0–10%) and <strong>Royalties</strong> (each a live beneficiary, a percent, and how it runs over time). A running total meter enforces the 20% royalty cap. Project sub-page → auto-saves; stage persistence lives on the management bar.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Revenue presets</a><span class="sep">/</span><span class="here">Founders Split</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Revenue preset</div><h2>Founders Split.</h2><p class="lede">A claim revenue preset. Vendors apply a Live preset at creation; this one is still in Draft.</p></div>
+            <div class="head-actions"><span class="sb sb--amber"><span class="dot"></span>Draft</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Preset</h3><span class="lockpill lockpill--lock">Locks on Live</span></div>
+            <div class="grid2">
+              <div><label class="flabel">Preset name <span class="tag tag--red">required</span></label><input class="input" value="Founders Split"></div>
+              <div><label class="flabel">Type</label><input class="input" value="Claim" disabled></div>
+            </div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Description <span class="tag">optional</span></label><textarea class="input">Higher artist share for founder drops, tapering over the first year.</textarea></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><div><h3>Fees</h3><div class="sub">Taken off the top before royalties &amp; payout</div></div><span class="lockpill lockpill--lock">Locks on Live</span></div>
+            <div class="pct-grid">
+              <div class="pct-field">
+                <label class="flabel">Project / cycles funding <span class="tag tag--red">required</span></label>
+                <div class="pct-input"><input value="3" inputmode="decimal"><span class="sign">%</span></div>
+                <div class="range"><span class="tiny">1%</span><input type="range" min="1" max="10" value="3"><span class="tiny">10%</span></div>
+                <div class="hint">Funds the project canister (cycles/blob storage). Allowed range 1–10%.</div>
+              </div>
+              <div class="pct-field">
+                <label class="flabel">Toko contribution <span class="tag">optional</span></label>
+                <div class="pct-input"><input value="0" inputmode="decimal"><span class="sign">%</span></div>
+                <div class="range"><span class="tiny">0%</span><input type="range" min="0" max="10" value="0"><span class="tiny">10%</span></div>
+                <div class="hint">An optional contribution to Toko. Allowed range 0–10%.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><div><h3>Royalties</h3><div class="sub">Optional · paid to live beneficiaries on each claim</div></div><span class="lockpill lockpill--lock">Locks on Live</span></div>
+            <div class="roy-row">
+              <span class="r-ben">Studio Treasury<small>k1m9…7uvw</small></span>
+              <span class="r-pct">8%</span>
+              <span class="r-meta"><span class="tag tag--indigo">Linear</span><span class="tiny">over 12 months</span></span>
+              <span class="r-act"><button class="ico-btn" aria-label="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="ico-btn ico-btn--danger" aria-label="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
+            </div>
+            <div class="roy-row">
+              <span class="r-ben">Lead Artist<small>9xa2…b3kk</small></span>
+              <span class="r-pct">7%</span>
+              <span class="r-meta"><span class="tag tag--indigo">Curve</span><span class="tiny">over 6 months</span></span>
+              <span class="r-act"><button class="ico-btn" aria-label="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="ico-btn ico-btn--danger" aria-label="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
+            </div>
+            <div class="roy-row">
+              <span class="r-ben">Community Fund<small>p4w8…2zzq</small></span>
+              <span class="r-pct">3%</span>
+              <span class="r-meta"><span class="tag">Forever</span><span class="tiny">no taper</span></span>
+              <span class="r-act"><button class="ico-btn" aria-label="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="ico-btn ico-btn--danger" aria-label="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
+            </div>
+            <button class="add-chip"><span style="font-size:1rem;line-height:1">+</span> Add royalty</button>
+            <div class="cap-meter">
+              <div class="cap-line"><span>Total royalties</span><span class="v">18% <span class="tiny" style="font-weight:400">of 20% max</span></span></div>
+              <div class="bar"><div class="fill" style="width:90%"></div></div>
+            </div>
+            <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Each royalty is <strong>0.1–10%</strong>; total royalties can't exceed <strong>20%</strong>. The backend also checks that <strong>DAO + referral + royalties stays under 40%</strong> across the whole revenue config.</div></div>
+          </div>
+
+          <div class="mngbar">
+            <span class="tiny">Sub-page auto-saves · stage changes happen here</span>
+            <div class="mb-actions"><button class="btn btn--ghost">Preview split</button><button class="btn btn--primary">Submit to Review</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Add / edit royalty modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Add royalty — beneficiary, percent, duration &amp; taper</span><span class="d">Opened from "+ Add royalty". Pick a <strong>live beneficiary</strong>, set a percent (0.1–10%), then choose whether it runs <strong>forever</strong> (constant) or for a <strong>fixed period</strong> — in which case pick an interval (1/3/6/9/12/24 months) and a taper (how the amount changes over that period).</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Add royalty</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div><label class="flabel">Beneficiary <span class="tag tag--red">required</span></label><select class="input"><option>Choose a live beneficiary…</option><option selected>Studio Treasury · k1m9…7uvw</option><option>Lead Artist · 9xa2…b3kk</option><option>Community Fund · p4w8…2zzq</option></select><div class="hint">Only the project's <strong>Live</strong> beneficiaries can be added.</div></div>
+            <div><label class="flabel">Percent <span class="tag tag--red">required</span></label><div class="pct-input"><input value="8" inputmode="decimal"><span class="sign">%</span></div><div class="hint">0.1–10% per royalty. 2% of the 20% cap remains.</div></div>
+            <div>
+              <label class="flabel">Duration</label>
+              <div class="choice"><span class="radio"></span><div><div class="ttl">Forever</div><div class="desc">A constant percent on every claim, with no end.</div></div></div>
+              <div class="choice sel"><span class="radio"></span><div><div class="ttl">For a fixed period</div><div class="desc">Runs for a set time, then ends. Choose how it tapers.</div></div></div>
+            </div>
+            <div><label class="flabel">Choose time period</label><select class="input"><option>1 month</option><option>3 months</option><option>6 months</option><option>9 months</option><option selected>12 months</option><option>24 months</option></select></div>
+            <div>
+              <label class="flabel">Taper — how the amount changes over the period</label>
+              <div class="taper-grid">
+                <div class="taper-card sel"><svg width="100%" height="34" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M2 14 H98" fill="none" stroke="var(--text-primary)" stroke-width="2"/></svg><div class="tc-h">No taper</div><div class="tc-d">Constant for the whole period, then ends.</div></div>
+                <div class="taper-card"><svg width="100%" height="34" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M2 8 H60 V32 H98" fill="none" stroke="var(--text-primary)" stroke-width="2"/></svg><div class="tc-h">Cliff</div><div class="tc-d">Full rate, then drops to 0 at the end.</div></div>
+                <div class="taper-card"><svg width="100%" height="34" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M2 8 L98 32" fill="none" stroke="var(--text-primary)" stroke-width="2"/></svg><div class="tc-h">Linear</div><div class="tc-d">Steps down evenly to 0 over the period.</div></div>
+                <div class="taper-card"><svg width="100%" height="34" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M2 8 Q40 12 98 32" fill="none" stroke="var(--text-primary)" stroke-width="2"/></svg><div class="tc-h">Curve</div><div class="tc-d">Holds high, then falls away faster near the end.</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add royalty</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Validation — over the cap -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Validation — royalty caps</span><span class="d">Two guards. Left: a single royalty over 10% (per-royalty max). Right: the running total over 20% — the meter goes red and Submit to Review is blocked. The 40% combined cap (DAO + referral + royalties) is a backend check, surfaced here as a note.</span></div>
+      <div class="stage" style="display:block;padding:var(--s-8)">
+        <div class="grid2" style="gap:var(--s-6);align-items:start">
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Per-royalty max (10%)</div>
+            <div><label class="flabel">Percent</label><div class="pct-input" style="border-color:var(--notify-error)"><input value="12" inputmode="decimal"><span class="sign">%</span></div></div>
+            <div class="info-note err-note" style="margin-top:var(--s-3)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A single royalty can't exceed 10%.</strong> Lower this one, or split it across two beneficiaries.</div></div>
+          </div>
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Total cap (20%)</div>
+            <div class="cap-meter" style="margin-top:0">
+              <div class="cap-line"><span>Total royalties</span><span class="v" style="color:var(--notify-error)">23% <span class="tiny" style="font-weight:400">of 20% max</span></span></div>
+              <div class="bar"><div class="fill over" style="width:100%"></div></div>
+            </div>
+            <div class="info-note err-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Total royalties exceed 20%.</strong> Remove or reduce a royalty to continue. <strong>Submit to Review is blocked</strong> until it's under the cap. Note the backend also rejects DAO + referral + royalties over 40%.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Preset — Live (locked, read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Preset — Live (locked, view only)</span><span class="d">Once Live and selectable by vendors, a preset is locked and view-only — vendors that already use it depend on these values, so fees and royalties can't change. There's no Manage on a Live preset, only View.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Revenue presets</a><span class="sep">/</span><span class="here">Standard Claim</span></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Revenue preset</div><h2>Standard Claim.</h2><p class="lede">Live — selectable by vendors. Fixed when it went Live.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span></div>
+          </div>
+          <div class="info-note lock-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong>This preset is locked.</strong> 4 vendors apply it, so fees and royalties can't change — it's view-only.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Fees</h3><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+            <div class="kv"><span>Project / cycles funding</span><span class="v">2%</span></div>
+            <div class="kv"><span>Toko contribution</span><span class="v">1%</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Royalties</h3><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+            <div class="roy-row"><span class="r-ben">Studio Treasury<small>k1m9…7uvw</small></span><span class="r-pct">8%</span><span class="r-meta"><span class="tag">Forever</span><span class="tiny">no taper</span></span></div>
+            <div class="roy-row"><span class="r-ben">Lead Artist<small>9xa2…b3kk</small></span><span class="r-pct">4%</span><span class="r-meta"><span class="tag tag--indigo">Linear</span><span class="tiny">over 12 months</span></span></div>
+            <div class="cap-meter"><div class="cap-line"><span>Total royalties</span><span class="v">12% <span class="tiny" style="font-weight:400">of 20% max</span></span></div><div class="bar"><div class="fill" style="width:60%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="t" style="color:var(--text-primary)">Design note (not UI)</span><span class="d">Revenue presets are <strong>project-scoped</strong> and reusable; a vendor selects a <strong>Live</strong> preset at creation, which copies its values onto the vendor (so later edits to the preset don't change existing vendors). Lifecycle mirrors other project policy: editable in Draft/Review, <strong>locked / view-only at Live</strong> while in use. Constraints: cycles funding 1–10%, Toko 0–10%, each royalty 0.1–10%, total royalties ≤ 20%, and the backend cap of DAO + referral + royalties &lt; 40%. Taper (No taper / Cliff / Linear / Curve) and time period (1/3/6/9/12/24 months) only apply to fixed-period royalties; "Forever" royalties are constant. <strong>Open:</strong> confirm whether Toko contribution and Sale presets are in scope for v1.</span></div>
+  </div>
+</body>
+</html>

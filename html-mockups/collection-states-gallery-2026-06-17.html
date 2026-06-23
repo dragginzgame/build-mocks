@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Collection · states gallery (single deep-dive)</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); flex-wrap:wrap; }
+  .context-bar .sep { color:var(--text-muted); }
+  .context-bar .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--surface-canvas); color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); border-color:transparent; cursor:not-allowed; }
+  .seclink { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); display:inline-flex; align-items:center; gap:.35rem; }
+  .seclink:hover { color:var(--text-primary); }
+
+  /* stage + tags */
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .stage-badge--review{ background:rgba(99,102,241,.12); color:var(--stage-review); }
+  .stage-badge--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+
+  /* ============ PUBLIC PAGE ============ */
+  .pub-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .pub-banner { height:230px; background:linear-gradient(135deg,#a3e635,#84cc16 60%,#65a30d); }
+  .pub-hero__body { padding:0 var(--s-8) var(--s-8); }
+  .pub-avatar { width:96px; height:96px; border-radius:var(--r-3); border:4px solid var(--surface-canvas); margin-top:-48px; background:linear-gradient(135deg,#166534,#22c55e); box-shadow:0 10px 30px -16px rgba(0,0,0,.35); }
+  .pub-name { display:flex; align-items:center; gap:var(--s-3); margin-top:var(--s-4); flex-wrap:wrap; }
+  .pub-name h1 { font-size:2.5rem; }
+  .verified { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); background:rgba(16,185,129,.12); color:var(--stage-live); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; }
+  .pub-by { color:var(--text-secondary); font-size:var(--text-base); margin-top:.375rem; }
+  .pub-by strong { color:var(--text-primary); }
+  .pub-desc { margin-top:var(--s-4); font-size:var(--text-md); max-width:70ch; }
+  .chip-row { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); }
+  .chip { display:inline-flex; align-items:center; gap:7px; padding:6px 13px; border-radius:var(--r-pill); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .chip .dot { width:7px; height:7px; border-radius:50%; background:var(--stage-live); }
+  /* guard badges (shared) — _on = permission allowed (active), _off = blocked (inactive) */
+  .guard-badges { display:flex; gap:var(--s-5); flex-wrap:wrap; }
+  .guard-badges--compact { gap:var(--s-4); }
+  .gb { display:inline-flex; align-items:center; gap:var(--s-2); }
+  .gb img { width:30px; height:30px; display:block; flex:none; }
+  .guard-badges--compact .gb img { width:22px; height:22px; }
+  .gb-l { display:flex; flex-direction:column; line-height:1.15; }
+  .gb-l b { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.02em; }
+  .gb-l span { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
+  .gb.on .gb-l b { color:var(--text-primary); } .gb.on .gb-l span { color:var(--stage-draft); }
+  .gb.off .gb-l b { color:var(--text-secondary); } .gb.off .gb-l span { color:var(--stage-live); }
+  .gb--inline { gap:6px; } .gb--inline img { width:24px; height:24px; }
+  .guard-strip { display:inline-flex; align-items:center; gap:var(--s-2); }
+  .guard-strip img { width:24px; height:24px; display:block; }
+  .guard-strip img.is-off { opacity:.95; }
+
+  .stat-row { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-4); }
+  .stat { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); }
+  .stat .lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); }
+  .stat .val { font-family:var(--font-display); font-size:1.875rem; margin-top:.375rem; line-height:1; }
+  .stat .val small { font-size:var(--text-sm); color:var(--text-secondary); margin-left:.25rem; }
+  @media (max-width:860px){ .stat-row { grid-template-columns:repeat(2,1fr); } }
+
+  .sec-head { display:flex; align-items:baseline; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-4); }
+  .sec-head h2 { font-size:var(--text-2xl); }
+
+  .tok-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-4); }
+  .tok-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .tok-card .pic { aspect-ratio:1/1; background:linear-gradient(160deg,#fed7aa,#fdba74); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
+  .tok-card .meta { padding:var(--s-3) var(--s-4) var(--s-4); }
+  .tok-card .meta .ttl { font-family:var(--font-display); font-size:var(--text-lg); }
+  .tok-card .meta .price { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.25rem; }
+  @media (max-width:860px){ .tok-grid { grid-template-columns:repeat(2,1fr); } }
+
+  /* vendor cards — mirrors the Vendor/Launchpad card view (no horizontal-bar variant exists) */
+  .vgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); }
+  @media (max-width:880px){ .vgrid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:560px){ .vgrid { grid-template-columns:1fr; } }
+  .vcard { border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; background:var(--surface-canvas); display:flex; flex-direction:column; transition:transform .12s ease,box-shadow .12s ease; }
+  .vcard:hover { transform:translateY(-3px); box-shadow:0 14px 40px -22px rgba(0,0,0,.35); }
+  .vcard .art { height:170px; display:flex; align-items:flex-start; justify-content:space-between; padding:.75rem; position:relative; }
+  .vcard .art .emoji { font-size:2.75rem; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); filter:drop-shadow(0 6px 10px rgba(0,0,0,.3)); }
+  .vcard .av { width:38px; height:38px; border-radius:50%; border:2px solid rgba(255,255,255,.85); background:#fff; display:flex; align-items:center; justify-content:center; font-size:1.125rem; align-self:flex-end; position:relative; z-index:1; }
+  .vbadge { font-family:var(--font-emphasis); font-size:var(--text-2xs); font-weight:700; text-transform:uppercase; letter-spacing:.08em; padding:.25rem .625rem; border-radius:var(--r-pill); background:#fff; color:var(--text-primary); position:relative; z-index:1; display:inline-flex; align-items:center; gap:.375rem; }
+  .vbadge.live { background:var(--stage-live); color:#04231a; }
+  .vbadge.ending { background:var(--stage-draft); color:#2a1900; }
+  .vbadge .pulse { width:7px; height:7px; border-radius:50%; background:currentColor; }
+  .vcard .b { padding:var(--s-4); display:flex; flex-direction:column; gap:.5rem; flex:1; }
+  .vcard .nm { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.02em; line-height:1.05; }
+  .vcard .by { color:var(--text-secondary); font-size:var(--text-xs); margin-top:-.125rem; }
+  .vcard .price { display:flex; align-items:baseline; gap:.375rem; }
+  .vcard .price .n { font-family:var(--font-emphasis); font-weight:800; font-size:1.0625rem; }
+  .vcard .price .u { color:var(--text-secondary); font-size:var(--text-xs); font-weight:700; }
+  .vcard .bar { height:8px; background:var(--surface-canvas-deep); border:1px solid var(--border-soft); border-radius:var(--r-pill); overflow:hidden; }
+  .vcard .bar>span { display:block; height:100%; background:var(--stage-live); }
+  .vcard .meta-row { display:flex; justify-content:space-between; font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .vcard .foot { margin-top:auto; padding-top:.25rem; }
+  .btn--block { width:100%; justify-content:center; }
+  .sec-intro { color:var(--text-secondary); font-size:var(--text-sm); margin:-.25rem 0 var(--s-4); max-width:72ch; }
+  .sec-intro strong { color:var(--text-primary); }
+
+  /* empty states (public, no vendors / no listings) */
+  .empty { background:var(--surface-canvas); border:1.5px dashed var(--border-soft); border-radius:var(--r-4); padding:var(--s-10) var(--s-8); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .empty .e-ic { width:56px; height:56px; border-radius:var(--r-3); background:var(--surface-canvas-alt); color:var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .empty h3 { font-size:var(--text-2xl); }
+  .empty p { color:var(--text-secondary); font-size:var(--text-sm); max-width:54ch; margin:0; }
+  .empty .e-act { margin-top:var(--s-2); }
+
+  /* token types (shown only when a collection has more than one type) */
+  .type-strip { display:flex; gap:var(--s-3); flex-wrap:wrap; align-items:center; }
+  .type-chip { display:inline-flex; align-items:center; gap:8px; padding:7px 13px 7px 11px; border-radius:var(--r-pill); background:var(--surface-canvas); border:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .type-chip .tc-dot { width:9px; height:9px; border-radius:50%; flex:none; background:var(--text-muted); }
+  .type-chip b { font-family:var(--font-emphasis); font-weight:700; }
+  .type-chip .tc-n { color:var(--text-secondary); font-size:var(--text-xs); font-variant-numeric:tabular-nums; }
+  .type-tag { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .type-tag .tc-dot { width:7px; height:7px; border-radius:50%; flex:none; background:var(--text-muted); }
+
+  .activity { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .activity .a { display:flex; align-items:center; gap:var(--s-4); padding:var(--s-4) var(--s-5); }
+  .activity .a + .a { border-top:1px solid var(--border-soft); }
+  .activity .ic { width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex:none; font-weight:700; }
+  .activity .ic--sale { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .activity .ic--mint { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .activity .txt { flex:1; min-width:0; }
+  .activity .txt .ln { font-size:var(--text-base); }
+  .activity .txt .tm { color:var(--text-muted); font-size:var(--text-xs); margin-top:.125rem; }
+
+  /* ============ MANAGE ============ */
+  .mng-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .mng-id { display:flex; align-items:center; gap:var(--s-3); min-width:0; }
+  .mng-id .av { width:46px; height:46px; border-radius:var(--r-2); background:linear-gradient(135deg,#6EE7B7,#38BDF8); flex:none; }
+  .mng-id h1 { font-size:var(--text-2xl); }
+  .mng-id .sub { font-size:var(--text-xs); color:var(--text-muted); font-family:var(--font-emphasis); }
+  .mng-actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-6); border-bottom:1px solid var(--border-soft); }
+  .card__head h2 { font-size:var(--text-2xl); }
+
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .tb-row { display:flex; gap:var(--s-4); align-items:stretch; }
+  .tb-thumb { width:96px; height:96px; border-radius:var(--r-3); background:linear-gradient(135deg,#a7f3d0,#60a5fa); flex:none; }
+  .tb-banner { flex:1; border-radius:var(--r-3); border:1.5px dashed var(--border-soft); background:linear-gradient(135deg,#a3e635,#84cc16 60%,#65a30d); min-height:96px; }
+  .tb-banner--empty { background:var(--surface-canvas-alt); display:flex; align-items:center; justify-content:center; }
+  .cta-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); display:flex; align-items:center; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .cta-card h3 { font-size:var(--text-xl); }
+  .cta-card p { color:var(--text-secondary); font-size:var(--text-sm); margin:.375rem 0 0; max-width:62ch; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .field { margin-top:var(--s-5); }
+  .social-row { display:grid; grid-template-columns:170px 1fr auto; gap:var(--s-3); align-items:center; }
+  .social-row + .social-row { margin-top:var(--s-3); }
+  .x-btn { width:42px; height:42px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .x-btn:hover { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+  .add-social { margin-top:var(--s-4); }
+  @media (max-width:560px){ .social-row { grid-template-columns:1fr; } .x-btn{ width:auto; } }
+
+  /* status checklist */
+  .status-block h3 { font-size:var(--text-2xl); }
+  .status-block .lede { color:var(--text-secondary); font-size:var(--text-sm); margin:.375rem 0 var(--s-5); }
+  .status-list { display:flex; flex-direction:column; gap:var(--s-3); }
+  .status-item { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; align-items:center; gap:var(--s-4); }
+  .status-item .si-ic { width:38px; height:38px; border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .status-item .si-main { flex:1; min-width:0; }
+  .status-item .si-ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); display:inline-flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .status-item .si-sub { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.25rem; }
+  .status-item .si-val { font-family:var(--font-display); font-size:var(--text-lg); text-align:right; flex:none; }
+  .status-item .si-arrow { color:var(--text-muted); flex:none; }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+
+  .danger-zone { border:1px solid rgba(239,68,68,.35); background:rgba(239,68,68,.04); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+  .danger-zone h3 { color:var(--notify-error); font-size:var(--text-xl); }
+  .danger-zone p { color:var(--text-secondary); font-size:var(--text-sm); margin:.375rem 0 0; }
+
+  /* tokens needing attention */
+  .attn .a { display:flex; align-items:center; gap:var(--s-4); padding:var(--s-4) 0; }
+  .attn .a + .a { border-top:1px solid var(--border-soft); }
+  .attn .pic { width:44px; height:44px; border-radius:var(--r-2); background:linear-gradient(160deg,#fed7aa,#fdba74); flex:none; display:flex; align-items:center; justify-content:center; }
+  .attn .pic--busy { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .attn .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .attn .sub { color:var(--text-muted); font-size:var(--text-xs); margin-top:.125rem; font-family:var(--font-emphasis); }
+  .attn .acts { margin-left:auto; display:flex; align-items:center; gap:var(--s-4); }
+  .attn .lnk { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .attn .lnk:hover { text-decoration:underline; }
+
+  /* live locked list */
+  .live-status { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); display:flex; gap:var(--s-5); align-items:center; }
+  .live-status .av { width:64px; height:64px; border-radius:var(--r-3); background:linear-gradient(135deg,#166534,#22c55e); flex:none; }
+  .live-status h3 { font-size:var(--text-2xl); }
+  .live-status p { color:var(--text-secondary); font-size:var(--text-sm); margin:.375rem 0 var(--s-3); }
+  .progress { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .progress > span { display:block; height:100%; background:var(--stage-live); }
+  .locked { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .locked__head { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); padding:var(--s-4) var(--s-5); }
+  .locked .r { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.875rem var(--s-5); border-top:1px solid var(--border-soft); font-size:var(--text-base); color:var(--text-secondary); }
+  .locked .r .v { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+  .needs-save { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+
+  /* just-created identity card (mirrors project overview) */
+  .id-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .id-banner { height:150px; }
+  .id-banner--empty { background:var(--surface-canvas-alt); border-bottom:1px dashed var(--border-soft); display:flex; align-items:center; justify-content:center; }
+  .banner-upload { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-pill); padding:.5rem 1rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .banner-upload:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .id-body { padding:var(--s-6); }
+  .id-top { display:grid; grid-template-columns:84px 1fr; gap:var(--s-5); align-items:center; }
+  .id-avatar { width:84px; height:84px; border-radius:var(--r-3); border:4px solid var(--surface-canvas); margin-top:-3.5rem; box-shadow:0 8px 30px -16px rgba(0,0,0,.3); }
+  .id-name { font-family:var(--font-display); font-size:2rem; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .desc-box { width:100%; min-height:84px; resize:vertical; border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.5rem .75rem; font-family:var(--font-body); font-size:var(--text-base); color:var(--text-primary); background:var(--surface-canvas); }
+  .desc-box::placeholder { color:var(--text-muted); }
+  .id-cols { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); margin-top:var(--s-6); padding-top:var(--s-6); border-top:1px solid var(--border-soft); }
+  @media (max-width:720px){ .id-cols { grid-template-columns:1fr; gap:var(--s-5); } }
+  .hd { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:var(--s-3); }
+  .id-socadd { display:grid; grid-template-columns:1fr 1fr auto; gap:var(--s-3); align-items:end; }
+  .id-socadd .m-field { display:flex; flex-direction:column; }
+  @media (max-width:560px){ .id-socadd { grid-template-columns:1fr; } }
+  .icon-btn { width:42px; height:42px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); font-size:var(--text-xl); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .icon-btn:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .id-namewrap { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .social-list { display:flex; flex-direction:column; gap:var(--s-2); margin-bottom:var(--s-4); }
+  .social-item { display:flex; align-items:center; gap:var(--s-3); padding:.5rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); }
+  .social-item .plat { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); width:92px; flex:none; }
+  .social-item .handle { font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .social-item .acts { display:flex; gap:.375rem; }
+  .ib { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); }
+  .ib:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .ib.danger:hover { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .modal-stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 24px 64px -20px rgba(0,0,0,.4); }
+  .modal-card > header { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card > header h4 { font-size:var(--text-xl); color:var(--notify-error); margin:0; }
+  .modal-card > header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.55; }
+  .modal-card .mbody strong { color:var(--text-primary); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .dz-note { background:rgba(239,68,68,.06); border:1px solid rgba(239,68,68,.25); border-radius:var(--r-3); padding:var(--s-4); display:flex; gap:var(--s-3); align-items:flex-start; }
+  .dz-note .ic { color:var(--notify-error); flex:none; margin-top:1px; }
+  .dz-list { margin:0; padding-left:1.1rem; } .dz-list li { margin:.2rem 0; }
+  .btn--danger-solid { background:var(--notify-error); color:#fff; border-color:var(--notify-error); }
+  .btn[disabled] { opacity:.45; cursor:not-allowed; }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-link { color:var(--info,#2563EB); font-weight:700; font-size:var(--text-sm); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Collection — single deep-dive.</h1>
+      <p>One collection, end to end. The public live page buyers see (read-only), then the creator's Manage → Overview across the three stages: Draft (configuring), Review (validating, scores to clear), and Live (storefront editable, core policy locked). Media edits are direct on Live; metadata edits still need an explicit save.</p>
+    </header>
+
+    <!-- 01 PUBLIC · live, read-only -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Public collection page · live (read-only)</span><span class="d">What a buyer sees — banner, stats, guards, active vendors (primary mint) then secondary-market listings. No edit controls.</span></div>
+      <div class="screen">
+        <div class="section" style="padding-top:0;padding-bottom:var(--s-8)">
+          <div class="pub-hero" style="margin-top:0">
+            <div class="pub-banner"></div>
+            <div class="pub-hero__body">
+              <div class="pub-avatar"></div>
+              <div class="pub-name"><h1>Crystal Birds</h1><span class="verified"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Verified creator</span></div>
+              <div class="pub-by">by <strong>Vault One</strong> · digital collectibles studio</div>
+              <p class="pub-desc">A 500-piece flock of crystalline songbirds — each token a unique mineral and posture pairing.</p>
+              <div class="chip-row">
+                <span class="chip"><span class="dot"></span>vault.one</span>
+                <span class="chip"><span class="dot"></span>@crystalbirds</span>
+              </div>
+              <div style="margin-top:var(--s-5)">
+                <div class="hd" style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs);letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:var(--s-3)">Guards</div>
+                <div class="guard-badges">
+                  <span class="gb off" title="Duplicate tokens — blocked. Every token is one-of-one."><img src="../style-guide/icons/dupe_off.png" alt="Duplicates blocked"><span class="gb-l"><b>Duplicates</b><span>Blocked</span></span></span>
+                  <span class="gb off" title="Token destruction — blocked. Tokens can never be burned."><img src="../style-guide/icons/destroy_off.png" alt="Destruction blocked"><span class="gb-l"><b>Destruction</b><span>Blocked</span></span></span>
+                  <span class="gb off" title="Transfer restrictions — none. Tokens transfer freely."><img src="../style-guide/icons/transfer_restr_off.png" alt="Transfer restrictions off"><span class="gb-l"><b>Transfer limits</b><span>None</span></span></span>
+                  <span class="gb on" title="Sale restrictions — may apply (e.g. royalty windows)."><img src="../style-guide/icons/sale_restr_on.png" alt="Sale restrictions on"><span class="gb-l"><b>Sale limits</b><span>May apply</span></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat"><div class="lbl">Floor</div><div class="val">9.4<small>ICP</small></div></div>
+            <div class="stat"><div class="lbl">Volume</div><div class="val">2,180<small>ICP</small></div></div>
+            <div class="stat"><div class="lbl">Owners</div><div class="val">87</div></div>
+            <div class="stat"><div class="lbl">Listed</div><div class="val">42</div></div>
+            <div class="stat"><div class="lbl">Vendors</div><div class="val">2</div></div>
+          </div>
+
+          <div>
+            <div class="sec-head"><h2>Active vendors</h2><a class="seclink">View all vendors →</a></div>
+            <p class="sec-intro">Buy <strong>direct from the collection</strong> — minting from a vendor makes you the token's very first owner, straight from the creator.</p>
+            <div class="vgrid">
+              <article class="vcard">
+                <div class="art" style="background:linear-gradient(140deg,#166534,#22c55e)">
+                  <span class="vbadge live"><span class="pulse"></span>Live</span>
+                  <span class="emoji">🐦</span>
+                  <span class="av">🪶</span>
+                </div>
+                <div class="b">
+                  <div><div class="nm">Genesis Drop</div><div class="by">by Vault One · fixed-price market</div></div>
+                  <div class="price"><span class="n">8</span><span class="u">ICP</span></div>
+                  <div class="bar"><span style="width:52%"></span></div>
+                  <div class="meta-row"><span>156 / 300 minted</span><span>Open now</span></div>
+                  <div class="foot"><a class="btn btn--primary btn--block btn--sm" href="#">Mint now</a></div>
+                </div>
+              </article>
+              <article class="vcard">
+                <div class="art" style="background:linear-gradient(140deg,#0EA5E9,#075985)">
+                  <span class="vbadge live"><span class="pulse"></span>Live</span>
+                  <span class="emoji">🎁</span>
+                  <span class="av">✨</span>
+                </div>
+                <div class="b">
+                  <div><div class="nm">Holder Reward Gacha</div><div class="by">by Vault One · gacha · holders only</div></div>
+                  <div class="price"><span class="n">3</span><span class="u">ICP / pull</span></div>
+                  <div class="bar"><span style="width:33%"></span></div>
+                  <div class="meta-row"><span>8 / 12 capsules left</span><span>Open-ended</span></div>
+                  <div class="foot"><a class="btn btn--primary btn--block btn--sm" href="#">Pull a capsule</a></div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div>
+            <div class="sec-head"><h2>Active listings</h2><a class="seclink">Explore listings →</a></div>
+            <p class="sec-intro">Tokens listed for resale on the <strong>secondary market</strong> by collectors who already hold them — you're buying from another owner, not the creator.</p>
+            <div class="tok-grid">
+              <div class="tok-card"><div class="pic">🐦</div><div class="meta"><div class="ttl">Crystal Bird #231</div><div class="price">12 ICP · Buy now</div></div></div>
+              <div class="tok-card"><div class="pic">🐦</div><div class="meta"><div class="ttl">Crystal Bird #198</div><div class="price">9.4 ICP · Buy now</div></div></div>
+              <div class="tok-card"><div class="pic">🐦</div><div class="meta"><div class="ttl">Crystal Bird #102</div><div class="price">Auction · ends 4h</div></div></div>
+              <div class="tok-card"><div class="pic">🐦</div><div class="meta"><div class="ttl">Crystal Bird #051</div><div class="price">15 ICP · Buy now</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01b PUBLIC · live, no vendors or listings -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01b</span><span class="t">Public collection page · no vendors or listings yet</span><span class="d">A Live collection before any drop opens and before any holder resells — verified identity and guards still show, but there's nothing to mint or buy yet.</span></div>
+      <div class="screen">
+        <div class="section" style="padding-top:0;padding-bottom:var(--s-8)">
+          <div class="pub-hero" style="margin-top:0">
+            <div class="pub-banner" style="background:linear-gradient(135deg,#c4b5fd,#818cf8 60%,#6366f1)"></div>
+            <div class="pub-hero__body">
+              <div class="pub-avatar" style="background:linear-gradient(135deg,#4c1d95,#7c3aed)"></div>
+              <div class="pub-name"><h1>Aurora Foxes</h1><span class="verified"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Verified creator</span></div>
+              <div class="pub-by">by <strong>Vault One</strong> · digital collectibles studio</div>
+              <p class="pub-desc">A seasonal set of aurora-lit fox portraits. The collection is live — the first drop opens soon.</p>
+              <div class="chip-row">
+                <span class="chip"><span class="dot"></span>vault.one</span>
+                <span class="chip"><span class="dot"></span>@aurorafoxes</span>
+              </div>
+              <div style="margin-top:var(--s-5)">
+                <div class="hd" style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs);letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:var(--s-3)">Guards</div>
+                <div class="guard-badges">
+                  <span class="gb off" title="Duplicate tokens — blocked. Every token is one-of-one."><img src="../style-guide/icons/dupe_off.png" alt="Duplicates blocked"><span class="gb-l"><b>Duplicates</b><span>Blocked</span></span></span>
+                  <span class="gb off" title="Token destruction — blocked. Tokens can never be burned."><img src="../style-guide/icons/destroy_off.png" alt="Destruction blocked"><span class="gb-l"><b>Destruction</b><span>Blocked</span></span></span>
+                  <span class="gb off" title="Transfer restrictions — none. Tokens transfer freely."><img src="../style-guide/icons/transfer_restr_off.png" alt="Transfer restrictions off"><span class="gb-l"><b>Transfer limits</b><span>None</span></span></span>
+                  <span class="gb off" title="Sale restrictions — none. Resale is never limited."><img src="../style-guide/icons/sale_restr_off.png" alt="Sale restrictions off"><span class="gb-l"><b>Sale limits</b><span>None</span></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat"><div class="lbl">Floor</div><div class="val" style="color:var(--text-muted)">—</div></div>
+            <div class="stat"><div class="lbl">Volume</div><div class="val">0<small>ICP</small></div></div>
+            <div class="stat"><div class="lbl">Owners</div><div class="val">0</div></div>
+            <div class="stat"><div class="lbl">Listed</div><div class="val">0</div></div>
+            <div class="stat"><div class="lbl">Vendors</div><div class="val">0</div></div>
+          </div>
+
+          <div>
+            <div class="sec-head"><h2>Active vendors</h2></div>
+            <p class="sec-intro">Buy <strong>direct from the collection</strong> — minting from a vendor makes you the token's very first owner, straight from the creator.</p>
+            <div class="empty">
+              <span class="e-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg></span>
+              <h3>No active vendors yet</h3>
+              <p>Nothing is minting from the creator right now. The first drop hasn't opened yet — check back soon.</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="sec-head"><h2>Active listings</h2></div>
+            <p class="sec-intro">Tokens listed for resale on the <strong>secondary market</strong> by collectors who already hold them — you're buying from another owner, not the creator.</p>
+            <div class="empty">
+              <span class="e-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L3 13V3h10l7.59 7.59a2 2 0 0 1 0 2.82Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></span>
+              <h3>No listings yet</h3>
+              <p>No holders have listed a token for resale. Once the collection mints and owners start trading, their listings will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01c PUBLIC · live, multiple token types -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01c</span><span class="t">Public collection page · multiple token types</span><span class="d">When a collection holds more than one kind of token, the overview surfaces the types. Single-type collections (frames 01 / 01b) show nothing here.</span></div>
+      <div class="screen">
+        <div class="section" style="padding-top:0;padding-bottom:var(--s-8)">
+          <div class="pub-hero" style="margin-top:0">
+            <div class="pub-banner" style="background:linear-gradient(135deg,#fbbf24,#10b981 55%,#7c3aed)"></div>
+            <div class="pub-hero__body">
+              <div class="pub-avatar" style="background:linear-gradient(135deg,#065f46,#7c3aed)"></div>
+              <div class="pub-name"><h1>Mythwood</h1><span class="verified"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Verified creator</span></div>
+              <div class="pub-by">by <strong>Vault One</strong> · digital collectibles studio</div>
+              <p class="pub-desc">A fantasy world set: playable Characters, their Companions, and rare Relics that power them — three kinds of token, one collection.</p>
+              <div class="chip-row">
+                <span class="chip"><span class="dot"></span>vault.one</span>
+                <span class="chip"><span class="dot"></span>@mythwood</span>
+              </div>
+              <div style="margin-top:var(--s-5)">
+                <div class="hd" style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs);letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:var(--s-3)">Guards</div>
+                <div class="guard-badges">
+                  <span class="gb off" title="Duplicate tokens — blocked. Every token is one-of-one."><img src="../style-guide/icons/dupe_off.png" alt="Duplicates blocked"><span class="gb-l"><b>Duplicates</b><span>Blocked</span></span></span>
+                  <span class="gb off" title="Token destruction — blocked. Tokens can never be burned."><img src="../style-guide/icons/destroy_off.png" alt="Destruction blocked"><span class="gb-l"><b>Destruction</b><span>Blocked</span></span></span>
+                  <span class="gb off" title="Transfer restrictions — none. Tokens transfer freely."><img src="../style-guide/icons/transfer_restr_off.png" alt="Transfer restrictions off"><span class="gb-l"><b>Transfer limits</b><span>None</span></span></span>
+                  <span class="gb off" title="Sale restrictions — none. Resale is never limited."><img src="../style-guide/icons/sale_restr_off.png" alt="Sale restrictions off"><span class="gb-l"><b>Sale limits</b><span>None</span></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat"><div class="lbl">Floor</div><div class="val">4.2<small>ICP</small></div></div>
+            <div class="stat"><div class="lbl">Volume</div><div class="val">5,640<small>ICP</small></div></div>
+            <div class="stat"><div class="lbl">Owners</div><div class="val">312</div></div>
+            <div class="stat"><div class="lbl">Listed</div><div class="val">96</div></div>
+            <div class="stat"><div class="lbl">Vendors</div><div class="val">3</div></div>
+          </div>
+
+          <!-- Token types — only rendered because this collection has >1 type -->
+          <div>
+            <div class="sec-head"><h2>Token types</h2><a class="seclink">Filter the collection →</a></div>
+            <p class="sec-intro">This collection contains <strong>three kinds of token</strong>, each with its own traits. Rarity is ranked within each type, so scores compare like-for-like.</p>
+            <div class="type-strip">
+              <span class="type-chip"><span class="tc-dot" style="background:#d97706"></span><b>Character</b><span class="tc-n">800</span></span>
+              <span class="type-chip"><span class="tc-dot" style="background:#10b981"></span><b>Companion</b><span class="tc-n">450</span></span>
+              <span class="type-chip"><span class="tc-dot" style="background:#7c3aed"></span><b>Relic</b><span class="tc-n">120</span></span>
+            </div>
+          </div>
+
+          <div>
+            <div class="sec-head"><h2>Active vendors</h2><a class="seclink">View all vendors →</a></div>
+            <p class="sec-intro">Buy <strong>direct from the collection</strong> — minting from a vendor makes you the token's very first owner, straight from the creator.</p>
+            <div class="vgrid">
+              <article class="vcard">
+                <div class="art" style="background:linear-gradient(140deg,#b45309,#d97706)">
+                  <span class="vbadge live"><span class="pulse"></span>Live</span>
+                  <span class="emoji">🧙</span>
+                  <span class="av">⚔️</span>
+                </div>
+                <div class="b">
+                  <div><div class="nm">Heroes Drop</div><div class="by">by Vault One · Character · fixed-price</div></div>
+                  <div class="price"><span class="n">6</span><span class="u">ICP</span></div>
+                  <div class="bar"><span style="width:61%"></span></div>
+                  <div class="meta-row"><span>488 / 800 minted</span><span>Open now</span></div>
+                  <div class="foot"><a class="btn btn--primary btn--block btn--sm" href="#">Mint now</a></div>
+                </div>
+              </article>
+              <article class="vcard">
+                <div class="art" style="background:linear-gradient(140deg,#7c3aed,#4c1d95)">
+                  <span class="vbadge live"><span class="pulse"></span>Live</span>
+                  <span class="emoji">💎</span>
+                  <span class="av">✨</span>
+                </div>
+                <div class="b">
+                  <div><div class="nm">Relic Vault</div><div class="by">by Vault One · Relic · gacha</div></div>
+                  <div class="price"><span class="n">5</span><span class="u">ICP / pull</span></div>
+                  <div class="bar"><span style="width:78%"></span></div>
+                  <div class="meta-row"><span>94 / 120 pulled</span><span>Open-ended</span></div>
+                  <div class="foot"><a class="btn btn--primary btn--block btn--sm" href="#">Pull a relic</a></div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div>
+            <div class="sec-head"><h2>Active listings</h2><a class="seclink">Explore listings →</a></div>
+            <p class="sec-intro">Tokens listed for resale on the <strong>secondary market</strong> by collectors who already hold them — you're buying from another owner, not the creator.</p>
+            <div class="tok-grid">
+              <div class="tok-card"><div class="pic" style="background:linear-gradient(160deg,#fde68a,#f59e0b)">🧙</div><div class="meta"><span class="type-tag"><span class="tc-dot" style="background:#d97706"></span>Character</span><div class="ttl">Ashwarden #044</div><div class="price">11 ICP · Buy now</div></div></div>
+              <div class="tok-card"><div class="pic" style="background:linear-gradient(160deg,#a7f3d0,#10b981)">🦅</div><div class="meta"><span class="type-tag"><span class="tc-dot" style="background:#10b981"></span>Companion</span><div class="ttl">Storm Hawk #207</div><div class="price">4.2 ICP · Buy now</div></div></div>
+              <div class="tok-card"><div class="pic" style="background:linear-gradient(160deg,#ddd6fe,#7c3aed)">💎</div><div class="meta"><span class="type-tag"><span class="tc-dot" style="background:#7c3aed"></span>Relic</span><div class="ttl">Sunstone #009</div><div class="price">Auction · ends 7h</div></div></div>
+              <div class="tok-card"><div class="pic" style="background:linear-gradient(160deg,#fde68a,#f59e0b)">🧝</div><div class="meta"><span class="type-tag"><span class="tc-dot" style="background:#d97706"></span>Character</span><div class="ttl">Greenseer #118</div><div class="price">8 ICP · Buy now</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 MANAGE · just created (blank) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Manage · just created (blank)</span><span class="d">First view straight out of the Create-collection modal — name, thumbnail and description are set; no banner, no socials, no tokens yet.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Project: Vault One</span><span class="sep">/</span><span>Collections</span><span class="sep">/</span><span class="here">Manage</span></div>
+        <div class="mng-bar">
+          <div class="mng-id"><div class="av" style="background:linear-gradient(135deg,#6EE7B7,#38BDF8)"></div><div><h1>Aurora Foxes</h1><div class="sub">coll_01J2K4…8B · no generator linked</div></div></div>
+          <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+          <div class="mng-actions"><button class="btn btn--ghost">Public view</button><button class="btn btn--primary">Save changes</button><button class="btn" disabled>Submit to Review</button></div>
+        </div>
+        <div class="section">
+          <div class="id-card">
+            <div class="id-banner id-banner--empty"><button class="banner-upload"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Upload a banner</button></div>
+            <div class="id-body">
+              <div class="id-top">
+                <div class="id-avatar" style="background:linear-gradient(135deg,#6EE7B7,#38BDF8)"></div>
+                <div class="id-name">Aurora Foxes</div>
+              </div>
+              <div class="id-cols">
+                <div>
+                  <div class="hd">Description</div>
+                  <textarea class="desc-box" placeholder="Add a publicly viewable description — optional">A seasonal set of aurora-lit fox portraits — added at creation, edit anytime.</textarea>
+                </div>
+                <div>
+                  <div class="hd">Social links</div>
+                  <p class="tiny" style="margin:0 0 var(--s-4)">No socials yet — add your X, Discord, or a website so buyers can find the collection.</p>
+                  <div class="id-socadd">
+                    <div class="m-field"><label class="flabel">Add a platform</label><select class="input"><option>Select an option</option><option>X (Twitter)</option><option>Discord</option><option>Website</option><option>Instagram</option><option>Telegram</option></select></div>
+                    <div class="m-field"><label class="flabel">Handle</label><input class="input" placeholder="@yourhandle"></div>
+                    <button class="icon-btn" title="Add social">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-card">
+            <div><h3>Add your first tokens</h3><p>Bring tokens in from a generator export or by uploading them. A collection needs tokens before it can move to Review.</p></div>
+            <button class="btn btn--primary">Add tokens</button>
+          </div>
+
+          <div class="status-block">
+            <h3>Collection status</h3>
+            <p class="lede">Just created — add tokens and finish setup before you can submit to Review.</p>
+            <div class="status-list">
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg></span><div class="si-main"><div class="si-ttl">Tokens added <span class="tag tag--amber">None yet</span></div><div class="si-sub">No tokens yet — source from a generator export or upload.</div></div><div class="si-val" style="font-size:var(--text-sm);font-family:var(--font-emphasis);color:var(--text-secondary)">0 draft · 0 review · 0 live</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="17" x2="18" y2="17"/></svg></span><div class="si-main"><div class="si-ttl">Attributes used <span class="tag tag--amber">Not set up</span></div><div class="si-sub">0 defined · attributes appear once you add tokens or define a schema.</div></div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span><div class="si-main"><div class="si-ttl">Supply policy <span class="tag tag--green">Default set</span></div><div class="si-sub">Capped at 1,000 by default — adjust the cap, copies &amp; issue display anytime before Live.</div></div><div class="si-val">Max 1,000</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg></span><div class="si-main"><div class="si-ttl">Rarity <span class="tag tag--indigo">Default</span></div><div class="si-sub">Uniform by default — every token equally likely. Switch to Tiered or Weighted anytime.</div></div><div class="si-val" style="font-size:var(--text-lg)">Uniform</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span><div class="si-main"><div class="si-ttl">Guards chosen <span class="tag tag--indigo">Default</span></div><div class="si-sub">Default — no duplicates · never burned · free transfer · free resale. Buyer-facing; locks at Live.</div><div class="guard-strip" style="margin-top:var(--s-3)"><img src="../style-guide/icons/dupe_off.png" class="is-off" alt="Duplicates blocked" title="Duplicates — blocked"><img src="../style-guide/icons/destroy_off.png" class="is-off" alt="Destruction blocked" title="Destruction — blocked"><img src="../style-guide/icons/transfer_restr_off.png" class="is-off" alt="Transfer limits off" title="Transfer limits — none"><img src="../style-guide/icons/sale_restr_off.png" class="is-off" alt="Sale limits off" title="Sale limits — none"></div></div><span class="si-arrow">›</span></div>
+            </div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>You can delete this collection while it's in <strong>Draft or Review</strong>. Once it goes <strong>Live</strong> it can't be deleted — going Live enables minting and creates on-chain holders. <span class="tag tag--indigo">Spec rule</span></div></div>
+
+          <div class="danger-zone"><div><h3>Delete collection</h3><p>No tokens yet — deleting removes the collection. Requires confirmation.</p></div><button class="btn btn--danger">Delete Aurora Foxes</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 MANAGE · Draft -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Manage · overview (Draft)</span><span class="d">Creator-facing setup. Everything editable; Submit to Review is blocked until the checklist clears.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Project: Vault One</span><span class="sep">/</span><span>Collections</span><span class="sep">/</span><span class="here">Manage</span></div>
+        <div class="mng-bar">
+          <div class="mng-id"><div class="av"></div><div><h1>Spring Foxes</h1><div class="sub">coll_01H8R2…4F · linked to gen_01H81…9C</div></div></div>
+          <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+          <div class="mng-actions"><button class="btn btn--ghost">Public view</button><button class="btn btn--primary">Save changes</button><button class="btn" disabled>Submit to Review</button></div>
+        </div>
+        <div class="section">
+          <div class="id-card">
+            <div class="id-banner" style="background:linear-gradient(135deg,#a3e635,#84cc16 60%,#65a30d)"></div>
+            <div class="id-body">
+              <div class="id-top">
+                <div class="id-avatar" style="background:linear-gradient(135deg,#a7f3d0,#60a5fa)"></div>
+                <div class="id-name">Spring Foxes</div>
+              </div>
+              <div class="id-cols">
+                <div>
+                  <div class="hd">Description</div>
+                  <textarea class="desc-box">A small spring-themed collection of generative fox portraits, layered with seasonal accessories and weather moods.</textarea>
+                </div>
+                <div>
+                  <div class="hd">Social links</div>
+                  <div class="social-list">
+                    <div class="social-item"><span class="plat">Website</span><span class="handle">vault.one/foxes</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">X / Twitter</span><span class="handle">@springfoxes</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">Discord</span><span class="handle">discord.gg/springfoxes</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                  </div>
+                  <div class="id-socadd">
+                    <div class="m-field"><label class="flabel">Add a platform</label><select class="input"><option>Select an option</option><option>X (Twitter)</option><option>Discord</option><option>Website</option><option>Instagram</option><option>Telegram</option></select></div>
+                    <div class="m-field"><label class="flabel">Handle</label><input class="input" placeholder="@yourhandle"></div>
+                    <button class="icon-btn" title="Add social">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-block">
+            <h3>Collection status</h3>
+            <p class="lede">A quick read on setup — update any area from the sidebar. 2 items left before you can submit to Review.</p>
+            <div class="status-list">
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg></span><div class="si-main"><div class="si-ttl">Tokens added</div><div class="si-sub">Optionally sourced from generator <span class="mono">gen_01H81…9C</span> — a generator isn't required.</div></div><div class="si-val" style="font-size:var(--text-sm);font-family:var(--font-emphasis);color:var(--text-secondary)">23 draft · 0 review · 0 live</div><span class="si-arrow">↗</span></div>
+              <!-- Token types — only rendered because this collection has >1 type -->
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><div class="si-main"><div class="si-ttl">Token types <span class="tag tag--green">2 types</span></div><div class="si-sub">Each type carries its own attribute schema. Only shown when a collection has more than one type.</div><div class="type-strip" style="margin-top:var(--s-3)"><span class="type-chip"><span class="tc-dot" style="background:#d97706"></span><b>Fox</b><span class="tc-n">18</span></span><span class="type-chip"><span class="tc-dot" style="background:#10b981"></span><b>Companion</b><span class="tc-n">5</span></span></div></div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="17" x2="18" y2="17"/></svg></span><div class="si-main"><div class="si-ttl">Attributes used <span class="tag tag--amber">3 to assign</span></div><div class="si-sub">12 defined · 3 tokens are missing required attribute values.</div></div><a class="btn btn--primary btn--sm" href="#" title="Jump to the tokens that still need values">Fix assignments →</a><a class="si-arrow" href="#" title="Open Attributes schema">↗</a></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span><div class="si-main"><div class="si-ttl">Supply policy <span class="tag tag--green">Default set</span></div><div class="si-sub">Capped at 1,000 by default — adjust the cap, copies &amp; issue display anytime before Live.</div></div><div class="si-val">Max 1,000</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg></span><div class="si-main"><div class="si-ttl">Rarity <span class="tag tag--indigo">Default</span></div><div class="si-sub">Uniform by default — every token equally likely. Switch to Tiered or Weighted anytime.</div></div><div class="si-val" style="font-size:var(--text-lg)">Uniform</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span><div class="si-main"><div class="si-ttl">Claim defaults <span class="tag tag--amber">Cost not set</span></div><div class="si-sub">Set a claim cost (free, ICP or ICRC-1) on every tier — requirements optional. <strong>Required before Review</strong>; locks at Live.</div></div><a class="btn btn--primary btn--sm" href="#" title="Open Claim defaults">Set claim defaults →</a><a class="si-arrow" href="#">↗</a></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span><div class="si-main"><div class="si-ttl">Guards chosen <span class="tag tag--green">Set</span></div><div class="si-sub">No duplicates · never burned · free transfer · resale may be limited. Buyer-facing; locks at Live.</div><div class="guard-strip" style="margin-top:var(--s-3)"><img src="../style-guide/icons/dupe_off.png" class="is-off" alt="Duplicates blocked" title="Duplicates — blocked"><img src="../style-guide/icons/destroy_off.png" class="is-off" alt="Destruction blocked" title="Destruction — blocked"><img src="../style-guide/icons/transfer_restr_off.png" class="is-off" alt="Transfer limits off" title="Transfer limits — none"><img src="../style-guide/icons/sale_restr_on.png" alt="Sale limits on" title="Sale limits — may apply"></div></div><span class="si-arrow">›</span></div>
+            </div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>You can delete this collection while it's in <strong>Draft or Review</strong>. Once it goes <strong>Live</strong> it can't be deleted — going Live enables minting and creates on-chain holders. <span class="tag tag--indigo">Spec rule</span></div></div>
+
+          <div class="danger-zone"><div><h3>Delete collection</h3><p>23 Draft tokens will be removed. Generator <span class="mono">gen_01H81…9C</span> stays. Requires confirmation.</p></div><button class="btn btn--danger">Delete Spring Foxes</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 MANAGE · Review -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Manage · overview (Review)</span><span class="d">Required setup complete and publicly reviewable. Publish to Live is blocked until stale token scores are cleared.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Project: Vault One</span><span class="sep">/</span><span>Collections</span><span class="sep">/</span><span class="here">Manage</span></div>
+        <div class="mng-bar">
+          <div class="mng-id"><div class="av"></div><div><h1>Spring Foxes</h1><div class="sub">coll_01H8R2…4F · linked to gen_01H81…9C</div></div></div>
+          <span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span>
+          <div class="mng-actions"><button class="btn btn--ghost">Public view</button><button class="btn btn--primary">Save changes</button><button class="btn btn--ghost">Switch to Draft</button><button class="btn" disabled>Publish to Live</button></div>
+        </div>
+        <div class="section">
+          <div class="id-card">
+            <div class="id-banner" style="background:linear-gradient(135deg,#a3e635,#84cc16 60%,#65a30d)"></div>
+            <div class="id-body">
+              <div class="id-top">
+                <div class="id-avatar" style="background:linear-gradient(135deg,#a7f3d0,#60a5fa)"></div>
+                <div class="id-name">Spring Foxes</div>
+              </div>
+              <div class="id-cols">
+                <div>
+                  <div class="hd">Description</div>
+                  <textarea class="desc-box">A small spring-themed collection of generative fox portraits, layered with seasonal accessories and weather moods.</textarea>
+                </div>
+                <div>
+                  <div class="hd">Social links</div>
+                  <div class="social-list">
+                    <div class="social-item"><span class="plat">Website</span><span class="handle">vault.one/foxes</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">X / Twitter</span><span class="handle">@springfoxes</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">Discord</span><span class="handle">discord.gg/springfoxes</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                  </div>
+                  <div class="id-socadd">
+                    <div class="m-field"><label class="flabel">Add a platform</label><select class="input"><option>Select an option</option><option>X (Twitter)</option><option>Discord</option><option>Website</option><option>Instagram</option><option>Telegram</option></select></div>
+                    <div class="m-field"><label class="flabel">Handle</label><input class="input" placeholder="@yourhandle"></div>
+                    <button class="icon-btn" title="Add social">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-block">
+            <h3>Collection status</h3>
+            <p class="lede">All required setup is in place — clear the stale token scores below, then publish.</p>
+            <div class="status-list">
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg></span><div class="si-main"><div class="si-ttl">Tokens added</div><div class="si-sub">Sourced from generator <span class="mono">gen_01H81…9C</span>.</div></div><div class="si-val" style="font-size:var(--text-sm);font-family:var(--font-emphasis);color:var(--text-secondary)">0 draft · 80 review · 0 live</div><span class="si-arrow">↗</span></div>
+              <!-- Token types — only rendered because this collection has >1 type -->
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><div class="si-main"><div class="si-ttl">Token types <span class="tag tag--green">2 types</span></div><div class="si-sub">Each type carries its own attribute schema; rarity ranks within each type. Only shown when a collection has more than one type.</div><div class="type-strip" style="margin-top:var(--s-3)"><span class="type-chip"><span class="tc-dot" style="background:#d97706"></span><b>Fox</b><span class="tc-n">68</span></span><span class="type-chip"><span class="tc-dot" style="background:#10b981"></span><b>Companion</b><span class="tc-n">12</span></span></div></div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="17" x2="18" y2="17"/></svg></span><div class="si-main"><div class="si-ttl">Attributes used <span class="tag tag--green">Complete</span></div><div class="si-sub">12 defined · all required attributes assigned · per token type.</div></div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span><div class="si-main"><div class="si-ttl">Supply policy <span class="tag tag--green">Default set</span></div><div class="si-sub">Capped at 1,000 by default — adjust the cap, copies &amp; issue display anytime before Live.</div></div><div class="si-val">Max 1,000</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9"/></svg></span><div class="si-main"><div class="si-ttl">Rarity <span class="tag tag--green">Weighted</span></div><div class="si-sub">Weighted · 5 tiers · Common 60% → Legendary 1%.</div></div><div class="si-val">5 tiers</div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span><div class="si-main"><div class="si-ttl">Claim defaults <span class="tag tag--green">Complete</span></div><div class="si-sub">A cost is set on every tier (free / ICP / ICRC-1); requirements optional. Required to reach Review — now locks at Live.</div></div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span><div class="si-main"><div class="si-ttl">Guards chosen <span class="tag tag--green">Set</span></div><div class="si-sub">No duplicates · never burned · free transfer · resale may be limited. Buyer-facing; locks at Live.</div><div class="guard-strip" style="margin-top:var(--s-3)"><img src="../style-guide/icons/dupe_off.png" class="is-off" alt="Duplicates blocked" title="Duplicates — blocked"><img src="../style-guide/icons/destroy_off.png" class="is-off" alt="Destruction blocked" title="Destruction — blocked"><img src="../style-guide/icons/transfer_restr_off.png" class="is-off" alt="Transfer limits off" title="Transfer limits — none"><img src="../style-guide/icons/sale_restr_on.png" alt="Sale limits on" title="Sale limits — may apply"></div></div><span class="si-arrow">›</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>Tokens needing attention</h2><button class="btn btn--ghost btn--sm">Open Manage tokens ↗</button></div>
+            <div class="attn">
+              <div class="a"><span class="pic">🦊</span><div><div class="nm">Spring Fox #017</div><div class="sub">issue_number 17 · stale_score</div></div><div class="acts"><span class="tag tag--amber">Score out of date</span><button class="btn btn--ghost btn--sm">Refresh score</button><a class="lnk">Send to Draft</a></div></div>
+              <div class="a"><span class="pic">🦊</span><div><div class="nm">Spring Fox #042</div><div class="sub">issue_number 42 · stale_score</div></div><div class="acts"><span class="tag tag--amber">Score out of date</span><button class="btn btn--ghost btn--sm">Refresh score</button><a class="lnk">Send to Draft</a></div></div>
+              <div class="a"><span class="pic pic--busy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg></span><div><div class="nm">Spring Fox #066</div><div class="sub">recompute in progress</div></div><div class="acts"><span class="tag tag--indigo">Recomputing</span><a class="lnk" style="color:var(--text-muted)">Refresh score</a></div></div>
+            </div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>You can delete this collection while it's in <strong>Draft or Review</strong>. Once it goes <strong>Live</strong> it can't be deleted — going Live enables minting and creates on-chain holders. <span class="tag tag--indigo">Spec rule</span></div></div>
+
+          <div class="danger-zone"><div><h3>Delete collection</h3><p>80 tokens in Review will be removed. Generator <span class="mono">gen_01H81…9C</span> stays. Requires confirmation.</p></div><button class="btn btn--danger">Delete Spring Foxes</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 MANAGE · Live -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Manage · overview (Live)</span><span class="d">Storefront stays editable; media is a direct edit, metadata needs an explicit save, and core policy is locked read-only.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Project: Vault One</span><span class="sep">/</span><span>Collections</span><span class="sep">/</span><span class="here">Manage</span></div>
+        <div class="mng-bar">
+          <div class="mng-id"><div class="av" style="background:linear-gradient(135deg,#166534,#22c55e)"></div><div><h1>Crystal Birds</h1><div class="sub">coll_01F6T9…2A · 234 / 500 minted</div></div></div>
+          <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+          <div class="mng-actions"><button class="btn btn--ghost">View public page</button><button class="btn btn--primary">Save changes</button><button class="btn btn--ghost">Manage minted</button></div>
+        </div>
+        <div class="section">
+          <div class="id-card">
+            <div class="id-banner" style="background:linear-gradient(135deg,#a3e635,#84cc16 60%,#65a30d)"></div>
+            <div class="id-body">
+              <div class="id-top">
+                <div class="id-avatar" style="background:linear-gradient(135deg,#166534,#22c55e)"></div>
+                <div class="id-namewrap"><div class="id-name">Crystal Birds</div><span class="tag needs-save">Needs save</span></div>
+              </div>
+              <p class="tiny" style="margin-top:var(--s-4)">Live edit rules apply — banner &amp; thumbnail edits save immediately (direct edit); name, description and links need an explicit Save.</p>
+              <div class="id-cols">
+                <div>
+                  <div class="hd">Description <span class="tag needs-save">Needs save</span></div>
+                  <textarea class="desc-box">A 500-piece flock of crystalline songbirds — each token a unique mineral and posture pairing.</textarea>
+                </div>
+                <div>
+                  <div class="hd">Social links <span class="tag needs-save">Needs save</span></div>
+                  <div class="social-list">
+                    <div class="social-item"><span class="plat">Website</span><span class="handle">vault.one/birds</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">X / Twitter</span><span class="handle">@crystalbirds</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">Discord</span><span class="handle">discord.gg/crystalbirds</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                  </div>
+                  <div class="id-socadd">
+                    <div class="m-field"><label class="flabel">Add a platform</label><select class="input"><option>Select an option</option><option>X (Twitter)</option><option>Discord</option><option>Website</option><option>Instagram</option><option>Telegram</option></select></div>
+                    <div class="m-field"><label class="flabel">Handle</label><input class="input" placeholder="@yourhandle"></div>
+                    <button class="icon-btn" title="Add social">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="live-status">
+            <div class="av"></div>
+            <div style="flex:1;min-width:0">
+              <h3>Crystal Birds is live.</h3>
+              <p>Linked vendors are running. Edits to <strong style="color:var(--text-primary)">Guards, Supply, Attributes and Rarity</strong> are now locked.</p>
+              <div class="progress"><span style="width:46.8%"></span></div>
+              <p class="tiny" style="margin-top:.5rem">234 of 500 minted · stack &amp; copy ops <span class="tag tag--amber">WIP</span></p>
+            </div>
+          </div>
+
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Guards</span><span class="v" style="display:inline-flex;align-items:center;gap:var(--s-3)"><span class="guard-strip"><img src="../style-guide/icons/dupe_off.png" class="is-off" alt="Duplicates blocked" title="Duplicates — blocked"><img src="../style-guide/icons/destroy_off.png" class="is-off" alt="Destruction blocked" title="Destruction — blocked"><img src="../style-guide/icons/transfer_restr_off.png" class="is-off" alt="Transfer limits off" title="Transfer limits — none"><img src="../style-guide/icons/sale_restr_on.png" alt="Sale limits on" title="Sale limits — may apply"></span>1 on · 3 off</span></div>
+            <div class="r"><span>Supply</span><span class="v">Capped · 500</span></div>
+            <div class="r"><span>Attributes schema</span><span class="v">12 defined · locked</span></div>
+            <div class="r"><span>Rarity</span><span class="v">Weighted · 5 tiers</span></div>
+            <div class="r"><span>Token score visible</span><span class="v">Show (locked)</span></div>
+            <div class="r"><span>Issue numbers</span><span class="v">Retired on mint</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Delete collection modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Delete collection — confirmation modal</span><span class="d">Opened from the Danger zone "Delete {collection}" button — available only pre-Live (Draft / Review). Type the name to confirm. The generator is never deleted here.</span></div>
+      <div class="modal-stage">
+        <div class="modal-card">
+          <header><h4>Delete Spring Foxes?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p>This permanently deletes the collection. <strong>This can't be undone.</strong></p>
+            <div class="dz-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>
+              <ul class="dz-list">
+                <li><strong>80 tokens in Review</strong> will be removed.</li>
+                <li>The generator <span class="mono">gen_01H81…9C</span> <strong>stays</strong> — it's separate and reusable.</li>
+                <li>Claim defaults, attributes, rarity and guards for this collection are discarded.</li>
+              </ul>
+            </div></div>
+            <div><label class="flabel">Type <strong style="color:var(--text-primary)">SPRING FOXES</strong> to confirm</label><input class="input" placeholder="SPRING FOXES"></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid" disabled>Delete collection</button></div>
+        </div>
+      </div>
+      <div class="frame-cap" style="margin-top:var(--s-5)"><span class="d">Delete is only available pre-Live (Draft / Review). A Live collection can't be deleted — there's no delete affordance in its Danger zone — so a "blocked" modal is never reached.</span></div>
+    </section>
+
+    <!-- 07 Collection overview image · cycle check (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Collection overview image · cycle check (balance OK)</span><span class="d">Saving a collection banner or thumbnail stores it in blob storage, funded from project cycles. The guard is the same for either image — the modal just names the one you're adding (thumbnail shown here, banner in 08–09). Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload (see the Cycles &amp; uploads gallery). With headroom, it saves normally. On a Live collection these media edits save directly.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4 style="color:var(--text-primary)">Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-foxes-thumb.png staged · 0.4 MB · uploaded &amp; held</span>
+            <div class="cyc-est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.01 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">2.040 T</div></div>
+              <div class="e ok"><div class="k">After upload</div><div class="v">~2.03 T</div></div>
+            </div>
+            <div class="cyc-note cyc-note--ok" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>Enough cycles to store this thumbnail and keep your reserve. Toko moves project cycles into blob storage automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload assets</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 Collection overview image · low balance -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Collection overview image · low balance</span><span class="d">The estimate exceeds the balance. The image stays staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4 style="color:var(--text-primary)">Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-foxes-banner.png staged · 3.1 MB · uploaded &amp; held</span>
+            <div class="cyc-est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.03 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.010 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.02 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="cyc-note cyc-note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not quite enough cycles to store this image.</strong> It stays staged — top up and it saves straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 Top up to continue · image staged -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, it saves automatically.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4 style="color:var(--text-primary)">Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-foxes-banner.png staged · 3.1 MB · ready to save</span>
+            <div style="margin-top:var(--s-4)">
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.03 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.010 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div style="margin-top:var(--s-4)">
+              <span class="cyc-flabel">Top up amount</span>
+              <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="cyc-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged image saves automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

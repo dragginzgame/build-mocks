@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Style Guide</title>
+<link rel="stylesheet" href="css/styleguide.css" />
+</head>
+<body>
+
+<!-- Global theme toggle -->
+<div class="theme-toggle" role="tablist" aria-label="Theme">
+  <button type="button" data-theme-set="light" class="active">Light</button>
+  <button type="button" data-theme-set="dark">Dark</button>
+</div>
+<script>
+  (function(){
+    var root = document.documentElement;
+    var buttons = document.querySelectorAll('.theme-toggle button');
+    function setTheme(theme){
+      if (theme === 'dark') root.setAttribute('data-theme','dark');
+      else root.removeAttribute('data-theme');
+      buttons.forEach(function(b){
+        b.classList.toggle('active', b.getAttribute('data-theme-set') === theme);
+      });
+    }
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ setTheme(b.getAttribute('data-theme-set')); });
+    });
+  })();
+</script>
+
+<div class="shell">
+
+<!-- ========================================================
+     SIDEBAR NAV
+     ======================================================== -->
+<nav>
+  <div class="brandmark">
+    <img src="logos/2026-05 - face.svg" alt="" class="brandmark-icon" />
+    <img src="logos/app-name.png" alt="Toko" class="brandmark-wordmark" />
+  </div>
+  <ol>
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#brand">Brand</a></li>
+    <li class="group-label">Foundations</li>
+    <li><a href="#color">Color</a></li>
+    <li><a href="#typography">Typography</a></li>
+    <li><a href="#spacing">Spacing &amp; radius</a></li>
+    <li><a href="#iconography">Iconography</a></li>
+    <li class="group-label">Components</li>
+    <li><a href="#buttons">Buttons</a></li>
+    <li><a href="#inputs">Inputs &amp; forms</a></li>
+    <li><a href="#dropdowns">Dropdowns</a></li>
+    <li><a href="#selection">Selection controls</a></li>
+    <li><a href="#optional">Optional reveal</a></li>
+    <li><a href="#tags">Tags &amp; pills</a></li>
+    <li><a href="#status">Status &amp; lifecycle</a></li>
+    <li><a href="#cards">Cards</a></li>
+    <li><a href="#lists">List rows</a></li>
+    <li><a href="#tiles">Image tiles</a></li>
+    <li><a href="#tooltips">Tooltips</a></li>
+    <li><a href="#banners">Notifications</a></li>
+    <li><a href="#upload">Upload &amp; progress</a></li>
+    <li><a href="#modals">Modals</a></li>
+    <li><a href="#tabs">Tabs</a></li>
+    <li><a href="#lockchips">Lock &amp; edit chips</a></li>
+    <li><a href="#radiocards">Radio cards</a></li>
+    <li><a href="#statebanners">State banners</a></li>
+    <li><a href="#disclosure">Disclosure</a></li>
+    <li><a href="#savebar">Save bar</a></li>
+    <li class="group-label">Token surface</li>
+    <li><a href="#tokencard">Token card</a></li>
+    <li><a href="#rarityborders">Rarity borders</a></li>
+    <li><a href="#issueoptions">Issue &amp; copy display</a></li>
+    <li class="group-label">Patterns</li>
+    <li><a href="#nav">Navigation</a></li>
+    <li><a href="#bulk">Bulk actions</a></li>
+    <li><a href="#footerpattern">Page footer</a></li>
+    <li><a href="#empty">Empty states</a></li>
+    <li><a href="#imagery">Imagery &amp; backgrounds</a></li>
+    <li><a href="#identity">Identity layout</a></li>
+    <li><a href="#mediapreview">Banner vs thumbnail</a></li>
+    <li><a href="#mediapicker">Image picker</a></li>
+  </ol>
+</nav>
+
+<!-- ========================================================
+     MAIN
+     ======================================================== -->
+<main>
+
+<!-- ===== INTRO ===== -->
+<section id="intro">
+  <div class="brand-hero">
+    <div>
+      <div class="tag">Style guide · v0.1</div>
+      <h1>Toko</h1>
+      <p class="lede" style="margin-bottom:0;">The visual and component system behind Toko — Internet Computer-native generator, wallet, launchpad, and secondary marketplace. This guide is a single source for type, color, components, and the patterns the product is built on.</p>
+    </div>
+    <img src="bot-images/hi/IMG_4993.png" alt="Toko character saying hi" />
+  </div>
+  <p class="note">Rendered with the project's own fonts (Anton, Mona Sans, Mona Sans) and the canonical logo and character art. Built to hold up at desktop and at ~375px wide. Use the <strong>Light / Dark</strong> toggle (top-right of the page) to flip the entire guide between modes and verify every component reads correctly on both surfaces.</p>
+</section>
+
+<!-- ===== BRAND ===== -->
+<section id="brand">
+  <div class="eyebrow">Brand</div>
+  <h2>Brand rules</h2>
+  <p class="lede">Toko leads with a friendly character and an unapologetic display typeface. Keep visual personality concentrated in empty states, onboarding, and success moments — never on dense data views.</p>
+
+  <h3 class="section-h">Logo</h3>
+  <div class="canvas row" style="gap:var(--s-5);">
+    <figure style="margin:0; padding:var(--s-5); background:white; border:1px solid var(--border-soft); border-radius:var(--r-3);">
+      <div style="display:flex; align-items:center; gap:var(--s-3);">
+        <img src="logos/2026-05 - face.svg" alt="" style="height:40px; width:auto; display:block;" />
+        <img src="logos/app-name.png" alt="Toko" style="height:28px; width:auto; display:block; filter:brightness(0);" />
+      </div>
+      <figcaption style="font-family:var(--font-emphasis); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-secondary); margin-top:var(--s-3);">Light surface</figcaption>
+    </figure>
+    <figure style="margin:0; padding:var(--s-5); background:#1D1D1D; border-radius:var(--r-3);">
+      <div style="display:flex; align-items:center; gap:var(--s-3);">
+        <img src="logos/2026-05 - face.svg" alt="" style="height:40px; width:auto; display:block;" />
+        <img src="logos/app-name.png" alt="Toko" style="height:28px; width:auto; display:block;" />
+      </div>
+      <figcaption style="font-family:var(--font-emphasis); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#B5B5B5; margin-top:var(--s-3);">Dark surface</figcaption>
+    </figure>
+  </div>
+  <p class="note"><b>Use:</b> the logo is two files — the character (<code>2026-05 - face.svg</code>, preferred; <code>2026-05 - face.png</code> as a raster fallback for surfaces that can't render SVG) and the wordmark (<code>app-name.png</code>). Default to the SVG; only reach for the PNG when SVG isn't supported or you specifically need a fixed-pixel raster (e.g. OG/social images, older email clients). The wordmark file is white as shipped, so use it as-is on dark surfaces; on light surfaces apply <code>filter: brightness(0)</code> to flip it to black. Never recolor the character. Pair the character and wordmark with a gap and clear-space equal to the height of the "T".</p>
+
+  <h3 class="section-h">Character library</h3>
+  <p class="note">Each emotion is a folder of frames in <code>bot-images/</code> — pick a single frame when used statically, sequence frames when used as a Lottie/GIF. Below is the full library at one representative frame each.</p>
+  <div class="canvas char-grid">
+    <figure class="char"><img src="bot-images/hi/IMG_4993.png" alt="Hi" /><figcaption>Hi</figcaption></figure>
+    <figure class="char"><img src="bot-images/laugh/laugh_1.png" alt="Laugh" /><figcaption>Laugh</figcaption></figure>
+    <figure class="char"><img src="bot-images/thumbs-up/IMG_5005.png" alt="Thumbs up" /><figcaption>Thumbs up</figcaption></figure>
+    <figure class="char"><img src="bot-images/confident/IMG_6700.png" alt="Confident" /><figcaption>Confident</figcaption></figure>
+    <figure class="char"><img src="bot-images/love/IMG_5284.png" alt="Love" /><figcaption>Love</figcaption></figure>
+    <figure class="char"><img src="bot-images/grateful/IMG_5142.png" alt="Grateful" /><figcaption>Grateful</figcaption></figure>
+    <figure class="char"><img src="bot-images/party/IMG_6341.png" alt="Party" /><figcaption>Party</figcaption></figure>
+    <figure class="char"><img src="bot-images/spotlight/IMG_5547.png" alt="Spotlight" /><figcaption>Spotlight</figcaption></figure>
+    <figure class="char"><img src="bot-images/mic-drop/IMG_6195.png" alt="Mic drop" /><figcaption>Mic drop</figcaption></figure>
+    <figure class="char"><img src="bot-images/podcaster/IMG_6413.png" alt="Podcaster" /><figcaption>Podcaster</figcaption></figure>
+    <figure class="char"><img src="bot-images/determined/IMG_6276.png" alt="Determined" /><figcaption>Determined</figcaption></figure>
+    <figure class="char"><img src="bot-images/teach-or-present/IMG_5262.png" alt="Teach or present" /><figcaption>Teach / present</figcaption></figure>
+    <figure class="char"><img src="bot-images/question/IMG_5343.png" alt="Question" /><figcaption>Question</figcaption></figure>
+    <figure class="char"><img src="bot-images/point/IMG_5320.png" alt="Point" /><figcaption>Point</figcaption></figure>
+    <figure class="char"><img src="bot-images/inspect/IMG_5593.png" alt="Inspect" /><figcaption>Inspect</figcaption></figure>
+    <figure class="char"><img src="bot-images/read/IMG_5571.png" alt="Read" /><figcaption>Read</figcaption></figure>
+    <figure class="char"><img src="bot-images/type/IMG_5560.png" alt="Type" /><figcaption>Type</figcaption></figure>
+    <figure class="char"><img src="bot-images/recharge/IMG_4914.png" alt="Recharge" /><figcaption>Recharge</figcaption></figure>
+    <figure class="char"><img src="bot-images/oops-sorry/IMG_4838.png" alt="Oops / sorry" /><figcaption>Oops / sorry</figcaption></figure>
+    <figure class="char"><img src="bot-images/not-mathing/IMG_5579.png" alt="Not mathing" /><figcaption>Not mathing</figcaption></figure>
+    <figure class="char"><img src="bot-images/anxious/IMG_4839.png" alt="Anxious" /><figcaption>Anxious</figcaption></figure>
+    <figure class="char"><img src="bot-images/unwell/IMG_4843.png" alt="Unwell" /><figcaption>Unwell</figcaption></figure>
+  </div>
+
+  <h3 class="section-h">When to use which</h3>
+  <div class="canvas">
+    <table class="usemap">
+      <thead><tr><th>Moment</th><th>Recommended emotion folders</th></tr></thead>
+      <tbody>
+        <tr><td>Onboarding / first run</td><td>Hi, Teach / present</td></tr>
+        <tr><td>Empty state — no data yet</td><td>Recharge, Inspect, Read</td></tr>
+        <tr><td>Empty state — search returned nothing</td><td>Inspect, Oops / sorry</td></tr>
+        <tr><td>Success / confirmation</td><td>Thumbs up, Love, Party</td></tr>
+        <tr><td>Achievement / reward</td><td>Confident, Thumbs up, Grateful</td></tr>
+        <tr><td>Error / mistake</td><td>Oops / sorry, Not mathing — never use a happy pose with an error message</td></tr>
+        <tr><td>System unhealthy / outage</td><td>Unwell, Anxious</td></tr>
+        <tr><td>Loading / system busy</td><td>Type, Read</td></tr>
+        <tr><td>Pre-launch / countdown</td><td>Determined</td></tr>
+        <tr><td>Live event / featured drop</td><td>Podcaster, Spotlight, Mic drop</td></tr>
+        <tr><td>Drawing attention to UI</td><td>Point, Question</td></tr>
+        <tr><td>Profile avatar (logged in)</td><td>Hi, Confident</td></tr>
+        <tr><td>Big reveal / announcement</td><td>Mic drop, Spotlight</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note"><b>Use:</b> empty states, loading states, success moments, onboarding, marketing. <b>Avoid:</b> sprinkling through data tables, list rows, or transactional flows where personality reads as noise. <b>Never:</b> recolor, flip, or modify the character — use the pose that fits instead.</p>
+
+  <h3 class="section-h">Voice</h3>
+  <p class="note">Direct, friendly, never breathless. Sentence case in body copy, all-caps display type in headings. Errors are matter-of-fact, not apologetic. Status copy is short ("Draft", "Live", "Upload Failed"). No emojis in product copy.</p>
+</section>
+
+<!-- ===== COLOR ===== -->
+<section id="color">
+  <div class="eyebrow">Foundations · Color</div>
+  <h2>Color</h2>
+  <p class="lede">Three color languages, each scoped to one role. Lifecycle drives stage indicators. Health drives resource gauges. Notification severity drives toasts and banners. Don't cross them.</p>
+
+  <h3 class="section-h">Surfaces &amp; text</h3>
+  <div class="canvas grid-3">
+    <div class="swatch" style="background:#FFFFFF;"><div class="name">Canvas</div><div class="hex">#FFFFFF</div></div>
+    <div class="swatch" style="background:#FAFAFA;"><div class="name">Canvas alt</div><div class="hex">#FAFAFA</div></div>
+    <div class="swatch" style="background:#EAEAEA;"><div class="name">Page</div><div class="hex">#EAEAEA</div></div>
+    <div class="swatch swatch--dark" style="background:#1D1D1D;"><div class="name">Inverse</div><div class="hex">#1D1D1D</div></div>
+    <div class="swatch swatch--dark" style="background:#000000;"><div class="name">Inverse 2</div><div class="hex">#000000</div></div>
+    <div class="swatch" style="background:#E5E5E5;"><div class="name">Border soft</div><div class="hex">#E5E5E5</div></div>
+  </div>
+  <p class="note"><b>Page background:</b> application pages sit on the <b>Page</b> grey (<code>--surface-page</code>, #EAEAEA) — the light grey tone used throughout the app shell. <b>Canvas</b> white is reserved for the cards, panels and surfaces layered on top; it is never used as a full-page background. The Page grey is the quiet contrast that lets white cards read as raised.</p>
+
+  <h3 class="section-h">Lifecycle</h3>
+  <div class="canvas grid-3">
+    <div class="swatch" style="background:#F59E0B; color:white;"><div class="name">Draft</div><div class="hex">#F59E0B</div></div>
+    <div class="swatch" style="background:#6366F1; color:white;"><div class="name">Review</div><div class="hex">#6366F1</div></div>
+    <div class="swatch" style="background:#10B981; color:white;"><div class="name">Live</div><div class="hex">#10B981</div></div>
+  </div>
+  <p class="note"><b>Rule:</b> lifecycle colors carry the stage on a Status pill — a soft tint background with matching text and dot — and as the active segment of a Draft/Review/Live selector or the accent line on a Card header. Never use them as button backgrounds. The same three stages apply to projects, collections, and individual tokens.</p>
+
+  <h3 class="section-h">Health (resource gauges)</h3>
+  <div class="canvas grid-3">
+    <div class="swatch" style="background:#10B981; color:white;"><div class="name">OK</div><div class="hex">#10B981</div></div>
+    <div class="swatch" style="background:#F59E0B; color:white;"><div class="name">Warning</div><div class="hex">#F59E0B</div></div>
+    <div class="swatch" style="background:#EF4444; color:white;"><div class="name">Critical</div><div class="hex">#EF4444</div></div>
+  </div>
+  <p class="note"><b>Rule:</b> health red and lifecycle red share a hue. That's deliberate — both mean "stop / attention." Don't introduce a second red.</p>
+</section>
+
+<!-- ===== TYPOGRAPHY ===== -->
+<section id="typography">
+  <div class="eyebrow">Foundations · Typography</div>
+  <h2>Typography</h2>
+  <p class="lede">Three families, each with a single job. Anton for display. Mona Sans for emphasis and labels. Mona Sans for everything else.</p>
+
+  <h3 class="section-h">Families</h3>
+  <div class="canvas">
+    <div class="specimen">
+      <div class="meta"><b>Anton</b> Display · 400</div>
+      <div class="sample" style="font-family:var(--font-display); font-size:64px; line-height:0.95; letter-spacing:0.02em; text-transform:uppercase;">Built to glow</div>
+    </div>
+    <div class="specimen">
+      <div class="meta"><b>Mona Sans</b> Emphasis · 400–900</div>
+      <div class="sample" style="font-family:var(--font-emphasis); font-size:32px; font-weight:700; letter-spacing:0.04em;">Token details — edit metadata</div>
+    </div>
+    <div class="specimen">
+      <div class="meta"><b>Mona Sans</b> Body · 300–900</div>
+      <div class="sample" style="font-family:var(--font-body); font-size:18px;">A collection is the policy boundary for a group of tokens. Every collection owns its own attribute schema and rarity model.</div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Type scale</h3>
+  <div class="canvas">
+    <div class="specimen"><div class="meta"><b>Display XL</b> Anton · 72/0.9</div><div class="sample" style="font-family:var(--font-display); font-size:72px; line-height:0.9; text-transform:uppercase;">Icypeas</div></div>
+    <div class="specimen"><div class="meta"><b>Display</b> Anton · 48/0.95</div><div class="sample" style="font-family:var(--font-display); font-size:48px; line-height:0.95; text-transform:uppercase;">Icypeas Collection</div></div>
+    <div class="specimen"><div class="meta"><b>Heading</b> Anton · 28/1</div><div class="sample" style="font-family:var(--font-display); font-size:28px; text-transform:uppercase;">Claim Requirements</div></div>
+    <div class="specimen"><div class="meta"><b>Subheading</b> Mona Sans · 18/1.2 · 700</div><div class="sample" style="font-family:var(--font-emphasis); font-size:18px; font-weight:700;">Set staking or holding requirements</div></div>
+    <div class="specimen"><div class="meta"><b>Body L</b> Mona Sans · 18/1.55</div><div class="sample" style="font-family:var(--font-body); font-size:18px;">Featured in the marketplace as your collection's main visual.</div></div>
+    <div class="specimen"><div class="meta"><b>Body</b> Mona Sans · 16/1.55</div><div class="sample" style="font-family:var(--font-body); font-size:16px;">Primary collection for the Icypeas universe. Includes all canonical characters and key drops.</div></div>
+    <div class="specimen"><div class="meta"><b>Body S</b> Mona Sans · 14/1.5</div><div class="sample" style="font-family:var(--font-body); font-size:14px;">Why this drop matters, or what you'd like them to know.</div></div>
+    <div class="specimen"><div class="meta"><b>Caption</b> Mona Sans · 13/1.4 · 500</div><div class="sample" style="font-family:var(--font-body); font-size:13px; font-weight:500; color:var(--text-secondary);">This is your collection thumbnail shown in public views.</div></div>
+    <div class="specimen"><div class="meta"><b>Label</b> Mona Sans · 12/1 · 700, uppercase, tracked</div><div class="sample" style="font-family:var(--font-emphasis); font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;">Token Score Visible</div></div>
+  </div>
+
+  <h3 class="section-h">Anton vs Mona — when to use which</h3>
+  <div class="canvas">
+    <p class="note" style="margin-top:0;">Both are condensed and usually set in uppercase, so they're easy to confuse. The bright line is <b>24px</b>. Anton is one ultra-heavy display weight that loses legibility below 24px; Mona Sans has true weights (400–900) and stays crisp at caption sizes. Self-test: <i>is it uppercase?</i> No → Mona Sans. Yes → <i>is it 24px or bigger?</i> Yes → Anton. No → Mona.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s-4); margin-top:var(--s-4);">
+      <div class="specimen">
+        <div class="meta"><b>Anton</b> — the loud voice · ≥24px · one weight</div>
+        <div class="sample" style="font-family:var(--font-display); font-size:44px; line-height:0.95; text-transform:uppercase;">Launchpad</div>
+        <div class="sample" style="font-family:var(--font-display); font-size:28px; text-transform:uppercase; margin-top:10px;">Claim Requirements</div>
+        <p class="note" style="margin-bottom:0;">Page titles, section headers, hero text, big numbers. Never UI controls, never below 24px.</p>
+      </div>
+      <div class="specimen">
+        <div class="meta"><b>Mona Sans</b> — small uppercase labels · 10–13px · 700–800</div>
+        <div class="sample" style="font-family:var(--font-emphasis); font-size:12px; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted);">Foundations · Typography</div>
+        <div class="sample" style="font-family:var(--font-emphasis); font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-secondary); margin-top:10px;">Token name &nbsp;&nbsp; Rarity &nbsp;&nbsp; Status</div>
+        <div class="sample" style="margin-top:10px;"><span style="font-family:var(--font-emphasis); font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--border-soft); border-radius:9999px; padding:3px 9px;">Legendary</span></div>
+        <p class="note" style="margin-bottom:0;">Eyebrows, table headers, stage pills, tag chips, nav group labels — the sizes Anton physically can't do.</p>
+      </div>
+    </div>
+
+    <div class="specimen" style="margin-top:var(--s-4);">
+      <div class="meta"><b>Same word, same size</b> — they are not the same face</div>
+      <div class="sample" style="font-size:28px; text-transform:uppercase;">
+        <span style="font-family:var(--font-display);">Generator</span>
+        <span style="font-family:var(--font-emphasis); font-weight:800; margin-left:24px;">Generator</span>
+      </div>
+      <p class="note" style="margin-bottom:0;">Anton (left) is blacker and tighter; Mona (right) is lighter with open counters. If a Mona label starts reading like "mini Anton", it's set too big or too heavy — drop it back to 10–13px at weight 700–800.</p>
+    </div>
+
+    <table class="usemap">
+      <tr><th>Surface</th><th>Family</th><th>Spec</th></tr>
+      <tr><td>Page / section titles, hero</td><td>Anton</td><td>≥24px · uppercase · tracked</td></tr>
+      <tr><td>Big stats, counters</td><td>Anton</td><td>≥24px · tabular context only</td></tr>
+      <tr><td>Eyebrows, group labels</td><td>Mona Sans</td><td>10–12px · 700–800 · uppercase · 0.14–0.18em tracking</td></tr>
+      <tr><td>Table headers</td><td>Mona Sans</td><td>11px · 800 · uppercase</td></tr>
+      <tr><td>Stage pills, tag chips</td><td>Mona Sans</td><td>9.5–11px · 700 · uppercase</td></tr>
+      <tr><td>Subheadings (sentence case allowed)</td><td>Mona Sans</td><td>16–18px · 700</td></tr>
+      <tr><td>Everything in sentence case</td><td>Mona Sans</td><td>13–18px · 300–900</td></tr>
+    </table>
+  </div>
+
+  <h3 class="section-h">Rules</h3>
+  <p class="note">Headlines and section labels are uppercase. Body copy is sentence case. Never use Anton below 24px (it loses legibility). Use Mona Sans when a label needs emphasis but Anton would be too loud (form labels, table headers, eyebrows). Body text always Mona Sans. Quick self-test: uppercase? No → Mona Sans. Yes → 24px or bigger? Yes → Anton, no → Mona.</p>
+</section>
+
+<!-- ===== SPACING & RADIUS ===== -->
+<section id="spacing">
+  <div class="eyebrow">Foundations · Spacing &amp; radius</div>
+  <h2>Spacing &amp; radius</h2>
+  <p class="lede">Spacing is a multiple of 4. Radius scales with surface size — small controls 4–8px, cards and modals 12–16px, pills are fully rounded.</p>
+
+  <h3 class="section-h">Spacing scale</h3>
+  <div class="canvas">
+    <div class="row" style="align-items:flex-end; gap:var(--s-4);">
+      <div><div style="background:var(--text-primary); width:4px;  height:4px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">4</div></div>
+      <div><div style="background:var(--text-primary); width:8px;  height:8px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">8</div></div>
+      <div><div style="background:var(--text-primary); width:12px; height:12px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">12</div></div>
+      <div><div style="background:var(--text-primary); width:16px; height:16px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">16</div></div>
+      <div><div style="background:var(--text-primary); width:24px; height:24px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">24</div></div>
+      <div><div style="background:var(--text-primary); width:32px; height:32px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">32</div></div>
+      <div><div style="background:var(--text-primary); width:48px; height:48px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">48</div></div>
+      <div><div style="background:var(--text-primary); width:64px; height:64px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">64</div></div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Radius</h3>
+  <div class="canvas grid-4">
+    <div><div style="background:#1D1D1D; height:60px; border-radius:4px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">4 · controls</div></div>
+    <div><div style="background:#1D1D1D; height:60px; border-radius:8px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">8 · inputs, icon buttons</div></div>
+    <div><div style="background:#1D1D1D; height:60px; border-radius:12px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">12 · inner panels, notes</div></div>
+    <div><div style="background:#1D1D1D; height:60px; border-radius:16px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">16 · cards, modals, hero</div></div>
+    <div><div style="background:#1D1D1D; height:60px; border-radius:9999px;"></div><div class="hex" style="font-size:12px; margin-top:6px;">pill · buttons, status, badges</div></div>
+  </div>
+</section>
+
+<!-- ===== ICONOGRAPHY ===== -->
+<section id="iconography">
+  <div class="eyebrow">Foundations · Iconography</div>
+  <h2>Iconography</h2>
+  <p class="lede">Two icon systems. Semantic notification icons are filled black circles with a white glyph. Health gauges are colored battery icons. Don't mix: don't use a colored circle for a notification, don't use a black battery.</p>
+
+  <h3 class="section-h">Notification icons</h3>
+  <div class="canvas row" style="gap:var(--s-6);">
+    <div style="text-align:center;">
+      <div class="banner-icon" style="width:32px; height:32px; background:#1D1D1D; color:white; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;">✓</div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Success</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="banner-icon" style="width:32px; height:32px; background:#1D1D1D; color:white; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700;">!</div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Error</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="banner-icon" style="width:32px; height:32px; background:#1D1D1D; color:white; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;">△</div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Warning</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="banner-icon" style="width:32px; height:32px; background:#1D1D1D; color:white; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-style:italic;">i</div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Info</div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Cycle Status (health gauges)</h3>
+  <div class="canvas row" style="gap:var(--s-6);">
+    <div style="text-align:center;">
+      <div class="battery battery--ok"><div class="fill"></div></div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Healthy</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="battery battery--warn"><div class="fill"></div></div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Degraded</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="battery battery--crit"><div class="fill"></div></div>
+      <div class="hex" style="font-size:12px; margin-top:6px;">Critical</div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Guard badges</h3>
+  <p class="lede">Collection guards are buyer-facing permission promises, shown on the public collection page and across collection management (Manage → Guards, status summaries, the Live locked list). Each guard ships as a self-contained shield badge in two states: <b>on</b> (solid black — the permission is allowed / active) and <b>off</b> (muted grey — blocked / inactive, a stronger guarantee to buyers). Unlike the line icons, these are pre-coloured raster badges — don't recolour them with <span class="mono">currentColor</span>. Render at 22–32px. <i>(Placeholder art, PNG only; SVGs to follow.)</i></p>
+  <div class="canvas" style="display:flex; flex-direction:column; gap:var(--s-6);">
+    <div class="row" style="gap:var(--s-8); flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <img src="icons/dupe_on.png" alt="Duplicates guard on" title="Allow duplicate tokens — On (allowed). Tokens can exist as more than one copy." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Duplicates · on</div>
+      </div>
+      <div style="text-align:center;">
+        <img src="icons/destroy_on.png" alt="Destruction guard on" title="Allow token destruction — On (allowed). Tokens can be burned." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Destruction · on</div>
+      </div>
+      <div style="text-align:center;">
+        <img src="icons/transfer_restr_on.png" alt="Transfer-restrictions guard on" title="Allow transfer restrictions — On. Transfers can be limited (e.g. lockups)." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Transfer limits · on</div>
+      </div>
+      <div style="text-align:center;">
+        <img src="icons/sale_restr_on.png" alt="Sale-restrictions guard on" title="Allow sale restrictions — On. Resale can be limited (e.g. royalty windows)." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Sale limits · on</div>
+      </div>
+    </div>
+    <div class="row" style="gap:var(--s-8); flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <img src="icons/dupe_off.png" alt="Duplicates guard off" title="Allow duplicate tokens — Off (blocked). Every token is one-of-one." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Duplicates · off</div>
+      </div>
+      <div style="text-align:center;">
+        <img src="icons/destroy_off.png" alt="Destruction guard off" title="Allow token destruction — Off (blocked). Tokens can never be burned." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Destruction · off</div>
+      </div>
+      <div style="text-align:center;">
+        <img src="icons/transfer_restr_off.png" alt="Transfer-restrictions guard off" title="Allow transfer restrictions — Off. Tokens transfer freely." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Transfer limits · off</div>
+      </div>
+      <div style="text-align:center;">
+        <img src="icons/sale_restr_off.png" alt="Sale-restrictions guard off" title="Allow sale restrictions — Off. Resale is never limited." width="40" height="40" style="display:block;margin:0 auto;">
+        <div class="hex" style="font-size:12px; margin-top:6px;">Sale limits · off</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BUTTONS ===== -->
+<section id="buttons">
+  <div class="eyebrow">Components</div>
+  <h2>Buttons</h2>
+  <p class="lede">Primary actions are solid black and pill-shaped, with Mona Sans (emphasis) labels in sentence case, lightly tracked (0.04em). Secondary actions are outlined on a light fill; ghosts are outlined and transparent. Reserve Anton for headings and titles — never for button labels. Icon buttons stay square (8px radius).</p>
+
+  <div class="canvas row">
+    <button class="btn">Add to collection</button>
+    <button class="btn btn--secondary">Cancel</button>
+    <button class="btn btn--ghost">Skip</button>
+    <button class="btn" disabled>Create</button>
+  </div>
+
+  <h4 class="spec-h">Sizes</h4>
+  <div class="canvas row">
+    <button class="btn">Default</button>
+    <button class="btn btn--sm">Small</button>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell"><button class="btn">Save</button><span class="state-label">Default</span></div>
+      <div class="state-cell"><button class="btn is-hover">Save</button><span class="state-label">Hover</span></div>
+      <div class="state-cell"><button class="btn is-active">Save</button><span class="state-label">Pressed</span></div>
+      <div class="state-cell"><button class="btn is-focus">Save</button><span class="state-label">Focused</span></div>
+      <div class="state-cell"><button class="btn" disabled>Save</button><span class="state-label">Disabled</span></div>
+    </div>
+    <div class="states-grid">
+      <div class="state-cell"><button class="btn btn--secondary">Cancel</button><span class="state-label">Secondary · default</span></div>
+      <div class="state-cell"><button class="btn btn--secondary is-hover">Cancel</button><span class="state-label">Secondary · hover</span></div>
+      <div class="state-cell"><button class="btn btn--ghost">Skip</button><span class="state-label">Ghost · default</span></div>
+      <div class="state-cell"><button class="btn btn--ghost is-hover">Skip</button><span class="state-label">Ghost · hover</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="states-grid">
+      <div class="state-cell"><button class="btn">Save</button><span class="state-label">Default</span></div>
+      <div class="state-cell"><button class="btn is-hover">Save</button><span class="state-label">Hover</span></div>
+      <div class="state-cell"><button class="btn btn--secondary">Cancel</button><span class="state-label">Secondary</span></div>
+      <div class="state-cell"><button class="btn btn--ghost" style="color:white;">Skip</button><span class="state-label">Ghost</span></div>
+      <div class="state-cell"><button class="btn" disabled>Save</button><span class="state-label">Disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Color variants — semantic CTAs</h4>
+  <p class="note">Use only when the action itself carries a hard meaning. <b>Danger</b> for destructive ("Delete collection", "Burn token"). <b>Success</b> as a confirmation CTA inside a success modal — never as a default save. <b>Warning</b> for "I understand the risk, proceed" actions. Never use semantic colors on the page's standing primary CTA.</p>
+  <div class="canvas row">
+    <button class="btn">Primary</button>
+    <button class="btn btn--success">Confirm transfer</button>
+    <button class="btn btn--danger">Delete collection</button>
+    <button class="btn btn--warn">Proceed anyway</button>
+    <button class="btn btn--info">Learn more</button>
+  </div>
+  <h4 class="spec-h">Color variants — states</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell"><button class="btn btn--danger">Delete</button><span class="state-label">Danger · default</span></div>
+      <div class="state-cell"><button class="btn btn--danger is-hover">Delete</button><span class="state-label">Danger · hover</span></div>
+      <div class="state-cell"><button class="btn btn--danger is-focus">Delete</button><span class="state-label">Danger · focused</span></div>
+      <div class="state-cell"><button class="btn btn--danger" disabled>Delete</button><span class="state-label">Danger · disabled</span></div>
+      <div class="state-cell"><button class="btn btn--success">Confirm</button><span class="state-label">Success · default</span></div>
+      <div class="state-cell"><button class="btn btn--success is-hover">Confirm</button><span class="state-label">Success · hover</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Icon buttons</h4>
+  <p class="note">Same anatomy as the standard button — square, holds a single 18px icon. Always include an <code>aria-label</code>. Use the secondary variant for non-primary actions in a toolbar; reserve the solid black variant for the primary affordance only. The destructive icon button uses the danger color for trash, burn, disconnect, etc.</p>
+  <div class="canvas row">
+    <button class="btn btn--icon" aria-label="Add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="btn btn--icon btn--secondary" aria-label="Edit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+    <button class="btn btn--icon btn--ghost" aria-label="More">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+    </button>
+    <button class="btn btn--icon btn--danger" aria-label="Delete">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+    </button>
+    <button class="btn btn--icon" disabled aria-label="Save">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+    </button>
+  </div>
+  <h4 class="spec-h">Icon buttons — sizes</h4>
+  <div class="canvas row">
+    <button class="btn btn--icon" aria-label="Add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="btn btn--icon btn--sm" aria-label="Add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="btn btn--icon btn--sm btn--secondary" aria-label="Edit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
+
+  <h4 class="spec-h">Rules</h4>
+  <p class="note">One primary button per surface. Place primary on the right of an action group. Disabled state is mid-grey; never lower the opacity of the active button to fake a disabled state. Color variants are reserved for actions whose semantic weight matches the color — they are not theming.</p>
+</section>
+
+<!-- ===== INPUTS ===== -->
+<section id="inputs">
+  <div class="eyebrow">Components</div>
+  <h2>Inputs &amp; forms</h2>
+  <p class="lede">Single visual treatment for inputs: light alt-canvas fill, soft border, focus ring in primary text color.</p>
+
+  <div class="canvas grid-2">
+    <div class="field">
+      <label>Collection name</label>
+      <input class="input" placeholder="Enter" />
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea class="input" placeholder="Enter"></textarea>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Search</h4>
+  <div class="canvas">
+    <div class="search-input">
+      <input placeholder="Search..." />
+      <button aria-label="Search">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell" style="align-items:stretch;"><input class="input" placeholder="Enter" /><span class="state-label">Default · empty</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input" value="Toko Bot — Welcoming" /><span class="state-label">Default · filled</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input is-hover" placeholder="Enter" /><span class="state-label">Hover</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input is-focus" placeholder="Enter" /><span class="state-label">Focused</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input is-error" value="Bad input" /><span class="state-label">Error</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input is-disabled" value="Locked" disabled /><span class="state-label">Disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="states-grid">
+      <div class="state-cell" style="align-items:stretch;"><input class="input" placeholder="Enter" style="background:#252525; border-color:#3A3A3A; color:white;" /><span class="state-label">Default</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input is-focus" placeholder="Enter" style="background:#252525; border-color:#3A3A3A; color:white;" /><span class="state-label">Focused</span></div>
+      <div class="state-cell" style="align-items:stretch;"><input class="input is-disabled" value="Locked" disabled style="background:#1D1D1D; border-color:#2E2E2E; color:#7A7A7A;" /><span class="state-label">Disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Helper text, required, optional</h4>
+  <p class="note">Helper text sits below the field at 12px slate. Required is a red asterisk after the label. Optional uses an uppercase chip on the right of the label row. Helpers are short — one line, no terminal period unless a sentence.</p>
+  <div class="canvas grid-2">
+    <div class="field field--required">
+      <label>Wallet name</label>
+      <input class="input" placeholder="e.g. Daily wallet" />
+      <span class="helper-text">Shown in your wallet list. You can change it later.</span>
+    </div>
+    <div class="field">
+      <div class="label-row">
+        <label>Display name</label>
+        <span class="label-aux">Optional</span>
+      </div>
+      <input class="input" placeholder="Shown on your collector profile" />
+      <span class="helper-text">3–24 characters. Letters, numbers, and underscores.</span>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Error &amp; success messages</h4>
+  <p class="note">Error text replaces helper text on validation failure. Use the destructive red and a leading icon. Success messaging is rare — reserve it for inputs where confirming validity matters (handle availability, claim code, transaction hash).</p>
+  <div class="canvas grid-2">
+    <div class="field field--required">
+      <label>Collection handle</label>
+      <input class="input is-error" value="Icypeas World!" />
+      <span class="error-text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Handles can't include spaces or punctuation.
+      </span>
+    </div>
+    <div class="field">
+      <label>Recipient principal</label>
+      <input class="input is-success" value="k2whm-xa7d4-vbktw-d5n5h-...-aaab5" />
+      <span class="success-text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l4 4 10-10"/></svg>
+        Valid principal — found on the IC.
+      </span>
+    </div>
+    <div class="field">
+      <label>Bio</label>
+      <textarea class="input" placeholder="Tell collectors who you are."></textarea>
+      <div class="label-row">
+        <span class="helper-text">Markdown is supported.</span>
+        <span class="label-aux" style="font-variant-numeric:tabular-nums;">0 / 240</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Bio</label>
+      <textarea class="input is-error" placeholder="Tell collectors who you are.">A really long bio that has gone over the limit and is being asked to trim down. The system shows the count in red and surfaces a count-style error rather than an icon-led one because the user can self-correct from the count alone.</textarea>
+      <div class="label-row">
+        <span class="error-text">Trim to 240 characters.</span>
+        <span class="error-text" style="font-variant-numeric:tabular-nums;">293 / 240</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DROPDOWNS ===== -->
+<section id="dropdowns">
+  <div class="eyebrow">Components</div>
+  <h2>Dropdowns</h2>
+  <p class="lede">Three flavors. <b>Select</b> for one-of-many short lists. <b>Multi-select</b> when several values are valid; selected values appear as removable chips inside the control. <b>Autocomplete</b> when the option set is long enough that scanning is slower than typing.</p>
+
+  <h4 class="spec-h">Select — closed and open</h4>
+  <div class="canvas grid-2">
+    <div class="field">
+      <label>Network</label>
+      <div class="select">
+        <button class="select-control" type="button">
+          <span class="lead-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          </span>
+          <span class="value">Internet Computer</span>
+          <span class="caret"></span>
+        </button>
+      </div>
+      <span class="helper-text">The chain your collection lives on.</span>
+    </div>
+    <div class="field">
+      <label>Currency</label>
+      <div class="select is-open">
+        <button class="select-control" type="button">
+          <span class="value">ICP</span>
+          <span class="caret"></span>
+        </button>
+        <div class="select-menu inline" role="listbox">
+          <div class="opt is-current">
+            <div class="opt-body"><span class="opt-title">ICP</span></div>
+            <span class="opt-secondary">Internet Computer</span>
+          </div>
+          <div class="opt">
+            <div class="opt-body"><span class="opt-title">ckBTC</span></div>
+            <span class="opt-secondary">Chain-key Bitcoin</span>
+          </div>
+          <div class="opt">
+            <div class="opt-body"><span class="opt-title">ckUSDC</span></div>
+            <span class="opt-secondary">Chain-key USDC</span>
+          </div>
+          <div class="opt">
+            <div class="opt-body"><span class="opt-title">CHAT</span></div>
+            <span class="opt-secondary">OpenChat</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Select — items with secondary labels</h4>
+  <p class="note">Right-aligned secondary metadata (count, rank, currency code). Two-line items use a 14px title with a 12px slate description below — choose this layout when the user genuinely needs the context to decide.</p>
+  <div class="canvas grid-2">
+    <div class="select">
+      <div class="select-menu inline" role="listbox" style="max-height:none;">
+        <div class="opt-group-label">My collections</div>
+        <div class="opt is-current">
+          <div class="opt-body">
+            <span class="opt-title">Icypeas</span>
+            <span class="opt-desc">Primary character drop · Live</span>
+          </div>
+          <span class="opt-secondary">210 tokens</span>
+        </div>
+        <div class="opt">
+          <div class="opt-body">
+            <span class="opt-title">Game Moomin</span>
+            <span class="opt-desc">Generative art · Draft</span>
+          </div>
+          <span class="opt-secondary">0 tokens</span>
+        </div>
+        <div class="opt-group-label">Shared with me</div>
+        <div class="opt">
+          <div class="opt-body">
+            <span class="opt-title">Dragginz Team</span>
+            <span class="opt-desc">Co-curator · Review</span>
+          </div>
+          <span class="opt-secondary">42 tokens</span>
+        </div>
+      </div>
+    </div>
+    <div class="select">
+      <div class="select-menu inline" role="listbox" style="max-height:none;">
+        <div class="opt is-current">
+          <div class="opt-body"><span class="opt-title">Common</span></div>
+          <span class="opt-secondary">≥ 30 / 100</span>
+        </div>
+        <div class="opt">
+          <div class="opt-body"><span class="opt-title">Uncommon</span></div>
+          <span class="opt-secondary">10 – 29 / 100</span>
+        </div>
+        <div class="opt">
+          <div class="opt-body"><span class="opt-title">Rare</span></div>
+          <span class="opt-secondary">3 – 9 / 100</span>
+        </div>
+        <div class="opt">
+          <div class="opt-body"><span class="opt-title">Legendary</span></div>
+          <span class="opt-secondary">≤ 2 / 100</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Multi-select — selected values as tag chips</h4>
+  <p class="note">Each selected value renders as a small dark chip inside the control. The chip <code>×</code> removes that value without opening the menu. Use a placeholder when nothing is selected.</p>
+  <div class="canvas grid-2">
+    <div class="field">
+      <label>Vendors allowed to mint</label>
+      <div class="select select--multi">
+        <div class="select-control">
+          <span class="chip">Icypeas Studio <span class="x">×</span></span>
+          <span class="chip">Dragginz Team <span class="x">×</span></span>
+          <span class="chip">Game Moomin Co. <span class="x">×</span></span>
+          <span class="caret"></span>
+        </div>
+      </div>
+      <span class="helper-text">Vendors can issue tokens in this collection. You can revoke any time.</span>
+    </div>
+    <div class="field">
+      <label>Tags</label>
+      <div class="select select--multi">
+        <div class="select-control">
+          <span class="ms-placeholder">Select one or more…</span>
+          <span class="caret"></span>
+        </div>
+      </div>
+      <span class="helper-text">Help collectors find your drop in the Marketplace.</span>
+    </div>
+  </div>
+
+  <div class="canvas">
+    <div class="select select--multi is-open" style="max-width:480px;">
+      <div class="select-control">
+        <span class="chip">Generative <span class="x">×</span></span>
+        <span class="chip">PFP <span class="x">×</span></span>
+        <span class="caret"></span>
+      </div>
+      <div class="select-menu inline" role="listbox">
+        <div class="opt is-current">
+          <div class="opt-body"><span class="opt-title">Generative</span></div>
+          <span class="check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span>
+        </div>
+        <div class="opt is-current">
+          <div class="opt-body"><span class="opt-title">PFP</span></div>
+          <span class="check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span>
+        </div>
+        <div class="opt">
+          <div class="opt-body"><span class="opt-title">Music</span></div>
+          <span class="check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span>
+        </div>
+        <div class="opt">
+          <div class="opt-body"><span class="opt-title">Photography</span></div>
+          <span class="check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span>
+        </div>
+        <div class="opt">
+          <div class="opt-body"><span class="opt-title">3D</span></div>
+          <span class="check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Autocomplete — type to filter</h4>
+  <p class="note">A real text input lives inside the control. Matches highlight the typed substring. The typeahead shows the top results, filtered as the user types. Use for long sets — collections, vendors, principals, attribute values.</p>
+  <div class="canvas grid-2">
+    <div class="field">
+      <label>Send to</label>
+      <div class="select select--auto">
+        <div class="select-control">
+          <span class="lead-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </span>
+          <input class="ac-input" placeholder="Search wallet, name, or principal…" />
+        </div>
+      </div>
+      <span class="helper-text">Type to search across your contacts and the IC.</span>
+    </div>
+    <div class="field">
+      <label>Send to</label>
+      <div class="select select--auto is-open">
+        <div class="select-control">
+          <span class="lead-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </span>
+          <input class="ac-input" value="icy" />
+          <button class="clear" aria-label="Clear">×</button>
+        </div>
+        <div class="select-menu inline" role="listbox">
+          <div class="opt-group-label">Contacts</div>
+          <div class="opt">
+            <div class="opt-body">
+              <span class="opt-title"><mark>Icy</mark>peas Treasury</span>
+              <span class="opt-desc">k2whm-xa7d4-…-aaab5</span>
+            </div>
+            <span class="opt-secondary">Saved</span>
+          </div>
+          <div class="opt">
+            <div class="opt-body">
+              <span class="opt-title">Username</span>
+              <span class="opt-desc">Last sent 3 days ago</span>
+            </div>
+            <span class="opt-secondary">Saved</span>
+          </div>
+          <div class="opt-group-label">From the IC</div>
+          <div class="opt">
+            <div class="opt-body">
+              <span class="opt-title"><mark>icy</mark>peas.icp</span>
+              <span class="opt-desc">u43rt-…-9hkd2</span>
+            </div>
+            <span class="opt-secondary">.icp</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="canvas">
+    <div class="select select--auto is-open" style="max-width:420px;">
+      <div class="select-control">
+        <input class="ac-input" value="zzz" />
+        <button class="clear" aria-label="Clear">×</button>
+      </div>
+      <div class="select-menu inline" role="listbox">
+        <div class="empty">
+          No matches for <strong>zzz</strong>.<br/>
+          <span style="font-size:12px;">Try a wallet name, handle, or principal ID.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Dropdown — states</h4>
+  <div class="canvas">
+    <div class="states-grid" style="grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));">
+      <div class="state-cell" style="align-items:stretch;">
+        <div class="select"><button class="select-control" type="button"><span class="placeholder">Select…</span><span class="caret"></span></button></div>
+        <span class="state-label">Empty</span>
+      </div>
+      <div class="state-cell" style="align-items:stretch;">
+        <div class="select"><button class="select-control" type="button"><span class="value">Internet Computer</span><span class="caret"></span></button></div>
+        <span class="state-label">Filled</span>
+      </div>
+      <div class="state-cell" style="align-items:stretch;">
+        <div class="select is-open"><button class="select-control" type="button"><span class="value">Internet Computer</span><span class="caret"></span></button></div>
+        <span class="state-label">Open / focused</span>
+      </div>
+      <div class="state-cell" style="align-items:stretch;">
+        <div class="select is-error"><button class="select-control" type="button"><span class="placeholder">Select a network</span><span class="caret"></span></button></div>
+        <span class="state-label">Error</span>
+      </div>
+      <div class="state-cell" style="align-items:stretch;">
+        <div class="select is-disabled"><button class="select-control" type="button" disabled><span class="value">Internet Computer</span><span class="caret"></span></button></div>
+        <span class="state-label">Disabled</span>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Dropdown with helper / error text</h4>
+  <div class="canvas grid-2">
+    <div class="field field--required">
+      <label>Network</label>
+      <div class="select is-error">
+        <button class="select-control" type="button">
+          <span class="placeholder">Select a network</span>
+          <span class="caret"></span>
+        </button>
+      </div>
+      <span class="error-text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Pick a network to continue.
+      </span>
+    </div>
+    <div class="field">
+      <label>Royalty receiver</label>
+      <div class="select">
+        <button class="select-control" type="button">
+          <span class="value">Icypeas Treasury</span>
+          <span class="caret"></span>
+        </button>
+      </div>
+      <span class="helper-text">Royalties from secondary sales are sent to this principal.</span>
+    </div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="grid-2">
+      <div class="field">
+        <label style="color:#B5B5B5;">Network</label>
+        <div class="select">
+          <button class="select-control" type="button" style="background:#252525; border-color:#3A3A3A; color:white;">
+            <span class="value">Internet Computer</span>
+            <span class="caret" style="border-color:#B5B5B5;"></span>
+          </button>
+        </div>
+      </div>
+      <div class="field">
+        <label style="color:#B5B5B5;">Tags</label>
+        <div class="select select--multi">
+          <div class="select-control" style="background:#252525; border-color:#3A3A3A; color:white;">
+            <span class="chip" style="background:white; color:#1D1D1D;">Generative <span class="x" style="background:rgba(0,0,0,0.18); color:#1D1D1D;">×</span></span>
+            <span class="chip" style="background:white; color:#1D1D1D;">PFP <span class="x" style="background:rgba(0,0,0,0.18); color:#1D1D1D;">×</span></span>
+            <span class="caret" style="border-color:#B5B5B5;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SELECTION CONTROLS ===== -->
+<section id="selection">
+  <div class="eyebrow">Components</div>
+  <h2>Selection controls</h2>
+  <p class="lede">Checkboxes for multi-select, radios for one-of-many, switches for binary settings. The bulk-action bar uses the indeterminate checkbox state when a partial multi-select is active.</p>
+
+  <h4 class="spec-h">Checkbox</h4>
+  <div class="canvas row">
+    <span class="checkbox"></span>
+    <span class="checkbox checkbox--indeterminate"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 12h12" /></svg></span>
+    <span class="checkbox checkbox--on"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10" /></svg></span>
+    <span class="checkbox checkbox--disabled"></span>
+  </div>
+
+  <h4 class="spec-h">Radio</h4>
+  <div class="canvas row">
+    <span class="radio"></span>
+    <span class="radio radio--on"><span style="width:8px; height:8px; background:white; border-radius:50%;"></span></span>
+    <span class="radio checkbox--disabled"></span>
+  </div>
+
+  <h4 class="spec-h">Switch</h4>
+  <div class="canvas row">
+    <span class="switch switch--off" role="switch" aria-checked="false"></span>
+    <span class="switch switch--on" role="switch" aria-checked="true"></span>
+  </div>
+
+  <h4 class="spec-h">Switch — states</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell"><span class="switch switch--off"></span><span class="state-label">Off · default</span></div>
+      <div class="state-cell"><span class="switch switch--off" style="background:#C5C5C5;"></span><span class="state-label">Off · hover</span></div>
+      <div class="state-cell"><span class="switch switch--off" style="outline:2px solid var(--text-primary); outline-offset:2px;"></span><span class="state-label">Off · focused</span></div>
+      <div class="state-cell"><span class="switch switch--off" style="opacity:0.45; cursor:not-allowed;"></span><span class="state-label">Off · disabled</span></div>
+      <div class="state-cell"><span class="switch switch--on"></span><span class="state-label">On · default</span></div>
+      <div class="state-cell"><span class="switch switch--on" style="background:#000;"></span><span class="state-label">On · hover</span></div>
+      <div class="state-cell"><span class="switch switch--on" style="outline:2px solid var(--text-primary); outline-offset:2px;"></span><span class="state-label">On · focused</span></div>
+      <div class="state-cell"><span class="switch switch--on" style="opacity:0.45; cursor:not-allowed;"></span><span class="state-label">On · disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Checkbox — states</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell"><span class="checkbox"></span><span class="state-label">Empty</span></div>
+      <div class="state-cell"><span class="checkbox" style="border-color:var(--text-secondary); background:#FAFAFA;"></span><span class="state-label">Empty · hover</span></div>
+      <div class="state-cell"><span class="checkbox" style="outline:2px solid var(--text-primary); outline-offset:2px;"></span><span class="state-label">Empty · focused</span></div>
+      <div class="state-cell"><span class="checkbox" style="opacity:0.35;"></span><span class="state-label">Empty · disabled</span></div>
+      <div class="state-cell"><span class="checkbox checkbox--on"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10" /></svg></span><span class="state-label">Checked</span></div>
+      <div class="state-cell"><span class="checkbox checkbox--on" style="opacity:0.55;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10" /></svg></span><span class="state-label">Checked · disabled</span></div>
+      <div class="state-cell"><span class="checkbox checkbox--indeterminate"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 12h12" /></svg></span><span class="state-label">Indeterminate</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Radio — states</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell"><span class="radio"></span><span class="state-label">Empty</span></div>
+      <div class="state-cell"><span class="radio" style="border-color:var(--text-secondary); background:#FAFAFA;"></span><span class="state-label">Empty · hover</span></div>
+      <div class="state-cell"><span class="radio" style="outline:2px solid var(--text-primary); outline-offset:2px;"></span><span class="state-label">Empty · focused</span></div>
+      <div class="state-cell"><span class="radio" style="opacity:0.35;"></span><span class="state-label">Empty · disabled</span></div>
+      <div class="state-cell"><span class="radio radio--on"><span style="width:8px; height:8px; background:white; border-radius:50%;"></span></span><span class="state-label">Selected</span></div>
+      <div class="state-cell"><span class="radio radio--on" style="opacity:0.55;"><span style="width:8px; height:8px; background:white; border-radius:50%;"></span></span><span class="state-label">Selected · disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">With labels &amp; secondary text</h4>
+  <p class="note">For form lists, pair the control with a 14px title and an optional 13px slate description. Click target is the whole row. Wrap the row inside <code>.option-list</code> when the rows belong together (settings panel, multi-select group).</p>
+  <div class="canvas grid-2">
+    <div class="option-list">
+      <label class="option">
+        <span class="control"><span class="checkbox checkbox--on"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span></span>
+        <span class="opt-text">
+          <span class="opt-title">Show issue numbers</span>
+          <span class="opt-desc">Tokens display "#7" on the public card. Required when copies are numbered.</span>
+        </span>
+      </label>
+      <label class="option">
+        <span class="control"><span class="checkbox"></span></span>
+        <span class="opt-text">
+          <span class="opt-title">Allow stacking in wallets</span>
+          <span class="opt-desc">Identical tokens stack with a ×N badge instead of showing one card each.</span>
+        </span>
+      </label>
+      <label class="option is-disabled">
+        <span class="control"><span class="checkbox"></span></span>
+        <span class="opt-text">
+          <span class="opt-title">Hide from Marketplace</span>
+          <span class="opt-desc">Available once the collection is Live. Drafts are hidden by default.</span>
+        </span>
+      </label>
+    </div>
+    <div class="option-list">
+      <label class="option">
+        <span class="control"><span class="radio radio--on"><span style="width:8px; height:8px; background:white; border-radius:50%;"></span></span></span>
+        <span class="opt-text">
+          <span class="opt-title">Capped supply</span>
+          <span class="opt-desc">A fixed number of tokens. Mint progress is shown to the creator.</span>
+        </span>
+      </label>
+      <label class="option">
+        <span class="control"><span class="radio"></span></span>
+        <span class="opt-text">
+          <span class="opt-title">Open edition</span>
+          <span class="opt-desc">Anyone can mint until the cutoff date.</span>
+        </span>
+      </label>
+      <label class="option">
+        <span class="control"><span class="radio"></span></span>
+        <span class="opt-text">
+          <span class="opt-title">1 of 1</span>
+          <span class="opt-desc">A single, unique token. Forces individual issue numbering.</span>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Switch row — settings layout</h4>
+  <p class="note">Switches in a settings list always sit on the right with the label on the left. Optional secondary text drops below the title at 13px. Rows divide with a 1px hairline.</p>
+  <div class="canvas">
+    <div class="option-list" style="padding:0 var(--s-5);">
+      <label class="option option--switch">
+        <span class="opt-text">
+          <span class="opt-title">Email me about offers</span>
+          <span class="opt-desc">Notifications when someone bids on or buys one of your tokens.</span>
+        </span>
+        <span class="control"><span class="switch switch--on"></span></span>
+      </label>
+      <label class="option option--switch">
+        <span class="opt-text">
+          <span class="opt-title">Email me about new drops</span>
+          <span class="opt-desc">A weekly digest of upcoming Launchpad drops we think match your taste.</span>
+        </span>
+        <span class="control"><span class="switch switch--off"></span></span>
+      </label>
+      <label class="option option--switch is-disabled">
+        <span class="opt-text">
+          <span class="opt-title">Push notifications</span>
+          <span class="opt-desc">Available in the mobile app.</span>
+        </span>
+        <span class="control"><span class="switch switch--off"></span></span>
+      </label>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Compact (label only)</h4>
+  <p class="note">Use when secondary text would be noise — short labels in toolbars, filters, or quick toggles.</p>
+  <div class="canvas row" style="gap:var(--s-6); flex-wrap:wrap;">
+    <label class="option" style="display:inline-grid; grid-template-columns:20px auto; padding:0;">
+      <span class="control"><span class="checkbox checkbox--on"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></span></span>
+      <span class="opt-text"><span class="opt-title">Live only</span></span>
+    </label>
+    <label class="option" style="display:inline-grid; grid-template-columns:20px auto; padding:0;">
+      <span class="control"><span class="radio radio--on"><span style="width:8px; height:8px; background:white; border-radius:50%;"></span></span></span>
+      <span class="opt-text"><span class="opt-title">Newest first</span></span>
+    </label>
+    <label class="option option--switch" style="display:inline-grid; grid-template-columns:auto 44px; padding:0; gap:var(--s-3); border:0;">
+      <span class="opt-text"><span class="opt-title">Hide locked</span></span>
+      <span class="control"><span class="switch switch--off"></span></span>
+    </label>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="states-grid">
+      <div class="state-cell"><span class="switch switch--off"></span><span class="state-label">Switch off</span></div>
+      <div class="state-cell"><span class="switch switch--on"></span><span class="state-label">Switch on</span></div>
+      <div class="state-cell"><span class="checkbox" style="border-color:white; background:transparent;"></span><span class="state-label">Empty</span></div>
+      <div class="state-cell"><span class="checkbox checkbox--on" style="border-color:white; background:white; color:#1D1D1D;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10" /></svg></span><span class="state-label">Checked</span></div>
+      <div class="state-cell"><span class="radio" style="border-color:white; background:transparent;"></span><span class="state-label">Radio empty</span></div>
+      <div class="state-cell"><span class="radio radio--on" style="border-color:white; background:white;"><span style="width:8px; height:8px; background:#1D1D1D; border-radius:50%;"></span></span><span class="state-label">Radio selected</span></div>
+    </div>
+    <div class="option-list" style="background:#252525; border-color:#3A3A3A; margin-top:var(--s-4); padding:0 var(--s-5);">
+      <label class="option option--switch" style="border-color:#3A3A3A;">
+        <span class="opt-text">
+          <span class="opt-title" style="color:white;">Email me about offers</span>
+          <span class="opt-desc" style="color:#B5B5B5;">Notifications when someone bids on or buys one of your tokens.</span>
+        </span>
+        <span class="control"><span class="switch switch--on"></span></span>
+      </label>
+      <label class="option option--switch" style="border-color:#3A3A3A;">
+        <span class="opt-text">
+          <span class="opt-title" style="color:white;">Email me about new drops</span>
+          <span class="opt-desc" style="color:#B5B5B5;">A weekly digest of upcoming Launchpad drops we think match your taste.</span>
+        </span>
+        <span class="control"><span class="switch switch--off"></span></span>
+      </label>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OPTIONAL REVEAL ===== -->
+<section id="optional">
+  <div class="eyebrow">Components</div>
+  <h2>Optional reveal</h2>
+  <p class="lede">A switch that toggles a hidden field group on and off. Use when an input is conditionally relevant — opt-in royalties, custom claim requirements, an alternate payout address. Off is the default; the body collapses entirely.</p>
+
+  <h4 class="spec-h">Off and on</h4>
+  <div class="canvas grid-2">
+    <div class="optional is-off">
+      <label class="opt-head">
+        <span>
+          <span class="opt-title">Set a maximum per wallet</span>
+          <span class="opt-desc">Cap how many copies a single wallet can hold. Otherwise, no per-wallet limit.</span>
+        </span>
+        <span class="switch switch--off"></span>
+      </label>
+      <div class="opt-body">
+        <div class="field">
+          <label>Max per wallet</label>
+          <input class="input" type="number" placeholder="e.g. 5" />
+          <span class="helper-text">Whole numbers between 1 and the supply cap.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="optional is-on">
+      <label class="opt-head">
+        <span>
+          <span class="opt-title">Set a maximum per wallet</span>
+          <span class="opt-desc">Cap how many copies a single wallet can hold. Otherwise, no per-wallet limit.</span>
+        </span>
+        <span class="switch switch--on"></span>
+      </label>
+      <div class="opt-body">
+        <div class="field">
+          <label>Max per wallet</label>
+          <input class="input" type="number" value="5" />
+          <span class="helper-text">Whole numbers between 1 and the supply cap.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">With a richer revealed body</h4>
+  <div class="canvas">
+    <div class="optional is-on" style="max-width:560px;">
+      <label class="opt-head">
+        <span>
+          <span class="opt-title">Custom royalties</span>
+          <span class="opt-desc">Take a share of every secondary sale. Off uses the project default (5%).</span>
+        </span>
+        <span class="switch switch--on"></span>
+      </label>
+      <div class="opt-body">
+        <div class="field">
+          <label>Royalty %</label>
+          <input class="input" type="number" value="7.5" />
+          <span class="helper-text">Between 0% and 15%. Higher rates can deter trading.</span>
+        </div>
+        <div class="field">
+          <label>Royalty receiver</label>
+          <div class="select">
+            <button class="select-control" type="button">
+              <span class="value">Icypeas Treasury</span>
+              <span class="caret"></span>
+            </button>
+          </div>
+          <span class="helper-text">Where royalties are sent. Defaults to your connected wallet.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Rules</h4>
+  <p class="note">The switch sits in the top-right of the head. Title and description follow the same spec as labeled selection rows. The revealed body is divided from the head with a hairline and inherits a slightly raised surface to signal "this is now active." Off state collapses the body fully — never just disable the inputs and leave them visible.</p>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="optional is-on" style="background:#252525; border-color:white; max-width:480px;">
+      <label class="opt-head">
+        <span>
+          <span class="opt-title" style="color:white;">Set a maximum per wallet</span>
+          <span class="opt-desc" style="color:#B5B5B5;">Cap how many copies a single wallet can hold. Otherwise, no per-wallet limit.</span>
+        </span>
+        <span class="switch switch--on"></span>
+      </label>
+      <div class="opt-body" style="border-color:#3A3A3A;">
+        <div class="field">
+          <label style="color:#B5B5B5;">Max per wallet</label>
+          <input class="input" type="number" value="5" style="background:#1D1D1D; border-color:#3A3A3A; color:white;" />
+          <span class="helper-text" style="color:#B5B5B5;">Whole numbers between 1 and the supply cap.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TAGS ===== -->
+<section id="tags">
+  <div class="eyebrow">Components</div>
+  <h2>Tags &amp; pills</h2>
+  <p class="lede">Tags are user-attached metadata (removable). Status pills indicate lifecycle. Token-count badges show stack size.</p>
+
+  <h4 class="spec-h">Tag</h4>
+  <div class="canvas row">
+    <span class="tag">Character Drop <span class="x">×</span></span>
+    <span class="tag">Game Moomin <span class="x">×</span></span>
+    <span class="tag tag--dark">ICYPEASVERSE <span class="x">×</span></span>
+  </div>
+
+  <h4 class="spec-h">Token count</h4>
+  <div class="canvas row">
+    <span class="token-count">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.236L5 8.118v7.764L12 19.764l7-3.882V8.118L12 4.236z" /></svg>
+      9
+    </span>
+    <span class="token-count">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.236L5 8.118v7.764L12 19.764l7-3.882V8.118L12 4.236z" /></svg>
+      99
+    </span>
+    <span class="token-count">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.236L5 8.118v7.764L12 19.764l7-3.882V8.118L12 4.236z" /></svg>
+      9,999
+    </span>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="row" style="gap:var(--s-3); flex-wrap:wrap;">
+      <span class="tag" style="background:#252525; color:white; border-color:#3A3A3A;">Character Drop <span class="x">×</span></span>
+      <span class="tag tag--dark" style="background:white; color:#1D1D1D;">ICYPEASVERSE <span class="x">×</span></span>
+      <span class="token-count" style="background:white; color:#1D1D1D;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5z" /></svg>
+        99
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATUS / LIFECYCLE ===== -->
+<section id="status">
+  <div class="eyebrow">Components</div>
+  <h2>Status &amp; lifecycle</h2>
+  <p class="lede">Status indicates the current stage of a project, collection, or token. The same three stages — Draft, Review, Live — apply to all three. Use Status pills for inline indicators and the stage selector for stage selection or progress.</p>
+
+  <h4 class="spec-h">Status pill</h4>
+  <div class="canvas row">
+    <span class="status status--draft"><span class="dot"></span>Draft</span>
+    <span class="status status--review"><span class="dot"></span>Review</span>
+    <span class="status status--live"><span class="dot"></span>Live</span>
+  </div>
+
+  <h4 class="spec-h">Stage selector — 2 stage</h4>
+  <div class="canvas">
+    <div class="segmented" role="tablist">
+      <button aria-pressed="true"><span class="dot" style="background:var(--stage-draft);"></span>Draft</button>
+      <button aria-pressed="false"><span class="dot" style="background:var(--stage-live);"></span>Live</button>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Stage selector — 3 stage</h4>
+  <div class="canvas">
+    <div class="segmented" role="tablist">
+      <button aria-pressed="true"><span class="dot" style="background:var(--stage-draft);"></span>Draft</button>
+      <button aria-pressed="false"><span class="dot" style="background:var(--stage-review);"></span>Review</button>
+      <button aria-pressed="false"><span class="dot" style="background:var(--stage-live);"></span>Live</button>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Number state (issue_number lifecycle)</h4>
+  <div class="canvas row">
+    <span class="numstate numstate--empty">#</span>
+    <span class="numstate numstate--assigned">#</span>
+    <span class="numstate numstate--locked">✓</span>
+  </div>
+  <p class="note">Left: unassigned (pre-review). Middle: assigned or reserved. Right: locked and retired on Live.</p>
+
+  <h4 class="spec-h">Stage selector — states</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell" style="align-items:stretch;"><div class="segmented"><button><span class="dot" style="background:var(--stage-draft);"></span>Draft</button><button aria-pressed="true"><span class="dot" style="background:var(--stage-review);"></span>Review</button><button><span class="dot" style="background:var(--stage-live);"></span>Live</button></div><span class="state-label">Review active</span></div>
+      <div class="state-cell" style="align-items:stretch;"><div class="segmented"><button aria-pressed="true"><span class="dot" style="background:var(--stage-draft);"></span>Draft</button><button><span class="dot" style="background:var(--stage-review);"></span>Review</button><button><span class="dot" style="background:var(--stage-live);"></span>Live</button></div><span class="state-label">Draft active</span></div>
+      <div class="state-cell" style="align-items:stretch;"><div class="segmented"><button><span class="dot" style="background:var(--stage-draft);"></span>Draft</button><button><span class="dot" style="background:var(--stage-review);"></span>Review</button><button aria-pressed="true"><span class="dot" style="background:var(--stage-live);"></span>Live</button></div><span class="state-label">Live active</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="row" style="gap:var(--s-4); flex-wrap:wrap;">
+      <span class="status status--draft" style="background:#252525; color:white;"><span class="dot"></span>Draft</span>
+      <span class="status status--review" style="background:#252525; color:white;"><span class="dot"></span>Review</span>
+      <span class="status status--live" style="background:#252525; color:white;"><span class="dot"></span>Live</span>
+    </div>
+    <div style="margin-top:var(--s-4);">
+      <div class="segmented" style="background:#252525; border-color:#3A3A3A;">
+        <button aria-pressed="true" style="background:white; color:#1D1D1D;"><span class="dot" style="background:var(--stage-draft);"></span>Draft</button>
+        <button style="color:#B5B5B5;"><span class="dot" style="background:var(--stage-review);"></span>Review</button>
+        <button style="color:#B5B5B5;"><span class="dot" style="background:var(--stage-live);"></span>Live</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CARDS ===== -->
+<section id="cards">
+  <div class="eyebrow">Components</div>
+  <h2>Cards</h2>
+  <p class="lede">Two card kinds: Project (top-level creator workspace, gets a health pill and a collections count) and Collection (a token-policy boundary inside a project, shows token count). Same anatomy, different metadata row.</p>
+
+  <div class="canvas row" style="gap:var(--s-5); flex-wrap:wrap;">
+    <article class="card">
+      <div class="thumb"></div>
+      <div class="meta">
+        <div class="name">Project name</div>
+        <div class="info">
+          <span class="pill"><span class="battery battery--ok" style="width:18px; height:11px; border-width:1.5px;"><span class="fill"></span></span> Healthy</span>
+          <span class="left">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5z" /></svg>
+            # Collections
+          </span>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb"></div>
+      <div class="meta">
+        <div class="name">Collection name</div>
+        <div class="info">
+          <span class="left">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7l9-5z" /></svg>
+            # Tokens
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== LIST ROWS ===== -->
+<section id="lists">
+  <div class="eyebrow">Components</div>
+  <h2>List rows</h2>
+  <p class="lede">Two row primitives. <b>dropdown-item</b> is text-only and stripes alternating rows for scannability. <b>Collection Menu</b> adds a thumbnail and a count, and uses a pill on the active row.</p>
+
+  <h4 class="spec-h">dropdown-item</h4>
+  <div class="canvas">
+    <div class="dropdown">
+      <div class="opt">Option</div>
+      <div class="opt">Option</div>
+      <div class="opt is-current">Option</div>
+      <div class="opt is-current">Option</div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Collection Menu (single-select)</h4>
+  <div class="canvas">
+    <div class="col-menu">
+      <div class="row-item"><div class="thumb"></div><div class="col-name">Dragginz</div><div class="col-count">0 Tokens</div></div>
+      <div class="row-item is-current"><div class="thumb"></div><div class="col-name">Pokedbots</div><div class="col-count">0 Tokens</div></div>
+      <div class="row-item"><div class="thumb"></div><div class="col-name">Motokos</div><div class="col-count">0 Tokens</div></div>
+    </div>
+  </div>
+  <p class="note">The current row uses a soft canvas-alt pill, not a checkbox. Multi-select is reserved for token tiles, not collection rows.</p>
+</section>
+
+<!-- ===== TILES ===== -->
+<section id="tiles">
+  <div class="eyebrow">Components</div>
+  <h2>Image tiles</h2>
+  <p class="lede">Token thumbnails. Corner controls reveal on hover or persist when a multi-select session is active. Use the checkmark variant only when at least one tile is selected — empty checkboxes appear on all sibling tiles to invite selection.</p>
+
+  <div class="canvas row" style="gap:var(--s-4); flex-wrap:wrap;">
+    <div class="tile"></div>
+    <div class="tile">
+      <span class="corner kebab"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="18" r="1.5"/></svg></span>
+    </div>
+    <div class="tile is-bordered"></div>
+    <div class="tile">
+      <span class="corner"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></span>
+    </div>
+    <div class="tile">
+      <span class="corner checked"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10" /></svg></span>
+    </div>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell"><div class="tile"></div><span class="state-label">Default</span></div>
+      <div class="state-cell"><div class="tile is-hover"></div><span class="state-label">Hover</span></div>
+      <div class="state-cell"><div class="tile">
+        <span class="corner kebab"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="18" r="1.5"/></svg></span>
+      </div><span class="state-label">Hover · kebab visible</span></div>
+      <div class="state-cell"><div class="tile">
+        <span class="corner"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></span>
+      </div><span class="state-label">Multi-select · unchecked</span></div>
+      <div class="state-cell"><div class="tile is-selected">
+        <span class="corner checked"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10" /></svg></span>
+      </div><span class="state-label">Selected</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TOOLTIPS ===== -->
+<section id="tooltips">
+  <div class="eyebrow">Components</div>
+  <h2>Tooltips</h2>
+  <p class="lede">Dark by default for high contrast. Light variant for use on dark surfaces. Arrow placement reflects the trigger position.</p>
+
+  <div class="canvas row" style="gap:var(--s-8); align-items:flex-start;">
+    <div class="tt">A message which appears on hover.</div>
+    <div class="tt tt--light">A message which appears on hover.</div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="row" style="gap:var(--s-6); align-items:flex-start;">
+      <div class="tt tt--inverted">A message which appears on hover.</div>
+      <div class="tt tt--light" style="background:#252525; color:white; box-shadow:0 4px 12px rgba(0,0,0,0.5);">A message which appears on hover.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BANNERS ===== -->
+<section id="banners">
+  <div class="eyebrow">Components</div>
+  <h2>Notification banners</h2>
+  <p class="lede">Four severities — success, error, warning, info — across three visual treatments. Use the light variant inline, the filled variant for high-attention toasts, and the dark variant in dense areas where the page is already light.</p>
+
+  <h4 class="spec-h">Light · accent underline</h4>
+  <div class="canvas grid-2">
+    <div class="banner success light"><span class="icon">✓</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner error light"><span class="icon">!</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner warn light"><span class="icon">△</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner info light"><span class="icon" style="font-style:italic;">i</span><span>Wow so easy</span><button class="close">×</button></div>
+  </div>
+
+  <h4 class="spec-h">Filled</h4>
+  <div class="canvas grid-2">
+    <div class="banner success filled banner--filled"><span class="icon" style="background:rgba(0,0,0,0.18);">✓</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner error filled banner--filled"><span class="icon" style="background:rgba(0,0,0,0.18);">!</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner warn filled banner--filled"><span class="icon" style="background:rgba(0,0,0,0.18);">△</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner info filled banner--filled"><span class="icon" style="background:rgba(0,0,0,0.18); font-style:italic;">i</span><span>Wow so easy</span><button class="close">×</button></div>
+  </div>
+
+  <h4 class="spec-h">Dark</h4>
+  <div class="canvas grid-2">
+    <div class="banner success dark banner--dark"><span class="icon">✓</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner error dark banner--dark"><span class="icon">!</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner warn dark banner--dark"><span class="icon">△</span><span>Wow so easy</span><button class="close">×</button></div>
+    <div class="banner info dark banner--dark"><span class="icon" style="font-style:italic;">i</span><span>Wow so easy</span><button class="close">×</button></div>
+  </div>
+</section>
+
+<!-- ===== UPLOAD ===== -->
+<section id="upload">
+  <div class="eyebrow">Components</div>
+  <h2>Upload &amp; progress</h2>
+  <p class="lede">Each upload renders one row. Blue bar = in-progress (with percentage). Green = done. Red = failed (with "Upload Failed" replacing percent label).</p>
+
+  <div class="canvas">
+    <div class="upload-row in-progress">
+      <div class="thumb">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="1.5"/><path d="M21 17l-5-5-10 8"/></svg>
+      </div>
+      <div class="meta">
+        <div class="top">
+          <div><span class="name">Image001.png</span><span class="size">1.8 MB</span></div>
+          <div class="pct">60%</div>
+        </div>
+        <div class="bar"><i></i></div>
+      </div>
+      <button class="trash" aria-label="Remove">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+      </button>
+    </div>
+
+    <div class="upload-row done">
+      <div class="thumb">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="1.5"/><path d="M21 17l-5-5-10 8"/></svg>
+      </div>
+      <div class="meta">
+        <div class="top">
+          <div><span class="name">Image001.png</span><span class="size">1.8 MB</span></div>
+          <div class="pct">100%</div>
+        </div>
+        <div class="bar"><i></i></div>
+      </div>
+      <button class="trash" aria-label="Remove">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+      </button>
+    </div>
+
+    <div class="upload-row failed">
+      <div class="thumb">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="1.5"/><path d="M21 17l-5-5-10 8"/></svg>
+      </div>
+      <div class="meta">
+        <div class="top">
+          <div><span class="name">Image001.png</span><span class="size" style="color:var(--notify-error); font-weight:700;">Upload Failed</span></div>
+          <div class="pct">00%</div>
+        </div>
+        <div class="bar"><i></i></div>
+      </div>
+      <button class="trash" aria-label="Remove">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <h4 class="spec-h">Skeleton (Input Load)</h4>
+  <div class="canvas">
+    <div style="background:linear-gradient(90deg, #FAFAFA, #F0F0F0, #FAFAFA); background-size:200% 100%; animation:shimmer 1.6s linear infinite; padding:24px; border-radius:var(--r-3); color:var(--text-muted); text-align:center; max-width:480px;">Uploading…</div>
+  </div>
+</section>
+
+<!-- ===== MODALS ===== -->
+<section id="modals">
+  <div class="eyebrow">Components</div>
+  <h2>Modals</h2>
+  <p class="lede">Simple Modal Base: white surface, large radius, display-typeface title, lede below it, content area, action group on the right. Use the info strip for cost or consequence disclosures (e.g. "this will use ICP").</p>
+
+  <div class="canvas">
+    <div class="modal">
+      <h3>Create new collection</h3>
+      <div class="lede-small">Create a collection to manage your NFTs.</div>
+
+      <div class="field" style="margin-top:var(--s-3);">
+        <label>Collection name *</label>
+        <input class="input" placeholder="Enter" />
+      </div>
+
+      <div class="info-strip" style="margin-top:var(--s-4);">
+        <span>Creating a collection deploys a new canister and requires a small ICP fee.</span>
+        <strong>0.10 ICP</strong>
+      </div>
+
+      <label style="display:flex; gap:8px; margin-top:var(--s-4); font-size:13px; align-items:center;">
+        <span class="checkbox"></span>
+        I understand this will use ICP to create a canister
+      </label>
+
+      <div class="actions">
+        <button class="btn btn--secondary">Cancel</button>
+        <button class="btn" disabled>Create</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TABS ===== -->
+<section id="tabs">
+  <div class="eyebrow">Components</div>
+  <h2>Tabs</h2>
+  <p class="lede">Horizontal tab bar for navigating between sections of the same surface (Overview / Guards / Supply / Attributes / Rarity / Tokens / Review on the collection editor). Scrolls horizontally on narrow viewports. Distinct from the Draft/Review/Live stage selector — tabs change <i>what you're editing</i>, the stage selector changes <i>which stage you're viewing</i>.</p>
+
+  <div class="canvas">
+    <nav class="h-tabs">
+      <button>Overview</button>
+      <button>NFTs</button>
+      <button>Parameters</button>
+      <button class="active">Rules</button>
+      <button>Categories</button>
+      <button>Go Live</button>
+    </nav>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell" style="align-items:stretch;"><nav class="h-tabs" style="border:0; background:transparent; padding:0;"><button>Tab</button></nav><span class="state-label">Default</span></div>
+      <div class="state-cell" style="align-items:stretch;"><nav class="h-tabs" style="border:0; background:transparent; padding:0;"><button style="color:var(--text-primary); background:rgba(0,0,0,0.04);">Tab</button></nav><span class="state-label">Hover</span></div>
+      <div class="state-cell" style="align-items:stretch;"><nav class="h-tabs" style="border:0; background:transparent; padding:0;"><button class="active">Tab</button></nav><span class="state-label">Active</span></div>
+      <div class="state-cell" style="align-items:stretch;"><nav class="h-tabs" style="border:0; background:transparent; padding:0;"><button style="outline:2px solid var(--text-primary); outline-offset:2px;">Tab</button></nav><span class="state-label">Focused</span></div>
+      <div class="state-cell" style="align-items:stretch;"><nav class="h-tabs" style="border:0; background:transparent; padding:0;"><button style="opacity:0.4; cursor:not-allowed;">Tab</button></nav><span class="state-label">Disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <nav class="h-tabs" style="background:#252525; border-color:#3A3A3A;">
+      <button style="color:#B5B5B5;">Overview</button>
+      <button class="active" style="background:white; color:#1D1D1D;">Rules</button>
+      <button style="color:#B5B5B5;">Categories</button>
+    </nav>
+  </div>
+</section>
+
+<!-- ===== LOCK CHIPS ===== -->
+<section id="lockchips">
+  <div class="eyebrow">Components</div>
+  <h2>Lock &amp; edit chips</h2>
+  <p class="lede">Inline indicators that tell the creator what happens to a setting when the collection goes Live. Pair with section headers on the configuration editor.</p>
+
+  <div class="canvas row">
+    <span class="lock-chip lock-chip--lock">Locks at Live</span>
+    <span class="lock-chip lock-chip--edit">Editable in Live</span>
+  </div>
+  <p class="note">Use <b>Locks at Live</b> for structural fields (supply, guards, attribute schema). Use <b>Editable in Live</b> for presentation fields (banner, description, social handles).</p>
+</section>
+
+<!-- ===== RADIO CARDS ===== -->
+<section id="radiocards">
+  <div class="eyebrow">Components</div>
+  <h2>Radio cards</h2>
+  <p class="lede">Large clickable choice cards for high-stakes selections — supply policy, rarity model, vendor type. Use the "Most common" pill when one option is the safe default.</p>
+
+  <div class="canvas">
+    <div class="radio-cards">
+      <div class="radio-card active">
+        <span class="dot"></span>
+        <div>
+          <span class="rc-most">Most common</span>
+          <span class="rc-title">Unique pieces</span>
+          <span class="rc-desc">Each token is one-of-one. No duplicates, no editions.</span>
+        </div>
+      </div>
+      <div class="radio-card">
+        <span class="dot"></span>
+        <div>
+          <span class="rc-title">Multi-copy editions</span>
+          <span class="rc-desc">Every token can have multiple copies — like a print run. Clone Mode is enabled automatically.</span>
+        </div>
+      </div>
+      <div class="radio-card">
+        <span class="dot"></span>
+        <div>
+          <span class="rc-title">Mixed</span>
+          <span class="rc-desc">Each token decides its own supply individually. Use for collections with both unique and edition pieces.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell" style="align-items:stretch;"><div class="radio-card"><span class="dot"></span><div><span class="rc-title">Option</span></div></div><span class="state-label">Default</span></div>
+      <div class="state-cell" style="align-items:stretch;"><div class="radio-card" style="border-color:var(--text-secondary);"><span class="dot"></span><div><span class="rc-title">Option</span></div></div><span class="state-label">Hover</span></div>
+      <div class="state-cell" style="align-items:stretch;"><div class="radio-card active"><span class="dot"></span><div><span class="rc-title">Option</span></div></div><span class="state-label">Selected</span></div>
+      <div class="state-cell" style="align-items:stretch;"><div class="radio-card" style="outline:2px solid var(--text-primary); outline-offset:2px;"><span class="dot"></span><div><span class="rc-title">Option</span></div></div><span class="state-label">Focused</span></div>
+      <div class="state-cell" style="align-items:stretch;"><div class="radio-card" style="opacity:0.45; cursor:not-allowed;"><span class="dot"></span><div><span class="rc-title">Option</span></div></div><span class="state-label">Disabled</span></div>
+    </div>
+  </div>
+
+  <h4 class="spec-h">On dark surface</h4>
+  <div class="canvas canvas--dark">
+    <div class="radio-cards">
+      <div class="radio-card" style="background:#252525; border-color:#3A3A3A; color:white;"><span class="dot" style="border-color:white;"></span><div><span class="rc-title">Default</span><span class="rc-desc" style="color:#B5B5B5;">Not selected.</span></div></div>
+      <div class="radio-card active" style="background:#2A2A2A; border-color:white; color:white;"><span class="dot" style="border-color:white;"></span><div><span class="rc-title">Selected</span><span class="rc-desc" style="color:#B5B5B5;">The chosen option.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATE BANNER ===== -->
+<section id="statebanners">
+  <div class="eyebrow">Components</div>
+  <h2>State banners</h2>
+  <p class="lede">Status feedback tied to a choice the creator just made. Different from a notification toast — these are persistent until the configuration changes. Used for Clone Mode, Generator linked, Vendor staged, etc.</p>
+
+  <div class="canvas" style="display:grid; gap:var(--s-3);">
+    <div class="state-banner state-banner--on">
+      <span class="icon-wrap">✓</span>
+      <span><strong>Clone Mode</strong> will be enabled in Guards when you save — required for multi-copy tokens.</span>
+      <a href="#">Jump to Guards →</a>
+    </div>
+    <div class="state-banner state-banner--off">
+      <span class="icon-wrap">!</span>
+      <span><strong>Clone Mode</strong> stays off — each token is one-of-one.</span>
+      <a href="#">Jump to Guards →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DISCLOSURE ===== -->
+<section id="disclosure">
+  <div class="eyebrow">Components</div>
+  <h2>Disclosure</h2>
+  <p class="lede">Progressive disclosure for secondary detail. Default closed. Use sparingly — content the creator needs to reach for ≥50% of the time should not be hidden behind a click.</p>
+
+  <div class="canvas">
+    <details class="disclosure">
+      <summary>How is "Up to mintable" calculated?</summary>
+      <div class="disclosure-body">Unique designs × copies-each = total mintable cap. The cap is the structural ceiling and locks at Live. Per-token supply policy can lower this per token but never raise it.</div>
+    </details>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas">
+    <div class="states-grid">
+      <div class="state-cell" style="align-items:stretch;"><details class="disclosure"><summary>Closed</summary><div class="disclosure-body">Hidden detail.</div></details><span class="state-label">Default · closed</span></div>
+      <div class="state-cell" style="align-items:stretch;"><details class="disclosure" open><summary>Open</summary><div class="disclosure-body">Revealed detail content shows below the trigger.</div></details><span class="state-label">Open</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SAVE BAR ===== -->
+<section id="savebar">
+  <div class="eyebrow">Components</div>
+  <h2>Save bar</h2>
+  <p class="lede">Sticky bottom bar that appears when there are unsaved edits on a configuration page. Lives outside the scroll container.</p>
+
+  <div class="canvas">
+    <div class="save-bar">
+      <span class="save-meta">Unsaved changes</span>
+      <button class="save-btn">Save changes</button>
+    </div>
+  </div>
+
+  <h4 class="spec-h">States</h4>
+  <div class="canvas" style="display:grid; gap:var(--s-3);">
+    <div class="save-bar"><span class="save-meta">No changes</span><button class="save-btn" disabled style="background:#5A5A5A; color:#B5B5B5; cursor:not-allowed;">Save changes</button></div>
+    <div class="save-bar"><span class="save-meta">Unsaved changes · 3 fields</span><button class="save-btn">Save changes</button></div>
+    <div class="save-bar"><span class="save-meta">Saving…</span><button class="save-btn" style="opacity:0.8;">Saving…</button></div>
+    <div class="save-bar" style="background:#10B981;"><span class="save-meta" style="color:white;">Saved 2s ago</span><button class="save-btn" style="background:rgba(255,255,255,0.2); color:white;">Saved ✓</button></div>
+  </div>
+</section>
+
+<!-- ===== TOKEN CARD ===== -->
+<section id="tokencard">
+  <div class="eyebrow">Token surface</div>
+  <h2>Token card</h2>
+  <p class="lede">Same token, two audiences. The public card carries identity only — name, issue, edition. The studio card adds a creator-only panel with mint progress and remaining capacity.</p>
+
+  <h3 class="section-h">Two contexts</h3>
+  <div class="canvas">
+    <div class="two-view">
+      <div class="pane">
+        <span class="context-tag public">Public — wallet / marketplace</span>
+        <p class="note" style="margin-top:var(--s-3);">Collectors and the public. Identity only.</p>
+        <div class="tok-card">
+          <div class="art pink"></div>
+          <div class="meta">
+            <div class="top"><h3 class="name">Token name</h3><span class="issue">#110</span></div>
+            <div class="meta-row"><span><span class="label-strong">Edition</span><span class="val-strong">4/25</span></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pane">
+        <span class="context-tag studio">Creator studio</span>
+        <p class="note" style="margin-top:var(--s-3);">Creator only. Adds mint progress and remaining count.</p>
+        <div class="tok-card">
+          <div class="art pink"></div>
+          <div class="meta">
+            <div class="top"><h3 class="name">Token name</h3><span class="issue">#110</span></div>
+            <div class="meta-row"><span><span class="label-strong">Edition</span><span class="val-strong">4/25</span></span></div>
+          </div>
+          <div class="studio">
+            <div class="studio-eyebrow">Studio · creator only</div>
+            <div class="row">
+              <span class="status status--live"><span class="dot"></span>Live</span>
+              <span class="mint-count">5<span class="max"> / 25</span></span>
+            </div>
+            <div class="progress"><i style="width:20%;"></i></div>
+            <div class="remaining"><strong>20</strong> remaining to mint</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Public anatomy</h3>
+  <div class="canvas">
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:var(--s-8); align-items:start;">
+      <div class="tok-card">
+        <div class="art blue">
+          <div class="stack-badge"><span class="x">×</span>10</div>
+        </div>
+        <div class="meta">
+          <div class="top"><h3 class="name">Token name</h3><span class="issue">#120</span></div>
+          <div class="meta-row"><span><span class="label-strong">Edition</span><span class="val-strong">4/25</span></span></div>
+        </div>
+      </div>
+      <ol style="list-style:none; padding:0; margin:0; display:grid; gap:var(--s-3);">
+        <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">1</span><div><b>Artwork — never overlaid by metadata.</b> The image is the most important pixel on the card.</div></li>
+        <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">2</span><div><b>Stack badge (wallet only).</b> Shown when the holding's stack quantity &gt; 1. The <code>×</code> prefix prevents confusion with issue numbers.</div></li>
+        <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">3</span><div><b>Token name.</b> Anton, uppercase. Owns the visual weight.</div></li>
+        <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">4</span><div><b>Issue number.</b> Smaller, slate-grey, same row as the name. Reads like a serial number. Hidden when issue visibility is set to <code>Hidden</code>.</div></li>
+        <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">5</span><div><b>Edition fraction or supply tag.</b> Prominent <code>Edition 4/25</code> on capped tokens with copy numbering enabled. Falls back to soft <code>Limited edition</code> / <code>Open edition</code> / <code>1 of 1</code> when copy numbers are hidden. No mint progress is ever shown publicly.</div></li>
+      </ol>
+    </div>
+  </div>
+
+  <h3 class="section-h">Public — all variants</h3>
+  <div class="canvas">
+    <div class="row" style="gap:var(--s-6); flex-wrap:wrap; align-items:flex-start;">
+      <figure style="margin:0;">
+        <div class="tok-card">
+          <div class="art blue"><div class="stack-badge"><span class="x">×</span>10</div></div>
+          <div class="meta">
+            <div class="top"><h3 class="name">Token name</h3></div>
+            <div class="meta-row"><span class="val-soft">Open edition</span></div>
+          </div>
+        </div>
+        <figcaption class="note" style="margin-top:var(--s-2); max-width:220px;"><b>Unlimited</b> · issue hidden · stack of 10. Only the stack badge sits on the art.</figcaption>
+      </figure>
+
+      <figure style="margin:0;">
+        <div class="tok-card">
+          <div class="art graphite"></div>
+          <div class="meta">
+            <div class="top"><h3 class="name">Lone astronaut</h3><span class="issue">#106</span></div>
+            <div class="meta-row"><span class="val-soft">1 of 1</span></div>
+          </div>
+        </div>
+        <figcaption class="note" style="margin-top:var(--s-2); max-width:220px;"><b>Single</b> supply · issue shown. "1 of 1" reads warmer than "1/1".</figcaption>
+      </figure>
+
+      <figure style="margin:0;">
+        <div class="tok-card">
+          <div class="art teal"></div>
+          <div class="meta">
+            <div class="top"><h3 class="name">Token name</h3><span class="issue">#120</span></div>
+            <div class="meta-row"><span class="val-soft">Limited edition</span></div>
+          </div>
+        </div>
+        <figcaption class="note" style="margin-top:var(--s-2); max-width:220px;"><b>Capped</b> · issue shown · copy hidden. Cap is intentionally not revealed publicly.</figcaption>
+      </figure>
+
+      <figure style="margin:0;">
+        <div class="tok-card">
+          <div class="art pink"></div>
+          <div class="meta">
+            <div class="top"><h3 class="name">Token name</h3><span class="issue">#110</span></div>
+            <div class="meta-row"><span><span class="label-strong">Edition</span><span class="val-strong">4/25</span></span></div>
+          </div>
+        </div>
+        <figcaption class="note" style="margin-top:var(--s-2); max-width:220px;"><b>Capped</b> · issue + copy shown. The print-run treatment.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RARITY BORDERS ===== -->
+<section id="rarityborders">
+  <div class="eyebrow">Token surface</div>
+  <h2>Rarity borders</h2>
+  <p class="lede">Every token wears its rarity. The border is part of the card itself — a coloured frame the artwork is inset into. Three border systems cover every collection: a plain default, creator-picked tiers, and the canonical weighted ladder.</p>
+
+  <h3 class="section-h">Three rarity systems</h3>
+  <div class="canvas">
+    <table class="usemap">
+      <thead><tr><th>System</th><th>Who picks the colour</th><th>When to use it</th></tr></thead>
+      <tbody>
+        <tr><td><b>Default / uniform</b></td><td>Toko ships a single neutral border.</td><td>Collections with no rarity, or where every token is rated the same.</td></tr>
+        <tr><td><b>Tiered</b></td><td>The creator picks one colour per tier.</td><td>Bespoke ladders that don't map to the canonical 7. Recommendation: pick distinct hues that read clearly at thumbnail size.</td></tr>
+        <tr><td><b>Weighted (canonical)</b></td><td>Toko-defined.</td><td>The seven-step ladder used across the marketplace.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="section-h">Anatomy</h3>
+  <p class="note">The border is a solid-colour outer frame with the artwork inset by 8px. The inner card carries its own corner-radius — drawn in code with the image rendered over it — so the rounded corners stay clean regardless of the tier colour. Card-to-card spacing in a grid stays at <code>var(--s-3)</code> (12px) so the borders never abut.</p>
+  <div class="canvas" style="display:grid; grid-template-columns:auto 1fr; gap:var(--s-8); align-items:center;">
+    <div class="rarity-frame rarity-frame--rare">
+      <div class="tok-card">
+        <div class="art blue"></div>
+        <div class="meta">
+          <div class="top"><h3 class="name">Token name</h3><span class="issue">#110</span></div>
+          <div class="meta-row"><span><span class="label-strong">Edition</span><span class="val-strong">4/25</span></span></div>
+        </div>
+      </div>
+    </div>
+    <ol style="list-style:none; padding:0; margin:0; display:grid; gap:var(--s-3);">
+      <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">1</span><div><b>Outer frame.</b> Solid colour. Carries a 14px outer radius and an 8px inner padding.</div></li>
+      <li style="display:flex; gap:var(--s-3); align-items:flex-start;"><span class="annotation">2</span><div><b>Inset content.</b> The standard token card sits inside the frame with its own 8px radius. The border peeks out evenly on all sides.</div></li>
+    </ol>
+  </div>
+
+  <h3 class="section-h">Default — no rarity / uniform</h3>
+  <p class="note">Same anatomy, neutral fill. Reads as "framed but unranked" against any surface.</p>
+  <div class="canvas">
+    <div class="rarity-frame rarity-frame--default">
+      <div class="tok-card">
+        <div class="art graphite"></div>
+        <div class="meta">
+          <div class="top"><h3 class="name">Token name</h3><span class="issue">#001</span></div>
+          <div class="meta-row"><span class="val-soft">1 of 1</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Tiered — creator picks the palette</h3>
+  <p class="note">A recipe, not a fixed palette. The creator chooses one colour per tier they define. Use distinct hues with enough contrast to read at thumbnail size; reserve very saturated colours for the top tiers.</p>
+  <div class="canvas">
+    <div class="rarity-row">
+      <figure class="rarity-tile">
+        <div class="rarity-frame" style="background: #14B8A6;">
+          <div class="tok-card">
+            <div class="art teal"></div>
+            <div class="meta"><div class="top"><h3 class="name">Tier I</h3><span class="issue">#012</span></div></div>
+          </div>
+        </div>
+        <figcaption class="label">Tier I · Teal</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame" style="background: #DB2777;">
+          <div class="tok-card">
+            <div class="art pink"></div>
+            <div class="meta"><div class="top"><h3 class="name">Tier II</h3><span class="issue">#012</span></div></div>
+          </div>
+        </div>
+        <figcaption class="label">Tier II · Magenta</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame" style="background: #1F2937;">
+          <div class="tok-card">
+            <div class="art graphite"></div>
+            <div class="meta"><div class="top"><h3 class="name">Tier III</h3><span class="issue">#012</span></div></div>
+          </div>
+        </div>
+        <figcaption class="label">Tier III · Graphite</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <h3 class="section-h">Weighted — the canonical seven</h3>
+  <p class="note">Each tier has one canonical hex — the rarity colour — reused wherever the tier is referenced (frame, dot, tag, text). All seven tiers render the frame as a flat fill of their hex; no gradients, no halos, no metal sheens. The top three tiers — Legendary (light yellow-orange), Mythical (deep pink), and Inconceivable (cyan) — are tuned to feel equally vibrant so none dominates the others.</p>
+  <div class="canvas">
+    <div class="rarity-row">
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Common</h3><span class="issue">#001</span></div></div></div></div>
+        <figcaption class="label">Common · #E6E6E6</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art" style="background:url('images/token_example2.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Uncommon</h3><span class="issue">#024</span></div></div></div></div>
+        <figcaption class="label">Uncommon · #2ECC71</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art" style="background:url('images/token_example3.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Rare</h3><span class="issue">#077</span></div></div></div></div>
+        <figcaption class="label">Rare · #2F80ED</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--epic"><div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Epic</h3><span class="issue">#108</span></div></div></div></div>
+        <figcaption class="label">Epic · #8F3DFF</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art" style="background:url('images/token_example2.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Legendary</h3><span class="issue">#142</span></div></div></div></div>
+        <figcaption class="label">Legendary · #FCD34D</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--mythical"><div class="tok-card"><div class="art" style="background:url('images/token_example3.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Mythical</h3><span class="issue">#188</span></div></div></div></div>
+        <figcaption class="label">Mythical · #FF1493</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--inconceivable"><div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Inconceivable</h3><span class="issue">#001</span></div></div></div></div>
+        <figcaption class="label">Inconceivable · #06B6D4</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <h3 class="section-h">Tier reference</h3>
+  <div class="canvas row" style="gap:var(--s-3); flex-wrap:wrap;">
+    <span class="rarity-pill"><span class="swatch swatch--common"></span>Common</span>
+    <span class="rarity-pill"><span class="swatch swatch--uncommon"></span>Uncommon</span>
+    <span class="rarity-pill"><span class="swatch swatch--rare"></span>Rare</span>
+    <span class="rarity-pill"><span class="swatch swatch--epic"></span>Epic</span>
+    <span class="rarity-pill"><span class="swatch swatch--legendary"></span>Legendary</span>
+    <span class="rarity-pill"><span class="swatch swatch--mythical"></span>Mythical</span>
+    <span class="rarity-pill"><span class="swatch swatch--inconceivable"></span>Inconceivable</span>
+  </div>
+
+  <h3 class="section-h">Selection state</h3>
+  <p class="note">Don't override the rarity border to indicate selection — that's the moment the user most needs to see what tier they're picking. Add an outer <strong>black ring</strong> with a 4px gap and a corner check badge instead. The rarity stays legible, the selection is unambiguous, and it stacks cleanly on every tier including Inconceivable.</p>
+  <div class="canvas">
+    <div class="rarity-row">
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--rare">
+          <div class="tok-card"><div class="art" style="background:url('images/token_example3.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Token name</h3><span class="issue">#110</span></div></div></div>
+        </div>
+        <figcaption class="label">Default</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--rare is-selected">
+          <div class="tok-card"><div class="art" style="background:url('images/token_example3.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Token name</h3><span class="issue">#110</span></div></div></div>
+        </div>
+        <figcaption class="label">Selected — outer ring + check</figcaption>
+      </figure>
+      <figure class="rarity-tile">
+        <div class="rarity-frame rarity-frame--inconceivable is-selected">
+          <div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Token name</h3><span class="issue">#001</span></div></div></div>
+        </div>
+        <figcaption class="label">Selected — Inconceivable</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <h3 class="section-h">On dark surface</h3>
+  <p class="note">The frame colours are surface-agnostic by design. The inner card flips to the dark canvas treatment automatically.</p>
+  <div class="canvas canvas--dark">
+    <div class="rarity-row">
+      <div class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Common</h3><span class="issue">#001</span></div></div></div></div>
+      <div class="rarity-frame rarity-frame--epic"><div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Epic</h3><span class="issue">#108</span></div></div></div></div>
+      <div class="rarity-frame rarity-frame--mythical"><div class="tok-card"><div class="art" style="background:url('images/token_example3.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Mythical</h3><span class="issue">#188</span></div></div></div></div>
+      <div class="rarity-frame rarity-frame--inconceivable is-selected"><div class="tok-card"><div class="art" style="background:url('images/token_example1.png') center/cover;"></div><div class="meta"><div class="top"><h3 class="name">Inconceivable</h3><span class="issue">#001</span></div></div></div></div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Rules</h3>
+  <p class="note"><b>Always render the border in code</b> as an outer container with the artwork inset over it — never bake the border into the artwork. <b>Card spacing in a grid</b> stays at <code>var(--s-3)</code> (12px) so the borders never touch. <b>Selection</b> is an outer ring plus a check badge — never an override of the rarity colour.</p>
+</section>
+
+<!-- ===== ISSUE DISPLAY OPTIONS ===== -->
+<section id="issueoptions">
+  <div class="eyebrow">Token surface</div>
+  <h2>Issue &amp; copy display options</h2>
+  <p class="lede">Collection-wide defaults for how tokens identify themselves on the public card. Vendors can override these before going live.</p>
+
+  <div class="canvas grid-2">
+    <div>
+      <h4 class="spec-h">Issue number</h4>
+      <table class="spec">
+        <thead><tr><th>Option</th><th>Sample</th></tr></thead>
+        <tbody>
+          <tr><td>Hidden</td><td><span class="val-soft" style="color:var(--text-muted);">no #</span></td></tr>
+          <tr><td>Show issue number</td><td><span style="font-family:var(--font-emphasis); font-weight:700;">#7</span></td></tr>
+          <tr><td>Show issue and supply cap</td><td><span style="font-family:var(--font-emphasis); font-weight:700;">#7 / 100</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h4 class="spec-h">Copy / edition number</h4>
+      <table class="spec">
+        <thead><tr><th>Option</th><th>Sample</th></tr></thead>
+        <tbody>
+          <tr><td>Hidden</td><td><span class="val-soft" style="color:var(--text-muted);">—</span></td></tr>
+          <tr><td>Show edition number</td><td><span style="font-family:var(--font-emphasis); font-weight:700;">Edition 4/50</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h4 class="spec-h">Stack behaviour</h4>
+      <table class="spec">
+        <thead><tr><th>Option</th><th>Sample</th></tr></thead>
+        <tbody>
+          <tr><td>Allow stacking</td><td><span class="stack-badge" style="position:static;"><span class="x">×</span>10</span></td></tr>
+          <tr><td>Always individual</td><td><span style="font-family:var(--font-emphasis); font-weight:700;">1, 2, 3…</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="note">"Allow stacking" is fungible-style (coins, ammo, consumables). "Always individual" is collectible-style (numbered prints). Showing edition numbers forces "Always individual".</p>
+</section>
+
+<!-- ===== PATTERNS — NAV ===== -->
+<section id="nav">
+  <div class="eyebrow">Patterns</div>
+  <h2>Navigation</h2>
+  <p class="lede">Two surfaces. The top bar is the always-visible header; the sidebar is the in-app navigation rail. On narrow viewports the sidebar collapses behind a hamburger (☰) in the top bar — kebab (⋮) is reserved exclusively for per-row overflow menus (e.g. token tile actions).</p>
+
+  <h3 class="section-h">Top bar</h3>
+  <p class="note">A full-width, always-dark application header that spans the entire page above all other chrome. In Studio the sidebar begins <em>below</em> it — so the brandmark appears exactly once, at the far left, and is never repeated in a sidebar beneath it. The bar and every control on it are <strong>identical in light and dark themes</strong> — it does not recolour. Below <strong>768px</strong> the nav, the Studio link and the theme toggle fold into the hamburger (☰), which opens the sidebar as a slide-in overlay; the notifications bell and the wallet control stay in the bar.</p>
+  <p class="note"><strong>Left:</strong> the brandmark, then the public destinations — Launchpad and Marketplace. <strong>Right:</strong> the Studio link, a hairline divider, then the account controls. There is no separate <em>Wallet</em> nav item; the wallet control on the right is the wallet. The bar has two states. <strong>Connected:</strong> the account controls are the notifications bell with an unread count, the theme toggle, and the cyan wallet pill showing the principal. <strong>Not connected:</strong> there is no bell, and the wallet control becomes a white <em>Connect</em> button — the primary call-to-action on the dark bar. Studio stays visible when signed out so visitors see as much as possible before connecting; tapping it starts the connect flow.</p>
+  <div class="canvas" style="padding:0; overflow:hidden;">
+    <!-- Connected -->
+    <div class="topbar">
+      <button class="tb-menu" aria-label="Open menu">☰</button>
+      <a class="tb-brand" href="#" aria-label="Toko home">
+        <img class="tb-face" src="logos/2026-05 - face.svg" alt="" />
+        <img class="tb-word" src="logos/app-name.png" alt="Toko" />
+      </a>
+      <nav class="tb-nav">
+        <a class="tb-link is-active" href="#">Launchpad</a>
+        <a class="tb-link" href="#">Marketplace</a>
+      </nav>
+      <span class="tb-spacer"></span>
+      <div class="tb-end">
+        <a class="tb-link" href="#">Studio</a>
+        <span class="tb-div"></span>
+        <button class="tb-icon tb-bell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="tb-badge">3</span>
+        </button>
+        <button class="tb-icon tb-theme" aria-label="Toggle light or dark theme">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg>
+        </button>
+        <button class="tb-wallet">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+          tk-3f4…91a2
+        </button>
+      </div>
+    </div>
+    <!-- Not connected -->
+    <div class="topbar" style="border-top:1px solid rgba(255,255,255,0.08);">
+      <button class="tb-menu" aria-label="Open menu">☰</button>
+      <a class="tb-brand" href="#" aria-label="Toko home">
+        <img class="tb-face" src="logos/2026-05 - face.svg" alt="" />
+        <img class="tb-word" src="logos/app-name.png" alt="Toko" />
+      </a>
+      <nav class="tb-nav">
+        <a class="tb-link is-active" href="#">Launchpad</a>
+        <a class="tb-link" href="#">Marketplace</a>
+      </nav>
+      <span class="tb-spacer"></span>
+      <div class="tb-end">
+        <a class="tb-link" href="#">Studio</a>
+        <span class="tb-div"></span>
+        <button class="tb-icon tb-theme" aria-label="Toggle light or dark theme">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg>
+        </button>
+        <button class="tb-connect">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+          Connect
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Sidebar</h3>
+  <p class="note">The dark in-app navigation rail, shown on screens &ge;768px. It sits <em>below</em> the top bar, so it never repeats the brandmark. The rail is context-aware, with four iterations. <strong>Studio &middot; no project:</strong> the profile and All&nbsp;Projects only. <strong>Studio &middot; project:</strong> adds the project card, its sections, and pinned collections. <strong>Studio &middot; collection:</strong> a pinned collection is expanded to its editor sections — Manage, Supply, Attributes, Token&nbsp;types, Rarity, Manage&nbsp;tokens. <strong>Non-Studio:</strong> the wallet-side rail — My&nbsp;Tokens, Offers, Activity. Below 768px the rail is hidden by default and slides in as a full-height overlay when the hamburger (☰) in the top bar is tapped.</p>
+  <div class="canvas">
+    <div class="sb-demo">
+
+      <!-- Iteration 1 — Studio, no project -->
+      <figure>
+        <div class="sidebar">
+          <div class="sb-profile">
+            <span class="sb-avatar"></span>
+            <div class="pm"><div class="pn">Donna</div><div class="ps">Studio &middot; Owner</div></div>
+          </div>
+          <div class="sb-rule"></div>
+          <a class="sb-allproj is-active" href="#">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+            All Projects
+          </a>
+        </div>
+        <figcaption>Studio &middot; no project</figcaption>
+      </figure>
+
+      <!-- Iteration 2 — Studio, project -->
+      <figure>
+        <div class="sidebar">
+          <div class="sb-profile">
+            <span class="sb-avatar"></span>
+            <div class="pm"><div class="pn">Donna</div><div class="ps">Studio &middot; Owner</div></div>
+          </div>
+          <div class="sb-rule"></div>
+          <a class="sb-allproj" href="#">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+            All Projects
+          </a>
+          <div class="sb-card">
+            <span class="sb-thumb"></span>
+            <div class="cm"><div class="cn">Mythwright</div><div class="cs">Spring 2026 &middot; Owner</div></div>
+          </div>
+          <a class="sb-link is-active" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="lbl">Overview</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-7M20 12h-7M20 17h-7"/><path d="M4 7h.01M4 12h.01M4 17h.01"/></svg><span class="lbl">Collections</span><span class="ct">5</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="lbl">Generators</span><span class="ct">4</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l2-6h14l2 6"/><path d="M5 9v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/></svg><span class="lbl">Vendors</span><span class="ct">7</span></a>
+          <div class="sb-section">Pinned collections</div>
+          <div class="pinned-list">
+            <div class="pinned">
+              <button class="pinned-head">
+                <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                <span class="pthumb" style="background:linear-gradient(140deg,#5EEAD4,#2563EB)"></span>
+                <span class="pname">Realm Keepers</span>
+                <svg class="ppin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v6l-3 4h12l-3-4V4M8 4h8"/></svg>
+              </button>
+            </div>
+            <div class="pinned">
+              <button class="pinned-head">
+                <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                <span class="pthumb" style="background:linear-gradient(140deg,#F472B6,#9333EA)"></span>
+                <span class="pname">Tiny Spirits</span>
+                <svg class="ppin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v6l-3 4h12l-3-4V4M8 4h8"/></svg>
+              </button>
+            </div>
+            <div class="pinned">
+              <button class="pinned-head">
+                <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                <span class="pthumb" style="background:linear-gradient(140deg,#FBBF24,#B45309)"></span>
+                <span class="pname">Hollow Court</span>
+                <svg class="ppin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v6l-3 4h12l-3-4V4M8 4h8"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <figcaption>Studio &middot; project</figcaption>
+      </figure>
+
+      <!-- Iteration 3 — Studio, project + collection -->
+      <figure>
+        <div class="sidebar">
+          <div class="sb-profile">
+            <span class="sb-avatar"></span>
+            <div class="pm"><div class="pn">Donna</div><div class="ps">Studio &middot; Owner</div></div>
+          </div>
+          <div class="sb-rule"></div>
+          <a class="sb-allproj" href="#">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+            All Projects
+          </a>
+          <div class="sb-card">
+            <span class="sb-thumb"></span>
+            <div class="cm"><div class="cn">Mythwright</div><div class="cs">Spring 2026 &middot; Owner</div></div>
+          </div>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="lbl">Overview</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-7M20 12h-7M20 17h-7"/><path d="M4 7h.01M4 12h.01M4 17h.01"/></svg><span class="lbl">Collections</span><span class="ct">5</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="lbl">Generators</span><span class="ct">4</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l2-6h14l2 6"/><path d="M5 9v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/></svg><span class="lbl">Vendors</span><span class="ct">7</span></a>
+          <div class="sb-section">Pinned collections</div>
+          <div class="pinned-list">
+            <div class="pinned open">
+              <button class="pinned-head">
+                <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                <span class="pthumb" style="background:linear-gradient(140deg,#5EEAD4,#2563EB)"></span>
+                <span class="pname">Realm Keepers</span>
+                <svg class="ppin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v6l-3 4h12l-3-4V4M8 4h8"/></svg>
+              </button>
+              <div class="pinned-body">
+                <a class="sb-link" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/></svg><span class="lbl">Manage</span></a>
+                <a class="sb-link" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg><span class="lbl">Supply</span></a>
+                <a class="sb-link" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L4 6v6c0 5 4 9 8 10 4-1 8-5 8-10V6l-8-4z"/></svg><span class="lbl">Attributes</span></a>
+                <a class="sb-link" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="lbl">Token types</span></a>
+                <a class="sb-link" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 9 8.5 12 2"/></svg><span class="lbl">Rarity</span></a>
+                <a class="sb-link is-active" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><circle cx="16" cy="16" r="6"/></svg><span class="lbl">Manage tokens</span></a>
+              </div>
+            </div>
+            <div class="pinned">
+              <button class="pinned-head">
+                <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                <span class="pthumb" style="background:linear-gradient(140deg,#F472B6,#9333EA)"></span>
+                <span class="pname">Tiny Spirits</span>
+                <svg class="ppin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v6l-3 4h12l-3-4V4M8 4h8"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <figcaption>Studio &middot; collection</figcaption>
+      </figure>
+
+      <!-- Iteration 4 — Non-Studio -->
+      <figure>
+        <div class="sidebar">
+          <div class="sb-profile sb-profile--mini">
+            <span class="sb-avatar"></span>
+            <div class="pm"><div class="pn">Donna</div></div>
+          </div>
+          <div class="sb-rule"></div>
+          <div class="sb-section" style="padding-top:4px;">Yours</div>
+          <a class="sb-link is-active" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 7v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-3-5z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg><span class="lbl">My Tokens</span><span class="ct">24</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-6.1A8.4 8.4 0 1 1 21 11.5z"/></svg><span class="lbl">Offers</span><span class="ct">2</span></a>
+          <a class="sb-link" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="lbl">Activity</span></a>
+        </div>
+        <figcaption>Non-Studio</figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== PATTERNS — BULK ===== -->
+<section id="bulk">
+  <div class="eyebrow">Patterns</div>
+  <h2>Bulk actions</h2>
+  <p class="lede">Persistent toolbar that appears at the edge of the viewport while a multi-select session is active. Empty checkbox = no selection. Indeterminate (minus) = partial selection. Reuses the bar shell for post-action success feedback.</p>
+
+  <div class="canvas" style="display:grid; gap:var(--s-3);">
+    <div class="bulkbar">
+      <span class="checkbox" style="background:transparent; border-color:white;"></span>
+      <span>Items selected: 0</span>
+      <span class="actions">
+        <button class="icon-btn" aria-label="Add to collection">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M21 7v14H7"/></svg>
+        </button>
+        <button class="icon-btn" aria-label="Delete">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+        </button>
+      </span>
+    </div>
+
+    <div class="bulkbar">
+      <span class="checkbox checkbox--indeterminate" style="border-color:white;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="white" stroke-width="3"><path d="M6 12h12" /></svg></span>
+      <span>Items selected: 3</span>
+      <span class="actions">
+        <button class="icon-btn active" aria-label="Add to collection">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M21 7v14H7"/></svg>
+        </button>
+        <button class="icon-btn" aria-label="Delete">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+        </button>
+      </span>
+    </div>
+
+    <div class="bulkbar" style="background:#1D1D1D;">
+      <span style="width:20px; height:20px; background:var(--notify-success); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:white;">✓</span>
+      <span>Assets added to collection successfully</span>
+      <span class="actions">
+        <button class="icon-btn" aria-label="Add to collection">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M21 7v14H7"/></svg>
+        </button>
+        <button class="icon-btn" aria-label="Delete">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+        </button>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PATTERNS — PAGE FOOTER ===== -->
+<section id="footerpattern">
+  <div class="eyebrow">Patterns</div>
+  <h2>Page footer</h2>
+  <p class="lede">A wide illustration tile that anchors the bottom of every page. The image carries its own top-fade, so it eases into the page background without an explicit divider — the page just trails off into a friendly clutter of bots and tools.</p>
+
+  <h3 class="section-h">Light surface</h3>
+  <p class="note">Drop the asset full-width at the bottom of the page. The internal opacity gradient handles the fade; no extra mask or wrapper needed. Sits flush to the bottom edge, no horizontal padding.</p>
+  <div class="canvas" style="padding:0; overflow:hidden; background:var(--surface-canvas);">
+    <div style="height:120px; background:linear-gradient(to bottom, var(--surface-canvas), var(--surface-canvas) 40%, transparent); position:relative; z-index:1; margin-bottom:-60px;"></div>
+    <img class="page-footer" src="page-footer/Rectangle 1175.svg" alt="" />
+  </div>
+
+  <h3 class="section-h">Dark surface</h3>
+  <p class="note">The asset's white-to-transparent gradient is inverted with a CSS filter. The illustration goes light, the gradient becomes dark-to-transparent, and the whole thing fades into the dark page exactly the way the light variant does.</p>
+  <div class="canvas canvas--dark" style="padding:0; overflow:hidden; background:var(--surface-page);">
+    <div style="height:120px; background:linear-gradient(to bottom, var(--surface-page), var(--surface-page) 40%, transparent); position:relative; z-index:1; margin-bottom:-60px;"></div>
+    <img class="page-footer page-footer--dark" src="page-footer/Rectangle 1175.svg" alt="" />
+  </div>
+
+  <h3 class="section-h">Implementation</h3>
+  <pre class="note" style="background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:var(--s-4); font-family:'SF Mono','Menlo',monospace; font-size:13px; overflow-x:auto; white-space:pre;">&lt;img class="page-footer" src="page-footer/Rectangle 1175.svg" alt="" /&gt;
+
+.page-footer {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: auto;
+  pointer-events: none;
+  user-select: none;
+}
+:root[data-theme="dark"] .page-footer {
+  filter: invert(1);
+}</pre>
+
+  <h3 class="section-h">Rules</h3>
+  <p class="note"><b>Use sparingly.</b> The footer belongs at the bottom of long marketing or browse pages — not in modals, drawers, or transactional flows. <b>Don't crop it.</b> The illustration is designed at 1728 × 307 and works best at full page width. <b>Don't tint it.</b> The grey is intentional; coloured variants risk competing with token art above. <b>Keep it decorative.</b> The image is purely illustrative — never put functional UI inside or on top of it.</p>
+</section>
+
+<!-- ===== PATTERNS — EMPTY ===== -->
+<section id="empty">
+  <div class="eyebrow">Patterns</div>
+  <h2>Empty states</h2>
+  <p class="lede">Two flavours. A <strong>full-screen empty</strong> keeps the page's normal header (eyebrow, Anton title, one-line intro), then the hero image, then the empty-state message, primary action, and any extra info underneath. A <strong>compact inline empty</strong> — an empty table or a filtered list with no matches inside an otherwise-populated page — drops the hero for a small character frame. Keep copy short and action-oriented; one primary action only.</p>
+
+  <h3 class="section-h">Full-screen — hero empty</h3>
+  <p class="note"><strong>Order: title &amp; intro → image → everything else underneath.</strong> The page keeps its normal header — eyebrow, Anton title, and a one-line intro — <em>above</em> the hero. Then the 16:6 hero image, then the empty-state headline, supporting copy, the primary action, and any additional information (a "how it works" explainer, fact cards) underneath. Image spec lives in <a href="#imagery">Imagery &amp; backgrounds</a> — assume a finished <strong>1600 × 600 JPG</strong> named <code>no_&lt;name&gt;.jpg</code>.</p>
+  <div class="canvas" style="padding:var(--s-8);">
+    <div style="margin-bottom:var(--s-5);">
+      <div class="eyebrow">Project · Beneficiaries</div>
+      <div style="font-family:var(--font-display); font-size:30px; text-transform:uppercase; letter-spacing:0.02em; line-height:1.05; margin-top:4px;">Beneficiaries.</div>
+      <p class="note" style="margin:6px 0 0;">Payout identities that earn a royalty on each sale, after fees.</p>
+    </div>
+    <div style="background:var(--surface-canvas,#fff); border:1px solid var(--border-soft); border-radius:16px; overflow:hidden; text-align:center;">
+      <div style="aspect-ratio:16/6; background:#0A0A0A;"><img src="empty-state-hero/no-projects.jpg" alt="" style="width:100%; height:100%; object-fit:cover; display:block;" /></div>
+      <div style="padding:24px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div style="font-family:var(--font-display); font-size:26px; text-transform:uppercase; letter-spacing:0.02em; line-height:1.05;">No beneficiaries yet.</div>
+        <p class="note" style="margin:0; max-width:46ch;">Add the people, charities, or partners who should earn a royalty on each sale.</p>
+        <button class="btn" style="margin-top:6px;">+ Add your first beneficiary</button>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Compact — inline empty</h3>
+  <p class="note">For an empty region inside a populated page (an empty table, a filtered list with no matches). No hero image — a small character frame, one line, and the action.</p>
+  <div class="canvas" style="text-align:center; padding:var(--s-12);">
+    <img src="bot-images/inspect/IMG_5593.png" alt="" style="width:140px; margin:0 auto var(--s-4);" />
+    <div style="font-family:var(--font-display); font-size:24px; text-transform:uppercase; letter-spacing:0.04em;">No tokens yet</div>
+    <p class="note" style="margin:var(--s-2) auto var(--s-4); max-width:36ch;">When you mint or claim something, it'll show up here.</p>
+    <button class="btn">Browse Launchpad</button>
+  </div>
+</section>
+
+
+<!-- ===== IMAGERY & BACKGROUNDS ===== -->
+<section id="imagery">
+  <div class="eyebrow">Assets</div>
+  <h2>Imagery &amp; backgrounds</h2>
+  <p class="lede">Full-bleed photographic and rendered artwork — empty-state heroes and carousel backgrounds. Both are cropped with <code>object-fit: cover</code> / <code>background-position: center</code>, so the same file has to survive more than one crop. Export to spec, keep the subject centered, and ship JPG.</p>
+
+  <h3 class="section-h">Format — always JPG</h3>
+  <p class="note">These are continuous-tone photos and 3D renders with no transparency, so JPG at quality ~80 is correct: it lands 80–90% smaller than PNG for the same result. Reserve PNG for flat graphics, UI, logos, or anything that needs a transparent background (the character art stays PNG). Run every export through an optimiser so a hero is never heavier than it needs to be.</p>
+
+  <h3 class="section-h">Empty-state heroes</h3>
+  <p class="note">The wide banner that sits below the page title in an empty-state screen (the <code>.empty-hero</code> pattern). It spans the <strong>full content width</strong> — the same width as the cards, explainer, and panels below it — with the image area locked to a 16:6 ratio. Export at 1600 × 600 so it stays crisp at typical container widths. On phones (≤560px) the frame switches to a taller 4:3 crop that trims the <strong>left and right edges</strong> — so keep the hero element horizontally centred with ~10% of clear margin each side.</p>
+  <table class="usemap">
+    <tr><th>Property</th><th>Spec</th></tr>
+    <tr><td>Aspect ratio</td><td>16 : 6 (8 : 3)</td></tr>
+    <tr><td>Export size</td><td>1600 × 600 px (16:6 · full content width, retina-ready)</td></tr>
+    <tr><td>Format / weight</td><td>JPG · quality ~80 · ≤ 200 KB</td></tr>
+    <tr><td>Crop behaviour</td><td>cover · centred · mobile recrops to 4:3 (trims sides)</td></tr>
+    <tr><td>Safe area</td><td>subject centred, ~10% clear margin left &amp; right</td></tr>
+    <tr><td>Folder</td><td><code>style-guide/empty-state-hero/</code></td></tr>
+  </table>
+  <p class="note" style="margin-top:var(--s-4)"><strong>Assume a finished asset.</strong> Each hero is delivered ready to use — a <strong>1600 × 600 JPG</strong> named <code>no_&lt;name&gt;.jpg</code>. Drop it straight into the folder; no resizing or re-cropping on our side.</p>
+  <p class="note"><strong>Naming.</strong> <code>no_&lt;name&gt;.jpg</code> (underscore), where <em>singular</em> is the overview of one thing and <em>plural</em> is the list of them — this is what keeps the project overview and the collection overview from colliding.</p>
+  <table class="usemap">
+    <tr><th>Surface</th><th>File</th></tr>
+    <tr><td>All projects · studio entry</td><td><code>no_projects.jpg</code></td></tr>
+    <tr><td>Project overview · empty project</td><td><code>no_project.jpg</code></td></tr>
+    <tr><td>Collection overview · empty collection</td><td><code>no_collection.jpg</code></td></tr>
+    <tr><td>Collections · list</td><td><code>no_collections.jpg</code></td></tr>
+    <tr><td>Generators · list</td><td><code>no_generators.jpg</code></td></tr>
+    <tr><td>Access</td><td><code>no_access.jpg</code></td></tr>
+    <tr><td>Whitelists</td><td><code>no_whitelists.jpg</code></td></tr>
+    <tr><td>Beneficiaries</td><td><code>no_beneficiaries.jpg</code></td></tr>
+  </table>
+
+  <h3 class="section-h">Carousel backgrounds</h3>
+  <p class="note">Full-bleed slide art behind the hero carousel (<code>hero-carousel.html</code>). Desktop renders the carousel at a 16:6 banner (up to ~1300px wide); phones (≤720px) switch to a <strong>3:4 portrait</strong>. Because the same file fills both a wide and a tall box from the centre, export a large 16:9 master and keep the focal subject inside the central safe zone so it survives both crops.</p>
+  <p class="note">A dark gradient scrim sits over the <strong>left third</strong> on desktop and the <strong>bottom</strong> on mobile to keep the white headline legible. Don't put essential detail in those zones — favour a lower-detail or naturally darker area there, and let the focal subject sit centre / centre-right.</p>
+  <table class="usemap">
+    <tr><th>Property</th><th>Spec</th></tr>
+    <tr><td>Display ratio</td><td>16 : 6 desktop · 3 : 4 mobile (≤720px)</td></tr>
+    <tr><td>Export size</td><td>2560 × 1440 px (16:9 master covering both crops)</td></tr>
+    <tr><td>Format / weight</td><td>JPG · quality ~80 · ≤ 400 KB</td></tr>
+    <tr><td>Crop behaviour</td><td>cover · centred — must read wide and portrait</td></tr>
+    <tr><td>Safe area</td><td>focal subject in the central ~60% (h &amp; v)</td></tr>
+    <tr><td>Text scrim</td><td>keep left third (desktop) / bottom (mobile) low-detail</td></tr>
+  </table>
+</section>
+
+
+<section id="identity">
+  <div class="eyebrow">Patterns</div>
+  <h2>Project &amp; collection identity</h2>
+  <p class="lede">The "view / edit" surface at the top of a project or collection. Both use the same identity container — one inset card, the same width as the content below it, holding the banner, thumbnail, name, description, and social links, with its own save footer. Never split these into a full-bleed banner plus separate form fields.</p>
+
+  <div class="canvas">
+    <div style="max-width:580px; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden;">
+      <div style="height:92px; background:linear-gradient(135deg,#FDE68A,#F472B6 55%,#6366F1);"></div>
+      <div style="padding:var(--s-5) var(--s-6) var(--s-6);">
+        <div style="display:grid; grid-template-columns:64px 1fr; gap:var(--s-4); align-items:center;">
+          <div style="width:64px; height:64px; border-radius:var(--r-3); border:3px solid var(--surface-canvas); margin-top:-44px; background:linear-gradient(135deg,#FDE68A,#F472B6); box-shadow:0 8px 24px -14px rgba(0,0,0,0.35);"></div>
+          <div style="font-family:var(--font-display); font-size:26px; text-transform:uppercase; letter-spacing:0.02em; line-height:1;">Ipsum Studio</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft);">
+          <div>
+            <div style="font-family:var(--font-emphasis); font-weight:700; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:8px;">Description</div>
+            <div style="border:1px solid var(--border-soft); border-radius:var(--r-2); padding:8px 10px; font-size:13px; color:var(--text-secondary); min-height:56px;">A small studio making warm, generative work.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-emphasis); font-weight:700; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:8px;">Social links</div>
+            <div style="border:1px solid var(--border-soft); border-radius:var(--r-2); padding:7px 10px; font-size:13px; display:flex; align-items:center; gap:8px;"><span style="font-family:var(--font-emphasis); font-weight:700; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-secondary);">X</span> @ipsumstudio</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:var(--s-5); padding-top:var(--s-4); border-top:1px solid var(--border-soft);">
+          <span style="margin-right:auto; font-family:var(--font-emphasis); font-weight:700; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--stage-draft); display:inline-flex; align-items:center; gap:6px;"><span style="width:7px; height:7px; border-radius:50%; background:currentColor;"></span>Unsaved changes</span>
+          <button class="btn btn--secondary btn--sm">Discard</button>
+          <button class="btn btn--sm">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Rules</h3>
+  <p class="note">One inset container at content width — never a full-bleed banner. The <strong>banner</strong> sits across the top; the square <strong>thumbnail</strong> overlaps its lower edge as an avatar; the <strong>name</strong> is the Anton title beside the avatar. <strong>Description</strong> and <strong>Social links</strong> sit side by side as two columns on web and stack below ~720px. The <strong>save controls</strong> — an "unsaved changes" indicator with Discard + Save — live in the container's own footer, <strong>never in the breadcrumb / nav bar</strong>. Identical pattern for both project and collection.</p>
+  <table class="usemap">
+    <tr><th>State</th><th>What it shows</th></tr>
+    <tr><td>Just created</td><td>Thumbnail + name + description carried from the create modal; empty banner shows a dashed "Upload a banner" prompt; no social rows yet — a hint plus the add-row only.</td></tr>
+    <tr><td>Populated</td><td>Filled banner; existing socials listed as editable rows (edit + delete) above the add-row.</td></tr>
+    <tr><td>Live</td><td>Banner &amp; thumbnail are direct edits (save immediately); name / description / links show a "Needs save" chip; core policy is locked read-only below the card.</td></tr>
+  </table>
+</section>
+
+
+<section id="mediapreview">
+  <div class="eyebrow">Assets</div>
+  <h2>Banner vs thumbnail previews</h2>
+  <p class="lede">Two different shapes that must always preview at their true aspect ratio. A banner is a wide horizontal header; a thumbnail is a square icon. Never force a banner into a square card, or stretch a thumbnail to fill a wide slot.</p>
+
+  <div class="canvas row" style="align-items:flex-start; gap:var(--s-8);">
+    <div>
+      <div style="width:340px; aspect-ratio:16/6; border-radius:var(--r-3); background:linear-gradient(135deg,#a3e635,#84cc16 60%,#65a30d);"></div>
+      <div style="font-family:var(--font-emphasis); font-weight:700; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-secondary); margin-top:10px;">Banner · 16:6 wide</div>
+    </div>
+    <div>
+      <div style="width:104px; aspect-ratio:1/1; border-radius:var(--r-3); background:linear-gradient(135deg,#166534,#22c55e);"></div>
+      <div style="font-family:var(--font-emphasis); font-weight:700; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-secondary); margin-top:10px;">Thumbnail · 1:1 square</div>
+    </div>
+  </div>
+
+  <h3 class="section-h">Rules</h3>
+  <p class="note">A <strong>banner</strong> is a wide 16:6 horizontal image — preview it at 16:6 everywhere it appears, never cropped into a square tile. A <strong>thumbnail</strong> is 1:1 and renders as the avatar / icon. In the media library this is why assets are split into separate <strong>Banners / Thumbnails / Other</strong> views — so each kind previews at its own ratio rather than being normalised to one card shape.</p>
+  <table class="usemap">
+    <tr><th>Kind</th><th>Ratio</th><th>Used as</th></tr>
+    <tr><td>Banner</td><td>16 : 6 wide</td><td>Project / collection header, marketplace hero</td></tr>
+    <tr><td>Thumbnail</td><td>1 : 1 square</td><td>Avatar, list / grid icon, vendor tile</td></tr>
+  </table>
+</section>
+
+
+<section id="mediapicker">
+  <div class="eyebrow">Patterns</div>
+  <h2>Image picker — Upload / Media library</h2>
+  <p class="lede">Anywhere an image is set (new project, new collection, banner or thumbnail), the picker is two equal square tiles side by side: <strong>Upload</strong> and <strong>Media library</strong>, given identical treatment. The library option is a peer tile — never a smaller link or a secondary control beneath the upload box.</p>
+
+  <div class="canvas row" style="gap:var(--s-4);">
+    <button style="aspect-ratio:1/1; width:150px; border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--text-secondary); cursor:pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <strong style="color:var(--text-primary); font-size:13px;">Upload</strong>
+      <span style="font-size:12px;">Drop or browse</span>
+    </button>
+    <button style="aspect-ratio:1/1; width:150px; border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--text-secondary); cursor:pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <strong style="color:var(--text-primary); font-size:13px;">Media library</strong>
+      <span style="font-size:12px;">Pick existing</span>
+    </button>
+  </div>
+
+  <h3 class="section-h">Rules</h3>
+  <p class="note">Both tiles are <strong>square, equal-sized, dashed</strong>, each with a 22px icon, a bold label, and a one-line hint — Upload uses the upload-arrow icon, Media library uses the grid icon. They sit side by side as equal peers; the media-library choice must never be demoted to a text link or tucked below the upload area. When the picker sets a square thumbnail the tiles are square; the same two-tile pattern applies when choosing a banner.</p>
+</section>
+
+
+<p style="text-align:center; color:var(--text-secondary); font-size:13px; marg

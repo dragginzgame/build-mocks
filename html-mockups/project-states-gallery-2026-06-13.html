@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Project · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .row { display:flex; align-items:center; gap:var(--s-3); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+
+  /* identity card — banner, thumb, name, description, socials, show creator (one container, page width) */
+  .id-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .id-banner { height:150px; background:linear-gradient(135deg,#FDE68A 0%,#F472B6 50%,#6366F1 100%); }
+  .id-banner--empty { background:var(--surface-canvas-alt); border-bottom:1px dashed var(--border-soft); display:flex; align-items:center; justify-content:center; }
+  .banner-upload { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-pill); padding:.5rem 1rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .banner-upload:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .id-body { padding:var(--s-6); }
+  .id-top { display:grid; grid-template-columns:84px 1fr; gap:var(--s-5); align-items:start; }
+  .id-avatar { width:84px; height:84px; border-radius:var(--r-3); background:linear-gradient(135deg,#FDE68A,#F472B6); border:4px solid var(--surface-canvas); margin-top:-3.5rem; box-shadow:0 8px 30px -16px rgba(0,0,0,.3); }
+  .id-name { font-family:var(--font-display); font-size:2rem; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .desc-box { width:100%; min-height:84px; resize:vertical; border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.5rem .75rem; font-family:var(--font-body); font-size:var(--text-base); color:var(--text-primary); background:var(--surface-canvas); }
+  .desc-box::placeholder { color:var(--text-muted); }
+  .id-sec { margin-top:var(--s-6); padding-top:var(--s-6); border-top:1px solid var(--border-soft); }
+  .hd { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:var(--s-3); }
+  .id-cols { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); margin-top:var(--s-6); padding-top:var(--s-6); border-top:1px solid var(--border-soft); }
+  @media (max-width:720px){ .id-cols { grid-template-columns:1fr; gap:var(--s-5); } }
+  .id-foot { margin-top:var(--s-6); padding-top:var(--s-5); border-top:1px solid var(--border-soft); display:flex; align-items:center; justify-content:flex-end; gap:var(--s-3); }
+  .unsaved { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--stage-draft); display:inline-flex; align-items:center; gap:.375rem; margin-right:auto; }
+  .unsaved .dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+  /* form bits */
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .m-field { display:flex; flex-direction:column; }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); font-size:var(--text-xl); flex:none; }
+  .ib { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); }
+  .ib:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .ib.danger:hover { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-link { color:var(--info,#2563EB); font-weight:700; font-size:var(--text-sm); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+  .social-list { display:flex; flex-direction:column; gap:var(--s-2); margin-bottom:var(--s-4); }
+  .social-item { display:flex; align-items:center; gap:var(--s-3); padding:.5rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); }
+  .social-item .plat { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); width:110px; flex:none; }
+  .social-item .handle { font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .social-item .acts { display:flex; gap:.375rem; }
+  .social-row { display:grid; grid-template-columns:1fr 1fr auto; gap:var(--s-3); align-items:end; }
+  @media (max-width:560px){ .social-row { grid-template-columns:1fr; } }
+  .toggle { display:inline-flex; align-items:center; gap:.625rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .toggle .sw { width:42px; height:24px; border-radius:var(--r-pill); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); position:relative; flex:none; }
+  .toggle .sw::after { content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:left .15s; }
+  .toggle.on .sw { background:var(--text-primary); border-color:transparent; }
+  .toggle.on .sw::after { left:20px; }
+  .toggle .on-lbl { color:var(--text-muted); }
+
+  /* create-collection CTA (empty only) */
+  .cta-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); display:flex; align-items:center; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .cta-card h3 { font-size:var(--text-xl); }
+  .cta-card p { color:var(--text-secondary); font-size:var(--text-sm); margin:.375rem 0 0; max-width:60ch; }
+
+  /* concertina */
+  details.acc { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  details.acc > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:var(--s-3); padding:var(--s-5) var(--s-6); }
+  details.acc > summary::-webkit-details-marker { display:none; }
+  details.acc > summary .s-ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-xl); }
+  details.acc > summary .count { margin-left:auto; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); }
+  details.acc > summary .chev { color:var(--text-secondary); transition:transform .15s; flex:none; }
+  details.acc[open] > summary .chev { transform:rotate(180deg); }
+  details.acc .acc-body { padding:var(--s-5) var(--s-6) var(--s-6); border-top:1px solid var(--border-soft); }
+  .wired .branch { display:grid; grid-template-columns:160px 1fr; gap:var(--s-3); padding:var(--s-3) 0; border-top:1px dashed var(--border-soft); align-items:start; }
+  .wired .branch:first-child { border-top:0; }
+  .wired .branch-label { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; padding-top:.375rem; }
+  .wired .branch-items { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
+  .wired .pill { display:inline-flex; align-items:center; gap:.5rem; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.375rem .75rem; font-size:var(--text-sm); }
+  .wired .pill .ico { width:16px; height:16px; border-radius:4px; background:var(--text-muted); flex:none; }
+  .wired .none { font-size:var(--text-sm); color:var(--text-muted); }
+  @media (max-width:560px){ .wired .branch{ grid-template-columns:1fr; } }
+
+  /* billing */
+  .bill h3 { font-size:var(--text-xl); }
+  .bill-sub { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); margin:var(--s-5) 0 var(--s-3); }
+  .bill .note { color:var(--text-secondary); font-size:var(--text-xs); margin:0 0 var(--s-3); line-height:1.5; }
+  .ov-rows { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .ov-rows .r { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.875rem var(--s-5); font-size:var(--text-base); }
+  .ov-rows .r + .r { border-top:1px solid var(--border-soft); }
+  .ov-rows .r .v { font-family:var(--font-emphasis); font-weight:700; }
+  .ov-rows .r.read, .ov-rows .r.read .v { color:var(--text-secondary); }
+  .ov-rows .foot { padding:var(--s-4) var(--s-5); border-top:1px solid var(--border-soft); display:flex; justify-content:flex-end; }
+
+  /* modal */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .kvlist { border-top:1px solid var(--border-soft); margin-top:var(--s-4); }
+  .kvlist .r { display:flex; justify-content:space-between; gap:var(--s-3); padding:.625rem 0; font-size:var(--text-base); border-bottom:1px solid var(--border-soft); }
+  .kvlist .r .v { font-family:var(--font-emphasis); font-weight:700; }
+  .info-note { background:rgba(99,102,241,.08); border-radius:var(--r-3); padding:var(--s-4); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Project — states &amp; stages.</h1>
+      <p>The single-project overview (there's no separate "empty project" view). The identity — banner, thumbnail, name, description, socials, and show-creator — lives in one container the same width as the page, with its own save footer. Below it: a create-a-collection prompt, the wired-map concertina, and billing (blob storage &amp; cycles). Shown populated and just-created.</p>
+    </header>
+
+    <!-- 01 OVERVIEW · populated -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Project · overview (populated)</span><span class="d">Identity container (banner, thumb, name, description, socials, show-creator) with its save footer, then the open wired-map concertina and billing.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span></div>
+        <div class="section">
+          <div class="id-card">
+            <div class="id-banner"></div>
+            <div class="id-body">
+              <div class="id-top">
+                <div class="id-avatar"></div>
+                <div class="id-name">Ipsum Studio</div>
+              </div>
+              <div class="id-cols">
+                <div>
+                  <div class="hd">Description</div>
+                  <textarea class="desc-box" placeholder="Add a publicly viewable description — optional">A small studio making warm, generative work. Spring 2026 program.</textarea>
+                </div>
+                <div>
+                  <div class="hd">Project socials</div>
+                  <div class="social-list">
+                    <div class="social-item"><span class="plat">X / Twitter</span><span class="handle">@ipsumstudio</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                    <div class="social-item"><span class="plat">Discord</span><span class="handle">discord.gg/ipsum</span><div class="acts"><button class="ib" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+                  </div>
+                  <div class="social-row">
+                    <div class="m-field"><label class="flabel">Add a social platform</label><select class="input"><option>Select an option</option><option>X / Twitter</option><option>Discord</option><option>Website</option><option>Instagram</option><option>Telegram</option></select></div>
+                    <div class="m-field"><label class="flabel">Handle</label><input class="input" placeholder="@yourhandle"></div>
+                    <button class="icon-btn" title="Add social">+</button>
+                  </div>
+                </div>
+              </div>
+              <div class="id-sec">
+                <div class="hd">Show Creator</div>
+                <div class="toggle"><span>Hide</span><span class="sw"></span><span class="on-lbl">Show</span></div>
+                <p class="tiny" style="margin-top:.5rem;max-width:64ch">Display who the Creator of this project is. By default all projects are anonymous.</p>
+              </div>
+              <div class="id-foot"><span class="unsaved"><span class="dot"></span>Unsaved changes</span><button class="btn btn--ghost btn--sm">Discard</button><button class="btn btn--primary btn--sm">Save changes</button></div>
+            </div>
+          </div>
+
+          <details class="acc" open>
+            <summary><span class="s-ttl">How your project is wired</span><span class="count">22 items</span><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body">
+              <p class="tiny" style="margin:0 0 var(--s-5)">Projects own everything — collections, generators, vendors, team, whitelists, beneficiaries. Click any pill to jump.</p>
+              <div class="wired">
+                <div class="branch"><div class="branch-label">Collections · 5</div><div class="branch-items"><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#1D1D1D,#6366F1)"></span>Lorem Drop No. 1</a><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></span>Dolor Series II</a><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#6EE7B7,#1E3A8A)"></span>Consectetur</a><a class="pill"><span class="ico"></span>+ 2 more</a></div></div>
+                <div class="branch"><div class="branch-label">Generators · 4</div><div class="branch-items"><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#FDE68A,#F472B6)"></span>Lorem Drop No. 1</a><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#93C5FD,#A78BFA)"></span>Dolor Series II</a><a class="pill"><span class="ico"></span>+ 2 more</a></div></div>
+                <div class="branch"><div class="branch-label">Vendors · 7</div><div class="branch-items"><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#FDE68A,#F472B6)"></span>Spring drop · <span style="color:var(--stage-live);font-weight:600">Live</span></a><a class="pill"><span class="ico" style="background:#EF4444"></span>Mystery pack · <span style="color:var(--notify-error);font-weight:600">Faulted</span></a><a class="pill"><span class="ico"></span>+ 5 more</a></div></div>
+                <div class="branch"><div class="branch-label">Team · 6</div><div class="branch-items"><a class="pill"><span class="ico" style="background:#1D1D1D"></span>Mara · Creator</a><a class="pill"><span class="ico" style="background:#6366F1"></span>Kai · Super Admin</a><a class="pill"><span class="ico"></span>+ 4 more</a></div></div>
+                <div class="branch"><div class="branch-label">Whitelists · 3</div><div class="branch-items"><a class="pill"><span class="ico" style="background:#F59E0B"></span>Genesis holders · 412</a><a class="pill"><span class="ico" style="background:#6366F1"></span>Newsletter alpha · 88</a><a class="pill"><span class="ico" style="background:#10B981"></span>Team-only · 6</a></div></div>
+                <div class="branch"><div class="branch-label">Beneficiaries · 4</div><div class="branch-items"><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#6366F1,#10B981)"></span>Ipsum Studio · creator</a><a class="pill"><span class="ico" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></span>Mara · 10%</a><a class="pill"><span class="ico"></span>+ 2 more</a></div></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary><span class="s-ttl">Billing</span><span class="chev" style="margin-left:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body">
+              <p class="note" style="margin:0 0 var(--s-4);color:var(--text-secondary);font-size:var(--text-xs);line-height:1.5">Remote assets use blob storage. Billing uses this project canister's Cashier account, which can be auto-funded from project cycles when the balance is low.</p>
+              <div class="ov-rows">
+                <div class="r"><span>Project canister</span><span class="v">9.452 T</span></div>
+                <div class="r read"><span>Ledger canister cycles <span style="font-weight:400">(read-only)</span></span><span class="v">4.476 T</span></div>
+                <div class="r read"><span>Remote asset storage balance <span style="font-weight:400">(read-only)</span></span><span class="v">0.000 B</span></div>
+                <div class="r"><span>Idle daily usage</span><span class="v">0.000 / day</span></div>
+                <div class="foot"><button class="btn btn--primary btn--sm">Top up</button></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 OVERVIEW · just created -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Project · just created</span><span class="d">First view after creating a project — banner placeholder, the uploaded thumbnail, empty description, no socials yet, a create-collection prompt, the wired map folded (empty), and billing.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Moonlit Drop</span></div>
+        <div class="section">
+          <div class="id-card">
+            <div class="id-banner id-banner--empty"><button class="banner-upload"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Upload a banner</button></div>
+            <div class="id-body">
+              <div class="id-top">
+                <div class="id-avatar" style="background:linear-gradient(135deg,#6EE7B7,#38BDF8)"></div>
+                <div class="id-name">Moonlit Drop</div>
+              </div>
+              <div class="id-cols">
+                <div>
+                  <div class="hd">Description</div>
+                  <textarea class="desc-box" placeholder="Add a publicly viewable description — optional. A short blurb helps buyers understand your project."></textarea>
+                </div>
+                <div>
+                  <div class="hd">Project socials</div>
+                  <p class="tiny" style="margin:0 0 var(--s-4)">No socials yet — add your X, Discord, or website so people can find you.</p>
+                  <div class="social-row">
+                    <div class="m-field"><label class="flabel">Add a social platform</label><select class="input"><option>Select an option</option><option>X / Twitter</option><option>Discord</option><option>Website</option><option>Instagram</option><option>Telegram</option></select></div>
+                    <div class="m-field"><label class="flabel">Handle</label><input class="input" placeholder="@yourhandle"></div>
+                    <button class="icon-btn" title="Add social">+</button>
+                  </div>
+                </div>
+              </div>
+              <div class="id-sec">
+                <div class="hd">Show Creator</div>
+                <div class="toggle"><span>Hide</span><span class="sw"></span><span class="on-lbl">Show</span></div>
+                <p class="tiny" style="margin-top:.5rem;max-width:64ch">Display who the Creator of this project is. By default all projects are anonymous.</p>
+              </div>
+              <div class="id-foot"><button class="btn btn--primary btn--sm">Save changes</button></div>
+            </div>
+          </div>
+
+          <div class="cta-card">
+            <div><h3>Add your first collection</h3><p>A collection is the policy boundary for a set of tokens — supply, attributes, rarity, vendors. It's the first thing most projects build.</p></div>
+            <button class="btn btn--primary">Create a collection</button>
+          </div>
+
+          <details class="acc">
+            <summary><span class="s-ttl">How your project is wired</span><span class="count">Nothing yet</span><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body">
+              <p class="tiny" style="margin:0 0 var(--s-4)">Nothing wired yet. As you add collections, generators, vendors, team, whitelists, and beneficiaries, they'll show up here.</p>
+              <div class="wired">
+                <div class="branch"><div class="branch-label">Collections · 0</div><div class="branch-items"><span class="none">None yet</span></div></div>
+                <div class="branch"><div class="branch-label">Generators · 0</div><div class="branch-items"><span class="none">None yet</span></div></div>
+                <div class="branch"><div class="branch-label">Vendors · 0</div><div class="branch-items"><span class="none">None yet</span></div></div>
+                <div class="branch"><div class="branch-label">Team · 1</div><div class="branch-items"><a class="pill"><span class="ico" style="background:#1D1D1D"></span>You · Creator</a></div></div>
+                <div class="branch"><div class="branch-label">Whitelists · 0</div><div class="branch-items"><span class="none">None yet</span></div></div>
+                <div class="branch"><div class="branch-label">Beneficiaries · 0</div><div class="branch-items"><span class="none">None yet</span></div></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary><span class="s-ttl">Billing</span><span class="chev" style="margin-left:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></summary>
+            <div class="acc-body">
+              <p class="note" style="margin:0 0 var(--s-4);color:var(--text-secondary);font-size:var(--text-xs);line-height:1.5">Remote assets use blob storage. Billing uses this project canister's Cashier account, which can be auto-funded from project cycles when the balance is low.</p>
+              <div class="ov-rows">
+                <div class="r"><span>Project canister</span><span class="v">2.040 T</span></div>
+                <div class="r read"><span>Ledger canister cycles <span style="font-weight:400">(read-only)</span></span><span class="v">3.000 T</span></div>
+                <div class="r read"><span>Remote asset storage balance <span style="font-weight:400">(read-only)</span></span><span class="v">0.000 B</span></div>
+                <div class="r"><span>Idle daily usage</span><span class="v">0.000 / day</span></div>
+                <div class="foot"><button class="btn btn--primary btn--sm">Top up</button></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 TOP UP PROJECT CYCLES · modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Top up project cycles · modal</span><span class="d">Opened from Cycles — fund the project canister; Toko moves cycles into blob storage when it runs low.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Top up project cycles</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0;font-size:var(--text-sm);line-height:1.6">Top up the project canister only. When blob storage is low, Toko automatically moves project cycles into the project blob storage Cashier account and keeps a project reserve.</p>
+            <div class="kvlist">
+              <div class="r"><span>Project cycles</span><span class="v">2.040 T</span></div>
+              <div class="r"><span>Project blob storage balance</span><span class="v">0.000</span></div>
+              <div class="r"><span>Wallet ICP</span><span class="v">0.5710 ICP</span></div>
+            </div>
+            <div class="info-note" style="margin-top:var(--s-5)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div>Project blob storage is below 500.000 B. Top up project cycles; Toko will automatically move project cycles into blob storage up to 1.000 T while preserving the project reserve.</div></div>
+            <div class="m-field" style="margin-top:var(--s-5)"><label class="flabel">Amount (ICP)</label><input class="input" value="0.3"></div>
+            <p class="tiny" style="margin-top:.5rem">0.3000 ICP will be sent to the project canister.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up project</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 Upload banner/thumbnail · cycle check (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Identity image · cycle check (balance OK)</span><span class="d">Saving a project banner or thumbnail stores it in blob storage, funded from project cycles. Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload (see the Cycles &amp; uploads gallery). With headroom, it saves normally.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>project-header.png staged · 2.4 MB · uploaded &amp; held</span>
+            <div class="cyc-est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.02 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">2.040 T</div></div>
+              <div class="e ok"><div class="k">After upload</div><div class="v">~2.02 T</div></div>
+            </div>
+            <div class="cyc-note cyc-note--ok" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>Enough cycles to store this image and keep your reserve. Toko moves project cycles into blob storage automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload assets</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 Upload banner/thumbnail · low balance -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Identity image · low balance</span><span class="d">The estimate exceeds the balance. The image stays staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>project-header.png staged · 2.4 MB · uploaded &amp; held</span>
+            <div class="cyc-est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.02 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.008 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.01 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="cyc-note cyc-note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not quite enough cycles to store this image.</strong> It stays staged — top up and it saves straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 Top up to continue · image staged -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, it saves automatically.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>project-header.png staged · 2.4 MB · ready to save</span>
+            <div style="margin-top:var(--s-4)">
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.02 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.008 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div style="margin-top:var(--s-4)">
+              <span class="cyc-flabel">Top up amount</span>
+              <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="cyc-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged image saves automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

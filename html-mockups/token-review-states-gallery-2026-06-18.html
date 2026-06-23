@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Tokens · Review states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .stage-badge--review{ background:rgba(99,102,241,.12); color:var(--stage-review); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .info-note a { color:var(--info); font-weight:700; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .bulkbar { display:flex; align-items:center; gap:var(--s-3); background:var(--text-primary); color:#fff; border-radius:var(--r-3); padding:.625rem var(--s-4); flex-wrap:wrap; }
+  .bulkbar .b-count { font-family:var(--font-emphasis); font-weight:700; }
+  .bulkbar .b-actions { margin-left:auto; display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .bulkbar .bb { background:var(--surface-canvas); color:var(--text-primary); border-radius:var(--r-2); padding:.45rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .bulkbar .bb:hover { opacity:.9; }
+  .bulkbar .bb--clear { background:transparent; border:1px solid rgba(255,255,255,.32); color:#fff; }
+  .view-toggle { display:inline-flex; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; flex:none; }
+  .view-toggle button { border:0; background:transparent; width:34px; height:30px; border-radius:var(--r-pill); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .view-toggle button:hover { color:var(--text-primary); }
+  .view-toggle button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .view-toggle svg { width:15px; height:15px; }
+  .tk-card .tk-more { position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:var(--r-pill); background:var(--surface-canvas); border:1px solid var(--border-soft); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); z-index:2; }
+  .tk-card .tk-more:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .tk-menu { position:absolute; top:42px; right:8px; z-index:6; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-2); box-shadow:0 14px 34px -14px rgba(0,0,0,.32); padding:4px; min-width:160px; display:flex; flex-direction:column; }
+  .tk-menu button { display:flex; align-items:center; gap:.55rem; padding:.5rem .6rem; border-radius:var(--r-1); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-primary); text-align:left; }
+  .tk-menu button:hover { background:var(--surface-canvas-alt); }
+  .tk-menu button.danger { color:var(--notify-error); }
+  .tk-menu .sepln { height:1px; background:var(--border-soft); margin:4px 2px; }
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:var(--s-4); }
+  .tk-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; position:relative; }
+  .tk-card.sel { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .tk-card .art { aspect-ratio:1/1; background:linear-gradient(135deg,#d6356d,#831843); }
+  .tk-card .art.b { background:linear-gradient(135deg,#60a5fa,#1e3a8a); }
+  .tk-card .art.g { background:linear-gradient(135deg,#6ee7b7,#065f46); }
+  .tk-card .meta { padding:var(--s-3) var(--s-4) var(--s-4); }
+  .tk-card .nm { font-family:var(--font-display); font-size:var(--text-base); text-transform:uppercase; }
+  .tk-card .sub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.25rem; }
+  .tk-card .chk { position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:6px; background:rgba(255,255,255,.92); border:1.5px solid var(--border-strong); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); }
+  .checklist { display:flex; flex-direction:column; gap:var(--s-2); }
+  .check { display:flex; align-items:flex-start; gap:var(--s-3); padding:.75rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
+  .check .ci { width:24px; height:24px; border-radius:50%; flex:none; display:grid; place-items:center; }
+  .check.pass .ci { background:rgba(16,185,129,.15); color:var(--stage-live); }
+  .check.fail .ci { background:rgba(245,158,11,.18); color:var(--stage-draft); }
+  .check .cm { flex:1; min-width:0; }
+  .check .ct { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .check .cd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.125rem; }
+  .check .cact { margin-left:auto; align-self:center; }
+  .mod-row { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-4); border-top:1px solid var(--border-soft); }
+  .mod-row:first-child { border-top:0; }
+  .mod-row .mt { width:38px; height:38px; border-radius:var(--r-2); background:linear-gradient(135deg,#d6356d,#831843); flex:none; }
+  .mod-row .mm { flex:1; min-width:0; }
+  .mod-row .mn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .mod-row .md { color:var(--text-secondary); font-size:var(--text-xs); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:var(--s-6); width:100%; max-width:1000px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.wide { max-width:640px; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .single-modal { display:flex; justify-content:center; }
+  .single-modal .modal-card { max-width:560px; }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin:var(--s-2) calc(-1 * var(--s-8)) calc(-1 * var(--s-8)); padding:var(--s-4) var(--s-8); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button:hover:not(:disabled):not([aria-current="page"]) { background:var(--surface-canvas-alt); color:var(--text-primary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; cursor:default; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-gap { min-width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.5rem 0 .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-xs); font-weight:700; }
+  @media (max-width:620px){ .listbar { justify-content:center; } .results-count, .perpage { display:none; } }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Tokens — Review.</h1>
+      <p>The gate between Draft and Live. Review tokens are locked for content (editing happens in Draft); here you screen content, set them Live, or send them back to Draft. Single and bulk.</p>
+      <div class="navlinks">Lifecycle: <a href="#">Add</a> · <a href="#">Draft</a> · <strong>Review</strong> · <a href="#">Live</a> · <a href="#">Minted</a></div>
+    </header>
+
+    <!-- 01 · Single — Review (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Single — Review (stage-only)</span><span class="d">A Review token is stage-only — the backend rejects every non-stage update. Nothing on the definition (name, description, tags, attributes, rarity, composition, assets, supply) can change. The only actions are setting it Live or returning it to Draft to edit.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card wide">
+          <header><h4>Token · Fox #244 <span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span></h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><strong style="color:var(--text-primary)">Locked in Review.</strong> Only the token's stage can change here — every edit to the definition is rejected. <a href="#">Return to Draft</a> to make any change, then re-submit.</div></div>
+            <div class="kv"><span>Name</span><span class="v">Fox #244</span></div>
+            <div class="kv"><span>Token type</span><span class="v">Character</span></div>
+            <div class="kv"><span>Tier</span><span class="v">Epic</span></div>
+            <div class="kv"><span>Supply</span><span class="v">Capped · max 100</span></div>
+            <div class="kv"><span>Reserved issue number</span><span class="v">#7 · held</span></div>
+            <div class="kv"><span>Total score</span><span class="v">148</span></div>
+            <p class="tiny" style="margin:.25rem 0 0">Submitting to Review created this hold from the desired number set in Draft. It's now reserved against every other token, and one value covers all copies. It becomes the permanent, locked issue number when the token goes Live; returning to Draft releases it.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Return to Draft</button><button class="btn btn--primary">Set Live</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Bulk — Review -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Manage (Review) — route to Draft or Live</span><span class="d">The Review view: per-card <strong>→ Draft</strong> / <strong>Set Live</strong> for routing one token, or Select for the bulk toolbar (Set Live, Return to Draft, Run content check) to route many at once. Review is stage-only — no editing. Header keeps just the Collection · Tokens eyebrow.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="eyebrow">Collection · Tokens</div>
+            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span><button class="btn btn--ghost">Select</button></div>
+          </div>
+          <div class="row">
+            <div style="position:relative;flex:1;min-width:200px"><input class="input" placeholder="Search Review tokens…"></div>
+            <div class="seg"><button>Draft · 8</button><button class="active">Review · 36</button><button>Live · 612</button></div>
+            <div class="view-toggle" role="group" aria-label="Grid size">
+              <button aria-pressed="true" aria-label="Large grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></button>
+              <button aria-pressed="false" aria-label="Small grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="16.5" y="3" width="4.5" height="5" rx="1"/><rect x="3" y="9.5" width="5" height="5" rx="1"/><rect x="10" y="9.5" width="5" height="5" rx="1"/><rect x="16.5" y="9.5" width="4.5" height="5" rx="1"/><rect x="3" y="16" width="5" height="5" rx="1"/><rect x="10" y="16" width="5" height="5" rx="1"/><rect x="16.5" y="16" width="4.5" height="5" rx="1"/></svg></button>
+              <button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3.5" y1="6" x2="3.5" y2="6"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="18" x2="3.5" y2="18"/></svg></button>
+            </div>
+          </div>
+          <div class="bulkbar"><span class="b-count">12 selected</span><div class="b-actions"><button class="bb">Set Live</button><button class="bb">Return to Draft</button><button class="bb">Run content check</button><button class="bb bb--clear">Clear</button></div></div>
+          <div class="tk-grid">
+            <div class="tk-card sel"><div class="art"></div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="meta"><div class="nm">Fox #018</div><div class="sub">Review · #2</div></div></div>
+            <div class="tk-card sel"><div class="art b"></div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="meta"><div class="nm">Fox #244</div><div class="sub">Review · #7</div></div></div>
+            <div class="tk-card"><div class="art g"></div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="meta"><div class="nm">Fox #501</div><div class="sub">Review · #58</div></div></div>
+            <div class="tk-card" style="overflow:visible;z-index:3"><div class="art y"></div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="tk-menu"><button>Set Live</button><button>Return to Draft</button><div class="sepln"></div><button>Run content check</button></div><div class="meta"><div class="nm">Fox #777</div><div class="sub">Review · #201</div></div></div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–24</strong> of <strong>36</strong></span>
+            <nav class="pg" aria-label="Pagination">
+              <button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <button aria-current="page">1</button><button>2</button>
+              <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </nav>
+            <span class="perpage"><label>Per page</label><select><option>24</option><option>48</option><option>96</option></select></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Content review (pre-live) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Content review (pre-live)</span><span class="d">An external check screens images and text for offensive content before tokens can go Live. Flagged items block go-live until resolved.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Collection · Tokens</div><h2>Content review.</h2><p class="lede">Each token's image and text are screened by an external service. Go-live is blocked while anything is flagged or still scanning.</p></div>
+            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span><button class="btn btn--primary" disabled>Set Live · blocked</button></div>
+          </div>
+          <div class="row" style="gap:var(--s-3)"><span class="tag tag--green">142 passed</span><span class="tag tag--indigo">2 scanning</span><span class="tag tag--red">1 flagged</span></div>
+          <div class="card" style="padding:0">
+            <div class="mod-row"><span class="mt" style="background:linear-gradient(135deg,#fde68a,#b45309)"></span><div class="mm"><div class="mn">Aurora Key</div><div class="md">Image + name + description</div></div><span class="tag tag--red">Flagged · text</span><button class="btn btn--ghost btn--sm" style="margin-left:var(--s-3)">Review</button></div>
+            <div class="mod-row"><span class="mt" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></span><div class="mm"><div class="mn">Fox #244</div><div class="md">Image + name + description</div></div><span class="tag tag--indigo">Scanning…</span></div>
+            <div class="mod-row"><span class="mt"></span><div class="mm"><div class="mn">Fox #018</div><div class="md">Image + name + description</div></div><span class="tag tag--green">Passed</span></div>
+          </div>
+          <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">"Aurora Key" was flagged on its description.</strong> Return it to Draft to edit the content and re-run the check, or request a manual review. Tokens can't be set Live until every item passes.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Move to Live (set-live readiness) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Move to Live (set-live readiness)</span><span class="d">Every gate that must pass before Review tokens can be set Live and minted, shown as a checklist with one blocker. Issue numbers are assigned in live-order at this step.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Collection · Tokens · Review</div><h2>Set Live.</h2><p class="lede">36 Review tokens selected. They go Live and become mintable once every check passes.</p></div>
+            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span><button class="btn btn--primary" disabled>Set 36 Live · 1 blocker</button></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Readiness checks</h3><span class="tag tag--amber">1 of 10 blocking</span></div>
+            <div class="checklist">
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Collection is Live</div><div class="cd">Tokens can only be set Live once the collection itself is Live.</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Every token has assets</div><div class="cd">A token can't go Live without at least its main asset.</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">No duplicate tokens</div><div class="cd">Identical tokens block go-live — use a multi-copy supply, or remove the duplicate.</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Required attributes assigned</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Rarity valid for model</div><div class="cd">Tiered: every token has a tier. Weighted: scores fresh and assigned.</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Live-definition cap</div><div class="cd">Hard cap: 1,000 definitions may be Live. 612 live now — these 36 fit (648). The cap blocks go-live; it can't be oversubscribed.</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Copy supply — not a blocker</div><div class="cd">Definitions may collectively promise more copies than Max Supply (1,000) or a tier's quota. That's allowed at go-live; actual minting is rationed at the mint step, not here.</div></div></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Issue numbers free of collisions</div><div class="cd">Held reservations are re-checked against Live and other reserved tokens; at go-live each number is assigned atomically (reserved value consumed, else next in live-order) and shared by all copies. Any collision blocks go-live.</div></div></div>
+              <div class="check fail"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v5M12 16h.01"/></svg></span><div class="cm"><div class="ct">Content review passed</div><div class="cd">1 token flagged by the external content check — resolve it before go-live.</div></div><a class="cact btn btn--ghost btn--sm" href="#">Open content review</a></div>
+              <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Scores fresh (Weighted)</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Move to Draft (return-to-draft confirm) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Move to Draft (return to Draft)</span><span class="d">Send Review tokens back to Draft to edit them again — single and bulk. Returning re-opens editing, releases any reserved issue numbers, and means the content check must pass again.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Return to Draft · Fox #244?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0">Moves <strong>Fox #244</strong> back to Draft so its composition, attributes, rarity and supply can be edited again.</p>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Releases its reserved issue number (#7) back to the pool, and its content-review result is cleared — it'll re-scan when re-submitted.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Return to Draft</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Return 12 tokens to Draft?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="kv"><span>Tokens to return</span><span class="v">12</span></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>All 12 return to Draft for editing. Reserved issue numbers are released and content-review results clear — they'll re-scan on re-submit.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Return 12 to Draft</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Review — no Review tokens -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Review — no Review tokens</span><span class="d">The Review view when nothing is in Review — either no Draft tokens have been submitted yet, or they've all gone Live. Distinct from first-run "No tokens": the Draft / Review / Live tabs stay, and it points back to Draft.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="eyebrow">Collection · Tokens</div>
+            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span></div>
+          </div>
+          <div class="row">
+            <div style="position:relative;flex:1;min-width:200px"><input class="input" placeholder="Search Review tokens…"></div>
+            <div class="seg"><button>Draft · 8</button><button class="active">Review · 0</button><button>Live · 612</button></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--s-3);padding:var(--s-10) var(--s-6)">
+            <img src="../Toko%20Character%20Examples/normal.png" alt="" style="width:116px;height:auto" onerror="this.style.display='none'">
+            <h3 style="font-size:var(--text-2xl)">No tokens in Review.</h3>
+            <p style="color:var(--text-secondary);max-width:54ch;margin:0">Submit tokens from <strong>Draft</strong> when they're complete and they'll appear here for the content check and go-live. If everything's already minted, you'll find them under <strong>Live</strong>.</p>
+            <div class="row" style="justify-content:center;margin-top:var(--s-2)"><button class="btn btn--primary">Go to Draft · 8</button><button class="btn btn--ghost">View Live · 612</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Set Live blocked — live-definition cap -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Set Live blocked — definition cap</span><span class="d">The live-definition cap is a hard gate at Review → Live (unlike copy supply, which may be oversubscribed). Two cases: the cap is already full (nothing can go Live), or there's partial room (only some of the selection fits). Draft and Review are never capped — only the move to Live.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Can't set Live · cap reached</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><strong style="color:var(--text-primary)">This collection is capped at 1,000 live definitions and already has 1,000.</strong> No new definition can go Live until you remove or replace a live one. This cap was locked when the collection went Live and can't be raised.</div></div>
+              <div class="kv"><span>Live definitions</span><span class="v">1,000 / 1,000</span></div>
+              <div class="kv"><span>Trying to set Live</span><span class="v">12</span></div>
+              <div class="kv"><span>Can go Live now</span><span class="v" style="color:var(--notify-error)">0</span></div>
+              <p class="tiny" style="margin:.25rem 0 0">Authoring and Review are unaffected — these 12 stay in Review until room opens up.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Manage live definitions</button><button class="btn btn--primary" disabled>Set Live · blocked</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Only 6 of 12 can go Live</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>The cap leaves room for <strong>6 more</strong> live definitions. You can set 6 of the 12 Live now; the rest stay in Review. Go-live order decides which 6 — reorder your selection if it matters.</div></div>
+              <div class="kv"><span>Live definitions</span><span class="v">994 / 1,000</span></div>
+              <div class="kv"><span>Remaining room</span><span class="v">6</span></div>
+              <div class="kv"><span>Selected</span><span class="v">12</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Set Live</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

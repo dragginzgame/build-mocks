@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Tokens · Manage minted states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:70ch; }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .search { position:relative; flex:1; min-width:200px; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  /* minted holding row (in modals) */
+  .hold { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); }
+  .hold .th { width:44px; height:44px; border-radius:var(--r-2); background:linear-gradient(135deg,#60a5fa,#1e3a8a); flex:none; position:relative; }
+  .hold .th .stackn { position:absolute; bottom:-6px; right:-6px; background:rgba(10,10,10,.78); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .hold .hn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .hold .hd { color:var(--text-secondary); font-size:var(--text-xs); }
+  /* summary strip */
+  .summary-strip { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-4); }
+  @media (max-width:760px){ .summary-strip { grid-template-columns:repeat(2,1fr); } }
+  .sm .l { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .sm .v { font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.02em; margin-top:.25rem; }
+  .sm .v small { font-family:var(--font-body); font-size:var(--text-xs); color:var(--text-secondary); font-weight:400; }
+  .mintbar { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; margin-top:var(--s-5); display:flex; }
+  .mintbar > i { display:block; height:100%; }
+  .legend { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); }
+  .legend span { display:inline-flex; align-items:center; gap:.375rem; } .legend i { width:9px; height:9px; border-radius:3px; }
+  /* view toggle */
+  .view-toggle { display:inline-flex; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; flex:none; }
+  .view-toggle button { border:0; background:transparent; width:34px; height:30px; border-radius:var(--r-pill); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .view-toggle button:hover { color:var(--text-primary); }
+  .view-toggle button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .view-toggle svg { width:15px; height:15px; }
+  /* token grid */
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:var(--s-4); }
+  .tk-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; position:relative; }
+  .tk-card.rar-common { border:3px solid #B8B8B8; }
+  .tk-card.rar-uncommon { border:3px solid #15803D; }
+  .tk-card.rar-rare { border:3px solid #1e40af; }
+  .tk-card.rar-epic { border:3px solid #6D28D9; }
+  .tk-card.rar-legendary { border:3px solid #B45309; }
+  .tk-card .art { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2.5rem; background:linear-gradient(135deg,#d6356d,#831843); }
+  .tk-card .art.b { background:linear-gradient(135deg,#60a5fa,#1e3a8a); }
+  .tk-card .art.g { background:linear-gradient(135deg,#6ee7b7,#065f46); }
+  .tk-card .art.y { background:linear-gradient(135deg,#fde68a,#b45309); }
+  .tk-card .art.p { background:linear-gradient(135deg,#c084fc,#5b21b6); }
+  .tk-card .meta { padding:var(--s-3) var(--s-4) var(--s-4); display:flex; flex-direction:column; gap:.4rem; }
+  .tk-card .nm { font-family:var(--font-display); font-size:var(--text-base); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-card .trow { display:flex; align-items:center; justify-content:space-between; gap:.375rem; font-size:var(--text-xs); }
+  .tk-card .copyn { color:var(--text-secondary); font-weight:700; font-family:var(--font-emphasis); }
+  .tk-card .rname { font-weight:700; font-family:var(--font-emphasis); text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-3xs); }
+  .tk-card .status { position:absolute; top:8px; left:8px; display:inline-flex; align-items:center; gap:5px; background:rgba(10,10,10,.62); color:#fff; border-radius:var(--r-pill); padding:3px 8px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; }
+  .tk-card .status .dot { width:6px; height:6px; border-radius:50%; background:var(--stage-live); }
+  .tk-card .copies { position:absolute; bottom:8px; right:8px; background:rgba(10,10,10,.72); color:#fff; border-radius:var(--r-pill); padding:2px 8px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); }
+  .tk-card .chk { position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:6px; background:rgba(255,255,255,.92); border:1.5px solid var(--border-strong); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); }
+  .tk-card.sel { box-shadow:0 0 0 2px var(--border-strong); }
+  /* bulk bar */
+  .bulkbar { display:flex; align-items:center; gap:var(--s-3); background:var(--text-primary); color:#fff; border-radius:var(--r-3); padding:.625rem var(--s-4); flex-wrap:wrap; }
+  .bulkbar .b-count { font-family:var(--font-emphasis); font-weight:700; }
+  .bulkbar .b-actions { margin-left:auto; display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .bulkbar .bb { background:var(--surface-canvas); color:var(--text-primary); border-radius:var(--r-2); padding:.45rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .bulkbar .bb:hover { opacity:.9; }
+  .bulkbar .bb--danger { background:var(--notify-error); color:#fff; }
+  .bulkbar .bb--clear { background:transparent; border:1px solid rgba(255,255,255,.32); color:#fff; }
+  /* detail (single token read-only) */
+  .detail-grid { display:grid; grid-template-columns:320px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:720px){ .detail-grid { grid-template-columns:1fr; } }
+  .asset-main { aspect-ratio:1/1; border-radius:var(--r-3); border:1px solid var(--border-soft); }
+  .asset-thumbs { display:flex; gap:var(--s-2); margin-top:var(--s-3); flex-wrap:wrap; }
+  .asset-thumb { width:62px; height:62px; border-radius:var(--r-2); border:2px solid transparent; padding:0; overflow:hidden; cursor:pointer; }
+  .asset-thumb > span { display:block; width:100%; height:100%; }
+  .asset-thumb[aria-pressed="true"] { border-color:var(--border-strong); }
+  .dsec + .dsec { margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .dsec > .eyebrow { display:block; margin-bottom:var(--s-2); }
+  .about { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); font-size:var(--text-md); line-height:1.65; color:var(--text-primary); margin:0; }
+  /* shells */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .single-modal { display:flex; justify-content:center; }
+  .single-modal .modal-card { max-width:560px; }
+  .single-modal .modal-card.detail { max-width:900px; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:var(--s-6); width:100%; max-width:1040px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  /* list / pagination bar */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin:var(--s-2) calc(-1 * var(--s-8)) calc(-1 * var(--s-8)); padding:var(--s-4) var(--s-8); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button:hover:not(:disabled):not([aria-current="page"]) { background:var(--surface-canvas-alt); color:var(--text-primary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; cursor:default; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-gap { min-width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.5rem 0 .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-xs); font-weight:700; }
+  @media (max-width:620px){ .listbar { justify-content:center; } .results-count, .perpage { display:none; } }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Tokens — Manage minted.</h1>
+      <p>The collection-held minted inventory and every operational action on it: browse and filter held copies, open a single copy's full read-only detail, and move to a vendor, transfer, burn, or run stack actions — single and bulk. Once a copy is moved to a vendor, sold, or transferred out it leaves this list.</p>
+      <p>Every copy shares the token definition's single issue number (e.g. <strong>#7</strong>) and is told apart only by its copy number (<strong>Copy 5 / 100</strong>) — copies never get their own issue number, and burning or transferring a copy never changes it.</p>
+      <div class="navlinks">Lifecycle: <a href="#">Add</a> · <a href="#">Draft</a> · <a href="#">Review</a> · <a href="#">Live</a> · <strong>Minted</strong></div>
+    </header>
+
+    <!-- 01 · Manage (minted) — overview -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Manage (minted) — overview</span><span class="d">The held inventory at a glance: a supply summary (held here / in vendors / held externally / burned), a type filter, the rarity-bordered card grid, and the white pagination footer. Header, summary, search and filters all sit on the grey; only the summary card, token cards and list bar are white.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Night Market</a><span class="sep">/</span><span class="here">Minted</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Collection · Minted</div><h2>Minted.</h2><p class="lede">Minted copies currently held by this collection. Moving a copy to a vendor, selling, or transferring it out removes it from this list.</p></div>
+            <div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span><button class="btn btn--ghost">Export CSV</button><button class="btn btn--ghost">Select</button></div>
+          </div>
+          <div class="card" style="padding:var(--s-6)">
+            <div class="summary-strip">
+              <div class="sm"><div class="l">Minted</div><div class="v">1,000 <small>of 1,000</small></div></div>
+              <div class="sm"><div class="l">Held here</div><div class="v" style="color:#066D4E">620</div></div>
+              <div class="sm"><div class="l">In vendors</div><div class="v" style="color:#0560A0">180</div></div>
+              <div class="sm"><div class="l">Held externally</div><div class="v" style="color:#3F40B6">200 <small>· 168 holders</small></div></div>
+              <div class="sm"><div class="l">Burned</div><div class="v">0</div></div>
+            </div>
+            <div class="mintbar"><i style="width:62%;background:var(--stage-live)"></i><i style="width:18%;background:var(--info)"></i><i style="width:20%;background:var(--stage-review)"></i></div>
+            <div class="legend">
+              <span><i style="background:var(--stage-live)"></i>Held here · this list (620)</span>
+              <span><i style="background:var(--info)"></i>In vendors (180)</span>
+              <span><i style="background:var(--stage-review)"></i>Held externally (200)</span>
+              <span style="color:var(--text-muted)">Fully minted</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="search"><input class="input" placeholder="Search by name, issue or copy number…"></div>
+            <div class="seg"><button class="active">All held · 620</button><button>Lanterns · 280</button><button>Masks · 175</button><button>Charms · 110</button><button>Fireworks · 55</button></div>
+            <div class="view-toggle" role="group" aria-label="Grid size">
+              <button aria-pressed="true" aria-label="Large grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></button>
+              <button aria-pressed="false" aria-label="Small grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="16.5" y="3" width="4.5" height="5" rx="1"/><rect x="3" y="9.5" width="5" height="5" rx="1"/><rect x="10" y="9.5" width="5" height="5" rx="1"/><rect x="16.5" y="9.5" width="4.5" height="5" rx="1"/><rect x="3" y="16" width="5" height="5" rx="1"/><rect x="10" y="16" width="5" height="5" rx="1"/><rect x="16.5" y="16" width="4.5" height="5" rx="1"/></svg></button>
+              <button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3.5" y1="6" x2="3.5" y2="6"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="18" x2="3.5" y2="18"/></svg></button>
+            </div>
+          </div>
+          <div class="tk-grid">
+            <div class="tk-card rar-uncommon"><div class="art y">🏮</div><span class="status"><span class="dot"></span>Held</span><div class="meta"><div class="nm">Night Lantern #014</div><div class="trow"><span class="copyn">copy 14</span><span class="rname" style="color:#15803D">Uncommon</span></div></div></div>
+            <div class="tk-card rar-rare"><div class="art b">🎭</div><span class="status"><span class="dot"></span>Held</span><div class="meta"><div class="nm">Festival Mask #221</div><div class="trow"><span class="copyn">copy 221</span><span class="rname" style="color:#1e40af">Rare</span></div></div></div>
+            <div class="tk-card rar-common"><div class="art">🧧</div><span class="status"><span class="dot"></span>Held</span><span class="copies">×8</span><div class="meta"><div class="nm">Lucky Charm</div><div class="trow"><span class="copyn">stack ×8</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+            <div class="tk-card rar-legendary"><div class="art y">🎆</div><span class="status"><span class="dot"></span>Held</span><div class="meta"><div class="nm">Sky Firework #007</div><div class="trow"><span class="copyn">copy 7</span><span class="rname" style="color:#B45309">Legendary</span></div></div></div>
+            <div class="tk-card rar-common"><div class="art">🏮</div><span class="status"><span class="dot"></span>Held</span><div class="meta"><div class="nm">Night Lantern #102</div><div class="trow"><span class="copyn">copy 102</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+            <div class="tk-card rar-epic"><div class="art p">🎭</div><span class="status"><span class="dot"></span>Held</span><div class="meta"><div class="nm">Festival Mask #340</div><div class="trow"><span class="copyn">copy 340</span><span class="rname" style="color:#6D28D9">Epic</span></div></div></div>
+            <div class="tk-card rar-uncommon"><div class="art g">🧧</div><span class="status"><span class="dot"></span>Held</span><div class="meta"><div class="nm">Lucky Charm #058</div><div class="trow"><span class="copyn">copy 58</span><span class="rname" style="color:#15803D">Uncommon</span></div></div></div>
+            <div class="tk-card rar-rare"><div class="art">🎆</div><span class="status"><span class="dot"></span>Held</span><span class="copies">×3</span><div class="meta"><div class="nm">Sky Firework</div><div class="trow"><span class="copyn">stack ×3</span><span class="rname" style="color:#1e40af">Rare</span></div></div></div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–48</strong> of <strong>620</strong> held</span>
+            <nav class="pg" aria-label="Pagination">
+              <button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <button aria-current="page">1</button><button>2</button><button>3</button><span class="pg-gap">…</span><button>13</button>
+              <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </nav>
+            <span class="perpage"><label>Per page</label><select><option>48</option><option>96</option><option>24</option></select></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Manage (minted) — bulk select -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Manage (minted) — bulk select</span><span class="d">Select mode on: tick copies to populate the bulk bar. Operational actions run across the selection — move to a vendor, transfer, compact stacks (merge stackable holdings), or burn. Bulk operations run server-side and return a per-copy result.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Night Market</a><span class="sep">/</span><span class="here">Minted</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="eyebrow">Collection · Minted</div>
+            <div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span><button class="btn btn--ghost">Export CSV</button></div>
+          </div>
+          <div class="row">
+            <div class="search"><input class="input" placeholder="Search by name, issue or copy number…"></div>
+            <div class="seg"><button class="active">All held · 620</button><button>Lanterns · 280</button><button>Masks · 175</button><button>Charms · 110</button><button>Fireworks · 55</button></div>
+          </div>
+          <div class="bulkbar"><span class="b-count">6 selected</span><div class="b-actions"><button class="bb">Move to vendor</button><button class="bb">Transfer</button><button class="bb">Compact stacks</button><button class="bb bb--danger">Burn</button><button class="bb bb--clear">Clear</button></div></div>
+          <div class="tk-grid">
+            <div class="tk-card rar-uncommon sel"><div class="art y">🏮</div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="meta"><div class="nm">Night Lantern #014</div><div class="trow"><span class="copyn">copy 14</span><span class="rname" style="color:#15803D">Uncommon</span></div></div></div>
+            <div class="tk-card rar-rare sel"><div class="art b">🎭</div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="meta"><div class="nm">Festival Mask #221</div><div class="trow"><span class="copyn">copy 221</span><span class="rname" style="color:#1e40af">Rare</span></div></div></div>
+            <div class="tk-card rar-common sel"><div class="art">🧧</div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="copies">×8</span><div class="meta"><div class="nm">Lucky Charm</div><div class="trow"><span class="copyn">stack ×8</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+            <div class="tk-card rar-legendary sel"><div class="art y">🎆</div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="meta"><div class="nm">Sky Firework #007</div><div class="trow"><span class="copyn">copy 7</span><span class="rname" style="color:#B45309">Legendary</span></div></div></div>
+            <div class="tk-card rar-common sel"><div class="art">🏮</div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="meta"><div class="nm">Night Lantern #102</div><div class="trow"><span class="copyn">copy 102</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+            <div class="tk-card rar-epic sel"><div class="art p">🎭</div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="meta"><div class="nm">Festival Mask #340</div><div class="trow"><span class="copyn">copy 340</span><span class="rname" style="color:#6D28D9">Epic</span></div></div></div>
+            <div class="tk-card rar-uncommon"><div class="art g">🧧</div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><div class="meta"><div class="nm">Lucky Charm #058</div><div class="trow"><span class="copyn">copy 58</span><span class="rname" style="color:#15803D">Uncommon</span></div></div></div>
+            <div class="tk-card rar-rare"><div class="art">🎆</div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><span class="copies">×3</span><div class="meta"><div class="nm">Sky Firework</div><div class="trow"><span class="copyn">stack ×3</span><span class="rname" style="color:#1e40af">Rare</span></div></div></div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–48</strong> of <strong>620</strong> held</span>
+            <nav class="pg" aria-label="Pagination">
+              <button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <button aria-current="page">1</button><button>2</button><button>3</button><span class="pg-gap">…</span><button>13</button>
+              <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </nav>
+            <span class="perpage"><label>Per page</label><select><option>48</option><option>96</option><option>24</option></select></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Single minted copy — full read-only detail -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Single minted copy — full detail</span><span class="d">Selecting a held copy opens its full read-only detail — the same component as the Live definition view, plus the holding facts (copy number, status, acquired). Asset gallery (large primary; click a thumbnail to view it large) alongside the creator-authored description, details, rarity, attributes, supply and composition. The actions are operational: move to a vendor, transfer, stack actions (stackable only), or burn. This is the <strong>creator-side</strong> view — generator composition (seed, batch) and supply internals are creator-only; the public wallet viewer shows a trimmed set (identity, rarity, attributes, description, provenance).</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card detail">
+          <header><h4>Copy · Festival Mask #221 <span class="stage-badge stage-badge--live"><span class="dot"></span>Held</span></h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="detail-grid" id="minted-detail">
+              <div>
+                <div class="asset-main" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></div>
+                <div class="asset-thumbs">
+                  <button class="asset-thumb" aria-pressed="true" data-bg="linear-gradient(135deg,#60a5fa,#1e3a8a)" aria-label="Main asset"><span style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></span></button>
+                  <button class="asset-thumb" aria-pressed="false" data-bg="linear-gradient(135deg,#6ee7b7,#065f46)" aria-label="Asset 2"><span style="background:linear-gradient(135deg,#6ee7b7,#065f46)"></span></button>
+                  <button class="asset-thumb" aria-pressed="false" data-bg="linear-gradient(135deg,#fde68a,#b45309)" aria-label="Asset 3"><span style="background:linear-gradient(135deg,#fde68a,#b45309)"></span></button>
+                </div>
+                <p class="tiny" style="margin-top:var(--s-3)">Main asset shown large. Click a thumbnail to view it — assets are read-only.</p>
+              </div>
+              <div>
+                <div class="dsec">
+                  <span class="eyebrow">Holding</span>
+                  <div class="kv"><span>Copy number</span><span class="v">Copy 221 / 500</span></div>
+                  <div class="kv"><span>Status</span><span class="v">Held here</span></div>
+                  <div class="kv"><span>Acquired</span><span class="v">12 May 2026 · mint</span></div>
+                  <div class="kv"><span>Issue number</span><span class="v">#7 · shared by all copies</span></div>
+                </div>
+                <div class="dsec">
+                  <span class="eyebrow">Description</span>
+                  <p class="about">A lacquered festival mask from the Night Market series — hand-painted in the old-town style, its crane motif said to bring safe passage. One of 500 struck for the lantern festival. Flavour and lore are authored by the creator and travel with every copy of the token.</p>
+                </div>
+                <div class="dsec">
+                  <span class="eyebrow">Details</span>
+                  <div class="kv"><span>Name</span><span class="v">Festival Mask #221</span></div>
+                  <div class="kv"><span>Token type</span><span class="v">Mask</span></div>
+                  <div class="kv"><span>Total score</span><span class="v">132</span></div>
+                </div>
+                <div class="dsec">
+                  <span class="eyebrow">Rarity</span>
+                  <div class="kv"><span>Tier</span><span class="v">Rare</span></div>
+                  <div class="hint" style="margin-top:.5rem">Tier was locked at go-live and is shared by every copy of this definition.</div>
+                </div>
+                <div class="dsec">
+                  <span class="eyebrow">Attributes · Mask</span>
+                  <div class="kv"><span>Craft</span><span class="v">64</span></div>
+                  <div class="kv"><span>Luck</span><span class="v">48</span></div>
+                  <div class="kv"><span>Origin</span><span class="v">Old Town</span></div>
+                </div>
+                <div class="dsec">
+                  <span class="eyebrow">Supply</span>
+                  <div class="kv"><span>Policy</span><span class="v">Capped · max 500</span></div>
+                  <div class="kv"><span>Copies</span><span class="v">Individual</span></div>
+                  <div class="kv"><span>Minted</span><span class="v">500 / 500</span></div>
+                </div>
+                <div class="dsec">
+                  <span class="eyebrow">Composition <span class="tag">from generator</span></span>
+                  <div class="kv"><span>Generator</span><span class="v"><a href="#" style="color:var(--info)">Night Market No. 1</a></span></div>
+                  <div class="kv"><span>Batch</span><span class="v mono">batch_2C9D</span></div>
+                  <div class="kv"><span>Seed</span><span class="v mono">0x41b8…e07c</span></div>
+                  <div class="kv"><span>Base</span><span class="v">Lacquer</span></div>
+                  <div class="kv"><span>Pattern</span><span class="v">Crane</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="gap:var(--s-3);justify-content:flex-end;margin-top:var(--s-2)">
+              <button class="btn btn--ghost">Move to vendor</button>
+              <button class="btn btn--ghost">Transfer</button>
+              <button class="btn btn--danger">Burn</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Move to vendor -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Move to vendor (single &amp; bulk)</span><span class="d">Allocate held copies to a vendor for sale/claim — one holding, or many at once.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Move to vendor · Festival Mask #221</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="hold"><span class="th"></span><div><div class="hn">Festival Mask #221</div><div class="hd">Copy 221 / 500 · issue #7</div></div></div>
+              <div><label class="flabel">Vendor</label><select class="input"><option selected>Spring Launch · Launchpad</option><option>Gacha · Mystery Masks</option><option>Secondary listing</option></select></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Allocating reserves the copy to the vendor's inventory until it's claimed/sold or pulled back. It then leaves this list.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Move to vendor</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Move to vendor · 24 selected</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Vendor</label><select class="input"><option selected>Spring Launch · Launchpad</option><option>Gacha · Mystery Masks</option></select></div>
+              <div class="kv"><span>Eligible to move</span><span class="v">22 of 24</span></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>2 copies are already allocated elsewhere and will be skipped. Bulk allocation returns a per-copy result.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Move 22 to vendor</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Transfer -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Transfer (single &amp; bulk)</span><span class="d">Send held copies to another principal — one holding, or many at once. Once sent they leave this list.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Transfer · Festival Mask #221</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="hold"><span class="th"></span><div><div class="hn">Festival Mask #221</div><div class="hd">Copy 221 / 500 · issue #7</div></div></div>
+              <div><label class="flabel">Recipient principal</label><input class="input mono" placeholder="xxxxx-xxxxx-…-cai"></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Transfers move ownership on-chain and can't be reversed. Check the principal carefully.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Transfer</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Transfer · 12 selected</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Recipient principal</label><input class="input mono" placeholder="xxxxx-xxxxx-…-cai"></div>
+              <div class="kv"><span>Copies to transfer</span><span class="v">12</span></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>All 12 go to the same recipient. Stacked holdings transfer whole here — use stack actions for a partial amount.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Transfer 12</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Burn -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Burn (single &amp; bulk · confirm)</span><span class="d">Permanently destroy held copies — one holding, or many at once. Always confirmed.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Burn · Festival Mask #221?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="hold"><span class="th"></span><div><div class="hn">Festival Mask #221</div><div class="hd">Copy 221 / 500 · issue #7</div></div></div>
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Burning destroys this copy permanently and can't be undone. The token definition and other copies are unaffected.</div></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Burning reduces circulating copies but does <strong>not</strong> return the copy to the tier's mint budget — minted supply is permanent, so this won't free room to mint another Rare elsewhere.</div></div>
+              <div><label class="flabel">Type BURN to confirm</label><input class="input" placeholder="BURN"></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Burn copy</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Burn · 8 selected?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="kv"><span>Copies to burn</span><span class="v">8</span></div>
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Permanently destroys 8 held copies. This can't be undone.</div></div>
+              <div><label class="flabel">Type BURN to confirm</label><input class="input" placeholder="BURN"></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Burn 8 copies</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Stack actions (stackable tokens) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Stack actions (stackable only)</span><span class="d">When a token is stackable, a Stack actions button opens this modal: split a stack into a new stack, transfer a partial amount, or merge multiple stacks of the same token held by the same account. (Compact stacks in the bulk bar merges all eligible stacks at once.)</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Stack actions · Lucky Charm</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="hold"><span class="th"><span class="stackn">×40</span></span><div><div class="hn">Lucky Charm</div><div class="hd">Stackable · 40 held in this stack</div></div></div>
+              <div class="seg"><button class="active">Split</button><button>Transfer amount</button><button>Merge</button></div>
+            </div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Split stack</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Amount to split off</label><input class="input" type="number" value="10" style="max-width:140px"><div class="hint">Creates a new stack of 10; the original keeps 30.</div></div>
+              <div class="kv"><span>This stack</span><span class="v">40 → 30</span></div>
+              <div class="kv"><span>New stack</span><span class="v">×10</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Split off 10</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Transfer amount</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Amount</label><input class="input" type="number" value="15" style="max-width:140px"><div class="hint">Partial transfer — sends 15 of 40; you keep 25.</div></div>
+              <div><label class="flabel">Recipient principal</label><input class="input mono" placeholder="xxxxx-…-cai"></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>On-chain and irreversible. The recipient receives a stack of 15 (merging with any they already hold).</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Transfer 15</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Merge stacks</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p class="tiny" style="margin:0">You hold 2 stacks of <strong>Lucky Charm</strong> — merge them into one.</p>
+              <div class="kv"><span>Stack A</span><span class="v">×40</span></div>
+              <div class="kv"><span>Stack B</span><span class="v">×15</span></div>
+              <div class="kv"><span>After merge</span><span class="v">×55</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Merge into ×55</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 · Manage (minted) — empty -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Manage (minted) — nothing held</span><span class="d">The collection has minted tokens, but none are held here right now — they've all moved to vendors or out to holders. The summary still shows where the supply sits; the grid points to the vendors.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Night Market</a><span class="sep">/</span><span class="here">Minted</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="eyebrow">Collection · Minted</div>
+            <div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--s-3);padding:var(--s-10) var(--s-6)">
+            <img src="../Toko%20Character%20Examples/emote_happy.png" alt="" style="width:116px;height:auto" onerror="this.style.display='none'">
+            <h3 style="font-size:var(--text-2xl)">Nothing held here.</h3>
+            <p style="color:var(--text-secondary);max-width:54ch;margin:0">All 1,000 minted copies are allocated to vendors or held externally. Pull copies back from a vendor and they'll reappear here for transfer, burn, or re-allocation.</p>
+            <div class="row" style="justify-content:center;margin-top:var(--s-2)"><button class="btn btn--primary">View vendors</button><button class="btn btn--ghost">View Live tokens</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <script>
+    (function(){
+      var root = document.getElementById('minted-detail');
+      if(!root) return;
+      var main = root.querySelector('.asset-main');
+      root.querySelectorAll('.asset-thumb').forEach(function(t){
+        t.addEventListener('click', function(){
+          main.style.background = t.getAttribute('data-bg');
+          root.querySelectorAll('.asset-thumb').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+          t.setAttribute('aria-pressed','true');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Whitelists · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  /* Two fonts only: Anton (headers + titles) + Mona Sans (everything else) */
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2; --surface-inverse:#1D1D1D;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .ttl { text-transform:uppercase; letter-spacing:.02em; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:64ch; }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  /* shell */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); }
+  .spread { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-3xl); }
+  .section-head h3 { margin-top:.375rem; font-size:var(--text-2xl); }
+  .section-head .row { flex-wrap:wrap; justify-content:flex-end; }
+  .search { width:240px; max-width:100%; }
+  .input { border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .dash-link { color:var(--text-secondary); font-size:var(--text-sm); }
+  .dash-link:hover { color:var(--text-primary); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .btn--danger { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); }
+  .icon-btn:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .icon-btn--danger { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+
+  .status { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-alt); color:var(--text-secondary); border:1px solid var(--border-soft); }
+  .status .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .status--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); border-color:transparent; }
+  .status--review{ background:rgba(99,102,241,.12); color:var(--stage-review); border-color:transparent; }
+  .status--live  { background:rgba(16,185,129,.12); color:var(--stage-live); border-color:transparent; }
+
+  /* whitelist cards */
+  .wl-grid { display:grid; gap:var(--s-4); grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); }
+  .wl-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .wl-card .ttl { font-family:var(--font-display); font-weight:400; font-size:1.0625rem; }
+  .wl-card .desc { font-size:var(--text-xs); color:var(--text-secondary); line-height:1.5; margin-top:.375rem; }
+  .wl-card .count { display:flex; align-items:baseline; gap:6px; margin:var(--s-3) 0; }
+  .wl-card .count .n { font-family:var(--font-display); font-size:var(--text-3xl); letter-spacing:.04em; }
+  .wl-card .count .l { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); }
+  .wl-card .foot { display:flex; align-items:center; justify-content:space-between; gap:var(--s-2); margin-top:var(--s-3); padding-top:var(--s-3); border-top:1px solid var(--border-soft); font-size:var(--text-xs); color:var(--text-secondary); }
+  .wl-card .foot .vendors { color:var(--text-primary); font-weight:600; }
+  .wl-locked { display:inline-flex; align-items:center; gap:.375rem; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; font-weight:600; color:var(--text-secondary); }
+  .wl-actions { display:flex; gap:.375rem; }
+  .add-tile { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); text-align:center; color:var(--text-secondary); min-height:170px; padding:var(--s-5); }
+  .add-tile .plus { font-size:1.875rem; line-height:1; } .add-tile .lbl { font-family:var(--font-display); letter-spacing:.04em; text-transform:uppercase; font-size:var(--text-lg); }
+
+  /* detail table */
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .lock-banner { display:flex; align-items:flex-start; gap:.75rem; background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.25); border-radius:var(--r-3); padding:.875rem 1rem; margin-bottom:var(--s-6); }
+  .lock-banner .ic { color:var(--stage-live); flex:none; margin-top:1px; }
+  .wld-table .row { display:grid; grid-template-columns:34px 1.7fr 1fr 1fr auto; gap:var(--s-3); align-items:center; padding:.75rem var(--s-5); }
+  .wld-table.with-note .row { grid-template-columns:34px 1.5fr .8fr 1fr .8fr auto; }
+  .wld-table .row + .row { border-top:1px solid var(--border-soft); }
+  .wld-table .row.head { background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-size:var(--text-3xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; }
+  .wld-table .av { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#FBBF24,#EF4444); }
+  .wld-table .addr { font-family:ui-monospace,monospace; font-size:var(--text-sm); overflow:hidden; text-overflow:ellipsis; }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .fhint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  @media (max-width:680px){ .wld-table .row, .wld-table.with-note .row { grid-template-columns:34px 1fr auto; } .wld-table .c-hide { display:none; } }
+
+  /* modal */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:space-between; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); align-items:center; }
+
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ch-ttl { display:block; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); }
+  .choice .ch-desc { display:block; color:var(--text-secondary); font-size:var(--text-sm); margin-top:.25rem; line-height:1.45; }
+
+  /* empty-state: section-head (title+text) → hero image → body + extras underneath */
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+  .explainer { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-8); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8); margin-top:var(--s-8); }
+  .explainer h3 { margin-bottom:var(--s-3); font-size:var(--text-2xl); }
+  .explainer p { color:var(--text-secondary); font-size:var(--text-base); line-height:1.6; }
+  .explainer .visual { background:var(--surface-canvas-alt); border-radius:var(--r-3); padding:var(--s-5); display:flex; align-items:center; justify-content:center; }
+  @media (max-width:760px){ .explainer { grid-template-columns:1fr; } }
+  .fact-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); margin-top:var(--s-6); }
+  .fact-strip .fact { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .fact-strip .fact .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .fact-strip .fact h4 { font-size:var(--text-lg); margin:.5rem 0; letter-spacing:0; text-transform:none; font-family:var(--font-body); font-weight:700; }
+  .fact-strip .fact p { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.5; margin:0; }
+  @media (max-width:680px){ .fact-strip { grid-template-columns:1fr; } }
+
+  /* flow strip */
+  .flow-strip { display:grid; grid-template-columns:1fr 24px 1fr 24px 1fr; gap:0; align-items:stretch; width:100%; }
+  .flow-strip .node { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); text-align:center; }
+  .flow-strip .node.target { border-color:var(--text-primary); }
+  .flow-strip .node .lbl { font-family:var(--font-emphasis); font-size:var(--text-3xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; }
+  .flow-strip .node .n { font-family:var(--font-display); font-size:var(--text-xl); margin-top:.25rem; letter-spacing:.04em; text-transform:uppercase; }
+  .flow-strip .arr { display:flex; align-items:center; justify-content:center; color:var(--text-muted); }
+  @media (max-width:560px){ .flow-strip { grid-template-columns:1fr; } .flow-strip .arr { transform:rotate(90deg); padding:.5rem 0; } }
+
+  /* destructive confirm */
+  .modal-card .confirm { text-align:center; padding:var(--s-8) var(--s-6) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .modal-card .confirm img { width:140px; height:auto; }
+  .modal-card .confirm h3 { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); }
+  .modal-card .confirm p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); line-height:1.55; max-width:42ch; }
+  .btn--danger-solid { background:var(--notify-error); color:#fff; border-color:var(--notify-error); }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Whitelists — states &amp; stages.</h1>
+      <p>Every key state of the Whitelists surface, framed for side-by-side review on the shared page shell. A whitelist is a named set of addresses referenced from vendor claim rules; it moves through Draft → Review → Live, and Live + in-use lists lock.</p>
+    </header>
+
+    <!-- 01 INDEX (populated) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Index · populated</span><span class="d">Status, description, address count, used-by, and locked / editable affordances.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Whitelists</span><div class="actions"><a class="dash-link" href="#">Preview empty state →</a></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Whitelists</div><h2>Three whitelists.</h2><p class="lede">Named lists of principals or addresses. Reference them from any vendor's claim rules to gate who can claim what — without re-typing addresses for each drop.</p></div>
+            <div class="row"><input class="input search" placeholder="Search whitelists…"></div>
+          </div>
+          <div class="wl-grid">
+            <button class="add-tile"><span class="plus">+</span><span class="lbl">New whitelist</span><span class="tiny">Empty list or import addresses</span></button>
+            <div class="wl-card">
+              <div class="spread"><div class="ttl">Genesis holders</div><span class="status status--live"><span class="dot"></span>Live</span></div>
+              <div class="desc">Holders of Lorem Drop No. 1 ≥ 1 token, snapshot 2026-04-02.</div>
+              <div class="count"><span class="n">412</span><span class="l">addresses</span></div>
+              <div class="foot"><span>Used by <span class="vendors">2 vendors</span> · updated yesterday</span><span class="wl-locked"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked</span></div>
+            </div>
+            <div class="wl-card">
+              <div class="spread"><div class="ttl">Newsletter alpha</div><span class="status status--review"><span class="dot"></span>Review</span></div>
+              <div class="desc">Subscribers who opted into early access · imported CSV.</div>
+              <div class="count"><span class="n">88</span><span class="l">addresses</span></div>
+              <div class="foot"><span>Used by <span class="vendors">1 vendor</span> · updated 4 days ago</span><span class="wl-actions"><button class="icon-btn" title="Edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            </div>
+            <div class="wl-card">
+              <div class="spread"><div class="ttl">Team-only</div><span class="status status--draft"><span class="dot"></span>Draft</span></div>
+              <div class="desc">Project team members for testing builds before public launch.</div>
+              <div class="count"><span class="n">6</span><span class="l">addresses</span></div>
+              <div class="foot"><span>Used by <span class="vendors">0 vendors</span> · updated 1 week ago</span><span class="wl-actions"><button class="icon-btn" title="Edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 EMPTY (new layout: title/text → hero → body + extras underneath) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Empty</span><span class="d">Page title + intro, then the hero image, then the message, CTA, and the how-it-works explainer &amp; facts underneath.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Whitelists</span></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Whitelists</div><h2>Whitelists.</h2><p class="lede">Named lists of principals or addresses, referenced from any vendor's claim rules.</p></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_whitelists.jpg" alt="Whitelists — none yet"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">No whitelists yet.</h3>
+              <p class="empty-hero__sub">A whitelist is a named set of addresses (or principals) you reference from a vendor's claim rules. Build a list once — "Genesis holders," "Newsletter alpha," "Team-only" — then use it for every drop that needs it.</p>
+              <div class="empty-hero__cta"><button class="btn btn--primary">Create a whitelist</button></div>
+            </div>
+          </div>
+          <div class="explainer">
+            <div>
+              <div class="eyebrow" style="color:var(--stage-review)">How a whitelist is used</div>
+              <h3 style="margin-top:.5rem">List → Vendor → Claim.</h3>
+              <p>A whitelist lives at the project level. When you configure a vendor's claim rules, you can reference any whitelist as a gate — "only addresses on this list can claim from this vendor." The vendor checks the list at claim time.</p>
+              <p style="margin-top:var(--s-3)">Edit a list once and every vendor that references it picks up the change automatically. You can also see which vendors reference each list, so you understand the impact before editing.</p>
+            </div>
+            <div class="visual">
+              <div class="flow-strip">
+                <div class="node"><div class="lbl">Project</div><div class="n">Whitelist</div><div class="tiny" style="margin-top:.375rem">Genesis holders · 412</div></div>
+                <div class="arr"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                <div class="node"><div class="lbl">Vendor</div><div class="n">Claim rule</div><div class="tiny" style="margin-top:.375rem">"On Genesis list" gate</div></div>
+                <div class="arr"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+                <div class="node target"><div class="lbl">Claimer</div><div class="n">Eligible</div><div class="tiny" style="margin-top:.375rem">Address checked at claim</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="fact-strip">
+            <div class="fact"><div class="num">01</div><h4>Define once, reuse anywhere</h4><p>Your "Genesis holders" list works for every future drop — no re-uploading addresses per vendor.</p></div>
+            <div class="fact"><div class="num">02</div><h4>Edits propagate</h4><p>Add or remove an address and every vendor using that list reflects the change on the next claim attempt.</p></div>
+            <div class="fact"><div class="num">03</div><h4>Source from anywhere</h4><p>Import from CSV, paste addresses, or snapshot the current holders of one of your existing collections.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 NEW WHITELIST MODAL -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">New whitelist · modal</span><span class="d">List name plus how to populate — empty, import CSV, or snapshot a collection.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>New whitelist</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div style="margin-bottom:var(--s-5)">
+              <label class="flabel">List name</label>
+              <input class="input" style="width:100%" placeholder="e.g. Genesis holders">
+              <div class="fhint">Pick a name you'll recognize from vendor claim rules.</div>
+            </div>
+            <label class="flabel">How to populate</label>
+            <label class="choice sel"><span class="radio"></span><span><span class="ch-ttl">Empty list</span><span class="ch-desc">Add addresses one by one later.</span></span></label>
+            <label class="choice"><span class="radio"></span><span><span class="ch-ttl">Import from CSV</span><span class="ch-desc">One address per row, no header required.</span></span></label>
+            <label class="choice"><span class="radio"></span><span><span class="ch-ttl">Snapshot a collection</span><span class="ch-desc">Pull the current holders of one of your collections at a chosen point in time.</span></span></label>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Create whitelist</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 DETAIL · editable (draft / review) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Detail · editable (draft / review)</span><span class="d">Editable name, import / add addresses, and removable rows.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Whitelists</span><span class="sep">/</span><span>Newsletter alpha</span><div class="actions"><a class="dash-link" href="#">← Back to whitelists</a></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Whitelist</div><h2 style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">Newsletter alpha <span class="status status--review"><span class="dot"></span>Review</span></h2><p class="lede">Subscribers who opted into early access · imported CSV.</p></div><div class="row"><button class="btn btn--ghost btn--sm">Export CSV</button><button class="btn btn--ghost btn--sm btn--danger">Delete</button></div></div>
+          <div class="panel" style="padding:var(--s-5);margin-bottom:var(--s-6)">
+            <label class="flabel">List name</label>
+            <input class="input" style="width:100%" value="Newsletter alpha">
+            <div class="fhint">Pick a name you'll recognize from vendor claim rules.</div>
+          </div>
+          <div class="section-head" style="margin-bottom:var(--s-4)"><div><div class="eyebrow">Members</div><h3><span style="font-family:var(--font-display)">88</span> addresses</h3></div><div class="row"><button class="btn btn--ghost btn--sm">Import CSV</button><button class="btn btn--primary btn--sm">+ Add addresses</button></div></div>
+          <div class="panel">
+            <div class="wld-table with-note">
+              <div class="row head"><div></div><div>Principal / address</div><div class="c-hide">Added</div><div class="c-hide">Source</div><div class="c-hide">Note</div><div></div></div>
+              <div class="row"><span class="av"></span><div class="addr">p2x9-hcvz-7uvw-kx9m-hb4q-aaae-q</div><div class="c-hide tiny">3 weeks ago</div><div class="c-hide tiny">Snapshot 2026-04-02</div><div class="c-hide tiny">—</div><div><button class="icon-btn icon-btn--danger" title="Remove address"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#6366F1,#10B981)"></span><div class="addr">k1m9-7uvw-aaa1-bb2k-cdef-aaae-q</div><div class="c-hide tiny">3 weeks ago</div><div class="c-hide tiny">Snapshot 2026-04-02</div><div class="c-hide tiny">—</div><div><button class="icon-btn icon-btn--danger" title="Remove address"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#F472B6,#6366F1)"></span><div class="addr">b8x4-aaq2-zzzu-pp1m-aaaa-aaae-q</div><div class="c-hide tiny">3 weeks ago</div><div class="c-hide tiny">Snapshot 2026-04-02</div><div class="c-hide tiny">—</div><div><button class="icon-btn icon-btn--danger" title="Remove address"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#10B981,#1E3A8A)"></span><div class="addr">q9y7-aaae-mmm3-aaaa-zzzz-aaae-q</div><div class="c-hide tiny">Yesterday</div><div class="c-hide tiny">Manual · added by Kai</div><div class="c-hide tiny">"Early supporter"</div><div><button class="icon-btn icon-btn--danger" title="Remove address"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#A78BFA,#F472B6)"></span><div class="addr" style="color:var(--text-secondary)">+ 84 more addresses</div><div class="c-hide tiny">—</div><div class="c-hide tiny">—</div><div class="c-hide tiny">—</div><div><button class="btn btn--ghost btn--sm">View all →</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 DETAIL · live (locked) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Detail · live (locked)</span><span class="d">Live list referenced by vendors — read-only, locked banner, rows can't be removed.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Whitelists</span><span class="sep">/</span><span>Genesis holders</span><div class="actions"><a class="dash-link" href="#">← Back to whitelists</a></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Whitelist</div><h2 style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">Genesis holders <span class="status status--live"><span class="dot"></span>Live</span></h2><p class="lede">Snapshot of Lorem Drop No. 1 holders · updated 2 days ago · referenced by 2 vendors.</p></div><div class="row"><button class="btn btn--ghost btn--sm">Export CSV</button></div></div>
+          <div class="lock-banner"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><div style="font-weight:600">This whitelist is Live and locked.</div><div class="tiny" style="margin-top:.125rem">It's referenced by active vendor claim rules, so its members can't be edited or removed. Export a copy or duplicate it to make changes.</div></div></div>
+          <div class="section-head" style="margin-bottom:var(--s-4)"><div><div class="eyebrow">Members</div><h3><span style="font-family:var(--font-display)">412</span> addresses</h3></div></div>
+          <div class="panel">
+            <div class="wld-table">
+              <div class="row head"><div></div><div>Principal / address</div><div class="c-hide">Added</div><div class="c-hide">Source</div><div></div></div>
+              <div class="row"><span class="av"></span><div class="addr">p2x9-hcvz-7uvw-kx9m-hb4q-aaae-q</div><div class="c-hide tiny">3 weeks ago</div><div class="c-hide tiny">Snapshot 2026-04-02</div><div><button class="icon-btn icon-btn--danger" title="Locked" disabled style="opacity:.4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#6366F1,#10B981)"></span><div class="addr">k1m9-7uvw-aaa1-bb2k-cdef-aaae-q</div><div class="c-hide tiny">3 weeks ago</div><div class="c-hide tiny">Snapshot 2026-04-02</div><div><button class="icon-btn icon-btn--danger" title="Locked" disabled style="opacity:.4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#F472B6,#6366F1)"></span><div class="addr">b8x4-aaq2-zzzu-pp1m-aaaa-aaae-q</div><div class="c-hide tiny">3 weeks ago</div><div class="c-hide tiny">Snapshot 2026-04-02</div><div><button class="icon-btn icon-btn--danger" title="Locked" disabled style="opacity:.4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+              <div class="row"><span class="av" style="background:linear-gradient(135deg,#A78BFA,#F472B6)"></span><div class="addr" style="color:var(--text-secondary)">+ 408 more addresses</div><div class="c-hide tiny">—</div><div class="c-hide tiny">—</div><div><button class="btn btn--ghost btn--sm">View all →</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 DELETE CONFIRM -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Delete whitelist · confirm</span><span class="d">Draft / review lists only — a Live list is locked and can't be deleted until its vendor references are removed.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Delete whitelist?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="confirm">
+            <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+            <h3>Are you sure?</h3>
+            <p>This permanently deletes the <strong>Newsletter alpha</strong> whitelist and its <strong>88 addresses</strong>. Any vendor claim rules that reference it will lose this gate. You can't undo this.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid">Delete whitelist</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

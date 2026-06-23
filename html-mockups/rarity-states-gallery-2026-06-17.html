@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Rarity · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* ---- Chrome ---- */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb a:hover { color:var(--text-primary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .notif-bell:hover { background:var(--surface-canvas-alt); border-color:var(--border-strong); }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+
+  /* ---- Header ---- */
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head .eyebrow { margin-bottom:.375rem; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:none; }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .stage-badge--review{ background:rgba(99,102,241,.12); color:var(--stage-review); }
+  .stage-badge--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .card__intro { color:var(--text-secondary); font-size:var(--text-sm); margin:0 0 var(--s-5); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .info-note a { color:var(--info); font-weight:700; }
+  .warn-note { background:rgba(245,158,11,.1); }
+  .warn-note .ic { color:var(--stage-draft); }
+
+  .locked { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .locked__head { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); padding:var(--s-4) var(--s-5); }
+  .locked .r { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.875rem var(--s-5); border-top:1px solid var(--border-soft); font-size:var(--text-base); color:var(--text-secondary); }
+  .locked .r .v { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+
+  /* ---- Sub-tabs (Setup / Layer Multipliers / Assignment) ---- */
+  .subtabs { display:inline-flex; flex-wrap:wrap; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; }
+  .subtabs button { border:0; background:transparent; padding:.5rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .subtabs button.active { background:var(--text-primary); color:#fff; }
+
+  /* ---- Radio choice cards (mode chooser) ---- */
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); cursor:pointer; }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .choice .desc { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.25rem; line-height:1.45; }
+
+  /* ---- Rarity summary header (non-uniform) ---- */
+  .rar-sum { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); display:flex; align-items:center; gap:var(--s-5); flex-wrap:wrap; }
+  .rar-sum .rs-main { flex:1; min-width:240px; }
+  .rar-sum .rs-ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .rar-sum .rs-sub { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.25rem; }
+  .rar-sum .rs-thumb { width:120px; flex:none; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:var(--s-3) var(--s-4); display:flex; align-items:center; }
+  @media (max-width:560px){ .rar-sum .rs-thumb { display:none; } }
+
+  /* keep the section-head title block from shoving the actions onto a wrapped line */
+  .section-head > div:first-child { flex:1 1 340px; min-width:0; }
+  .section-head .head-actions { flex:none; }
+
+  /* rarity mode cards (visual chooser) */
+  .rmode-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); }
+  @media (max-width:760px){ .rmode-grid { grid-template-columns:1fr; } }
+  .rmode { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); background:var(--surface-canvas); display:flex; flex-direction:column; gap:var(--s-4); }
+  .rmode.sel { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .rmode .rm-top { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); }
+  .rmode .rm-ttl { font-family:var(--font-display); font-size:var(--text-2xl); text-transform:uppercase; letter-spacing:.02em; line-height:1; }
+  .rmode .rm-thumb { background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:var(--s-6) var(--s-5); }
+  .rmode .rm-desc { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.45; flex:1; }
+  .pill-dark { background:var(--text-primary); color:#fff; }
+  .bars { display:flex; gap:3px; width:100%; }
+  .bars span { height:9px; border-radius:var(--r-pill); }
+
+  /* ---- Tier rows ---- */
+  .tier-row { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-4); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); flex-wrap:wrap; }
+  .tier-row + .tier-row { margin-top:var(--s-2); }
+  .tier-row .sw { width:18px; height:18px; border-radius:5px; flex:none; }
+  .tier-row .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .tier-row .pct { width:84px; }
+  .tier-row .pct input { width:100%; text-align:center; border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.35rem .4rem; font-family:var(--font-emphasis); font-weight:700; }
+  .tier-row .quota { margin-left:auto; font-size:var(--text-sm); color:var(--text-secondary); }
+  .tier-row .quota b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .tier-row .tier-count { margin-left:auto; font-size:var(--text-sm); color:var(--text-secondary); }
+  .add-row { display:flex; align-items:center; justify-content:center; gap:.5rem; padding:.75rem; margin-top:var(--s-3); border:1.5px dashed var(--border-soft); border-radius:var(--r-2); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; background:transparent; width:100%; }
+  .add-row:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  /* editable tier rows + standard "add" affordance (a dashed echo of the item it adds) */
+  .tier-row .sw { cursor:pointer; }
+  .tier-row .nm-input { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); border:1px solid transparent; background:transparent; border-radius:var(--r-1); padding:.25rem .4rem; min-width:96px; color:var(--text-primary); }
+  .tier-row .nm-input:hover { border-color:var(--border-soft); background:var(--surface-canvas); }
+  .tier-row .nm-input:focus { border-color:var(--border-strong); background:var(--surface-canvas); outline:none; }
+  .tier-row--add { background:transparent; border-style:dashed; justify-content:center; gap:.5rem; color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+  .tier-row--add:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  /* shared "add" affordance: a dashed pill echo of the item it creates (matches the attributes gallery) */
+  .add-chip { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; margin-top:var(--s-3); border-radius:var(--r-pill); border:1.5px dashed var(--border-soft); background:transparent; color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); cursor:pointer; }
+  .add-chip:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .icon-btn { width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .icon-btn:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .icon-btn--danger:hover { border-color:var(--notify-error); color:var(--notify-error); }
+
+  /* ---- Per-token override modal bits ---- */
+  .ovr-tok { display:flex; align-items:center; gap:var(--s-3); }
+  .ovr-tok .th { width:40px; height:40px; border-radius:8px; background:linear-gradient(135deg,#d6356d,#831843); flex:none; }
+  .ovr-nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .ovr-meta { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.15rem; }
+  .ovr-meta b, .ovr-nm + .ovr-meta b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .ovr-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); border-bottom:1px solid var(--border-soft); }
+  .ovr-lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .pin-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:rgba(99,102,241,.14); color:var(--stage-review); margin-left:var(--s-2); }
+  /* overridden-value flag — a warning triangle (avoids the word "pinned", which means something else in generator/collections) */
+  .ovr-flag { display:inline-flex; align-items:center; color:var(--stage-draft); margin-left:6px; vertical-align:middle; cursor:help; }
+  .ovr-flag svg { width:15px; height:15px; }
+
+  /* ---- Score breakdown (click a token row) ---- */
+  .tbl tbody tr.clickable { cursor:pointer; }
+  .tbl tbody tr.clickable:hover { background:var(--surface-canvas-alt); }
+  .sb { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .sb-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.7rem var(--s-4); border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .sb-row:first-child { border-top:0; }
+  .sb-k { color:var(--text-secondary); }
+  .sb-map { color:var(--text-muted); }
+  .sb-v { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+  .sb-sub { background:var(--surface-canvas-alt); }
+  .sb-sub .sb-k { color:var(--text-primary); font-family:var(--font-emphasis); font-weight:700; }
+  .sb-total { background:var(--surface-canvas-deep); }
+  .sb-total .sb-k, .sb-total .sb-v { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-lg); color:var(--text-primary); }
+
+  /* ---- Pagination (faithful port of style-guide pagination-system component) ---- */
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:40px; height:40px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); transition:background 120ms ease,color 120ms ease; }
+  .pg button:hover:not(:disabled):not([aria-current="page"]) { background:#F0F0F0; color:var(--text-primary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:var(--text-inverse); font-weight:700; cursor:default; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-gap { min-width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:var(--text-base); user-select:none; }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .listbar { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:var(--s-4); padding-top:var(--s-5); margin-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .listbar .lb-left { justify-self:start; } .listbar .lb-center { justify-self:center; } .listbar .lb-right { justify-self:end; }
+  .results-count { font-size:var(--text-base); color:var(--text-secondary); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-sm); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.75rem 0 .75rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background-color:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-sm); font-weight:600; appearance:none; background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B6B6B' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; }
+  .perpage select:hover { border-color:var(--border-strong); }
+  @media (max-width:680px){ .listbar { grid-template-columns:1fr 1fr; row-gap:var(--s-4); } .listbar .lb-center { grid-column:1 / -1; grid-row:2; justify-self:center; } .perpage label { display:none; } }
+  /* white panel wrapping a table + its list bar (toolbar) */
+  .table-panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .table-panel .tbl-wrap { border:0; border-radius:0; }
+  .table-panel .listbar { margin:0; padding:var(--s-4) var(--s-5); border-top:1px solid var(--border-soft); }
+  /* filter toolbar at the top of a table panel (token-type filter) */
+  .panel-toolbar { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); border-bottom:1px solid var(--border-soft); flex-wrap:wrap; }
+  .panel-toolbar .pt-lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .panel-toolbar select { height:36px; padding:0 1.75rem 0 .75rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background-color:var(--surface-canvas); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-sm); font-weight:600; appearance:none; background-repeat:no-repeat; background-position:right 10px center; background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B6B6B' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); }
+  .panel-toolbar select:hover { border-color:var(--border-strong); }
+  .panel-toolbar .pt-spring { flex:1; }
+  .panel-toolbar .pt-scope { font-size:var(--text-sm); color:var(--text-secondary); }
+  .panel-toolbar .pt-scope b { color:var(--text-primary); font-family:var(--font-emphasis); font-weight:700; }
+  /* tier dropdown — pill shaped, tinted with the tier's own colour (set inline per row) */
+  .tier-sel { appearance:none; -webkit-appearance:none; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; text-transform:uppercase; border-radius:var(--r-pill); padding:.34rem 1.55rem .34rem .8rem; border:1px solid transparent; cursor:pointer; background-repeat:no-repeat; background-position:right .55rem center; background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23808080' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); }
+
+  /* ---- Weighted distribution (fixed official tiers + ratio/accelerator) ---- */
+  .wt-controls { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); margin-bottom:var(--s-6); }
+  @media (max-width:600px){ .wt-controls { grid-template-columns:1fr; gap:var(--s-5); } }
+  .wt-ctl .flabel { justify-content:flex-start; }
+  .wt-ctl input[type=range] { width:100%; accent-color:var(--text-primary); margin-top:.5rem; }
+  .wt-ctl .wt-val { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); margin-left:.4rem; }
+  .wt-ctl .scale { display:flex; justify-content:space-between; font-size:var(--text-2xs); color:var(--text-muted); margin-top:.25rem; }
+  .wt-bar { display:flex; height:16px; border-radius:var(--r-pill); overflow:hidden; margin-bottom:var(--s-5); border:1px solid var(--border-soft); }
+  .wt-bar span { display:block; }
+  .wt-rows { display:flex; flex-direction:column; gap:var(--s-2); }
+  .wt-row { display:flex; align-items:center; gap:var(--s-3); padding:.65rem var(--s-4); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); }
+  .wt-row .d { width:12px; height:12px; border-radius:50%; flex:none; }
+  .wt-row .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .wt-row .lk { color:var(--text-muted); display:inline-flex; }
+  .wt-row .lk svg { width:13px; height:13px; }
+  .wt-row .share { margin-left:auto; font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+  .wt-row .quota { width:130px; text-align:right; color:var(--text-secondary); font-size:var(--text-sm); }
+  .wt-row .quota b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .wt-total { display:flex; justify-content:space-between; padding:.7rem var(--s-4); margin-top:var(--s-3); font-family:var(--font-emphasis); font-weight:700; border-top:1px solid var(--border-soft); }
+
+  /* ---- Colour swatch picker (edit tier modal) ---- */
+  .swatch-grid { display:flex; flex-wrap:wrap; gap:var(--s-3); }
+  .swatch { width:34px; height:34px; border-radius:var(--r-2); border:2px solid transparent; cursor:pointer; position:relative; }
+  .swatch.sel { border-color:var(--text-primary); }
+  .swatch.sel::after { content:""; position:absolute; inset:0; border-radius:5px; box-shadow:0 0 0 2px #fff inset; }
+
+  /* ---- Assignment table ---- */
+  .tbl-wrap { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .tbl { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .tbl th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); padding:.7rem var(--s-4); background:var(--surface-canvas-alt); border-bottom:1px solid var(--border-soft); white-space:nowrap; }
+  .tbl td { padding:.7rem var(--s-4); border-bottom:1px solid var(--border-soft); }
+  .tbl tr:last-child td { border-bottom:0; }
+  .tbl .tok { display:flex; align-items:center; gap:var(--s-3); }
+  .tbl .tok .th { width:30px; height:30px; border-radius:6px; background:linear-gradient(135deg,#d6356d,#831843); flex:none; }
+  .tbl .num { font-family:var(--font-emphasis); font-weight:700; }
+  .tbl .rank { color:var(--text-secondary); }
+  .tier-pill { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.04em; }
+  .tier-pill .d { width:8px; height:8px; border-radius:50%; }
+  .sel-sm { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.3rem .5rem; background:var(--surface-canvas); font:inherit; font-size:var(--text-sm); }
+
+  /* ---- Modal ---- */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:var(--s-6); width:100%; max-width:1000px; align-items:start; }
+  .modal-groups { display:flex; flex-direction:column; gap:var(--s-8); width:100%; max-width:1040px; }
+  .modal-group .mg-label { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:var(--s-3); }
+  .modal-pair { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:var(--s-5); align-items:start; }
+  .empty-tiers { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .empty-tiers strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-tiers p { margin:0; font-size:var(--text-sm); max-width:50ch; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  /* ---- Gallery scaffold ---- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .group-cap { margin-top:var(--s-10); padding-bottom:var(--s-3); border-bottom:2px solid var(--border-strong); }
+  .group-cap .ge { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .group-cap h2 { font-family:var(--font-display); font-weight:400; font-size:var(--text-3xl); text-transform:uppercase; letter-spacing:.02em; margin-top:.25rem; }
+  .group-cap p { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.35rem; max-width:74ch; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Rarity — states &amp; stages.</h1>
+      <p>Collection-level rarity policy. Every collection starts <strong>Uniform</strong>; switching to Tiered or Weighted needs explicit confirmation. Tiered and Weighted share a Setup / Layer Multipliers / Assignment workspace — Tiered assigns manually with non-binding guidance, Weighted assigns deterministically by score. Rarity locks at Live. Grouped by mode below: Uniform, then Tiered, then Weighted — each from first run through Live. The cross-cutting change-rarity confirmations are collected at the end.</p>
+    </header>
+
+    <!-- ============ GROUP: UNIFORM ============ -->
+    <div class="group-cap">
+      <div class="ge">Mode A</div>
+      <h2>Uniform</h2>
+      <p>The default. All tokens are equal rarity — no tiers, no rarity workspace. Draft/Review looks the same as launch; at Live it's locked read-only.</p>
+    </div>
+
+    <!-- 01 RARITY · Uniform (default) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Uniform · Draft / Review (default)</span><span class="d">The default — all tokens equal. Tiered and Weighted are offered as a switch; picking one opens a confirm.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+              <p class="lede">Every collection starts Uniform — all tokens are treated as equal rarity. If you don't need rarity, there's nothing more to do.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>            </div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Score visibility on tokens is controlled in <a href="#">Attributes → Token Score Visible</a>, not here — visibility is independent of rarity mode.</div></div>
+
+          <div>
+            <h3 style="font-size:var(--text-2xl);margin-bottom:.4rem">Pick a rarity mode</h3>
+            <p class="card__intro" style="margin-bottom:var(--s-5)">You can change this any time before the collection goes Live. Switching resets rarity assignment data but leaves attribute schema and composition evidence intact. <span class="tag tag--amber">Type locks at Live</span></p>
+            <div class="rmode-grid">
+              <div class="rmode sel">
+                <div class="rm-top"><span class="rm-ttl">Uniform</span><span class="tag">Current</span></div>
+                <div class="rm-thumb"><div class="bars"><span style="flex:1;background:#cbd5e1"></span></div></div>
+                <div class="rm-desc">All tokens treated as equal rarity. No tiers, no border colours, no score-driven assignment.</div>
+                <button class="btn btn--ghost" style="width:100%">Stay on Uniform</button>
+              </div>
+              <div class="rmode">
+                <div class="rm-top"><span class="rm-ttl">Tiered</span><span class="tag pill-dark">Manual</span></div>
+                <div class="rm-thumb"><div class="bars"><span style="flex:1;background:#15803D"></span><span style="flex:1;background:#0D9488"></span><span style="flex:1;background:#4D7C0F"></span><span style="flex:1;background:#B45309"></span><span style="flex:1;background:#57534E"></span></div></div>
+                <div class="rm-desc">Create custom tiers, name them, pick border colours. You assign each token manually with score-based suggestions.</div>
+                <button class="btn btn--primary" style="width:100%">Choose Tiered</button>
+              </div>
+              <div class="rmode">
+                <div class="rm-top"><span class="rm-ttl">Weighted</span><span class="tag pill-dark">Automatic</span></div>
+                <div class="rm-thumb"><div class="bars"><span style="flex:6;background:#94A3B8"></span><span style="flex:2;background:#60A5FA"></span><span style="flex:1;background:#A78BFA"></span></div></div>
+                <div class="rm-desc">Toko's official tier system. The system assigns tiers deterministically from token scores at your chosen ratio. Three tiers for everyone, with more unlockable later.</div>
+                <button class="btn btn--primary" style="width:100%">Choose Weighted</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>How scoring works on Uniform</h3></div>
+            <p class="card__intro">Uniform doesn't rank tokens, so there's no Setup / Layer Multipliers / Assignment workspace. Here's how scoring behaves while you stay on Uniform:</p>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Tokens can still carry an <strong>attribute score</strong> (configured in <a href="#">Attributes</a>), and you can show or hide it. In Uniform that score is <strong>informational only</strong> — it doesn't drive rarity, because all tokens are treated as equal.</div></div>
+            <div class="info-note" style="margin-top:var(--s-3)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Generator <strong>layer weighting</strong> only affects rarity in Tiered or Weighted. A generator can still feed a Uniform collection, but its composition won't change any token's standing here — switch to <strong>Tiered</strong> or <strong>Weighted</strong> to introduce scarcity and unlock the scoring workspace.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 RARITY · Uniform · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Uniform · Live (read-only)</span><span class="d">A collection that launched on Uniform. Every token is equal rarity; the model is locked at Live.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Forest Hares</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity. <span class="tag tag--green">Locked at Live</span></h2>
+              <p class="lede">This collection launched on Uniform — every token is equal rarity. The model locked when it went Live.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>            </div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live on Uniform. The rarity model is read-only and rarity-type changes are blocked, so what buyers bought into can't shift underneath them.</div></div>
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Rarity model</span><span class="v">Uniform</span></div>
+            <div class="r"><span>Tiers</span><span class="v">None — all tokens equal</span></div>
+            <div class="r"><span>Assignment</span><span class="v">Not applicable</span></div>
+            <div class="r"><span>Max supply</span><span class="v">1,000</span></div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Tokens may still display an attribute score if score visibility was enabled before Live — but on Uniform that score is informational and doesn't rank tokens.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GROUP: TIERED ============ -->
+    <div class="group-cap">
+      <div class="ge">Mode B</div>
+      <h2>Tiered</h2>
+      <p>Custom tiers with manual assignment. Starts empty (no tiers), you define tiers and place tokens yourself with non-binding score guidance, then it locks at Live. No quotas — Tiered never auto-distributes.</p>
+    </div>
+
+    <!-- 03 RARITY · Tiered · Setup (empty — no tiers yet) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Tiered · Empty (no tiers yet)</span><span class="d">What Tiered looks like right after switching: it starts with no tiers. Create the first tier before any token can be assigned.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--amber">No tiers yet</span></div>
+              <div class="rs-sub">Manual assignment · add at least one tier to start assigning tokens.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button class="active">Setup</button><button>Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Tiers</h3><span class="tag tag--amber">None yet</span></div>
+            <p class="card__intro">Create your rarity tiers — name each one and pick a border colour. Then assign tokens to tiers manually, with score-based suggestions to guide you. There are no quotas in Tiered — score guides you but never moves a token.</p>
+            <div class="empty-tiers">
+              <strong>No tiers yet</strong>
+              <p>Add at least one tier before you can assign tokens. Name them whatever suits your collection — most use 3–5 (e.g. Captain, Major, Colonel, General).</p>
+              <button class="btn btn--primary">+ Add your first tier</button>
+            </div>
+          </div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>The collection can't go to Review with Tiered rarity until at least one tier exists and every token has a tier assigned.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 RARITY · Tiered · Assignment (no tiers yet) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Tiered · Assignment — no tiers yet</span><span class="d">Opening Assignment before any tier exists shows the same guard as Setup — there's nowhere to place tokens until at least one tier is defined.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--amber">No tiers yet</span></div>
+              <div class="rs-sub">Manual assignment · add at least one tier to start assigning tokens.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button>Layer Multipliers</button><button class="active">Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Token assignment</h3><span class="tag tag--amber">None yet</span></div>
+            <p class="card__intro">Assign each token to one of your tiers. There are no tiers to assign into yet — create at least one on Setup first.</p>
+            <div class="empty-tiers">
+              <strong>No tiers yet</strong>
+              <p>Add at least one tier before you can assign tokens. Name them whatever suits your collection — most use 3–5 (e.g. Captain, Major, Colonel, General).</p>
+              <button class="btn btn--primary">+ Add your first tier</button>
+            </div>
+          </div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>The collection can't go to Review with Tiered rarity until at least one tier exists and every token has a tier assigned.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 RARITY · Tiered · Setup -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Tiered · Setup (Draft / Review)</span><span class="d">Define the tiers. Summary header with Change Rarity, then the Setup / Layer Multipliers / Assignment workspace. Tiers are editable and deletable until Live.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--indigo">4 tiers</span></div>
+              <div class="rs-sub">Manual assignment · Suggested Tier and Score Rank shown as non-binding guidance.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button class="active">Setup</button><button>Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Tiers</h3><span class="tag">Manual assignment</span></div>
+            <p class="card__intro">Create your tiers, name them and pick a colour. In Tiered you place tokens into tiers yourself on the Assignment tab — there are no quotas or auto-distribution. Score can guide you, but it never moves a token.</p>
+            <div class="tier-row"><span class="sw" style="background:#15803D"></span><span class="nm">General</span><span class="tier-count">0 assigned</span><button class="icon-btn" title="Edit tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            <div class="tier-row"><span class="sw" style="background:#0D9488"></span><span class="nm">Colonel</span><span class="tier-count">0 assigned</span><button class="icon-btn" title="Edit tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            <div class="tier-row"><span class="sw" style="background:#B45309"></span><span class="nm">Major</span><span class="tier-count">0 assigned</span><button class="icon-btn" title="Edit tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            <div class="tier-row"><span class="sw" style="background:#57534E"></span><span class="nm">Captain</span><span class="tier-count">0 assigned</span><button class="icon-btn" title="Edit tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            <button class="add-chip">+ Add tier</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 RARITY · Tiered · Layer Multipliers -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Tiered · Layer Multipliers (Draft / Review)</span><span class="d">Collection-wide multipliers that scale a generated token's attribute score by the layers it was built from. Independent of tiers — available whether or not any tiers exist. Editable until Live.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--indigo">4 tiers</span></div>
+              <div class="rs-sub">Manual assignment · layer multipliers scale each generated token's attribute score before ranking.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Layer multipliers</h3><span class="tag">Generated tokens · collection-wide</span></div>
+            <p class="card__intro">Scale a token's attribute score by the generator layers it was built from: <code class="mono">final score = attribute score × layer multiplier</code>. Each multiplier below applies to every <strong>generated</strong> token that includes that layer. Manually-created tokens (no generator composition) always use ×1.0.</p>
+            <div class="tier-row"><span class="nm">Background</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Body</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Outfit</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row" style="border-color:var(--border-strong);box-shadow:0 0 0 1px var(--border-strong)"><span class="nm">Accessory</span><span class="tag tag--amber" style="font-size:var(--text-3xs);padding:2px 7px">Unsaved</span><span class="pct" style="margin-left:auto"><input value="1.8×" style="border-color:var(--border-strong)"></span><button class="btn btn--ghost btn--sm">Reset</button><button class="btn btn--primary btn--sm">Save</button></div>
+            <div class="tier-row"><span class="nm">Hat</span><span class="pct" style="margin-left:auto"><input value="2.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Multipliers are <strong>collection-wide</strong> and feed the <strong>Final Score</strong> shown as guidance on Assignment. Layer/part <em>selection</em> weighting (how often a part appears in outputs) lives in the <a href="#">Generator</a> and is unrelated — this only scales scoring.</div></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Changing a multiplier marks every affected token's score <strong>stale</strong>; refresh to recompute. Multipliers are read-only once the collection is Live.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 RARITY · Tiered · Layer Multipliers (no generator linked) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Tiered · Layer Multipliers — no generator linked</span><span class="d">With no linked Toko generator there are no layers to weight, so the tab is unavailable. Tokens use ×1.0, so Final Score = attribute score. Optional — nothing to do here if you're not using a generator.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Hand-Drawn Owls</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--amber">No generator</span></div>
+              <div class="rs-sub">Manual assignment · layer multipliers need a linked Toko generator.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">No generator is linked to this collection</strong>, so there are no layers to weight — Layer Multipliers isn't available. Every token uses a ×1.0 multiplier, so Final Score = attribute score.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Layer multipliers</h3><span class="tag tag--amber">Unavailable</span></div>
+            <div class="empty-tiers">
+              <strong>No generator linked</strong>
+              <p>Layer multipliers scale a token's attribute score by the generator layers it was built from. This collection isn't using a Toko generator, so there's nothing to configure here — every token keeps a ×1.0 multiplier.</p>
+              <button class="btn btn--primary">Link a generator →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 RARITY · Tiered · Assignment (no tokens yet) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Tiered · Assignment — no tokens yet</span><span class="d">Tiers are defined but the collection has no token definitions, so there's nothing to assign. Add tokens before manual assignment can begin.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--amber">Awaiting tokens</span></div>
+              <div class="rs-sub">Tiers are ready. Add token definitions, then place each one into a tier yourself — Tiered never auto-assigns.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button>Layer Multipliers</button><button class="active">Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Token assignment</h3><span class="tag tag--amber">No tokens</span></div>
+            <p class="card__intro">Assign each token to one of your tiers. This collection doesn't have any token definitions yet, so there's nothing to assign.</p>
+            <div class="empty-tiers">
+              <strong>No tokens to assign</strong>
+              <p>Add token definitions in Tokens (or export them from a generator). Once tokens exist they'll appear here, ranked by Final Score, ready for you to place into tiers.</p>
+              <button class="btn btn--primary">Go to Tokens →</button>
+            </div>
+          </div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>The collection can't go to Review with Tiered rarity until tokens exist and every token has a tier assigned.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 RARITY · Tiered · Assignment (first load — none assigned) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Tiered · Assignment — first load (none assigned)</span><span class="d">How the Assignment tab looks the first time you open it: tokens and tiers exist, but nothing is placed. Every token reads Unassigned until you set it.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--amber">Not started</span></div>
+              <div class="rs-sub">Manual assignment · 0 of 312 assigned. Nothing is placed yet — set each token's tier.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button>Layer Multipliers</button><button class="active">Assignment</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Your tiers are ready — now place each token. <strong>Nothing is assigned yet</strong>, so every token reads <strong>Unassigned</strong>. There's no suggested tier; Final Score and Score Rank (within this token type) are guidance only. <strong>Click any row</strong> for the score breakdown.</div></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>The collection can't move to Review until <strong style="color:var(--text-primary)">every token</strong> has a tier — <strong style="color:var(--text-primary)">0 of 312</strong> assigned so far.</div></div>
+
+          <div class="table-panel">
+            <div class="panel-toolbar">
+              <span class="pt-lbl">Token type</span>
+              <select><option selected>Character</option><option>Creature</option><option>Item</option></select>
+              <span class="pt-spring"></span>
+              <span class="pt-scope">Score Rank is within <b>Character</b> · 312 tokens</span>
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Token</th><th>Final score</th><th>Score rank</th><th>Assigned tier</th></tr></thead>
+                <tbody>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #018</span></td><td><span class="num">192</span></td><td class="rank">#2 / 312</td><td><select class="tier-sel" style="background-color:var(--surface-canvas-alt);color:var(--text-secondary);border-color:var(--border-soft)"><option selected>Unassigned</option><option>General</option><option>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #244</span></td><td><span class="num">148</span></td><td class="rank">#14 / 312</td><td><select class="tier-sel" style="background-color:var(--surface-canvas-alt);color:var(--text-secondary);border-color:var(--border-soft)"><option selected>Unassigned</option><option>General</option><option>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #501</span></td><td><span class="num">96</span></td><td class="rank">#58 / 312</td><td><select class="tier-sel" style="background-color:var(--surface-canvas-alt);color:var(--text-secondary);border-color:var(--border-soft)"><option selected>Unassigned</option><option>General</option><option>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #777</span></td><td><span class="num">41</span></td><td class="rank">#201 / 312</td><td><select class="tier-sel" style="background-color:var(--surface-canvas-alt);color:var(--text-secondary);border-color:var(--border-soft)"><option selected>Unassigned</option><option>General</option><option>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="listbar">
+              <div class="lb-left"><span class="results-count">Showing <strong>1–25</strong> of <strong>312</strong> · Character</span></div>
+              <div class="lb-center">
+                <nav class="pg" aria-label="Pagination">
+                  <button class="pg-arrow" disabled aria-label="Previous page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><span class="pg-gap">…</span><button>13</button>
+                  <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                </nav>
+              </div>
+              <div class="lb-right"><div class="perpage"><label>Per page</label><select><option>25</option><option>50</option><option>100</option></select></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 RARITY · Tiered · Assignment (with tokens) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Tiered · Assignment — in progress (Draft / Review)</span><span class="d">Manual tier per token, partway through. Final Score and Score Rank are guidance only — no suggested tier. Click a row for the score breakdown. Paginated.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Tiered rarity <span class="tag tag--indigo">4 tiers</span></div>
+              <div class="rs-sub">Manual assignment · 248 of 1,000 tokens assigned.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button>Layer Multipliers</button><button class="active">Assignment</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Tiered never auto-assigns — the Tier you pick is what sticks. There's <strong>no suggested tier</strong>, because the right tier depends on criteria only you know. <strong>Score Rank is always within a single token type</strong> (not the whole collection), since scores aren't comparable across types — use the filter to switch type. <strong>Click any row</strong> to see how a token's Final Score was calculated.</div></div>
+
+          <div class="table-panel">
+            <div class="panel-toolbar">
+              <span class="pt-lbl">Token type</span>
+              <select><option selected>Character</option><option>Creature</option><option>Item</option></select>
+              <span class="pt-spring"></span>
+              <span class="pt-scope">Score Rank is within <b>Character</b> · 312 tokens</span>
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Token</th><th>Final score</th><th>Score rank</th><th>Assigned tier</th></tr></thead>
+                <tbody>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #018</span></td><td><span class="num">192</span></td><td class="rank">#2 / 312</td><td><select class="tier-sel" style="background-color:rgba(21,128,61,.14);color:#14532d;border-color:rgba(21,128,61,.5)"><option selected>General</option><option>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #244</span></td><td><span class="num">148</span></td><td class="rank">#14 / 312</td><td><select class="tier-sel" style="background-color:rgba(13,148,136,.14);color:#134e4a;border-color:rgba(13,148,136,.5)"><option>General</option><option selected>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #501</span></td><td><span class="num">96</span></td><td class="rank">#58 / 312</td><td><select class="tier-sel" style="background-color:rgba(13,148,136,.14);color:#134e4a;border-color:rgba(13,148,136,.5)"><option>General</option><option selected>Colonel</option><option>Major</option><option>Captain</option></select></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #777</span></td><td><span class="num">41</span></td><td class="rank">#201 / 312</td><td><select class="tier-sel" style="background-color:rgba(87,83,74,.18);color:#292524;border-color:rgba(87,83,74,.55)"><option>General</option><option>Colonel</option><option>Major</option><option selected>Captain</option></select></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="listbar">
+              <div class="lb-left"><span class="results-count">Showing <strong>1–25</strong> of <strong>312</strong> · Character</span></div>
+              <div class="lb-center">
+                <nav class="pg" aria-label="Pagination">
+                  <button class="pg-arrow" disabled aria-label="Previous page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><span class="pg-gap">…</span><button>13</button>
+                  <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                </nav>
+              </div>
+              <div class="lb-right"><div class="perpage"><label>Per page</label><select><option>25</option><option>50</option><option>100</option></select></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 RARITY · Tiered · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Tiered · Live — populated (read-only)</span><span class="d">A collection launched on Tiered: locked summary plus the full per-token table, read-only and paginated. Click a row for the score breakdown.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Coral Divers</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity. <span class="tag tag--green">Locked at Live</span></h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>            </div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live on Tiered. Tier definitions and assignments are read-only and rarity-type changes are blocked, so the scarcity buyers bought into can't shift underneath them.</div></div>
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Rarity model</span><span class="v">Tiered</span></div>
+            <div class="r"><span>Tiers</span><span class="v">General · Colonel · Major · Captain</span></div>
+            <div class="r"><span>Distribution (as assigned)</span><span class="v">61 / 174 / 285 / 480</span></div>
+            <div class="r"><span>Assignment</span><span class="v">Manual (score as guidance)</span></div>
+            <div class="r"><span>Max supply</span><span class="v">1,000</span></div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Tiered distribution reflects the tiers you placed tokens into by hand — there was no quota, so the per-tier counts are simply how you assigned them.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Tokens by tier</h3><span class="tag tag--green">Locked · read-only</span></div>
+            <p class="card__intro">Every token and the tier it launched in. Read-only at Live. Score Rank is within a single token type — switch type below. Click a row to see how a token's Final Score was calculated.</p>
+            <div class="panel-toolbar" style="padding-left:0;padding-right:0">
+              <span class="pt-lbl">Token type</span>
+              <select><option selected>Character</option><option>Creature</option><option>Item</option></select>
+              <span class="pt-spring"></span>
+              <span class="pt-scope">Score Rank is within <b>Character</b> · 312 tokens</span>
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Token</th><th>Final score</th><th>Score rank</th><th>Tier</th></tr></thead>
+                <tbody>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Diver #0007</span></td><td><span class="num">204</span></td><td class="rank">#1 / 312</td><td><span class="tier-pill" style="background:rgba(21,128,61,.14);color:#14532d"><span class="d" style="background:#15803D"></span>General</span></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Diver #0142</span></td><td><span class="num">151</span></td><td class="rank">#11 / 312</td><td><span class="tier-pill" style="background:rgba(13,148,136,.14);color:#134e4a"><span class="d" style="background:#0D9488"></span>Colonel</span></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Diver #0388</span></td><td><span class="num">88</span></td><td class="rank">#74 / 312</td><td><span class="tier-pill" style="background:rgba(180,83,9,.16);color:#78350f"><span class="d" style="background:#B45309"></span>Major</span></td></tr>
+                  <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Diver #0911</span></td><td><span class="num">37</span></td><td class="rank">#221 / 312</td><td><span class="tier-pill" style="background:rgba(87,83,74,.18);color:#292524"><span class="d" style="background:#57534E"></span>Captain</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="listbar">
+              <div class="lb-left"><span class="results-count">Showing <strong>1–25</strong> of <strong>312</strong> · Character</span></div>
+              <div class="lb-center">
+                <nav class="pg" aria-label="Pagination">
+                  <button class="pg-arrow" disabled aria-label="Previous page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><span class="pg-gap">…</span><button>13</button>
+                  <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                </nav>
+              </div>
+              <div class="lb-right"><div class="perpage"><label>Per page</label><select><option>25</option><option>50</option><option>100</option></select></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GROUP: WEIGHTED ============ -->
+    <div class="group-cap">
+      <div class="ge">Mode C</div>
+      <h2>Weighted</h2>
+      <p>Toko's deterministic tier system. Uses fixed official tiers — everyone gets <strong>Common, Uncommon, Rare</strong>; <strong>Epic and Legendary are unlockable later</strong> (paid purchase or a free milestone). The moment you switch, defaults apply — <strong>Max Supply 1,000, ratio 3, accelerator 1.0</strong> — so quotas are populated immediately; tokens then fill tiers by Final Score and it locks at Live. No setup gate.</p>
+    </div>
+
+    <!-- 11 RARITY · Weighted · Setup (default — just switched) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Weighted · Just switched (default)</span><span class="d">Right after choosing Weighted: three official tiers with the default Max Supply (1,000), ratio 3 and accelerator 1.0 — quotas are populated immediately, nothing to set up first.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--indigo">3 official tiers</span></div>
+              <div class="rs-sub">Deterministic by score · default Max Supply 1,000 · ratio 3 / accelerator 1.0.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button class="active">Setup</button><button>Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Weighted divides <strong>Max Supply</strong> across tiers by weight. Max Supply <strong>defaults to 1,000</strong> (change it in <a href="#">Supply</a>), so quotas compute the moment you switch — there's no setup gate.</div></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>Everyone has access to <strong>three rarity tiers</strong> — Common, Uncommon and Rare. Additional rarity levels (Epic, Legendary) can be unlocked at a later date — see <a href="#">Rarity upgrade requirements</a>.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Tier distribution</h3><span class="tag">Toko official tiers · 3</span></div>
+            <p class="card__intro">Weighted uses Toko's official tiers — currently <strong>Common, Uncommon, Rare</strong> — you don't create, rename or recolour them. Defaults load on switch (ratio 3, accelerator 1.0); fine-tune any time. Per-tier quotas are computed from Max Supply (1,000), and tokens fill the rarest tier first by Final Score.</p>
+
+            <div class="wt-controls">
+              <div class="wt-ctl">
+                <label class="flabel">Ratio <span class="wt-val">3×</span></label>
+                <input type="range" min="2" max="8" step="1" value="3">
+                <div class="scale"><span>Flatter · 2×</span><span>Steeper · 8×</span></div>
+                <div class="hint">How much scarcer each rarer tier is than the tier below it. At 3×, each tier holds a third of the one below.</div>
+              </div>
+              <div class="wt-ctl">
+                <label class="flabel">Accelerator <span class="wt-val">1.0</span></label>
+                <input type="range" min="1" max="2" step="0.1" value="1">
+                <div class="scale"><span>None · 1.0</span><span>Sharp top · 2.0</span></div>
+                <div class="hint">Bends the curve toward the rarest tiers — 1.0 is a pure geometric split from the ratio alone.</div>
+              </div>
+            </div>
+
+            <div class="wt-bar">
+              <span style="flex:69.23;background:#94A3B8" title="Common · 69.23%"></span>
+              <span style="flex:23.08;background:#34D399" title="Uncommon · 23.08%"></span>
+              <span style="flex:7.69;background:#60A5FA" title="Rare · 7.69%"></span>
+            </div>
+
+            <div class="wt-rows">
+              <div class="wt-row"><span class="d" style="background:#60A5FA"></span><span class="nm">Rare</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">7.69%</span><span class="quota">quota · <b>77</b> tokens</span></div>
+              <div class="wt-row"><span class="d" style="background:#34D399"></span><span class="nm">Uncommon</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">23.08%</span><span class="quota">quota · <b>231</b> tokens</span></div>
+              <div class="wt-row"><span class="d" style="background:#94A3B8"></span><span class="nm">Common</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">69.23%</span><span class="quota">quota · <b>692</b> tokens</span></div>
+            </div>
+            <div class="wt-total"><span>Total</span><span>100% · 1,000 tokens</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 RARITY · Weighted · Setup (full 5-tier set) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">13</span><span class="t">Weighted · Setup — full 5-tier set</span><span class="d">The expanded five-tier set (adds Epic and Legendary above Rare). Same defaults — ratio 3, accelerator 1.0 over Max Supply 1,000 — shown once Epic and Legendary are unlocked, down to ~8 Legendary.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--indigo">5 official tiers</span></div>
+              <div class="rs-sub">Deterministic by score · ratio 3 / accelerator 1.0 over Max Supply 1,000.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button class="active">Setup</button><button>Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>The full set adds <strong>Epic</strong> and <strong>Legendary</strong> above Rare. The same defaults apply (ratio 3, accelerator 1.0); raw tier weights are 81 : 27 : 9 : 3 : 1 (Common→Legendary), so at 1,000 supply every tier is populated. <strong>Epic and Legendary are unlockable add-ons</strong> — via a paid purchase or a free milestone (e.g. fully claiming a launched collection); requirements are still being finalised (see <a href="#">Rarity upgrade requirements</a>).</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Tier distribution</h3><span class="tag">Toko official tiers · 5 (Epic + Legendary unlocked)</span></div>
+            <p class="card__intro">The five-tier set — Common, Uncommon, Rare, Epic, Legendary — fixed names and colours. Shape scarcity with the <strong>ratio</strong> and <strong>accelerator</strong> below; per-tier quotas are computed deterministically from Max Supply (1,000), and tokens fill the rarest tier first by Final Score.</p>
+
+            <div class="wt-controls">
+              <div class="wt-ctl">
+                <label class="flabel">Ratio <span class="wt-val">3×</span></label>
+                <input type="range" min="2" max="8" step="1" value="3">
+                <div class="scale"><span>Flatter · 2×</span><span>Steeper · 8×</span></div>
+                <div class="hint">How much scarcer each rarer tier is than the tier below it.</div>
+              </div>
+              <div class="wt-ctl">
+                <label class="flabel">Accelerator <span class="wt-val">1.0</span></label>
+                <input type="range" min="1" max="2" step="0.1" value="1">
+                <div class="scale"><span>None · 1.0</span><span>Sharp top · 2.0</span></div>
+                <div class="hint">Bends the curve toward the rarest tiers — 1.0 is a pure geometric split from the ratio alone.</div>
+              </div>
+            </div>
+
+            <div class="wt-bar">
+              <span style="flex:66.94;background:#94A3B8" title="Common · 66.94%"></span>
+              <span style="flex:22.31;background:#34D399" title="Uncommon · 22.31%"></span>
+              <span style="flex:7.44;background:#60A5FA" title="Rare · 7.44%"></span>
+              <span style="flex:2.48;background:#A78BFA" title="Epic · 2.48%"></span>
+              <span style="flex:0.83;background:#FBBF24" title="Legendary · 0.83%"></span>
+            </div>
+
+            <div class="wt-rows">
+              <div class="wt-row"><span class="d" style="background:#FBBF24"></span><span class="nm">Legendary</span><span class="tag tag--green" style="font-size:var(--text-3xs);padding:2px 7px">Unlocked</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">0.83%</span><span class="quota">quota · <b>8</b> tokens</span></div>
+              <div class="wt-row"><span class="d" style="background:#A78BFA"></span><span class="nm">Epic</span><span class="tag tag--green" style="font-size:var(--text-3xs);padding:2px 7px">Unlocked</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">2.48%</span><span class="quota">quota · <b>25</b> tokens</span></div>
+              <div class="wt-row"><span class="d" style="background:#60A5FA"></span><span class="nm">Rare</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">7.44%</span><span class="quota">quota · <b>74</b> tokens</span></div>
+              <div class="wt-row"><span class="d" style="background:#34D399"></span><span class="nm">Uncommon</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">22.31%</span><span class="quota">quota · <b>223</b> tokens</span></div>
+              <div class="wt-row"><span class="d" style="background:#94A3B8"></span><span class="nm">Common</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">66.94%</span><span class="quota">quota · <b>670</b> tokens</span></div>
+            </div>
+            <div class="wt-total"><span>Total</span><span>100% · 1,000 tokens</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 RARITY · Weighted · Layer Multipliers -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14</span><span class="t">Weighted · Layer Multipliers (Draft / Review)</span><span class="d">The same collection-wide layer multipliers as Tiered. On Weighted they scale each generated token's attribute score — the deterministic input that places it into a tier. Editable until Live.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--indigo">3 official tiers</span></div>
+              <div class="rs-sub">Deterministic by score · layer multipliers scale the Final Score used to place each token.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Layer multipliers</h3><span class="tag">Generated tokens · collection-wide</span></div>
+            <p class="card__intro">Scale a token's attribute score by the generator layers it was built from: <code class="mono">final score = attribute score × layer multiplier</code>. On Weighted the Final Score is the <strong>deterministic input</strong> that places each token into a tier, so these multipliers directly affect tier placement. Manually-created tokens (no generator composition) always use ×1.0.</p>
+            <div class="tier-row"><span class="nm">Background</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Body</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Outfit</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row" style="border-color:var(--border-strong);box-shadow:0 0 0 1px var(--border-strong)"><span class="nm">Accessory</span><span class="tag tag--amber" style="font-size:var(--text-3xs);padding:2px 7px">Unsaved</span><span class="pct" style="margin-left:auto"><input value="1.8×" style="border-color:var(--border-strong)"></span><button class="btn btn--ghost btn--sm">Reset</button><button class="btn btn--primary btn--sm">Save</button></div>
+            <div class="tier-row"><span class="nm">Hat</span><span class="pct" style="margin-left:auto"><input value="2.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Multipliers are <strong>collection-wide</strong>. Layer/part <em>selection</em> weighting (how often a part appears in outputs) lives in the <a href="#">Generator</a> and is unrelated — this only scales scoring.</div></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Changing a multiplier marks every affected token's score <strong>stale</strong>; rebalance to recompute placements. Multipliers are read-only once the collection is Live.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 RARITY · Weighted · Layer Multipliers (no generator linked) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">15</span><span class="t">Weighted · Layer Multipliers — no generator (tokens exist)</span><span class="d">No linked generator means no layers to weight, so the tab is unavailable. This collection has tokens but no generator, so they're placed into tiers by attribute score alone (×1.0). For the empty baseline — no generator and no tokens — see frame 18.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Hand-Drawn Owls</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--amber">No generator</span></div>
+              <div class="rs-sub">Deterministic by score · tokens scored on attributes alone · layer multipliers need a linked Toko generator.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">No generator is linked to this collection</strong>, so there are no layers to weight — Layer Multipliers isn't available. Every token uses a ×1.0 multiplier, so tokens are placed into tiers by attribute score alone.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Layer multipliers</h3><span class="tag tag--amber">Unavailable</span></div>
+            <div class="empty-tiers">
+              <strong>No generator linked</strong>
+              <p>Layer multipliers scale a token's attribute score by the generator layers it was built from. This collection isn't using a Toko generator, so there's nothing to configure here — every token keeps a ×1.0 multiplier.</p>
+              <button class="btn btn--primary">Link a generator →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 RARITY · Weighted · Setup (no tokens yet) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">16</span><span class="t">Weighted · Setup — no tokens yet</span><span class="d">Setup works without tokens — quotas are projected from Max Supply. The same no-tokens warning shows here as on Assignment: you can't reach Review until tokens exist and are placed.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--amber">No tokens yet</span></div>
+              <div class="rs-sub">Deterministic by score · quotas projected from Max Supply 1,000 · ratio 3 / accelerator 1.0.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button class="active">Setup</button><button>Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">No token definitions yet.</strong> Quotas below are projected from Max Supply (1,000) and fill once tokens exist. The collection can't go to Review with Weighted rarity until tokens exist and every token has been placed in a tier.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Tier distribution</h3><span class="tag">Toko official tiers · 3</span></div>
+            <p class="card__intro">Shape scarcity with the <strong>ratio</strong> and <strong>accelerator</strong>; per-tier quotas are computed from Max Supply (1,000). These are projected until tokens exist and are ranked by Final Score.</p>
+
+            <div class="wt-controls">
+              <div class="wt-ctl">
+                <label class="flabel">Ratio <span class="wt-val">3×</span></label>
+                <input type="range" min="2" max="8" step="1" value="3">
+                <div class="scale"><span>Flatter · 2×</span><span>Steeper · 8×</span></div>
+                <div class="hint">How much scarcer each rarer tier is than the tier below it.</div>
+              </div>
+              <div class="wt-ctl">
+                <label class="flabel">Accelerator <span class="wt-val">1.0</span></label>
+                <input type="range" min="1" max="2" step="0.1" value="1">
+                <div class="scale"><span>None · 1.0</span><span>Sharp top · 2.0</span></div>
+                <div class="hint">Bends the curve toward the rarest tiers — 1.0 is a pure geometric split.</div>
+              </div>
+            </div>
+
+            <div class="wt-bar">
+              <span style="flex:69.23;background:#94A3B8" title="Common · 69.23%"></span>
+              <span style="flex:23.08;background:#34D399" title="Uncommon · 23.08%"></span>
+              <span style="flex:7.69;background:#60A5FA" title="Rare · 7.69%"></span>
+            </div>
+
+            <div class="wt-rows">
+              <div class="wt-row"><span class="d" style="background:#60A5FA"></span><span class="nm">Rare</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">7.69%</span><span class="quota">projected · <b>77</b></span></div>
+              <div class="wt-row"><span class="d" style="background:#34D399"></span><span class="nm">Uncommon</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">23.08%</span><span class="quota">projected · <b>231</b></span></div>
+              <div class="wt-row"><span class="d" style="background:#94A3B8"></span><span class="nm">Common</span><span class="lk" title="Official tier — fixed name &amp; colour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="share">69.23%</span><span class="quota">projected · <b>692</b></span></div>
+            </div>
+            <div class="wt-total"><span>Total</span><span>100% · 1,000 projected</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 RARITY · Weighted · Layer Multipliers (no tokens yet) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17</span><span class="t">Weighted · Layer Multipliers — generator linked, tokens deleted</span><span class="d">Edge case: a generator is linked (so the layers and saved multipliers are intact), but all imported tokens were deleted — there's nothing to score right now. Re-import to resume.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--amber">Tokens deleted</span></div>
+              <div class="rs-sub">Generator linked · all imported tokens were deleted — multipliers stay, but there's nothing to score.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A generator is linked, so your layers and saved multipliers are intact</strong> — but all imported tokens have been deleted, so there's nothing to score right now. Re-import or add tokens. The collection can't go to Review with Weighted rarity until tokens exist and every token has been placed in a tier.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Layer multipliers</h3><span class="tag">Generated tokens · collection-wide</span></div>
+            <p class="card__intro">These multipliers are saved against the linked generator's layers: <code class="mono">final score = attribute score × layer multiplier</code>. They'll apply again as soon as tokens are re-imported. Manually-created tokens (no generator composition) always use ×1.0.</p>
+            <div class="tier-row"><span class="nm">Background</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Body</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Outfit</span><span class="pct" style="margin-left:auto"><input value="1.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Accessory</span><span class="pct" style="margin-left:auto"><input value="1.5×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+            <div class="tier-row"><span class="nm">Hat</span><span class="pct" style="margin-left:auto"><input value="2.0×"></span><button class="btn btn--ghost btn--sm" disabled style="opacity:.4">Reset</button><button class="btn btn--primary btn--sm" disabled style="opacity:.4">Save</button></div>
+          </div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Multipliers are <strong>collection-wide</strong>. Layer/part <em>selection</em> weighting (how often a part appears in outputs) lives in the <a href="#">Generator</a> and is unrelated — this only scales scoring.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 RARITY · Weighted · Layer Multipliers (no generator and no tokens) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">18</span><span class="t">Weighted · Layer Multipliers — no generator and no tokens</span><span class="d">The most common baseline: no linked generator and no tokens, so there's no data to pull from at all. Nothing to configure — link a generator and add tokens to use multipliers.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Untitled Drop</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--amber">No data</span></div>
+              <div class="rs-sub">Deterministic by score · no generator and no tokens yet — nothing to weight.</div>
+            </div>
+            <button class="btn btn--ghost">Change rarity</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">No generator is linked and there are no tokens</strong>, so the Layer Multipliers tab has no data to pull from at all. Any tokens you add later score on attributes alone at ×1.0 unless you link a generator. You can't go to Review with Weighted rarity until tokens exist and every token has been placed in a tier.</div></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Layer multipliers</h3><span class="tag tag--amber">No data</span></div>
+            <div class="empty-tiers">
+              <strong>Nothing to weight yet</strong>
+              <p>Layer multipliers come from a generator's layers and apply to tokens — this collection has neither. Tokens score on attributes alone (×1.0) until you link a generator.</p>
+              <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:center">
+                <button class="btn btn--primary">Link a generator →</button>
+                <button class="btn btn--ghost">Add tokens →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 RARITY · Weighted · Assignment (no tokens yet) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">19</span><span class="t">Weighted · Assignment — no tokens yet</span><span class="d">Weights are defined, but the collection has no token definitions, so there's nothing to rank or place. Add tokens before assignment can run.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--amber">Awaiting tokens</span></div>
+              <div class="rs-sub">Tier weights are set. Tokens are ranked and placed automatically by Final Score once they exist — there's nothing to assign yet.</div>
+            </div>
+            <button class="btn btn--primary" disabled style="opacity:.5;cursor:not-allowed">Rebalance weighted tiers</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button>Layer Multipliers</button><button class="active">Assignment</button></div>
+
+          <div class="card">
+            <div class="card__head"><h3>Token assignment</h3><span class="tag tag--amber">No tokens</span></div>
+            <p class="card__intro">Weighted ranks every token by Final Score and fills each tier's quota top-down. It needs token definitions to do that — this collection doesn't have any yet.</p>
+            <div class="empty-tiers">
+              <strong>No tokens to assign</strong>
+              <p>Add token definitions in Tokens (or export them from a generator). Once tokens exist they're ranked and placed into tiers automatically — no manual step required.</p>
+              <button class="btn btn--primary">Go to Tokens →</button>
+            </div>
+          </div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>The collection can't go to Review with Weighted rarity until tokens exist and every token has been placed in a tier.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 RARITY · Weighted · Assignment (with tokens) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">20</span><span class="t">Weighted · Assignment — with tokens (Draft / Review)</span><span class="d">Deterministic tiers by score, an explicit Rebalance action, the stale-score gate before Live, and a per-row override (pencil); overridden tiers are flagged with a warning triangle — see 21. Click a row for the breakdown.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity.</h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span>
+            </div>
+          </div>
+
+          <div class="rar-sum">
+            <div class="rs-main">
+              <div class="rs-ttl">Weighted rarity <span class="tag tag--indigo">Assigned</span></div>
+              <div class="rs-sub">System-assigned tiers by Final Score. Manual tweaks are allowed after assignment; redistribution only happens on an explicit rebalance.</div>
+              <div class="rs-sub">1,000 / 1,000 tokens placed deterministically · last rebalanced 2 days ago.</div>
+            </div>
+            <button class="btn btn--primary">Rebalance weighted tiers</button>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button>Layer Multipliers</button><button class="active">Assignment</button></div>
+
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">12 tokens have a stale score.</strong> Review → Live is blocked while any score is stale or a recompute is in progress. Rebalance to refresh assignments.</div></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Manual override:</strong> use the pencil on any row to fix a token to a specific tier. Overridden tiers are flagged with a <span class="ovr-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span> and keep their tier through a rebalance; other tokens shift to preserve each tier's quota. Undo an override to hand the token back to automatic placement. <strong>Rank is always within a single token type</strong> (not the whole collection) — switch type with the filter. <strong>Click any row</strong> to see how its Final Score was calculated.</div></div>
+
+          <div class="table-panel">
+            <div class="panel-toolbar">
+              <span class="pt-lbl">Token type</span>
+              <select><option selected>Character</option><option>Creature</option><option>Item</option></select>
+              <span class="pt-spring"></span>
+              <span class="pt-scope">Rank &amp; tier quotas are within <b>Character</b> · 312 tokens</span>
+            </div>
+            <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Token</th><th>Final score</th><th>Rank</th><th>Assigned tier</th><th>Score</th><th>Override</th></tr></thead>
+              <tbody>
+                <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #018</span></td><td><span class="num">192</span></td><td class="rank">#2 / 312</td><td><span class="tier-pill" style="background:rgba(96,165,250,.18);color:#1e40af"><span class="d" style="background:#60A5FA"></span>Rare</span></td><td><span class="tag tag--green">Fresh</span></td><td><button class="icon-btn" title="Override tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></td></tr>
+                <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #244</span></td><td><span class="num">120</span></td><td class="rank">#40 / 312</td><td><span class="tier-pill" style="background:rgba(96,165,250,.18);color:#1e40af"><span class="d" style="background:#60A5FA"></span>Rare</span><span class="ovr-flag" title="Manually overridden from Uncommon — excluded from rebalance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span></td><td><span class="tag tag--green">Fresh</span></td><td><button class="icon-btn" title="Edit or undo override" style="border-color:var(--border-strong);color:var(--text-primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></td></tr>
+                <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #319</span></td><td><span class="num">96</span></td><td class="rank">#58 / 312</td><td><span class="tier-pill" style="background:rgba(52,211,153,.2);color:#065f46"><span class="d" style="background:#34D399"></span>Uncommon</span></td><td><span class="tag tag--amber">Stale</span></td><td><button class="icon-btn" title="Override tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></td></tr>
+                <tr class="clickable" title="Click to view score breakdown"><td><span class="tok"><span class="th"></span>Fox #777</span></td><td><span class="num">41</span></td><td class="rank">#198 / 312</td><td><span class="tier-pill" style="background:rgba(148,163,184,.2);color:#475569"><span class="d" style="background:#94A3B8"></span>Common</span></td><td><span class="tag tag--green">Fresh</span></td><td><button class="icon-btn" title="Override tier"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="listbar">
+            <div class="lb-left"><span class="results-count">Showing <strong>1–25</strong> of <strong>312</strong> · Character</span></div>
+            <div class="lb-center">
+              <nav class="pg" aria-label="Pagination">
+                <button class="pg-arrow" disabled aria-label="Previous page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                <button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><span class="pg-gap">…</span><button>13</button>
+                <button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              </nav>
+            </div>
+            <div class="lb-right"><div class="perpage"><label>Per page</label><select><option>25</option><option>50</option><option>100</option></select></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 RARITY · Weighted · Per-token override (modal) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">21</span><span class="t">Weighted · Per-token override</span><span class="d">Opened from the pencil on an assignment row. It's a modal because overriding is deliberate — it fixes the token to a tier and excludes it from rebalance until undone.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Override tier · Fox #244</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="ovr-tok"><span class="th"></span><div><div class="ovr-nm">Fox #244</div><div class="ovr-meta">Final score <b>120</b> · rank <b>#40 / 312</b></div></div></div>
+              <div class="ovr-row"><span class="ovr-lbl">System tier (deterministic)</span><span class="tier-pill" style="background:rgba(52,211,153,.2);color:#065f46"><span class="d" style="background:#34D399"></span>Uncommon</span></div>
+              <div><label class="flabel">Override to tier</label><select class="input"><option selected>Rare</option><option>Uncommon</option><option>Common</option></select></div>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>An override <strong>fixes</strong> this token to your chosen tier and flags it with a warning triangle. It won't move when you rebalance, and other tokens may shift to keep each tier's quota. You can undo the override any time to hand it back to automatic placement.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save override</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Undo override · Fox #244</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="ovr-tok"><span class="th"></span><div><div class="ovr-nm">Fox #244</div><div class="ovr-meta">Overridden to <b>Rare</b> · system tier <b>Uncommon</b></div></div></div>
+              <p style="margin:0">This token is overridden to <strong>Rare</strong>. Undoing the override hands it back to automatic placement — on the next rebalance it returns to the tier its Final Score earns (<strong>Uncommon</strong>).</p>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Undoing doesn't move the token straight away — it just stops excluding it from rebalance. Rebalance to apply.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--ghost" style="border-color:var(--notify-error);color:var(--notify-error)">Undo Override</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 RARITY · Weighted · Live (read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">22</span><span class="t">Weighted · Live (read-only)</span><span class="d">Rarity config is read-only at Live; rarity-type changes are blocked.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity. <span class="tag tag--green">Locked at Live</span></h2>
+              <p class="lede">The rarity model and tier distribution buyers see — locked when the collection went Live.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>            </div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live. The rarity model is read-only and rarity-type changes are blocked, so the scarcity buyers bought into can't shift underneath them.</div></div>
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Rarity model</span><span class="v">Weighted</span></div>
+            <div class="r"><span>Tiers</span><span class="v">Rare · Uncommon · Common</span></div>
+            <div class="r"><span>Distribution</span><span class="v">77 / 231 / 692</span></div>
+            <div class="r"><span>Assignment</span><span class="v">Deterministic by Final Score · ratio 3 · accelerator 1.0</span></div>
+            <div class="r"><span>Max supply</span><span class="v">1,000</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 RARITY · Layer Multipliers · Live (generator linked, read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">23</span><span class="t">Layer Multipliers · Live — generator linked (read-only)</span><span class="d">The Layer Multipliers tab on a Live collection that launched with a linked generator: the multipliers it launched with, locked read-only. Same for Tiered &amp; Weighted.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity. <span class="tag tag--green">Locked at Live</span></h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+            </div>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live, so the rarity workspace is read-only. These are the layer multipliers it launched with — they can't change, so the scores buyers bought into stay fixed.</div></div>
+
+          <div class="locked">
+            <div class="locked__head">Layer multipliers · launched values (read-only)</div>
+            <div class="r"><span>Background</span><span class="v">×1.0</span></div>
+            <div class="r"><span>Body</span><span class="v">×1.0</span></div>
+            <div class="r"><span>Outfit</span><span class="v">×1.0</span></div>
+            <div class="r"><span>Accessory</span><span class="v">×1.5</span></div>
+            <div class="r"><span>Hat</span><span class="v">×2.0</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21 RARITY · Layer Multipliers · Live (no generator, read-only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">24</span><span class="t">Layer Multipliers · Live — no generator (read-only)</span><span class="d">The Layer Multipliers tab on a Live collection that launched without a linked generator: multipliers were never available, every token scored at ×1.0. Same for Tiered &amp; Weighted.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Hand-Drawn Owls</a><span class="sep">/</span><span class="here">Rarity</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Rarity</div>
+              <h2>Rarity. <span class="tag tag--green">Locked at Live</span></h2>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+            </div>
+          </div>
+
+          <div class="subtabs"><button>Setup</button><button class="active">Layer Multipliers</button><button>Assignment</button></div>
+
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live and launched <strong>without a linked generator</strong>, so layer multipliers were never used — every token scored at ×1.0 (Final Score = attribute score). Read-only.</div></div>
+
+          <div class="locked">
+            <div class="locked__head">Layer multipliers · locked at Live (read-only)</div>
+            <div class="r"><span>Generator</span><span class="v">None linked</span></div>
+            <div class="r"><span>Layer multipliers</span><span class="v">Not used — all tokens ×1.0</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REFERENCE: modals ============ -->
+    <div class="group-cap">
+      <div class="ge">Reference</div>
+      <h2>Modals</h2>
+      <p>Modal dialogs used across the rarity flow: edit / delete a Tiered tier, the per-token score breakdown (Tiered &amp; Weighted), and the change-rarity confirmations.</p>
+    </div>
+
+    <!-- 15 RARITY · Tiered · Edit & delete tier modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">25</span><span class="t">Tiered · Edit &amp; delete tier modals</span><span class="d">Opened from the pencil / trash on a Tiered Setup row. Edit changes the tier's name and colour; delete confirms removal (and is blocked when the tier still has tokens assigned).</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Edit tier</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div><label class="flabel">Name</label><input class="input" value="Colonel"></div>
+              <div>
+                <label class="flabel">Colour</label>
+                <div class="swatch-grid">
+                  <span class="swatch" style="background:#15803D" title="Green"></span>
+                  <span class="swatch sel" style="background:#0D9488" title="Teal"></span>
+                  <span class="swatch" style="background:#4D7C0F" title="Olive"></span>
+                  <span class="swatch" style="background:#B45309" title="Bronze"></span>
+                  <span class="swatch" style="background:#57534E" title="Stone"></span>
+                  <span class="swatch" style="background:#9333EA" title="Purple"></span>
+                  <span class="swatch" style="background:#DC2626" title="Red"></span>
+                  <span class="swatch" style="background:#0EA5E9" title="Sky"></span>
+                </div>
+                <div class="hint">Pick any colour — Tiered tiers are fully custom. Avoid reusing the reserved Weighted palette.</div>
+              </div>
+              <div class="tier-row" style="margin-top:var(--s-2)"><span class="sw" style="background:#0D9488"></span><span class="nm">Colonel</span><span class="tier-count" style="margin-left:auto">Preview</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save tier</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Delete tier "Major"?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0">This removes the <strong>Major</strong> tier. Tiers are part of your rarity setup, so removing one can't be undone here.</p>
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">58 tokens are currently assigned to Major.</strong> Deleting it returns them to <strong>Unassigned</strong>; you'll need to place them in another tier before the collection can move to Review.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete tier</button></div>
+          </div>
+
+          <div class="modal-card">
+            <header><h4>Can't delete "Captain"</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0">A Tiered collection needs at least one tier, and <strong>Captain</strong> is the last one. Add another tier before deleting this one.</p>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>This guard only appears for the final remaining tier. With two or more tiers, delete uses the confirm on the left.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">Add a tier</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 RARITY · Score breakdown (Tiered & Weighted) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">26</span><span class="t">Score breakdown (Tiered &amp; Weighted)</span><span class="d">Opened by clicking any token row in either assignment table. Shows how the token's Final Score was built — attribute values, attribute total, and any layer multiplier.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Score breakdown · Fox #018</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p class="card__intro" style="margin:0">How this token's Final Score was calculated — the mapped attribute values, the attribute total, and any layer multiplier. Helps explain why a token ranks where it does.</p>
+              <div class="sb">
+                <div class="sb-row"><span class="sb-k">Strength <span class="sb-map">(mapped to 30)</span></span><span class="sb-v">30</span></div>
+                <div class="sb-row"><span class="sb-k">Speed <span class="sb-map">(mapped to 50)</span></span><span class="sb-v">50</span></div>
+                <div class="sb-row"><span class="sb-k">Agility <span class="sb-map">(mapped to 16)</span></span><span class="sb-v">16</span></div>
+                <div class="sb-row sb-sub"><span class="sb-k">Attribute score (Add values)</span><span class="sb-v">96</span></div>
+                <div class="sb-row sb-sub"><span class="sb-k">Layer multiplier (Hats 200%)</span><span class="sb-v">2.00</span></div>
+                <div class="sb-row sb-total"><span class="sb-k">Final score</span><span class="sb-v">192</span></div>
+              </div>
+              <div class="ovr-row"><span class="ovr-lbl">Assigned tier</span><span class="tier-pill" style="background:rgba(96,165,250,.18);color:#1e40af"><span class="d" style="background:#60A5FA"></span>Rare</span></div>
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Score method and attribute value mappings come from <a href="#">Attributes</a>. On Tiered this is guidance; on Weighted it's the input that places the token deterministically.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--primary">Close</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 RARITY · Change-rarity modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">27</span><span class="t">Change-rarity confirmations</span><span class="d">Switching resets rarity assignment data but keeps attributes, token-type assignment, composition evidence and score mappings. From Uniform uses "Change Rarity"; from Tiered/Weighted uses "Update Rarity".</span></div>
+      <div class="stage">
+        <div class="modal-groups">
+
+          <div class="modal-group">
+            <div class="mg-label">From Uniform</div>
+            <div class="modal-pair">
+              <div class="modal-card">
+                <header><h4>Switch to Tiered rarity?</h4><button class="x" aria-label="Close">✕</button></header>
+                <div class="mbody">
+                  <p style="margin:0">Tiered uses <strong>custom tiers</strong> with <strong>manual</strong> assignment — create and name tiers, pick border colours, then assign each token yourself with score-based suggestions as guidance. Nothing is auto-assigned.</p>
+                  <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Uniform has no saved rarity assignment, so nothing is reset. Attributes, token-type assignment, composition evidence and score mappings are kept.</div></div>
+                </div>
+                <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Change Rarity</button></div>
+              </div>
+              <div class="modal-card">
+                <header><h4>Switch to Weighted rarity?</h4><button class="x" aria-label="Close">✕</button></header>
+                <div class="mbody">
+                  <p style="margin:0">Weighted assigns tiers <strong>deterministically</strong> from token scores at your chosen ratio. It uses a <strong>Max Supply</strong> to compute tier quotas — this <strong>defaults to 1,000</strong> and can be changed in Supply.</p>
+                  <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>You get three rarity tiers — Common, Uncommon, Rare; Epic and Legendary can be unlocked later. Attributes, evidence and score mappings are kept.</div></div>
+                </div>
+                <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Change Rarity</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-group">
+            <div class="mg-label">From Tiered</div>
+            <div class="modal-pair">
+              <div class="modal-card">
+                <header><h4>Switch Tiered → Uniform?</h4><button class="x" aria-label="Close">✕</button></header>
+                <div class="mbody">
+                  <p style="margin:0">Uniform treats every token as <strong>equal rarity</strong>. Your <strong>tier definitions and manual assignments will be cleared</strong>.</p>
+                  <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Resets saved rarity assignment. Composition evidence, attributes and score mappings are kept.</div></div>
+                </div>
+                <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Update Rarity</button></div>
+              </div>
+              <div class="modal-card">
+                <header><h4>Switch Tiered → Weighted?</h4><button class="x" aria-label="Close">✕</button></header>
+                <div class="mbody">
+                  <p style="margin:0">Weighted assigns tiers deterministically from scores. Your <strong>manual tier assignments will be cleared</strong> and re-derived on the next assignment / rebalance.</p>
+                  <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Resets saved tier assignments. Rebalance to assign. Max Supply defaults to 1,000.</div></div>
+                </div>
+                <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Update Rarity</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-group">
+            <div class="mg-label">From Weighted</div>
+            <div class="modal-pair">
+              <div class="modal-card">
+                <header><h4>Switch Weighted → Uniform?</h4><button class="x" aria-label="Close">✕</button></header>
+                <div class="mbody">
+                  <p style="margin:0">Uniform treats every token as <strong>equal rarity</strong>. Weighted's <strong>deterministic assignments and weights will be cleared</strong>, and Max Supply is no longer used by rarity.</p>
+                  <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Resets saved rarity assignment. Attributes, evidence and score mappings are kept.</div></div>
+                </div>
+                <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Update Rarity</button></div>
+              </div>
+              <div class="modal-card">
+                <header><h4>Switch Weighted → Tiered?</h4><button class="x" aria-label="Close">✕</button></header>
+                <div class="mbody">
+                  <p style="margin:0">Tiered uses <strong>manual</strong> assignment with score suggestions. Weighted's deterministic assignments will be cleared and you'll <strong>assign tiers yourself</strong>. Max Supply is no longer used by rarity.</p>
+                  <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Resets saved tier assignments. Tier definitions (names, colours) carry over where they exist.</div></div>
+                </div>
+                <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Update Rarity</button></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

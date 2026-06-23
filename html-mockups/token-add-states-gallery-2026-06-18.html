@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Tokens · Add states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --accent:#6366F1;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* ---- Chrome ---- */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb a:hover { color:var(--text-primary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .notif-bell:hover { background:var(--surface-canvas-alt); border-color:var(--border-strong); }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+
+  /* ---- Header ---- */
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head .eyebrow { margin-bottom:.375rem; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:none; }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .card__intro { color:var(--text-secondary); font-size:var(--text-sm); margin:0 0 var(--s-5); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .info-note a { color:var(--info); font-weight:700; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+
+  /* ---- Empty hero ---- */
+  .empty-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); max-width:56ch; margin:0; }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } }
+  .opt-cards { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); max-width:680px; margin:0 auto; text-align:left; }
+  @media (max-width:680px){ .opt-cards { grid-template-columns:1fr; } }
+  .opt-card { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); background:var(--surface-canvas-alt); display:flex; flex-direction:column; align-items:flex-start; }
+  .opt-card h4 { font-size:var(--text-lg); margin-bottom:var(--s-2); }
+  .opt-card p { font-size:var(--text-sm); margin-bottom:var(--s-4); flex:1; }
+  .opt-card .btn { align-self:center; }
+
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .dropzone { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-4); text-align:center; color:var(--text-secondary); font-size:var(--text-sm); }
+  .dropzone strong { color:var(--text-primary); }
+  .dropzone .dz-ic { color:var(--text-muted); margin-bottom:var(--s-2); }
+  .dropzone.is-disabled { opacity:.45; }
+  .ulink { color:var(--info); font-weight:700; font-size:var(--text-sm); cursor:pointer; }
+
+  /* ---- Upload session meter (100MB limit) ---- */
+  .session { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); }
+  .session .sline { display:flex; align-items:center; justify-content:space-between; font-size:var(--text-xs); }
+  .session .sline .lbl { font-family:var(--font-emphasis); font-weight:700; color:var(--text-secondary); letter-spacing:.04em; text-transform:uppercase; }
+  .session .sbar { height:6px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; margin-top:.4rem; }
+  .session .sbar .fill { height:100%; background:var(--accent); border-radius:var(--r-pill); }
+
+  /* ---- Asset upload list ---- */
+  .up-panel { border:1px solid var(--border-soft); border-radius:var(--r-3); display:flex; flex-direction:column; min-height:300px; background:var(--surface-canvas); }
+  .up-phead { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-4); border-bottom:1px solid var(--border-soft); }
+  .up-phead .h { font-family:var(--font-emphasis); font-weight:700; }
+  .up-count { font-family:var(--font-emphasis); font-weight:700; color:var(--text-secondary); font-size:var(--text-sm); }
+  .up-overall { padding:var(--s-3) var(--s-4); border-bottom:1px solid var(--border-soft); }
+  .up-overall .row { justify-content:space-between; }
+  .up-overall .obar { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; margin-top:.45rem; }
+  .up-overall .obar .fill { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .up-list { padding:var(--s-3); display:flex; flex-direction:column; gap:var(--s-3); overflow:auto; }
+  .up-row { display:grid; grid-template-columns:44px 1fr 30px; gap:var(--s-3); align-items:center; }
+  .up-thumb { width:44px; height:44px; border-radius:var(--r-2); background:var(--surface-canvas-deep); overflow:hidden; flex:none; display:grid; place-items:center; color:var(--text-muted); }
+  .up-mid { min-width:0; }
+  .up-line { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); }
+  .up-name { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .up-name .sz { color:var(--text-muted); font-weight:400; margin-left:.4rem; }
+  .up-pct { color:var(--text-secondary); font-size:var(--text-xs); font-family:var(--font-emphasis); font-weight:700; flex:none; }
+  .up-pct.fail { color:var(--notify-error); }
+  .up-pct.done { color:var(--stage-live); }
+  .bar { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; margin-top:.35rem; }
+  .bar .fill { height:100%; border-radius:var(--r-pill); background:var(--accent); }
+  .bar.done .fill { background:var(--stage-live); }
+  .bar.fail .fill { background:var(--notify-error); }
+  .up-del { width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); display:grid; place-items:center; color:var(--text-secondary); flex:none; }
+  .up-del:hover { border-color:var(--notify-error); color:var(--notify-error); }
+  .up-del[disabled] { opacity:.4; cursor:not-allowed; }
+  .up-flag { display:inline-flex; align-items:center; gap:4px; font-size:var(--text-3xs); font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px; border-radius:var(--r-pill); margin-top:.35rem; }
+  .up-flag--warn { color:var(--stage-draft); background:rgba(245,158,11,.16); }
+  .up-flag--fail { color:var(--notify-error); background:rgba(239,68,68,.12); }
+  .up-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); color:var(--text-muted); text-align:center; padding:var(--s-6); }
+
+  /* ---- Project assets multiselect ---- */
+  .pa-tb { display:flex; align-items:center; gap:var(--s-2); padding:var(--s-3) var(--s-4); border-bottom:1px solid var(--border-soft); flex-wrap:wrap; }
+  .pa-tb .sp { margin-left:auto; }
+  .pa-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-3); padding:var(--s-3); overflow:auto; }
+  @media (max-width:760px){ .pa-grid { grid-template-columns:repeat(3,1fr); } }
+  .pa-tile { position:relative; aspect-ratio:1/1; border-radius:var(--r-2); overflow:hidden; border:2px solid transparent; box-shadow:0 0 0 1px var(--border-soft) inset; cursor:pointer; }
+  .pa-tile.sel { border-color:var(--border-strong); }
+  .pa-chk { position:absolute; top:5px; left:5px; width:20px; height:20px; border-radius:5px; background:rgba(255,255,255,.92); border:1.5px solid var(--border-strong); display:grid; place-items:center; color:var(--text-primary); }
+  .pa-chk.off { border-color:#fff; color:transparent; background:rgba(255,255,255,.55); }
+
+  /* ---- Advanced options accordion ---- */
+  .acc { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .acc-head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-4); cursor:pointer; background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .acc-head .chev { color:var(--text-secondary); transition:transform .2s; }
+  .acc.open .acc-head .chev { transform:rotate(180deg); }
+  .acc-body { padding:var(--s-4); display:flex; flex-direction:column; gap:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  /* ---- File-type reference cards ---- */
+  .ft-card { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .ft-card + .ft-card { margin-top:var(--s-3); }
+  .ft-card h4 { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); text-transform:none; letter-spacing:0; }
+  .ft-card p { margin:.25rem 0 var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.45; }
+  .ft-card .exts { font-family:ui-monospace,monospace; font-size:var(--text-xs); color:var(--text-primary); }
+  .ft-card .exts span { color:var(--text-muted); }
+
+  /* ---- Modal ---- */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:var(--s-6); width:100%; max-width:1000px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.wide { max-width:640px; }
+  .modal-card.xl { max-width:980px; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .sub { font-family:var(--font-body); font-weight:400; text-transform:none; letter-spacing:0; font-size:var(--text-sm); color:var(--text-secondary); margin-top:.35rem; }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); align-items:center; }
+  .modal-card .footer-row .grow { margin-right:auto; }
+  .up-cols { display:grid; grid-template-columns:minmax(240px,.85fr) 1.15fr; gap:var(--s-6); }
+  @media (max-width:760px){ .up-cols { grid-template-columns:1fr; } }
+  .lcol { display:flex; flex-direction:column; gap:var(--s-4); }
+  .single-modal { display:flex; justify-content:center; }
+  .single-modal .modal-card { max-width:560px; }
+
+  /* ---- Gallery scaffold ---- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); align-self:flex-start; }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Tokens — Add.</h1>
+      <p>Getting token definitions into a collection. Upload a batch of assets here, choose from assets already in the project, or build them in a generator and use its <strong>Export</strong> — all land as Draft tokens. The uploader keeps the common case simple (drop, tag, upload) and tucks per-batch settings behind <strong>Advanced options</strong>. Pressing Upload checks project cycles; uploads are size-capped per session and tracked per asset.</p>
+      <div class="navlinks">Lifecycle: <strong>Add</strong> · <a href="#">Draft</a> · <a href="#">Review</a> · <a href="#">Live</a> · <a href="#">Minted</a></div>
+    </header>
+
+    <!-- 01 · No tokens -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">No tokens (empty)</span><span class="d">First run. Two ways in: build tokens in a generator and export them here, or upload one or more assets.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Collection · Tokens</div><h2>Tokens.</h2><p class="lede">Token definitions are prepared here in Draft and Review, then set Live and minted.</p></div>
+            <div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div>
+          </div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_tokens.jpg" alt="Tokens — none yet" onerror="this.parentElement.style.display='none'"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">No tokens yet.</h3>
+              <p class="empty-hero__sub">Bring in tokens from a generator, or upload one or more assets to create them yourself.</p>
+              <div class="opt-cards" style="margin-top:var(--s-5)">
+                <div class="opt-card">
+                  <h4>Build in a generator</h4>
+                  <p>Create a new generator, or use an existing one.</p>
+                  <button class="btn btn--primary">View generators</button>
+                </div>
+                <div class="opt-card">
+                  <h4>Create from assets</h4>
+                  <p>Upload one or more assets to create your first tokens.</p>
+                  <button class="btn btn--ghost">Upload assets</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Add assets — drop & tag (empty) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Add assets — drop &amp; tag (default)</span><span class="d">Step 1. Drop assets on the left, tag them, and watch them land on the right. Per-batch settings sit behind Advanced options. The session is capped at 100&nbsp;MB; Upload is disabled until at least one asset is added.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card xl">
+          <header><div><h4>Add tokens</h4><div class="sub">Upload assets to create new tokens. Each asset becomes one Draft token.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="up-cols">
+              <div class="lcol">
+                <div class="seg"><button class="active">Upload assets</button><button>Use existing</button></div>
+                <div class="dropzone"><div class="dz-ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="9" cy="9" r="1.5"/></svg></div><strong>Drop assets here</strong> or <span class="ulink">browse</span>.<div style="margin-top:.5rem"><span class="ulink">See supported file types →</span></div></div>
+                <div class="session"><div class="sline"><span class="lbl">Upload size</span><span>0 of 100 MB</span></div><div class="sbar"><div class="fill" style="width:0%"></div></div></div>
+                <div>
+                  <label class="flabel">Tags <span class="tag">optional</span></label>
+                  <input class="input" placeholder="Add a tag and press Enter">
+                  <div class="hint">Non-public keywords; applied to every token in this batch and searchable in Manage.</div>
+                </div>
+              </div>
+              <div class="up-panel">
+                <div class="up-phead"><span class="h">Assets to upload</span><span class="up-count">0 added</span></div>
+                <div class="up-empty"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg><div class="tiny">Dropped assets show here with a preview before you upload.</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled>Upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Add assets — added & ready to upload -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Add assets — added, ready to upload</span><span class="d">Step 2. All assets are added and listed (none uploaded yet). You can still drop more, tag, or remove. Pressing Upload runs the project cycles check first, then begins uploading.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card xl">
+          <header><div><h4>Add tokens</h4><div class="sub">Upload assets to create new tokens. Each asset becomes one Draft token.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="up-cols">
+              <div class="lcol">
+                <div class="seg"><button class="active">Upload assets</button><button>Use existing</button></div>
+                <div class="dropzone" style="padding:var(--s-5) var(--s-4)"><strong>Drop more</strong> or <span class="ulink">browse</span>.<div style="margin-top:.4rem"><span class="ulink">See supported file types →</span></div></div>
+                <div class="session"><div class="sline"><span class="lbl">Upload size</span><span>9.0 of 100 MB</span></div><div class="sbar"><div class="fill" style="width:9%"></div></div></div>
+                <div>
+                  <label class="flabel">Tags <span class="tag">optional</span></label>
+                  <div class="row" style="gap:.4rem;margin-bottom:.5rem"><span class="tag">spring ✕</span><span class="tag">fox ✕</span></div>
+                  <input class="input" placeholder="Add a tag and press Enter">
+                </div>
+              </div>
+              <div class="up-panel">
+                <div class="up-phead"><span class="h">Assets to upload</span><span class="up-count">6 added · not uploaded</span></div>
+                <div class="up-list">
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#d6356d,#831843)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image001.png <span class="sz">1.8 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image002.png <span class="sz">1.8 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#6ee7b7,#065f46)"></div><div class="up-mid"><div class="up-line"><span class="up-name">avatar16.gif <span class="sz">0.03 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#a78bfa,#4c1d95)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image004.png <span class="sz">1.8 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#fde68a,#b45309)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image005.png <span class="sz">1.8 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#34d399,#047857)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image006.png <span class="sz">1.8 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-row"><span class="grow tiny">6 assets ready · checks project cycles on upload</span><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload 6 assets</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Add assets — uploading (in progress) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Add assets — uploading (in progress)</span><span class="d">Step 3. Upload was pressed and cycles passed. Adding more is paused, each asset uploads on its own bar (blue → green → red), the header counts done vs total and an overall meter shows batch progress. The window stays open until it finishes.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card xl">
+          <header><div><h4>Add tokens</h4><div class="sub">Uploading — keep this window open until it completes.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="up-cols">
+              <div class="lcol">
+                <div class="seg"><button class="active">Upload assets</button><button>Use existing</button></div>
+                <div class="dropzone is-disabled" style="padding:var(--s-5) var(--s-4)"><strong>Adding more is paused</strong><div class="tiny" style="margin-top:.3rem">You can add another batch once this upload finishes.</div></div>
+                <div class="session"><div class="sline"><span class="lbl">Upload size</span><span>9.0 of 100 MB</span></div><div class="sbar"><div class="fill" style="width:9%"></div></div></div>
+                <div>
+                  <label class="flabel">Tags <span class="tag">optional</span></label>
+                  <div class="row" style="gap:.4rem"><span class="tag">spring</span><span class="tag">fox</span></div>
+                </div>
+              </div>
+              <div class="up-panel">
+                <div class="up-phead"><span class="h">Assets to upload</span><span class="up-count">3 / 6 uploaded</span></div>
+                <div class="up-overall"><div class="row"><span class="tiny" style="font-family:var(--font-emphasis);font-weight:700;color:var(--text-secondary)">Uploading 6 files</span><span class="tiny" style="font-family:var(--font-emphasis);font-weight:700">58%</span></div><div class="obar"><div class="fill" style="width:58%"></div></div></div>
+                <div class="up-list">
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#d6356d,#831843)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image001.png <span class="sz">1.8 MB</span></span><span class="up-pct done">100%</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><button class="up-del" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image002.png <span class="sz">1.8 MB</span></span><span class="up-pct done">100%</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><button class="up-del" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#6ee7b7,#065f46)"></div><div class="up-mid"><div class="up-line"><span class="up-name">avatar16.gif <span class="sz">0.03 MB</span></span><span class="up-pct done">100%</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div><span class="up-flag up-flag--warn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg>Opaque</span></div><button class="up-del" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#a78bfa,#4c1d95)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image004.png <span class="sz">1.8 MB</span></span><span class="up-pct">62%</span></div><div class="bar"><div class="fill" style="width:62%"></div></div></div><button class="up-del" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#fde68a,#b45309)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image005.png <span class="sz">1.8 MB</span></span><span class="up-pct">Queued</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#34d399,#047857)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image006.png <span class="sz">1.8 MB</span></span><span class="up-pct">Queued</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-row"><span class="grow tiny">Uploading — adding more is paused</span><button class="btn btn--ghost">Cancel upload</button><button class="btn btn--primary" disabled>Uploading… 58%</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Add assets — upload complete -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Add assets — upload complete</span><span class="d">Step 4. All uploads finished and Draft tokens were created. The window stays open and switches its actions to "Add more files" (starts a fresh, empty batch) or "Close".</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card xl">
+          <header><div><h4>Upload complete</h4><div class="sub">6 assets uploaded · 6 Draft tokens created.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="info-note ok-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div><strong style="color:var(--text-primary)">All 6 assets uploaded.</strong> Each became a Draft token — edit them in the Draft gallery. Add another batch, or close to return to the token list.</div></div>
+            <div class="up-cols">
+              <div class="lcol">
+                <div class="session"><div class="sline"><span class="lbl">Upload size</span><span>9.0 of 100 MB used</span></div><div class="sbar"><div class="fill" style="width:9%;background:var(--stage-live)"></div></div></div>
+              </div>
+              <div class="up-panel">
+                <div class="up-phead"><span class="h">Uploaded</span><span class="up-count">6 / 6 uploaded</span></div>
+                <div class="up-list">
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#d6356d,#831843)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image001.png <span class="sz">1.8 MB</span></span><span class="up-pct done">Done</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><span style="width:30px;display:grid;place-items:center;color:var(--stage-live)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image002.png <span class="sz">1.8 MB</span></span><span class="up-pct done">Done</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><span style="width:30px;display:grid;place-items:center;color:var(--stage-live)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#6ee7b7,#065f46)"></div><div class="up-mid"><div class="up-line"><span class="up-name">avatar16.gif <span class="sz">0.03 MB</span></span><span class="up-pct done">Done</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div><span class="up-flag up-flag--warn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg>Opaque</span></div><span style="width:30px;display:grid;place-items:center;color:var(--stage-live)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#a78bfa,#4c1d95)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image004.png <span class="sz">1.8 MB</span></span><span class="up-pct done">Done</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><span style="width:30px;display:grid;place-items:center;color:var(--stage-live)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#fde68a,#b45309)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image005.png <span class="sz">1.8 MB</span></span><span class="up-pct done">Done</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><span style="width:30px;display:grid;place-items:center;color:var(--stage-live)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#34d399,#047857)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image006.png <span class="sz">1.8 MB</span></span><span class="up-pct done">Done</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><span style="width:30px;display:grid;place-items:center;color:var(--stage-live)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Add more files</button><button class="btn btn--primary">Close</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Add from existing assets -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Add from existing assets</span><span class="d">The "Use existing" tab. The left pane keeps the same tags + advanced options (no drop/browse box); the right pane lists every project asset that isn't a banner, with multi-select. No upload needed — picked assets become Draft tokens directly.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card xl">
+          <header><div><h4>Add tokens</h4><div class="sub">Pick assets already in this project. Each selected asset becomes one Draft token.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="up-cols">
+              <div class="lcol">
+                <div class="seg"><button>Upload assets</button><button class="active">Use existing</button></div>
+                <div>
+                  <label class="flabel">Tags <span class="tag">optional</span></label>
+                  <div class="row" style="gap:.4rem;margin-bottom:.5rem"><span class="tag">spring ✕</span></div>
+                  <input class="input" placeholder="Add a tag and press Enter">
+                  <div class="hint">Applied to every token created from the selection.</div>
+                </div>
+                <div class="acc open">
+                  <div class="acc-head">Advanced options · applied to all selected <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  <div class="acc-body">
+                    <div><label class="flabel">Token type</label><select class="input"><option selected>Character</option><option>Creature</option><option>Item</option></select></div>
+                    <div><label class="flabel">Rarity for these <span class="tag tag--indigo">Tiered</span></label><select class="input"><option>— choose a tier —</option><option selected>Major</option><option>Captain</option></select></div>
+                  </div>
+                </div>
+              </div>
+              <div class="up-panel">
+                <div class="pa-tb"><span class="h" style="font-family:var(--font-emphasis);font-weight:700">Project assets</span><span class="tag tag--indigo">4 selected</span><span class="sp"></span><button class="btn btn--ghost btn--sm">Select all</button><button class="btn btn--ghost btn--sm">Clear</button></div>
+                <div class="pa-grid">
+                  <div class="pa-tile sel" style="background:linear-gradient(135deg,#d6356d,#831843)"><span class="pa-chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="pa-tile sel" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"><span class="pa-chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="pa-tile" style="background:linear-gradient(135deg,#6ee7b7,#065f46)"><span class="pa-chk off"></span></div>
+                  <div class="pa-tile sel" style="background:linear-gradient(135deg,#a78bfa,#4c1d95)"><span class="pa-chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="pa-tile" style="background:linear-gradient(135deg,#fde68a,#b45309)"><span class="pa-chk off"></span></div>
+                  <div class="pa-tile sel" style="background:linear-gradient(135deg,#34d399,#047857)"><span class="pa-chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></div>
+                  <div class="pa-tile" style="background:linear-gradient(135deg,#f472b6,#9d174d)"><span class="pa-chk off"></span></div>
+                  <div class="pa-tile" style="background:linear-gradient(135deg,#38bdf8,#0c4a6e)"><span class="pa-chk off"></span></div>
+                  <div class="pa-tile" style="background:linear-gradient(135deg,#fbbf24,#92400e)"><span class="pa-chk off"></span></div>
+                  <div class="pa-tile" style="background:linear-gradient(135deg,#c4b5fd,#5b21b6)"><span class="pa-chk off"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add 4 tokens</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Asset row states (reference) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Asset row states</span><span class="d">The per-asset row in every state: ready/queued, uploading (blue), complete (green), complete with a validation warning ("Opaque"), and failed (red, with retry). Delete removes the asset from the batch.</span></div>
+      <div class="stage" style="display:block">
+        <div class="card" style="padding:var(--s-5)">
+          <div>
+            <div class="up-panel" style="min-height:0">
+              <div class="up-list">
+                <div class="up-row"><div class="up-thumb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l5-5 4 4"/></svg></div><div class="up-mid"><div class="up-line"><span class="up-name">Image001.png <span class="sz">1.8 MB</span></span><span class="up-pct">Ready</span></div><div class="bar"><div class="fill" style="width:0%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image002.png <span class="sz">1.8 MB</span></span><span class="up-pct">60%</span></div><div class="bar"><div class="fill" style="width:60%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#6ee7b7,#065f46)"></div><div class="up-mid"><div class="up-line"><span class="up-name">Image003.png <span class="sz">1.8 MB</span></span><span class="up-pct done">100%</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                <div class="up-row"><div class="up-thumb" style="background:linear-gradient(135deg,#fde68a,#b45309)"></div><div class="up-mid"><div class="up-line"><span class="up-name">avatar16.gif <span class="sz">0.03 MB</span></span><span class="up-pct done">100%</span></div><div class="bar done"><div class="fill" style="width:100%"></div></div><span class="up-flag up-flag--warn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg>Opaque · no transparency</span></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+                <div class="up-row"><div class="up-thumb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l5-5 4 4"/></svg></div><div class="up-mid"><div class="up-line"><span class="up-name">Image004.png <span class="sz">1.8 MB</span></span><span class="up-pct fail">Failed</span></div><div class="bar fail"><div class="fill" style="width:100%"></div></div><span class="up-flag up-flag--fail">Upload failed · retry</span></div><button class="up-del"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 · Advanced — Token type -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Advanced — Token type</span><span class="d">The token-type control appears only when the collection has more than one type. With a single type it's auto-assigned silently and never shown.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Token type · Allowed (multi-type)</div>
+            <div>
+              <div class="acc open"><div class="acc-head">Advanced options <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="acc-body">
+                  <div><label class="flabel">Token type <span class="tag tag--amber">required</span></label><select class="input"><option selected>Choose a type…</option><option>Character</option><option>Creature</option><option>Item</option></select><div class="hint">3 token types in this collection — one choice applies to the whole batch; override individual tokens later.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Token type · Not allowed (single type)</div>
+            <div>
+              <p class="hint" style="margin:0">Single token type — auto-assigned, so no selector is shown here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Advanced — Max copies -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Advanced — Max copies per token</span><span class="d">The copy-quantity field appears only when the collection allows copies. On a Single-only (1/1) collection it's hidden.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Max copies · Allowed</div>
+            <div>
+              <div class="acc open"><div class="acc-head">Advanced options <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="acc-body">
+                  <div><label class="flabel">Max copies per token</label><input class="input" type="number" value="25" min="1"><div class="hint">Applied to every token in this batch. Capped by the per-token hard maximum (200) set in <a href="#" style="color:var(--info);font-weight:700">Supply</a>; edit individual tokens later.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Max copies · Not allowed</div>
+            <div>
+              <p class="hint" style="margin:0">Single (1 / 1) collection — copies aren't allowed, so this field is hidden.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 · Advanced — Rarity by mode -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Advanced — Rarity (by collection mode)</span><span class="d">The rarity control follows the collection's rarity mode: Uniform shows nothing, Tiered picks a tier, Weighted picks Common / Uncommon / Rare and warns that a choice here is a manual override.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Rarity · Uniform</div>
+            <div>
+              <p class="hint" style="margin:0">Uniform rarity — every token is equal, so no rarity field appears.</p>
+            </div>
+          </div>
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Rarity · Tiered</div>
+            <div>
+              <div class="acc open"><div class="acc-head">Advanced options <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="acc-body">
+                  <div><label class="flabel">Rarity for this batch <span class="tag tag--indigo">Tiered</span></label><select class="input"><option>— choose a tier —</option><option>General</option><option>Colonel</option><option selected>Major</option><option>Captain</option></select><div class="hint">Pick one tier, applied to all. Change individual tokens afterwards.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:var(--s-3)">Rarity · Weighted</div>
+            <div>
+              <div class="acc open"><div class="acc-head">Advanced options <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="acc-body">
+                  <div><label class="flabel">Rarity for this batch <span class="tag tag--indigo">Weighted</span></label><select class="input"><option selected>— not set —</option><option>Common</option><option>Uncommon</option><option>Rare</option></select></div>
+                  <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Choosing a tier here is a <strong>manual override</strong> applied to the whole batch — those tokens keep that tier through a rebalance, and it counts against that tier's quota. Leave it <strong>not set</strong> to let Final Score assign tiers automatically.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 · Not enough cycles -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Add tokens · low balance (upload blocked)</span><span class="d">The cycles check runs when Upload is pressed. If the project is short on blob storage the upload is blocked — the batch stays staged and the primary action becomes Top up &amp; add tokens. Topping up swaps this same modal to the top-up step in place; it never stacks a second window.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card wide">
+          <header><div><h4>Add tokens</h4><div class="sub">Upload assets to create new tokens.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>6 assets staged · 42 MB · uploaded &amp; held</span>
+            <div class="cyc-est">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.42 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.300 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.12 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="cyc-note cyc-note--warn"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not enough cycles to store this batch.</strong> Your 6 assets stay staged — top up and they'll store straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; add tokens</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Top up project cycles (restyled) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Top up to continue · batch staged (step in place)</span><span class="d">The top-up runs as a step inside the Add tokens modal — same window, content swapped, the upload waiting behind it. The back arrow returns to the blocked upload without topping up. Once cycles land the staged batch stores automatically.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card wide">
+          <header><div class="row" style="gap:var(--s-3);flex:1;flex-wrap:nowrap"><button class="x" aria-label="Back to upload"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg></button><div><h4>Top up to continue</h4><div class="sub">A step inside Add tokens — your upload is waiting.</div></div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>6 assets staged · 42 MB · ready to send</span>
+            <div>
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.42 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.300 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div>
+              <span class="cyc-flabel">Top up amount</span>
+              <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="cyc-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged batch stores automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 · Top up complete -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">13</span><span class="t">Topped up · batch stored (step in place)</span><span class="d">Success is confirmed in the same modal — not as a toast glued to the page footer, where it can be missed. New balances are shown and the staged batch stores. "Back to upload" returns to the waiting upload step. Still one window throughout.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card wide">
+          <header><div><h4>Topped up — finishing</h4><div class="sub">A step inside Add tokens — returning you to the upload.</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="cyc-note cyc-note--ok"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div><strong>Added 1.000 T cycles.</strong> Balance is now 1.300 T. The staged batch is storing now — top-ups also appear in the project's activity log.</div></div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:var(--text-sm);margin-bottom:.4rem"><span><strong>6 / 6</strong> stored</span><span class="cyc-tag cyc-tag--green">Complete</span></div>
+              <div class="cyc-prog"><div class="f ok" style="width:100%"></div></div>
+            </div>
+            <div>
+              <div class="cyc-kv"><span>Cycles used</span><span class="v">0.42 T</span></div>
+              <div class="cyc-kv"><span>Balance remaining</span><span class="v">0.88 T</span></div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--primary">Back to upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 · Supported file types -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14</span><span class="t">Supported file types (popover)</span><span class="d">A read-only reference, so it doesn't take over the modal or stack a blocking dialog. It opens as a small popover anchored to the "See supported file types →" link — glance, dismiss, and you're still on your upload. Same list used for generator parts.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card" style="max-width:380px;overflow:visible">
+          <header><div><h4>Supported file types</h4><div class="sub">Quick reference · popover</div></div><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="ft-card"><h4>Still images</h4><p>For most visual tokens — characters, items, art pieces, backgrounds.</p><div class="exts">.png <span>·</span> .jpg <span>·</span> .jpeg <span>·</span> .webp</div></div>
+            <div class="ft-card"><h4>Animated</h4><p>For tokens that move — sparkle effects, blinking, flowing capes. Animation plays in the token preview and on the secondary marketplace.</p><div class="exts">.gif <span>·</span> animated .webp <span>·</span> .apng</div></div>
+            <div class="ft-card"><h4>Vector</h4><p>Crisp at any size — good for geometric or text-based tokens.</p><div class="exts">.svg</div></div>
+            <div class="ft-card"><h4>Audio</h4><p>For sound tokens — soundtracks, voice clips, ambient loops. Plays alongside the visual in the token preview.</p><div class="exts">.mp3 <span>·</span> .wav <span>·</span> .ogg <span>·</span> .m4a <span>·</span> .flac</div></div>
+            <p class="hint" style="margin:0">Each upload is capped at <strong>100 MB</strong> total; oversized files are rejected before upload.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Got it</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — My Tokens (Wallet) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .amt { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* ---- top context bar (white) ---- */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); color:var(--text-primary); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .princ .id { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  /* ---- section (grey) ---- */
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+
+  /* ---- wallet tab nav (pills on grey) ---- */
+  .wtabs { display:inline-flex; gap:var(--s-1); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; align-self:flex-start; }
+  .wtabs button { display:inline-flex; align-items:center; gap:.5rem; border:0; background:transparent; padding:.5rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .wtabs button .ct { background:var(--surface-canvas-deep); color:var(--text-secondary); border-radius:var(--r-pill); padding:1px 7px; font-size:var(--text-3xs); }
+  .wtabs button.active { background:var(--text-primary); color:#fff; }
+  .wtabs button.active .ct { background:rgba(255,255,255,.2); color:#fff; }
+
+  /* ---- controls row ---- */
+  .controls { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .search { position:relative; flex:1; min-width:200px; }
+  .search svg { position:absolute; left:.7rem; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-muted); }
+  .search input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem .625rem 2.1rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .sortsel { height:38px; padding:0 1.6rem 0 .7rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-sm); font-weight:600; }
+  .view-toggle { display:inline-flex; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; flex:none; }
+  .view-toggle button { border:0; background:transparent; width:34px; height:30px; border-radius:var(--r-pill); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .view-toggle button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .view-toggle svg { width:15px; height:15px; }
+
+  /* ---- buttons / tags ---- */
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .btn svg { width:15px; height:15px; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--cyan { background:rgba(6,176,230,.14); color:#0782a8; }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+
+  /* ---- holdings grid ---- */
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:var(--s-3); }
+  /* canonical token card (style guide): rarity is an OUTER FRAME, card inset 8px; identity-only meta */
+  .rarity-frame { display:block; position:relative; padding:8px; border-radius:14px; background:var(--border-soft); text-align:left; }
+  .rarity-frame--default { background:var(--border-soft); }
+  .rarity-frame--common { background:#E6E6E6; }
+  .rarity-frame--uncommon { background:#2ECC71; }
+  .rarity-frame--rare { background:#2F80ED; }
+  .rarity-frame--epic { background:#8F3DFF; }
+  .rarity-frame--legendary { background:#FCD34D; }
+  .rarity-frame--mythical { background:#FF1493; }
+  .rarity-frame--inconceivable { background:#06B6D4; }
+  .tok-card { background:#fff; border:0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column; }
+  .tok-card .art { display:block; aspect-ratio:1/1; position:relative; background:var(--surface-canvas-deep); overflow:hidden; }
+  .tok-card .art img { width:100%; height:100%; object-fit:cover; display:block; }
+  .tok-card .meta { padding:var(--s-3) var(--s-4) var(--s-4); display:grid; gap:6px; }
+  .tok-card .top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tok-card .name { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.04em; text-transform:uppercase; margin:0; }
+  .tok-card .issue { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .tok-card .meta-row { font-size:var(--text-sm); }
+  .tok-card .meta-row .label-strong { color:var(--text-secondary); margin-right:4px; }
+  .tok-card .meta-row .val-strong { font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .tok-card .meta-row .val-soft { color:var(--text-secondary); font-style:italic; }
+  .stack-badge { position:absolute; top:10px; right:10px; background:rgba(0,0,0,.78); color:#fff; border-radius:var(--r-pill); padding:4px 10px; font-size:var(--text-xs); font-weight:700; font-variant-numeric:tabular-nums; display:inline-flex; align-items:center; gap:2px; z-index:1; }
+  .stack-badge .x { opacity:.7; margin-right:1px; }
+  .asset-main img, .asset-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .rname { font-weight:700; }
+  /* select mode (combine / compact) */
+  .rarity-frame .chk { position:absolute; top:14px; left:14px; width:22px; height:22px; border-radius:6px; background:rgba(255,255,255,.95); border:1.5px solid var(--border-strong); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); z-index:2; }
+  .rarity-frame.sel { outline:2px solid var(--text-primary); outline-offset:2px; }
+  .bulkbar { display:flex; align-items:center; gap:var(--s-3); background:var(--text-primary); color:#fff; border-radius:var(--r-3); padding:.625rem var(--s-4); flex-wrap:wrap; }
+  .bulkbar .b-count { font-family:var(--font-emphasis); font-weight:700; }
+  .bulkbar .b-actions { margin-left:auto; display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .bulkbar .bb { background:var(--surface-canvas); color:var(--text-primary); border-radius:var(--r-2); padding:.45rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .bulkbar .bb--clear { background:transparent; border:1px solid rgba(255,255,255,.32); color:#fff; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .hold { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .hold .th { width:44px; height:44px; border-radius:var(--r-2); background:linear-gradient(135deg,#60a5fa,#1e3a8a); flex:none; position:relative; overflow:visible; }
+  .hold .th img { width:100%; height:100%; object-fit:cover; display:block; border-radius:var(--r-2); }
+  .hold .th .stackn { position:absolute; bottom:-6px; right:-6px; background:rgba(10,10,10,.85); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .hold .hn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .hold .hd { color:var(--text-secondary); font-size:var(--text-xs); }
+
+  /* ---- balances ---- */
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .bal { display:flex; align-items:center; gap:var(--s-4); padding:var(--s-4) var(--s-5); border-top:1px solid var(--border-soft); }
+  .bal:first-child { border-top:0; }
+  .bal .ico { width:38px; height:38px; border-radius:50%; flex:none; display:grid; place-items:center; font-family:var(--font-display); color:#fff; font-size:var(--text-sm); }
+  .bal .who { flex:1; min-width:0; }
+  .bal .who .n { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .bal .who .s { font-size:var(--text-xs); color:var(--text-secondary); display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+  .bal .val { text-align:right; }
+  .bal .val .a { font-size:var(--text-lg); }
+  .bal .val .u { font-size:var(--text-xs); color:var(--text-muted); }
+
+  /* ---- activity ---- */
+  .actrow { display:grid; grid-template-columns:auto 1fr auto; gap:var(--s-4); align-items:center; padding:var(--s-4) var(--s-5); border-top:1px solid var(--border-soft); }
+  .actrow:first-child { border-top:0; }
+  .actrow .ai { width:34px; height:34px; border-radius:50%; flex:none; display:grid; place-items:center; }
+  .actrow .ai svg { width:16px; height:16px; }
+  .ai--in { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .ai--out { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .ai--mint { background:rgba(6,176,230,.14); color:#0782a8; }
+  .ai--burn { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .actrow .desc .top { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .actrow .desc .meta { font-size:var(--text-xs); color:var(--text-secondary); display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin-top:1px; }
+  .actrow .right { text-align:right; }
+  .actrow .right .a { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .actrow .right .t { font-size:var(--text-xs); color:var(--text-muted); }
+
+  /* ---- list bar / pager ---- */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin:var(--s-2) calc(-1 * var(--s-8)) calc(-1 * var(--s-8)); padding:var(--s-4) var(--s-8); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button:hover:not(:disabled):not([aria-current="page"]) { background:var(--surface-canvas-alt); color:var(--text-primary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; cursor:default; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-gap { min-width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.5rem 0 .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-xs); font-weight:700; }
+  @media (max-width:620px){ .listbar { justify-content:center; } .results-count, .perpage { display:none; } }
+
+  /* ---- empty / loading / guard ---- */
+  .guard { display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s-3); padding:var(--s-12) var(--s-6); }
+  .guard img { width:150px; height:auto; }
+  .guard h3 { font-size:var(--text-2xl); }
+  .guard p { color:var(--text-secondary); font-size:var(--text-base); max-width:42ch; margin:0; }
+  .guard .row { display:flex; gap:var(--s-3); flex-wrap:wrap; justify-content:center; margin-top:var(--s-2); }
+  /* empty wallet — character + two acquisition-path CTAs */
+  .empty-wrap { display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s-3); padding:var(--s-8) var(--s-4) var(--s-6); }
+  .empty-wrap img { width:160px; height:auto; }
+  .empty-wrap h3 { font-size:var(--text-3xl); }
+  .empty-wrap > p { color:var(--text-secondary); font-size:var(--text-base); max-width:48ch; margin:0; }
+  .cta-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--s-4); width:100%; max-width:780px; margin:var(--s-5) auto 0; }
+  .cta-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); text-align:left; display:flex; flex-direction:column; gap:var(--s-2); transition:border-color .12s,box-shadow .12s; }
+  .cta-card:hover { border-color:#cfcfcf; box-shadow:0 8px 24px -16px rgba(0,0,0,.25); }
+  .cta-card .ci { width:42px; height:42px; border-radius:var(--r-3); display:grid; place-items:center; color:#fff; margin-bottom:var(--s-1); }
+  .cta-card .ci svg { width:21px; height:21px; }
+  .cta-card .ce { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; }
+  .cta-card h4 { font-size:var(--text-xl); }
+  .cta-card > p { color:var(--text-secondary); font-size:var(--text-sm); flex:1; margin:.1rem 0 0; }
+  .cta-card .btn { align-self:flex-start; margin-top:var(--s-3); }
+  .skel-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:var(--s-4); }
+  .skel-card { border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); overflow:hidden; }
+  .skel { background:linear-gradient(90deg,#ededed 25%,#f6f6f6 37%,#ededed 63%); background-size:400% 100%; animation:sh 1.4s ease infinite; }
+  @keyframes sh { 0%{background-position:100% 0} 100%{background-position:0 0} }
+  .skel-card .sk-art { aspect-ratio:1/1; }
+  .skel-card .sk-meta { padding:var(--s-3) var(--s-4) var(--s-4); display:flex; flex-direction:column; gap:.5rem; }
+  .skel-card .sk-line { height:11px; border-radius:var(--r-1); }
+
+  /* ---- detail ---- */
+  .detail-grid { display:grid; grid-template-columns:340px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:760px){ .detail-grid { grid-template-columns:1fr; } }
+  .asset-main { aspect-ratio:1/1; border-radius:var(--r-3); border:1px solid var(--border-soft); background:linear-gradient(135deg,#d6356d,#831843); overflow:hidden; }
+  .asset-thumbs { display:flex; gap:var(--s-2); margin-top:var(--s-3); flex-wrap:wrap; }
+  .asset-thumb { width:58px; height:58px; border-radius:var(--r-2); border:2px solid transparent; padding:0; overflow:hidden; }
+  .asset-thumb > span { display:block; width:100%; height:100%; }
+  .asset-thumb[aria-pressed="true"] { border-color:var(--border-strong); }
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dhead { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-4); }
+  .dhead h3 { font-size:var(--text-2xl); }
+  .dhead .sub { font-size:var(--text-sm); color:var(--text-secondary); margin-top:.25rem; display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv .k { color:var(--text-secondary); }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
+  .dsec { margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .dsec > .eyebrow { display:block; margin-bottom:var(--s-3); }
+  .about { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); font-size:var(--text-md); line-height:1.65; color:var(--text-primary); margin:0; }
+  .attrs { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:var(--s-2); }
+  .attr { border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); padding:.55rem .7rem; }
+  .attr .t { font-size:var(--text-3xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .attr .v { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  /* ---- notes ---- */
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; }
+  .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--err { background:rgba(239,68,68,.09); color:#8a2020; } .note--err .ic { color:var(--notify-error); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note strong { color:inherit; }
+
+  /* ---- modals ---- */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-6); width:100%; max-width:1040px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.single { max-width:480px; margin:0 auto; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.75rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .input.err { border-color:var(--notify-error); }
+  .input:focus { outline:2px solid var(--text-primary); outline-offset:1px; }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.4rem; display:flex; align-items:center; gap:.35rem; }
+  .mini-asset { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#d6356d,#831843); }
+  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-base); }
+  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  /* ---- gallery chrome ---- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:90ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Wallet · consistency reference</div>
+      <h1>My Tokens — Wallet.</h1>
+      <p>The end-user wallet, centred on <strong>My Tokens</strong>: everything owned by the connected principal. Three surfaces live under one page as tabs — <strong>Tokens</strong> (owned NFT holdings, singles and stacks), <strong>Balances</strong> (ICRC-1 and NNS fungibles, view-only in v1), and <strong>Activity</strong> (transaction history). Selecting a holding opens a read-only detail with the shipped owner actions — <strong>Transfer</strong>, <strong>Burn</strong>, and <strong>stack management</strong> (split, unstack, merge, combine, compact). Planned secondary <strong>sale / auction listing and offers/bids</strong> remain out of scope here ("coming soon"), matching the current app. Source: <span class="mono">Design Documentation/wallet.md</span>.</p>
+      <div class="navlinks">Surfaces: <strong>Tokens</strong> · <strong>Balances</strong> · <strong>Activity</strong> · Detail · Transfer · Burn · Stack actions · States &amp; guards</div>
+    </header>
+
+    <!-- 01 · Tokens tab (populated) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">My Tokens · Tokens tab (populated)</span><span class="d">The default wallet view, using the style-guide token card: the artwork sits inside an 8px solid-colour rarity frame (common grey, uncommon green, rare blue, epic violet, legendary gold), and the meta is identity-only — name, issue number, and edition/supply. Stacks of identical copies show a ×N badge on the art; singles show none. Selecting a card opens the read-only minted-token viewer (frame 07). Controls are search + an asset filter (All / Singles / Stacks) + sort + a grid/list view toggle, all on the grey. The white list bar is the only chrome at the bottom, mirroring the breadcrumb at the top.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+          <div class="actions">
+            <button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button>
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Wallet</div>
+              <h2>My Tokens.</h2>
+              <div class="lede">Everything owned by your connected principal — tokens, balances, and activity.</div>
+            </div>
+          </div>
+          <div class="wtabs">
+            <button class="active">Tokens <span class="ct">42</span></button>
+            <button>Balances <span class="ct">3</span></button>
+            <button>Activity</button>
+          </div>
+          <div class="controls">
+            <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search your tokens…"></div>
+            <div class="seg"><button class="active">All</button><button>Singles</button><button>Stacks</button></div>
+            <select class="sortsel"><option>Recently acquired</option><option>Name A–Z</option><option>Collection</option><option>Rarity</option></select>
+            <div class="view-toggle"><button aria-pressed="true" aria-label="Grid"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></button><button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div>
+          </div>
+          <div class="tk-grid">
+            <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#014</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">14/500</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>12</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#097</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">97/500</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--epic"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Sprite</h3><span class="issue">#003</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">3/250</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>4</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Reef Pip</h3><span class="issue">#058</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">58/999</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#140</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">140/500</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Ember Fox</h3><span class="issue">#011</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">11/100</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Sprite</h3><span class="issue">#042</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">42/250</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#061</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">61/500</span></div></div></div></a>
+          </div>
+          <div class="listbar">
+            <div class="results-count">Showing <strong>1–10</strong> of <strong>42</strong></div>
+            <div class="pg">
+              <button class="pg-arrow" disabled aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><span class="pg-gap">…</span><button>5</button>
+              <button class="pg-arrow" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+            <div class="perpage"><label>Per page</label><select><option>25</option><option>50</option><option>100</option></select></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Balances tab -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">My Tokens · Balances tab</span><span class="d">Fungible balances owned by the principal — ICRC-1 tokens and NNS (ICP). Each row shows symbol/name, a ledger-type tag, and the wallet balance with tabular alignment. Balances are <em>view-only</em> in v1 (send/swap is out of scope), so there are no row actions — that scope decision is documentation, hence it lives here in the caption, not as a banner in the surface.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+          <div class="actions">
+            <button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button>
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Wallet</div>
+              <h2>My Tokens.</h2>
+              <div class="lede">Everything owned by your connected principal — tokens, balances, and activity.</div>
+            </div>
+          </div>
+          <div class="wtabs">
+            <button>Tokens <span class="ct">42</span></button>
+            <button class="active">Balances <span class="ct">3</span></button>
+            <button>Activity</button>
+          </div>
+          <div class="panel">
+            <div class="bal">
+              <span class="ico" style="background:linear-gradient(135deg,#29abe2,#522785)">ICP</span>
+              <span class="who"><span class="n">Internet Computer</span><span class="s">ICP · <span class="tag tag--indigo">NNS</span></span></span>
+              <span class="val"><div class="amt a">128.4062</div><div class="u">ICP</div></span>
+            </div>
+            <div class="bal">
+              <span class="ico" style="background:linear-gradient(135deg,#10b981,#065f46)">CHAT</span>
+              <span class="who"><span class="n">OpenChat</span><span class="s">CHAT · <span class="tag tag--cyan">ICRC-1</span></span></span>
+              <span class="val"><div class="amt a">5,200.00</div><div class="u">CHAT</div></span>
+            </div>
+            <div class="bal">
+              <span class="ico" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">DKP</span>
+              <span class="who"><span class="n">Dragginz</span><span class="s">DKP · <span class="tag tag--cyan">ICRC-1</span></span></span>
+              <span class="val"><div class="amt a">1,250.0000</div><div class="u">DKP</div></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Activity tab -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">My Tokens · Activity tab (transaction history)</span><span class="d">Recent transfers across NFTs and fungibles, newest first, paginated like every other list. The filter switches between All / NFTs / Fungible. Each row reads as event type (received / sent / mint / burn), the asset, the counterparty (truncated principal), a timestamp, and the amount/quantity. A transaction reference is shown when the ledger provides one.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+          <div class="actions">
+            <button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button>
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Wallet</div>
+              <h2>My Tokens.</h2>
+              <div class="lede">Everything owned by your connected principal — tokens, balances, and activity.</div>
+            </div>
+          </div>
+          <div class="wtabs">
+            <button>Tokens <span class="ct">42</span></button>
+            <button>Balances <span class="ct">3</span></button>
+            <button class="active">Activity</button>
+          </div>
+          <div class="controls">
+            <div class="seg"><button class="active">All</button><button>NFTs</button><button>Fungible</button></div>
+          </div>
+          <div class="panel">
+            <div class="actrow">
+              <span class="ai ai--in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span>
+              <span class="desc"><div class="top">Received · Little Leaf #014</div><div class="meta">from <span class="mono">v8x2…91kp</span> · 22 Jun 2026, 14:02 · <span class="mono">tx 0x9f…3a</span></div></span>
+              <span class="right"><div class="a">+1</div><div class="t">NFT</div></span>
+            </div>
+            <div class="actrow">
+              <span class="ai ai--mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg></span>
+              <span class="desc"><div class="top">Mint · Swampie #221 ×12</div><div class="meta">from vendor <span class="mono">Swamp Drop</span> · 21 Jun 2026, 09:48 · <span class="mono">tx 0x71…0c</span></div></span>
+              <span class="right"><div class="a">+12</div><div class="t">stack</div></span>
+            </div>
+            <div class="actrow">
+              <span class="ai ai--out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>
+              <span class="desc"><div class="top">Sent · 25.0000 ICP</div><div class="meta">to <span class="mono">a3f0…77bc</span> · 20 Jun 2026, 18:31 · <span class="mono">tx 0x12…ee</span></div></span>
+              <span class="right"><div class="a">−25.0000</div><div class="t">ICP</div></span>
+            </div>
+            <div class="actrow">
+              <span class="ai ai--in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span>
+              <span class="desc"><div class="top">Received · 5,200.00 CHAT</div><div class="meta">from <span class="mono">9pq4…1m2n</span> · 19 Jun 2026, 11:09 · <span class="mono">tx 0x88…41</span></div></span>
+              <span class="right"><div class="a">+5,200.00</div><div class="t">CHAT</div></span>
+            </div>
+            <div class="actrow">
+              <span class="ai ai--burn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s4 1 4-6Z"/></svg></span>
+              <span class="desc"><div class="top">Burn · Reef Pip #002</div><div class="meta">permanent · 17 Jun 2026, 08:15 · <span class="mono">tx 0x4d…b9</span></div></span>
+              <span class="right"><div class="a">−1</div><div class="t">NFT</div></span>
+            </div>
+          </div>
+          <div class="listbar">
+            <div class="results-count">Showing <strong>1–5</strong> of <strong>318</strong></div>
+            <div class="pg">
+              <button class="pg-arrow" disabled aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button aria-current="page">1</button><button>2</button><button>3</button><span class="pg-gap">…</span><button>64</button>
+              <button class="pg-arrow" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+            <div class="perpage"><label>Per page</label><select><option>25</option><option>50</option><option>100</option></select></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Empty wallet -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Empty wallet</span><span class="d">No holdings and no balances for this principal. Rather than a dead end, the empty state turns into the two ways to acquire a first token — a character moment over two acquisition-path CTA cards: Launchpad (claim fresh from a live drop) and the secondary marketplace (buy from another collector), each echoing that surface's own voice. The empty state owns the character illustration; it never appears in the list bar or dense data views.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+          <div class="actions">
+            <button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Wallet</div>
+              <h2>My Tokens.</h2>
+              <div class="lede">Everything owned by your connected principal — tokens, balances, and activity.</div>
+            </div>
+          </div>
+          <div class="wtabs">
+            <button class="active">Tokens <span class="ct">0</span></button>
+            <button>Balances <span class="ct">0</span></button>
+            <button>Activity</button>
+          </div>
+          <div class="empty-wrap">
+            <img src="../style-guide/bot-images/point/IMG_5347.png" alt="" onerror="this.style.display='none'">
+            <h3>No tokens yet</h3>
+            <p>Nothing is held by this principal. There are two ways to get your first token — claim one fresh from a live drop, or pick one up from another collector. It'll appear here the moment ownership transfers.</p>
+            <div class="cta-grid">
+              <div class="cta-card">
+                <span class="ci" style="background:#d6356d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5 3 21l4.5-1.5M14 4s4 1 6 3 3 6 3 6l-6 4-7-7 4-6Z"/><circle cx="15" cy="9" r="1.6"/></svg></span>
+                <div class="ce" style="color:#d6356d">Launchpad</div>
+                <h4>Where the drops happen.</h4>
+                <p>Discover and claim live &amp; upcoming drops — the fastest way to get in on a new release, with transparent rules on every drop.</p>
+                <a class="btn btn--primary">Explore the Launchpad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              </div>
+              <div class="cta-card">
+                <span class="ci" style="background:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span>
+                <div class="ce" style="color:#2563EB">Secondary marketplace</div>
+                <h4>Trade after the drop.</h4>
+                <p>Buy collection items listed by other collectors once a launch is over — discover, compare and buy with full activity in context.</p>
+                <a class="btn btn--ghost">Browse the marketplace <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Loading -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Loading</span><span class="d">Holdings resolving from ledger queries. Skeleton cards hold the grid's shape so layout doesn't jump when data lands. Balances and Activity use the same skeleton treatment within their panels for consistency.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+          <div class="actions">
+            <button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Wallet</div>
+              <h2>My Tokens.</h2>
+              <div class="lede">Everything owned by your connected principal — tokens, balances, and activity.</div>
+            </div>
+          </div>
+          <div class="wtabs">
+            <button class="active">Tokens</button>
+            <button>Balances</button>
+            <button>Activity</button>
+          </div>
+          <div class="skel-grid">
+            <div class="skel-card"><div class="sk-art skel"></div><div class="sk-meta"><div class="sk-line skel" style="width:70%"></div><div class="sk-line skel" style="width:45%"></div></div></div>
+            <div class="skel-card"><div class="sk-art skel"></div><div class="sk-meta"><div class="sk-line skel" style="width:60%"></div><div class="sk-line skel" style="width:50%"></div></div></div>
+            <div class="skel-card"><div class="sk-art skel"></div><div class="sk-meta"><div class="sk-line skel" style="width:75%"></div><div class="sk-line skel" style="width:40%"></div></div></div>
+            <div class="skel-card"><div class="sk-art skel"></div><div class="sk-meta"><div class="sk-line skel" style="width:55%"></div><div class="sk-line skel" style="width:48%"></div></div></div>
+            <div class="skel-card"><div class="sk-art skel"></div><div class="sk-meta"><div class="sk-line skel" style="width:68%"></div><div class="sk-line skel" style="width:42%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Unauthenticated guard -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Unauthenticated — browse free, sign in to collect</span><span class="d">The wallet needs a principal to resolve holdings, but the unauthenticated state isn't a dead end. It makes clear that browsing the Launchpad and marketplace is open to everyone — signing in is only needed to claim, buy, or see tokens you already own. A character welcome plus a prominent Connect, with the two no-sign-in browse paths beneath. Connecting authenticates and routes straight back to the wallet.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+        </div>
+        <div class="section">
+          <div class="empty-wrap">
+            <img src="../style-guide/bot-images/hi/IMG_5266.png" alt="" onerror="this.style.display='none'">
+            <h3>Browse freely — sign in to collect</h3>
+            <p>Anyone can explore drops and the marketplace without an account. Connect your identity when you're ready to claim, buy, or see the tokens you already own.</p>
+            <a class="btn btn--primary" style="padding:.85rem 1.4rem;margin-top:var(--s-2)">Connect identity</a>
+            <div class="cta-grid">
+              <div class="cta-card">
+                <span class="ci" style="background:#d6356d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5 3 21l4.5-1.5M14 4s4 1 6 3 3 6 3 6l-6 4-7-7 4-6Z"/><circle cx="15" cy="9" r="1.6"/></svg></span>
+                <div class="ce" style="color:#d6356d">Launchpad · no sign-in</div>
+                <h4>See what's dropping.</h4>
+                <p>Explore live and upcoming drops freely. You only sign in at the moment you claim.</p>
+                <a class="btn btn--ghost">Explore the Launchpad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              </div>
+              <div class="cta-card">
+                <span class="ci" style="background:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span>
+                <div class="ce" style="color:#2563EB">Marketplace · no sign-in</div>
+                <h4>Window-shop the market.</h4>
+                <p>Browse collector listings and activity freely. Sign in only when you want to buy.</p>
+                <a class="btn btn--ghost">Browse the marketplace <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Token detail — single -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Token detail — single holding (owned)</span><span class="d">The minted-token viewer: this is the same read-only component as the creator-side "Single minted copy" view (manage-minted gallery, frame 03) and the Live definition view — reused here with the wallet's owner actions. Media gallery with clickable thumbnails (asset shown large, read-only), identity (collection, token id, ledger), rarity/score, attributes, and claim provenance. Footer actions are the two shipped owner actions — Transfer and Burn. Detail must resolve against the active principal's holdings; a link to a token you don't own lands on the guard in frame 12.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>My Tokens</a><span class="sep">/</span><span class="here">Little Leaf #014</span></div>
+          <div class="actions">
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="detail-grid">
+            <div>
+              <div class="asset-main" style="border:6px solid #2F80ED"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div>
+              <div class="asset-thumbs">
+                <button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></button>
+                <button class="asset-thumb"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></button>
+                <button class="asset-thumb"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></button>
+              </div>
+              <p class="tiny" style="margin-top:.6rem">Main asset shown large. Click a thumbnail to view it — assets are read-only.</p>
+            </div>
+            <div class="dcard">
+              <div class="dhead">
+                <div>
+                  <h3>Little Leaf #014</h3>
+                  <div class="sub">Little Leaf Guardians <span class="tag tag--green">Rare</span> <span class="tag">Score 812</span></div>
+                </div>
+                <span class="tag tag--green">Owned</span>
+              </div>
+              <div class="kv"><span class="k">Token ID</span><span class="v mono">leaf-014</span></div>
+              <div class="kv"><span class="k">Ledger canister</span><span class="v mono">rrkah…fqaaq</span></div>
+              <div class="kv"><span class="k">Holding</span><span class="v">Single (1 of 1)</span></div>
+              <div class="kv"><span class="k">Acquired</span><span class="v">22 Jun 2026 · claim</span></div>
+              <div class="dsec">
+                <span class="eyebrow">Description</span>
+                <p class="about">A Little Leaf Guardian roused from the deep moss after the first spring rain. Keepers of the forest floor, they trade in dewdrops and quiet favours. Flavour and lore are written by the creator and travel with the token wherever it goes.</p>
+              </div>
+              <div class="dsec">
+                <span class="eyebrow">Attributes</span>
+                <div class="attrs">
+                  <div class="attr"><div class="t">Body</div><div class="v">Mossback</div></div>
+                  <div class="attr"><div class="t">Eyes</div><div class="v">Dewdrop</div></div>
+                  <div class="attr"><div class="t">Crown</div><div class="v">Fern Sprout</div></div>
+                  <div class="attr"><div class="t">Aura</div><div class="v">Verdant</div></div>
+                </div>
+              </div>
+              <div class="dsec">
+                <span class="eyebrow">Provenance</span>
+                <div class="kv" style="border-top:0;padding-top:0"><span class="k">Claimed from</span><span class="v">Leaf Drop · vendor</span></div>
+                <div class="kv"><span class="k">Original mint</span><span class="v mono">tx 0x9f…3a</span></div>
+              </div>
+              <div class="dactions">
+                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Transfer</button>
+                <button class="btn btn--danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s4 1 4-6Z"/></svg> Burn</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 · Token detail — stack -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Token detail — stack holding (owned)</span><span class="d">A stack of identical minted copies held as one holding. Same read-only detail, with the holding line showing the quantity (×12). A <strong>Stack actions</strong> button sits alongside Transfer and Burn and opens split / unstack / merge for this stack (frame 13); combining separate holdings and compacting all stacks happen from the grid's select mode (frame 14).</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>My Tokens</a><span class="sep">/</span><span class="here">Swampie #221</span></div>
+          <div class="actions">
+            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="detail-grid">
+            <div>
+              <div class="asset-main" style="border:6px solid #E6E6E6;background:linear-gradient(135deg,#60a5fa,#1e3a8a)"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div>
+              <div class="asset-thumbs">
+                <button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></button>
+              </div>
+            </div>
+            <div class="dcard">
+              <div class="dhead">
+                <div>
+                  <h3>Swampie #221</h3>
+                  <div class="sub">Swampies <span class="tag">Common</span></div>
+                </div>
+                <span class="tag tag--cyan">Stack · ×12</span>
+              </div>
+              <div class="kv"><span class="k">Token ID</span><span class="v mono">swmp-221</span></div>
+              <div class="kv"><span class="k">Ledger canister</span><span class="v mono">2ouva…cai</span></div>
+              <div class="kv"><span class="k">Holding</span><span class="v">Stack · 12 copies</span></div>
+              <div class="kv"><span class="k">Acquired</span><span class="v">21 Jun 2026 · mint</span></div>
+              <div class="dsec">
+                <span class="eyebrow">Description</span>
+                <p class="about">Swampies are the bog's sleepy locals — happiest half-sunk under a lily pad with one eye open. This one comes as a stack of identical copies. Creator-written flavour travels with every copy.</p>
+              </div>
+              <div class="dsec">
+                <span class="eyebrow">Attributes</span>
+                <div class="attrs">
+                  <div class="attr"><div class="t">Body</div><div class="v">Bog Green</div></div>
+                  <div class="attr"><div class="t">Hat</div><div class="v">Lily Pad</div></div>
+                  <div class="attr"><div class="t">Mood</div><div class="v">Sleepy</div></div>
+                </div>
+              </div>
+              <div class="dactions">
+                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 12l10 5 10-5"/><path d="M2 17l10 5 10-5"/></svg> Stack actions</button>
+                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Transfer</button>
+                <button class="btn btn--danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s4 1 4-6Z"/></svg> Burn</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 · Transfer modal states -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Transfer — modal &amp; inline validation</span><span class="d">Transfer asks for a recipient principal and confirms in one modal. Validation is inline at the field: a malformed principal and a self-transfer are both rejected before the destructive confirm is reachable. The asset being moved is shown so there's no ambiguity about which holding leaves the wallet.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Transfer token</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="mini-asset"><span class="mart"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · single</div></span></div>
+              <div>
+                <label class="flabel">Recipient principal</label>
+                <input class="input" placeholder="Enter a principal ID" value="b7n2-xk4qd-…-9fua-cai">
+                <div class="hint tiny" style="margin-top:.4rem">Ownership moves immediately on confirm. There's no undo.</div>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Confirm transfer</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Transfer token</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="mini-asset"><span class="mart"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · single</div></span></div>
+              <div>
+                <label class="flabel">Recipient principal</label>
+                <input class="input err" value="not-a-principal">
+                <div class="field-err"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Recipient principal is invalid.</div>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled>Confirm transfer</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Transfer token</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="mini-asset"><span class="mart"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · single</div></span></div>
+              <div>
+                <label class="flabel">Recipient principal</label>
+                <input class="input err" value="k1m9…7uvw (you)">
+                <div class="field-err"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> You can't transfer a token to yourself.</div>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled>Confirm transfer</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Transfer result -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Transfer — success &amp; stale-state conflict</span><span class="d">On success the token leaves the wallet list and the modal confirms. If ownership or listing state changed between page load and confirm, the mutation fails safely (pre-submit revalidation) rather than acting on stale state — the wallet is refreshed and the user retries. Submits are single-flight: the confirm button disables while a transfer is in flight.</span></div>
+      <div class="stage">
+        <div class="modal-grid" style="max-width:760px">
+          <div class="modal-card">
+            <header><h4>Transfer complete</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>Token transferred successfully.</strong> Little Leaf #014 has moved to <span class="mono">b7n2…cai</span> and is no longer in your wallet.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--primary">Done</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Transfer token</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="note note--err"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>Transfer failed because the token state changed.</strong> Refresh and try again.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Refresh &amp; retry</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 · Burn confirm -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Burn — destructive confirm</span><span class="d">Burn is permanent and unrecoverable, so it's an explicit destructive confirm with a typed acknowledgement. The ledger keeps a Burned record for audit, but the holding leaves the wallet for good. The primary action is styled as danger and stays disabled until the confirm phrase is typed.</span></div>
+      <div class="stage">
+        <div class="modal-card single">
+          <header><h4>Burn token</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · single</div></span></div>
+            <div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Burning is permanent.</strong> This token can't be recovered. A <em>Burned</em> record stays in the ledger for audit, but the token is gone from your wallet.</div></div>
+            <div>
+              <label class="flabel">Type BURN to confirm</label>
+              <input class="input" placeholder="BURN">
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger" disabled>Burn permanently</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 · Detail guard & error states -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Detail guards &amp; error states</span><span class="d">The safe fallbacks for a detail route: an invalid or untrusted token link, a link to a token the active principal doesn't own, and a stale link to a token that's since been burned. Each is a calm dead-end with a single route back to the wallet — never a broken or half-rendered detail. Shown together here as a reference set on grey.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Invalid token link</h4></header>
+            <div class="mbody">
+              <div class="note note--err"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span><div>This token link is invalid or the canister isn't recognised. Nothing to show.</div></div>
+              <a class="btn btn--primary" style="align-self:flex-start">Back to My Tokens</a>
+            </div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Not your token</h4></header>
+            <div class="mbody">
+              <div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-9.3-5"/><path d="M3 3l18 18"/><path d="M6.6 6.6A6 6 0 0 0 6 8c0 7-3 9-3 9h13"/></svg></span><div>This token isn't held by your principal, so its wallet detail isn't available to you.</div></div>
+              <a class="btn btn--primary" style="align-self:flex-start">Back to My Tokens</a>
+            </div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Token burned</h4></header>
+            <div class="mbody">
+              <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s4 1 4-6Z"/></svg></span><div>This token was burned and is no longer a holding. The ledger keeps the <span class="mono">Burned</span> record for history.</div></div>
+              <a class="btn btn--primary" style="align-self:flex-start">Back to My Tokens</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Stack actions modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">13</span><span class="t">Stack actions — split · unstack · merge</span><span class="d">On a stackable holding, the Stack actions button opens this modal. Split peels an amount into a new stack; Unstack turns copies into individual single holdings (one or all); Merge folds two stacks of the same token held by the same principal into one. Listed/locked holdings are blocked until the listing is cancelled. Combining separate holdings and compacting live in the grid (frame 14).</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Stack actions · Swampie #221</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="hold"><span class="th"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"><span class="stackn">×12</span></span><div><div class="hn">Swampie #221</div><div class="hd">Stackable · 12 in this stack</div></div></div>
+              <div class="seg"><button class="active">Split</button><button>Unstack</button><button>Merge</button></div>
+            </div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Split stack</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div><label class="flabel">Amount to split off</label><input class="input" type="number" value="4" style="max-width:140px"><div class="hint">Creates a new stack of 4; this stack keeps 8.</div></div>
+              <div class="kv"><span class="k">This stack</span><span class="v">12 → 8</span></div>
+              <div class="kv"><span class="k">New stack</span><span class="v">×4</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Split off 4</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Unstack</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="seg"><button class="active">Unstack 1</button><button>Unstack all</button></div>
+              <p class="tiny" style="margin:0">Turns stacked copies into individual single holdings you can transfer or burn one by one.</p>
+              <div class="kv"><span class="k">This stack</span><span class="v">12 → 11</span></div>
+              <div class="kv"><span class="k">New singles</span><span class="v">×1</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Unstack 1</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Merge stacks</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <p class="tiny" style="margin:0">You hold 2 stacks of <strong>Swampie #221</strong> — fold them into one.</p>
+              <div class="kv"><span class="k">Stack A</span><span class="v">×12</span></div>
+              <div class="kv"><span class="k">Stack B</span><span class="v">×4</span></div>
+              <div class="kv"><span class="k">After merge</span><span class="v">×16</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Merge into ×16</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 · Combine & compact (multi-select) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14</span><span class="t">Combine &amp; compact — grid multi-select</span><span class="d">From the Tokens grid, select mode reveals corner checkboxes. Tick identical, unlocked holdings of the same token to Combine them into one stack, or Compact stacks to fold every eligible stack of that token at once (the V1 interaction; drag-stack-onto-stack does the same merge directly). Only identical, unlocked copies combine — mixed or listed selections are rejected with a clear reason.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><span class="here">My Tokens</span></div>
+          <div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Wallet · select</div>
+              <h2>My Tokens.</h2>
+              <div class="lede">Combine identical copies into a stack, or compact all eligible stacks of a token.</div>
+            </div>
+          </div>
+          <div class="bulkbar">
+            <span class="b-count">4 selected</span>
+            <span class="tiny" style="color:rgba(255,255,255,.72)">Swampie #221 · identical &amp; unlocked</span>
+            <span class="b-actions">
+              <button class="bb">Combine into stack</button>
+              <button class="bb">Compact stacks</button>
+              <button class="bb bb--clear">Clear</button>
+            </span>
+          </div>
+          <div class="tk-grid">
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>12</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Stack of 12</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>4</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Stack of 4</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Single</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Single</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--rare"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#014</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">14/500</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--epic"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Sprite</h3><span class="issue">#003</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">3/250</span></div></div></div></a>
+          </div>
+          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Only identical, unlocked copies of the same token can be combined. Tokens listed for sale must have the listing cancelled first. Greyed checkboxes here are eligible but unticked.</div></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

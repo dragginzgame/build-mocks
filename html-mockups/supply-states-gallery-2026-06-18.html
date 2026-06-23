@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Supply · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .hide { display:none !important; }
+
+  /* ---- Chrome: breadcrumb bar (the only white strip up top) ---- */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb a:hover { color:var(--text-primary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s, border-color .15s; flex:none; }
+  .notif-bell:hover { background:var(--surface-canvas-alt); border-color:var(--border-strong); }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+
+  /* ---- Header on grey (no white panel — per page-shell spec) ---- */
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head .eyebrow { margin-bottom:.375rem; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:none; }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .stage-badge--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .stage-badge--review{ background:rgba(99,102,241,.12); color:var(--stage-review); }
+  .stage-badge--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+
+  /* ---- Cards & form fields (studio standard) ---- */
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h2 { font-size:var(--text-2xl); }
+  .card__intro { color:var(--text-secondary); font-size:var(--text-sm); margin:0 0 var(--s-5); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  .input:disabled { background:var(--surface-canvas-alt); color:var(--text-muted); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+
+  .locked { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .locked__head { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); padding:var(--s-4) var(--s-5); }
+  .locked .r { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.875rem var(--s-5); border-top:1px solid var(--border-soft); font-size:var(--text-base); color:var(--text-secondary); }
+  .locked .r .v { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+
+  /* ---- Edition-mode radio cards ---- */
+  .mode-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--s-3); }
+  .mode-card { position:relative; display:flex; flex-direction:column; gap:var(--s-2); padding:var(--s-4) var(--s-4) var(--s-4) 2.75rem; border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); transition:border-color .15s, background .15s, box-shadow .15s; }
+  .mode-card.active { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .mode-card .mdot { position:absolute; top:18px; left:16px; width:18px; height:18px; border:2px solid var(--text-muted); border-radius:50%; background:transparent; }
+  .mode-card.active .mdot { border-color:var(--text-primary); }
+  .mode-card.active .mdot::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .mode-card .thumb { width:48px; height:48px; border-radius:var(--r-2); overflow:hidden; }
+  .mode-card .thumb svg { width:100%; height:100%; display:block; }
+  .mode-card .mc-ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .mode-card .mc-desc { color:var(--text-secondary); font-size:var(--text-xs); line-height:1.45; }
+  .mode-card .most { position:absolute; top:12px; right:12px; font-family:var(--font-emphasis); font-size:var(--text-3xs); font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-secondary); background:var(--surface-canvas-deep); padding:2px 8px; border-radius:var(--r-pill); }
+
+  /* ---- Clone-mode dependency banner ---- */
+  .dep { display:flex; align-items:center; gap:var(--s-3); margin-top:var(--s-5); padding:var(--s-3) var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); font-size:var(--text-sm); flex-wrap:wrap; }
+  .dep .ic { width:22px; height:22px; border-radius:6px; display:grid; place-items:center; background:var(--surface-canvas-deep); flex:none; font-weight:800; }
+  .dep a { margin-left:auto; font-weight:700; text-decoration:underline; }
+  .dep.on { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.08); color:#166534; }
+  .dep.on .ic { background:rgba(16,185,129,.22); color:#166534; }
+  .dep.off { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.1); color:#92400e; }
+  .dep.off .ic { background:rgba(245,158,11,.22); color:#92400e; }
+
+  /* ---- Capacity: compact one-line fields ---- */
+  .cap-fields { display:flex; flex-wrap:wrap; align-items:flex-end; gap:var(--s-4); }
+  .cap-field { display:flex; flex-direction:column; flex:1 1 170px; min-width:140px; }
+  .cap-field .flabel { margin-bottom:.375rem; }
+  .cap-update { align-self:flex-end; }
+  .cap-help { margin-top:var(--s-3); }
+  .cap-note { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .cap-note strong { color:var(--text-primary); font-weight:700; }
+  .cap-note a { color:var(--info); font-weight:700; }
+  .cap-note a:hover { text-decoration:underline; }
+
+  /* ---- Display defaults + preview ---- */
+  .disp-grid { display:grid; grid-template-columns:1fr 280px; gap:var(--s-8); align-items:start; }
+  @media (max-width:880px){ .disp-grid { grid-template-columns:1fr; } }
+  .fgroup { margin-bottom:var(--s-6); }
+  .fgroup:last-child { margin-bottom:0; }
+  .fg-ttl { display:flex; align-items:center; gap:.5rem; font-family:var(--font-emphasis); font-size:var(--text-sm); font-weight:700; margin-bottom:.25rem; }
+  .fg-ttl .sub { font-weight:600; color:var(--text-muted); font-size:var(--text-2xs); }
+  .fg-help { color:var(--text-secondary); font-size:var(--text-xs); margin:0 0 var(--s-3); max-width:540px; }
+  .opts { display:flex; flex-direction:column; gap:.5rem; }
+  .opt { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-4); border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); transition:border-color .15s, background .15s, box-shadow .15s; }
+  .opt.active { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .opt .odot { width:18px; height:18px; border:2px solid var(--text-muted); border-radius:50%; flex:none; position:relative; }
+  .opt.active .odot { border-color:var(--text-primary); }
+  .opt.active .odot::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .opt .olbl { font-size:var(--text-base); font-weight:700; flex:1; }
+  .opt .osample { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:var(--surface-canvas-deep); padding:.25rem .625rem; border-radius:var(--r-pill); }
+  .opt[data-disabled="true"] { opacity:.45; }
+  .opt-note { margin-top:.5rem; font-size:var(--text-xs); color:var(--text-muted); font-style:italic; }
+
+  .prev-wrap { position:sticky; top:20px; }
+  .prev-label { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; }
+  .prev-label .ctx { color:var(--text-muted); font-size:var(--text-3xs); }
+  .tok { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; width:100%; max-width:260px; }
+  .tok .art { aspect-ratio:1/1; background:linear-gradient(135deg,#d6356d,#831843); }
+  .tok .art svg { width:100%; height:100%; display:block; }
+  .tok .meta { padding:var(--s-3) var(--s-4) var(--s-4); }
+  .tok .top { display:flex; align-items:baseline; justify-content:space-between; gap:.625rem; }
+  .tok .nm { font-family:var(--font-display); font-size:var(--text-lg); text-transform:uppercase; }
+  .tok .iss { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); }
+  .tok .mrow { margin-top:.25rem; font-size:var(--text-xs); }
+  .tok .mrow .ls { color:var(--text-muted); font-weight:700; text-transform:uppercase; font-size:var(--text-3xs); letter-spacing:.08em; margin-right:.375rem; }
+  .tok .mrow .vs { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .tok .mrow .soft { color:var(--text-secondary); font-style:italic; }
+
+  /* ---- Gallery scaffold ---- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Supply — states &amp; stages.</h1>
+      <p>The collection's supply policy: edition mode, Max Supply, copies per token, and issue/copy-number display. Every collection has a Max Supply — <strong>1,000 by default for now</strong> (we expect to raise it as demand grows). Two Draft states — Unique pieces and Editions — then the locked Live view. Framed on the studio page shell: breadcrumb on white, header on grey.</p>
+    </header>
+
+    <!-- 01 SUPPLY · Draft — Unique pieces -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Supply · Draft — Unique pieces</span><span class="d">One-of-one collection: every token is unique, no copies. Only Max Supply to set; no edition number or stack behaviour.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Supply</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Supply</div>
+              <h2>Supply.</h2>
+              <p class="lede">Every token is a one-of-one. Set how many unique tokens the collection can ever hold.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+              <button class="btn btn--ghost">Discard</button>
+              <button class="btn btn--primary">Save changes</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>1 · Edition mode</h2><span class="tag tag--amber">Locks at Live</span></div>
+            <p class="card__intro">The foundational choice. It determines what fields appear below and whether Clone Mode is enabled in Guards.</p>
+            <div class="mode-cards">
+              <div class="mode-card active">
+                <span class="mdot"></span>
+                <span class="most">Most common</span>
+                <span class="thumb"><svg viewBox="0 0 56 56"><rect x="6" y="6" width="44" height="44" rx="6" fill="#0f172a"/><text x="28" y="34" text-anchor="middle" fill="#fde047" font-family="Anton" font-size="14">1/1</text></svg></span>
+                <span class="mc-ttl">Unique pieces</span>
+                <span class="mc-desc">Each token is one-of-one — no copies. Clone Mode stays off.</span>
+              </div>
+              <div class="mode-card">
+                <span class="mdot"></span>
+                <span class="thumb"><svg viewBox="0 0 56 56"><rect x="4" y="14" width="22" height="38" rx="4" fill="#0f172a"/><text x="15" y="38" text-anchor="middle" fill="#fde047" font-family="Anton" font-size="10">1/1</text><rect x="30" y="14" width="22" height="38" rx="4" fill="#831843"/><text x="41" y="38" text-anchor="middle" fill="#fef3c7" font-family="Anton" font-size="10">×N</text></svg></span>
+                <span class="mc-ttl">Editions <span style="font-weight:400;color:var(--text-muted)">· copies allowed</span></span>
+                <span class="mc-desc">Copies allowed. Each token sets its own supply — one-of-one or a numbered edition — so a collection can be all editions or a mix. Clone Mode is enabled automatically.</span>
+              </div>
+            </div>
+            <div class="dep off">
+              <span class="ic">!</span>
+              <span><strong>Clone Mode</strong> stays off — each token is one-of-one.</span>
+              <a href="#">Jump to Guards →</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>2 · Collection capacity</h2><span class="tag tag--amber">Locks at Live</span></div>
+            <p class="card__intro">Every collection has a <strong>Max Supply</strong> — the hard limit on how many tokens (unique or copies) can ever be minted, up to your plan limit. What you set alongside it depends on the edition mode.</p>
+            <div class="cap-fields">
+              <div class="cap-field"><label class="flabel">Max supply</label><input class="input" type="number" min="1" max="1000" value="1000"></div>
+              <button class="btn btn--primary cap-update">Update</button>
+            </div>
+            <p class="hint cap-help">Each token is a one-of-one — there are no copies. Set how many unique tokens the collection can ever contain (up to your plan limit of 1,000). Lowering it permanently reduces how many can ever be released.</p>
+            <div class="cap-note"><strong>1,000</strong> is the default cap for now — we expect to raise it as demand grows. Need more today? <a href="#">Talk to us on Discord ↗</a></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>3 · Edition display defaults</h2><span class="tag tag--green">Editable in Live</span></div>
+            <p class="card__intro">How tokens identify themselves on the public card. Collection-wide defaults — vendors can override before going live.</p>
+            <div class="disp-grid">
+              <div>
+                <div class="fgroup">
+                  <div class="fg-ttl">Issue number</div>
+                  <p class="fg-help">The token's permanent identifier within the collection (e.g. the 7th token to go Live).</p>
+                  <div class="opts">
+                    <div class="opt"><span class="odot"></span><span class="olbl">Hidden</span><span class="osample">no #</span></div>
+                    <div class="opt active"><span class="odot"></span><span class="olbl">Show issue number</span><span class="osample">#7</span></div>
+                    <div class="opt"><span class="odot"></span><span class="olbl">Show issue and supply cap</span><span class="osample">#7 / 100</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="prev-wrap">
+                <div class="prev-label"><span>Public preview</span><span class="ctx">what collectors see</span></div>
+                <div class="tok">
+                  <div class="art">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                      <defs><pattern id="dots1" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="0.7" fill="#fef3c7" opacity="0.6"/></pattern></defs>
+                      <rect width="200" height="200" fill="url(#dots1)"/>
+                      <circle cx="100" cy="78" r="32" fill="#831843" stroke="#fef3c7" stroke-width="2"/>
+                      <rect x="72" y="108" width="56" height="80" fill="#9d174d" stroke="#fef3c7" stroke-width="2"/>
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="top"><h3 class="nm">Sample token</h3><span class="iss">#7</span></div>
+                    <div class="mrow"><span class="soft">1 of 1</span></div>
+                  </div>
+                </div>
+                <p class="tiny" style="margin-top:.625rem;font-style:italic;max-width:260px">Mint progress (e.g. "5/50 minted") only appears in the Creator Studio view — collectors never see it here.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 SUPPLY · Draft — Editions (copies allowed) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Supply · Draft — Editions (copies allowed)</span><span class="d">Copies are allowed; each token sets its own supply — 1/1 or a numbered edition. Set the per-token copy ceiling and Max Supply. (Replaces the old Multi-copy / Mixed split — they were the same mode.)</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Supply</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Supply</div>
+              <h2>Supply.</h2>
+              <p class="lede">Copies are allowed. Each token sets its own supply — one-of-one or a numbered edition — so a collection can be all editions or a mix. Set the per-token copy ceiling and the total Max Supply.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+              <button class="btn btn--ghost">Discard</button>
+              <button class="btn btn--primary">Save changes</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>1 · Edition mode</h2><span class="tag tag--amber">Locks at Live</span></div>
+            <p class="card__intro">The foundational choice. It determines what fields appear below and whether Clone Mode is enabled in Guards.</p>
+            <div class="mode-cards">
+              <div class="mode-card">
+                <span class="mdot"></span>
+                <span class="most">Most common</span>
+                <span class="thumb"><svg viewBox="0 0 56 56"><rect x="6" y="6" width="44" height="44" rx="6" fill="#0f172a"/><text x="28" y="34" text-anchor="middle" fill="#fde047" font-family="Anton" font-size="14">1/1</text></svg></span>
+                <span class="mc-ttl">Unique pieces</span>
+                <span class="mc-desc">Each token is one-of-one — no copies. Clone Mode stays off.</span>
+              </div>
+              <div class="mode-card active">
+                <span class="mdot"></span>
+                <span class="thumb"><svg viewBox="0 0 56 56"><rect x="4" y="14" width="22" height="38" rx="4" fill="#0f172a"/><text x="15" y="38" text-anchor="middle" fill="#fde047" font-family="Anton" font-size="10">1/1</text><rect x="30" y="14" width="22" height="38" rx="4" fill="#831843"/><text x="41" y="38" text-anchor="middle" fill="#fef3c7" font-family="Anton" font-size="10">×N</text></svg></span>
+                <span class="mc-ttl">Editions <span style="font-weight:400;color:var(--text-muted)">· copies allowed</span></span>
+                <span class="mc-desc">Copies allowed. Each token sets its own supply — one-of-one or a numbered edition — so a collection can be all editions or a mix. Clone Mode is enabled automatically.</span>
+              </div>
+            </div>
+            <div class="dep on">
+              <span class="ic">✓</span>
+              <span><strong>Clone Mode</strong> will be enabled in Guards when you save — required when copies are allowed.</span>
+              <a href="#">Jump to Guards →</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>2 · Collection capacity</h2><span class="tag tag--amber">Locks at Live</span></div>
+            <p class="card__intro">Every collection has a <strong>Max Supply</strong> — the hard limit on how many tokens (unique or copies) can ever be minted, up to your plan limit. What you set alongside it depends on the edition mode.</p>
+            <div class="cap-fields">
+              <div class="cap-field"><label class="flabel">Max copies per token</label><input class="input" type="number" min="1" value="20"></div>
+              <div class="cap-field"><label class="flabel">Max supply</label><input class="input" type="number" min="1" max="1000" value="1000"></div>
+              <button class="btn btn--primary cap-update">Update</button>
+            </div>
+            <p class="hint cap-help">Max copies per token is the ceiling each token can choose up to — any individual token can still be 1/1. Max Supply is the hard limit on total tokens (across all copies) ever minted, currently up to 1,000.</p>
+            <div class="cap-note"><strong>1,000</strong> is the default cap for now — we expect to raise it as demand grows. Need more today? <a href="#">Talk to us on Discord ↗</a></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h2>3 · Edition display defaults</h2><span class="tag tag--green">Editable in Live</span></div>
+            <p class="card__intro">How tokens identify themselves on the public card. Collection-wide defaults — vendors can override before going live.</p>
+            <div class="disp-grid">
+              <div>
+                <div class="fgroup">
+                  <div class="fg-ttl">Issue number</div>
+                  <p class="fg-help">The token's permanent identifier within the collection (e.g. the 7th token to go Live).</p>
+                  <div class="opts">
+                    <div class="opt"><span class="odot"></span><span class="olbl">Hidden</span><span class="osample">no #</span></div>
+                    <div class="opt active"><span class="odot"></span><span class="olbl">Show issue number</span><span class="osample">#7</span></div>
+                    <div class="opt"><span class="odot"></span><span class="olbl">Show issue and supply cap</span><span class="osample">#7 / 100</span></div>
+                  </div>
+                </div>
+                <div class="fgroup">
+                  <div class="fg-ttl">Edition number <span class="sub">(copy serial number)</span></div>
+                  <p class="fg-help">Whether collectors can see which numbered copy they hold (e.g. <span class="mono">Edition 4/50</span>). Early copies in a print run typically command a premium.</p>
+                  <div class="opts">
+                    <div class="opt"><span class="odot"></span><span class="olbl">Hidden</span><span class="osample">—</span></div>
+                    <div class="opt active"><span class="odot"></span><span class="olbl">Show edition number</span><span class="osample">Edition 4/20</span></div>
+                  </div>
+                </div>
+                <div class="fgroup">
+                  <div class="fg-ttl">Stack behaviour <span class="tag tag--indigo">WIP spec</span></div>
+                  <p class="fg-help">How identical copies appear in wallets. The inventory stack-interaction model is not yet finalized.</p>
+                  <div class="opts">
+                    <div class="opt" data-disabled="true"><span class="odot"></span><span class="olbl">Allow stacking</span><span class="osample">×10</span></div>
+                    <div class="opt active"><span class="odot"></span><span class="olbl">Always individual</span><span class="osample">1, 2, 3…</span></div>
+                  </div>
+                  <p class="opt-note">"Allow stacking" is fungible-style (coins, ammo, consumables). "Always individual" is collectible-style (numbered prints). Showing edition numbers forces "Always individual".</p>
+                </div>
+              </div>
+              <div class="prev-wrap">
+                <div class="prev-label"><span>Public preview</span><span class="ctx">what collectors see</span></div>
+                <div class="tok">
+                  <div class="art">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                      <defs><pattern id="dots2" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="0.7" fill="#fef3c7" opacity="0.6"/></pattern></defs>
+                      <rect width="200" height="200" fill="url(#dots2)"/>
+                      <circle cx="100" cy="78" r="32" fill="#831843" stroke="#fef3c7" stroke-width="2"/>
+                      <rect x="72" y="108" width="56" height="80" fill="#9d174d" stroke="#fef3c7" stroke-width="2"/>
+                    </svg>
+                  </div>
+                  <div class="meta">
+                    <div class="top"><h3 class="nm">Sample token</h3><span class="iss">#7</span></div>
+                    <div class="mrow"><span class="ls">Per token</span><span class="soft">1 of 1 or Edition 4/20</span></div>
+                  </div>
+                </div>
+                <p class="tiny" style="margin-top:.625rem;font-style:italic;max-width:260px">Mint progress (e.g. "5/50 minted") only appears in the Creator Studio view — collectors never see it here.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 03 SUPPLY · Live (read-only) — Unique pieces -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Supply · Live (read-only) — Unique pieces</span><span class="d">A collection launched on Unique pieces: every token is 1/1, no copies. Edition mode and Max Supply are locked; issue-number display stays editable. No copy/edition numbering.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Forest Hares</a><span class="sep">/</span><span class="here">Supply</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Supply</div>
+              <h2>Supply. <span class="tag tag--green">Locked at Live</span></h2>
+              <p class="lede">The scarcity buyers bought into — locked when the collection went Live.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+              <button class="btn btn--ghost">View public page</button>
+            </div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live on <strong>Unique pieces</strong> — every token is one-of-one. Edition mode and Max Supply are locked. There are no copies, so there's no copy or edition numbering.</div></div>
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Edition mode</span><span class="v">Unique pieces</span></div>
+            <div class="r"><span>Max supply <span style="color:var(--text-muted);font-weight:400">· total ever mintable</span></span><span class="v">500</span></div>
+            <div class="r"><span>Copies</span><span class="v">None — every token is 1/1</span></div>
+            <div class="r"><span>Minted so far</span><span class="v">318 / 500</span></div>
+            <div class="r"><span>Issue numbers</span><span class="v">Assigned &amp; retired on Review → Live</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h2>Display defaults <span class="tag tag--green">Still editable</span></h2></div>
+            <div class="grid2">
+              <div><label class="flabel">Issue-number display</label><select class="input"><option>Hidden</option><option selected>Show issue only</option><option>Show issue + supply cap</option></select></div>
+            </div>
+            <div class="hint">No copies means no copy-number display. Issue-number changes apply to future vendor listings only — they don't alter any minted token's locked identity.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 SUPPLY · Live (read-only) — Editions -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Supply · Live (read-only) — Editions</span><span class="d">A collection launched on Editions: edition mode, Max Supply and per-token copy limits lock at Live. Issue/copy display defaults stay editable for future listings.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Supply</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Supply</div>
+              <h2>Supply. <span class="tag tag--green">Locked at Live</span></h2>
+              <p class="lede">The scarcity buyers bought into — locked when the collection went Live.</p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span>
+              <button class="btn btn--ghost">View public page</button>
+            </div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div>This collection is Live. Edition mode, Max Supply and copy limits are locked so buyers can trust the scarcity they bought into. Issue/copy display defaults stay editable for future vendor listings.</div></div>
+          <div class="locked">
+            <div class="locked__head">Locked at Live (read-only)</div>
+            <div class="r"><span>Edition mode</span><span class="v">Editions (copies allowed)</span></div>
+            <div class="r"><span>Max copies per token</span><span class="v">20</span></div>
+            <div class="r"><span>Max supply <span style="color:var(--text-muted);font-weight:400">· total ever mintable</span></span><span class="v">1,000</span></div>
+            <div class="r"><span>Stack behaviour</span><span class="v">Always individual</span></div>
+            <div class="r"><span>Minted so far</span><span class="v">612 / 1,000</span></div>
+            <div class="r"><span>Issue numbers</span><span class="v">Assigned &amp; retired on Review → Live</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h2>Display defaults <span class="tag tag--green">Still editable</span></h2></div>
+            <div class="grid2">
+              <div><label class="flabel">Issue-number display</label><select class="input"><option>Hidden</option><option selected>Show issue only</option><option>Show issue + supply cap</option></select></div>
+              <div><label class="flabel">Copy-number display</label><select class="input"><option>Hidden</option><option selected>Show copy sequence</option></select></div>
+            </div>
+            <div class="hint">Display changes apply to future vendor listings only — they don't alter any minted token's locked identity.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

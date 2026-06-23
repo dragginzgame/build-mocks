@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Vendors · Management states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  /* three-axis state badge */
+  .sb { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .sb .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sb--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .sb--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .sb--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .sb--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .sb--grey { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .axes { display:flex; gap:var(--s-5); flex-wrap:wrap; }
+  .axis { display:flex; flex-direction:column; gap:.35rem; }
+  .axis .al { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  textarea.input { resize:vertical; min-height:72px; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .search { position:relative; flex:1; min-width:200px; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .progress { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .progress .fill { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  /* choice cards */
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .choice.disabled { opacity:.55; }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .choice .desc { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.25rem; }
+  /* type chooser cards (hybrid of choice list + live card grid) */
+  .type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); }
+  @media (max-width:680px){ .type-grid { grid-template-columns:1fr; } }
+  .type-card { text-align:left; border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-3); min-height:200px; }
+  .type-card:not(.disabled):hover { border-color:var(--border-strong); }
+  .type-card.sel { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .type-card.disabled { opacity:.55; }
+  .type-card .tc-ic { width:44px; height:44px; border-radius:var(--r-2); background:var(--surface-canvas-deep); display:inline-flex; align-items:center; justify-content:center; font-size:1.375rem; flex:none; }
+  .type-card .tc-ttl { font-family:var(--font-display); font-size:var(--text-xl); text-transform:uppercase; letter-spacing:.02em; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .type-card .tc-desc { color:var(--text-secondary); font-size:var(--text-sm); }
+  .type-card .tc-foot { margin-top:auto; }
+  /* decision groups (lifecycle) — colour-coded so the three choices read as distinct */
+  .dgroup { border:1px solid var(--border-soft); border-left:3px solid var(--dg,var(--border-soft)); border-radius:var(--r-3); padding:var(--s-4) var(--s-5) var(--s-5); }
+  .dgroup + .dgroup { margin-top:var(--s-4); }
+  .dgroup__head { display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-4); }
+  .dgroup__n { width:22px; height:22px; border-radius:50%; background:var(--dg,var(--text-muted)); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); flex:none; }
+  .dgroup__t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  /* stepper */
+  .stepper { display:flex; align-items:center; flex-wrap:wrap; gap:var(--s-2); }
+  .stepper .step { display:flex; align-items:center; gap:var(--s-2); color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .stepper .step .n { width:24px; height:24px; border-radius:50%; background:var(--surface-canvas-deep); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; font-size:var(--text-2xs); }
+  .stepper .step.active { color:var(--text-primary); }
+  .stepper .step.active .n { background:var(--text-primary); color:#fff; }
+  .stepper .step.done .n { background:var(--stage-live); color:#fff; }
+  .stepper .sepl { width:20px; height:1px; background:var(--border-soft); flex:none; }
+  @media (max-width:760px){ .stepper .step .lbl { display:none; } }
+  /* vendor cards */
+  .vgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:var(--s-4); }
+  .vendor-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .vendor-card .vhead { display:flex; align-items:center; gap:var(--s-3); }
+  .vthumb { width:48px; height:48px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#60a5fa,#1e3a8a); }
+  .vthumb.g { background:linear-gradient(135deg,#6ee7b7,#065f46); }
+  .vthumb.y { background:linear-gradient(135deg,#fde68a,#b45309); }
+  .vendor-card .vname { font-family:var(--font-display); font-size:var(--text-lg); text-transform:uppercase; }
+  .vendor-card .vsub { font-size:var(--text-xs); color:var(--text-secondary); }
+  .vstate { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .vendor-card .vfoot { display:flex; gap:var(--s-2); flex-wrap:wrap; margin-top:auto; }
+  .coll-card--new { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); text-align:center; color:var(--text-secondary); min-height:200px; padding:var(--s-6); cursor:pointer; }
+  .coll-card--new:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .coll-card--new .plus { font-size:1.875rem; line-height:1; }
+  .coll-card--new .lbl { font-family:var(--font-display); font-size:var(--text-lg); letter-spacing:.04em; text-transform:uppercase; color:var(--text-primary); }
+  .media-zones { display:flex; gap:var(--s-4); align-items:stretch; flex-wrap:wrap; }
+  .dropzone { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.25rem; color:var(--text-secondary); text-align:center; cursor:pointer; padding:var(--s-4); }
+  .dropzone:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .dropzone .dz-plus { font-size:1.5rem; line-height:1; }
+  .dropzone .dz-lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .media-thumb { width:120px; height:120px; flex:none; }
+  .media-banner { flex:1; min-width:260px; min-height:200px; }
+  .acc { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; background:var(--surface-canvas); }
+  .acc + .acc { margin-top:var(--s-3); }
+  .acc__head { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); background:var(--surface-canvas-alt); }
+  .acc__head .acc-ttl { font-family:var(--font-display); font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; }
+  .acc__head .chev { margin-left:auto; color:var(--text-muted); }
+  .acc__body { padding:0 var(--s-5) var(--s-3); }
+  .tier-row { display:flex; align-items:center; gap:var(--s-3); padding:.7rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .tier-row:first-child { border-top:0; }
+  .tier-row .tr-tier { font-family:var(--font-emphasis); font-weight:700; min-width:120px; }
+  .tier-row .tr-cost { width:96px; }
+  .tier-row .tr-reqs { flex:1; display:flex; gap:.35rem; flex-wrap:wrap; min-width:160px; }
+  .tier-row .tr-actions { display:flex; gap:var(--s-2); margin-left:auto; }
+  .single-modal .modal-card.wide { max-width:640px; }
+  .splitbar { height:14px; border-radius:var(--r-pill); overflow:hidden; display:flex; }
+  .splitbar > i { display:block; height:100%; }
+  .splitlegend { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); }
+  .splitlegend span { display:inline-flex; align-items:center; gap:.375rem; }
+  .splitlegend i { width:9px; height:9px; border-radius:3px; }
+  .bene-head, .bene-row { display:grid; grid-template-columns:1fr 84px 1fr 36px; gap:var(--s-2); align-items:center; }
+  .bene-head span { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  @media (max-width:620px){ .bene-head, .bene-row { grid-template-columns:1fr 64px 1fr 32px; } }
+  .alloc-row { display:grid; grid-template-columns:1fr auto 92px 36px; gap:var(--s-3); align-items:center; padding:.65rem 0; border-top:1px solid var(--border-soft); }
+  .alloc-row .al-col { font-size:var(--text-xs); color:var(--text-secondary); }
+  .alloc-row .al-tok { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .alloc-row .al-avail { font-size:var(--text-xs); color:var(--text-muted); white-space:nowrap; }
+  @media (max-width:620px){ .alloc-row { grid-template-columns:1fr 80px 32px; } .alloc-row .al-avail { display:none; } }
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:var(--s-3); }
+  .tk-card { background:var(--surface-canvas); border:2px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; position:relative; }
+  .tk-card.rar-common { border-color:#B8B8B8; } .tk-card.rar-uncommon { border-color:#15803D; } .tk-card.rar-rare { border-color:#1e40af; } .tk-card.rar-epic { border-color:#6D28D9; } .tk-card.rar-legendary { border-color:#B45309; }
+  .tk-card .art { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2rem; background:linear-gradient(135deg,#f59e0b,#b45309); }
+  .tk-card .stackn { position:absolute; top:6px; right:6px; background:rgba(10,10,10,.72); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .tk-card .meta { padding:.45rem .55rem .6rem; }
+  .tk-card .nm { font-family:var(--font-display); font-size:var(--text-sm); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-card .rn { font-size:var(--text-3xs); font-weight:700; font-family:var(--font-emphasis); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); margin-top:.1rem; }
+  .controls { display:flex; gap:var(--s-3); flex-wrap:wrap; }
+  /* selectable token cards (vendor add-tokens picker) */
+  .tk-card.pick { cursor:pointer; }
+  .tk-card .pick-box { position:absolute; top:6px; left:6px; width:20px; height:20px; border-radius:6px; border:2px solid #fff; background:rgba(10,10,10,.4); display:inline-flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .tk-card .pick-box svg { width:13px; height:13px; opacity:0; }
+  .tk-card.sel { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary); }
+  .tk-card.sel .pick-box { background:var(--text-primary); border-color:var(--text-primary); }
+  .tk-card.sel .pick-box svg { opacity:1; }
+  .cbx { width:18px; height:18px; border-radius:5px; border:2px solid var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; color:#fff; }
+  .cbx svg { width:12px; height:12px; opacity:0; }
+  .cbx.on { background:var(--text-primary); border-color:var(--text-primary); }
+  .cbx.on svg { opacity:1; }
+  .cbx.some { background:var(--text-primary); border-color:var(--text-primary); }
+  .selectall { display:inline-flex; align-items:center; gap:var(--s-2); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-primary); cursor:pointer; }
+  .pickscroll { max-height:340px; overflow:auto; margin:0 calc(-1 * var(--s-2)); padding:0 var(--s-2); }
+  .modal-empty { text-align:center; padding:var(--s-8) var(--s-4); display:flex; flex-direction:column; align-items:center; gap:var(--s-2); }
+  .modal-empty .me-ttl { font-family:var(--font-display); font-size:var(--text-2xl); text-transform:uppercase; letter-spacing:.02em; }
+  /* compact inline empty (no hero) — mirrors rarity gallery's empty-tiers */
+  .empty-state { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .empty-state strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state p { margin:0; font-size:var(--text-sm); max-width:52ch; }
+  /* AND stack — shows requirements combining with AND */
+  .andstack { display:flex; flex-direction:column; }
+  .andreq { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.65rem .85rem; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .andreq .rq-t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .andreq .rq-d { color:var(--text-secondary); font-size:var(--text-xs); margin-left:auto; }
+  .andsep { display:flex; align-items:center; gap:var(--s-3); padding:.3rem 0 .3rem .85rem; }
+  .andsep b { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; color:var(--text-secondary); background:var(--surface-canvas-deep); border-radius:var(--r-pill); padding:2px 9px; }
+  .andsep i { flex:1; height:1px; background:var(--border-soft); }
+  /* inline field validation */
+  .input.is-error { border-color:var(--notify-error); }
+  .input.is-ok { border-color:var(--stage-live); }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .field-ok { color:var(--stage-live); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .field-checking { color:var(--text-muted); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .req-plus { color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); font-size:var(--text-sm); padding:0 1px; }
+  .acc.disabled-acc { opacity:.55; }
+  .acc.disabled-acc .acc__head { cursor:not-allowed; }
+  .acc__head.clickable { cursor:pointer; }
+  .acc__head .acc-note { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .vcheck { display:flex; gap:var(--s-3); align-items:flex-start; padding:.65rem 0; border-top:1px solid var(--border-soft); }
+  .vcheck:first-child { border-top:0; }
+  .vcheck .vi { flex:none; margin-top:1px; }
+  .vcheck .vi.err { color:var(--notify-error); } .vcheck .vi.ok { color:var(--stage-live); }
+  .vcheck .vt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .vcheck .vd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:1px; }
+  .vcheck .vfix { margin-left:auto; color:var(--info); font-weight:700; font-size:var(--text-xs); white-space:nowrap; align-self:center; }
+  .lockpill { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:4px; }
+  .lockpill--lock { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .lockpill--edit { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .lockpill--locked { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  /* empty-state hero (shared pattern) */
+  .empty-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); max-width:56ch; margin:0; }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } }
+  .explainer { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-8); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8); }
+  .explainer h3 { margin-bottom:var(--s-3); font-size:var(--text-2xl); }
+  .explainer p { color:var(--text-secondary); font-size:var(--text-base); line-height:1.6; }
+  .explainer .visual { background:var(--surface-canvas-alt); border-radius:var(--r-3); padding:var(--s-6); display:flex; flex-direction:column; gap:var(--s-4); justify-content:center; }
+  .flowstep { display:flex; align-items:flex-start; gap:var(--s-3); }
+  .flowstep .fn { width:26px; height:26px; border-radius:50%; background:var(--text-primary); color:#fff; flex:none; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .flowstep .ft { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .flowstep .fd { color:var(--text-secondary); font-size:var(--text-xs); }
+  @media (max-width:760px){ .explainer { grid-template-columns:1fr; } }
+  /* shells */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:var(--s-6); width:100%; max-width:1040px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .step-actions { display:flex; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; }
+  /* list bar */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin:var(--s-2) calc(-1 * var(--s-8)) calc(-1 * var(--s-8)); padding:var(--s-4) var(--s-8); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.5rem 0 .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-xs); font-weight:700; }
+  @media (max-width:620px){ .listbar { justify-content:center; } .results-count, .perpage { display:none; } }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); align-self:flex-start; }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-link { color:var(--info,#2563EB); font-weight:700; font-size:var(--text-sm); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+  /* ---- inventory bulk-action bar (flexible vendors) ---- */
+  .bulkbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); background:var(--surface-canvas); border:1px solid var(--border-strong); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); flex-wrap:wrap; }
+  .bulkbar .b-count { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .bulkbar .b-actions { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .bb { border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-pill); padding:.4rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-primary); }
+  .bb--danger { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+  .bb--clear { color:var(--text-secondary); }
+  .bulkbar .cbx.some svg { opacity:1; }
+  .bulkbar .bl { display:inline-flex; align-items:center; gap:var(--s-3); }
+  .inv-filters { display:flex; gap:var(--s-2); flex-wrap:wrap; align-items:center; }
+  .inv-filters select.input { width:auto; min-width:170px; }
+  /* ---- live vendor section tabs (mirror the creation stepper, as view/manage nav) ---- */
+  .vtabs { display:flex; gap:var(--s-2); flex-wrap:wrap; align-items:center; }
+  .vtabs button { padding:.5rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.02em; color:var(--text-secondary); border:1px solid var(--border-soft); background:var(--surface-canvas); white-space:nowrap; }
+  .vtabs button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .vtabs button:hover:not(.active) { border-color:var(--border-strong); color:var(--text-primary); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Vendors — Management.</h1>
+      <p>The running side of vendors: the vendor list, the vendor detail page, lifecycle controls, and runtime states. The create-a-vendor wizard (Type → … → Summary) and its Draft → Review → Live stages live in <strong>vendor-creation-states-gallery</strong>; gacha-only states live in <strong>gacha-vendor-states-gallery</strong>. The public claim side is <strong>Launchpad</strong>. Launch scope is <strong>Market</strong> vendors only (Gacha deferred).</p>
+      <div class="navlinks">A vendor has two independent states: <strong>Stage</strong> (Draft/Review/Live) · <strong>Runtime</strong> (setup/running/paused/…). Lifecycle controls depend on both.</div>
+    </header>
+
+    <!-- 01 · Manage vendors — list -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Manage vendors — list</span><span class="d">Every vendor for the collection. Each card shows the two independent state axes — Stage and Runtime — plus inventory and claimed progress. The blurred "status" of the old flow is replaced by these explicit signals, because every lifecycle control depends on a combination of them.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Vendors</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div style="width:100%"><div class="eyebrow">Project · Vendors</div><h2>Vendors.</h2><p class="lede">Project-scoped distribution mechanisms. Inventory can be drawn from any of the project's collections; rules are applied publicly on Launchpad.</p></div>
+          </div>
+          <div class="row">
+            <div class="search"><input class="input" placeholder="Search vendors…"></div>
+            <div class="seg"><button class="active">All · 5</button><button>Live · 3</button><button>Review · 1</button><button>Draft · 1</button></div>
+          </div>
+          <div class="vgrid">
+            <button class="coll-card--new"><span class="plus">+</span><span class="lbl">New vendor</span><span class="tiny">Set up a distribution mechanism</span></button>
+            <div class="vendor-card">
+              <div class="vhead"><span class="vthumb"></span><div><div class="vname">Spring Launch</div><div class="vsub">Market · 3 collections</div></div></div>
+              <div class="vstate"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--green"><span class="dot"></span>Running</span></div>
+              <div><div class="row" style="justify-content:space-between;font-size:var(--text-xs)"><span>Claimed</span><span style="font-family:var(--font-emphasis);font-weight:700">142 / 300</span></div><div class="progress" style="margin-top:.4rem"><div class="fill" style="width:47%"></div></div></div>
+              <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="btn btn--ghost btn--sm">Pause</button></div>
+            </div>
+            <div class="vendor-card">
+              <div class="vhead"><span class="vthumb y"></span><div><div class="vname">Holders Drop</div><div class="vsub">Market · Whitelist + NNS</div></div></div>
+              <div class="vstate"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--amber"><span class="dot"></span>Paused</span></div>
+              <div><div class="row" style="justify-content:space-between;font-size:var(--text-xs)"><span>Claimed</span><span style="font-family:var(--font-emphasis);font-weight:700">60 / 120</span></div><div class="progress" style="margin-top:.4rem"><div class="fill" style="width:50%"></div></div></div>
+              <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="btn btn--ghost btn--sm">Resume</button></div>
+            </div>
+            <div class="vendor-card">
+              <div class="vhead"><span class="vthumb g"></span><div><div class="vname">Founders Sale</div><div class="vsub">Market · ICP claim</div></div></div>
+              <div class="vstate"><span class="sb sb--indigo"><span class="dot"></span>Review</span><span class="sb sb--grey">Setup</span></div>
+              <div class="info-note" style="padding:var(--s-3) var(--s-4)"><div>Reviewed and stocked — set Live to publish to Launchpad.</div></div>
+              <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button></div>
+            </div>
+            <div class="vendor-card">
+              <div class="vhead"><span class="vthumb"></span><div><div class="vname">Summer Teaser</div><div class="vsub">Market · ICP claim</div></div></div>
+              <div class="vstate"><span class="sb sb--amber"><span class="dot"></span>Draft</span><span class="sb sb--grey">Setup</span></div>
+              <div class="info-note" style="padding:var(--s-3) var(--s-4)"><div>Configuration in progress — finish setup, then set Live.</div></div>
+              <div class="vfoot"><button class="btn btn--ghost btn--sm">Continue setup</button></div>
+            </div>
+            <div class="vendor-card">
+              <div class="vhead"><span class="vthumb y"></span><div><div class="vname">Glitch Drop</div><div class="vsub">Market · ICP claim</div></div></div>
+              <div class="vstate"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey"><span class="dot"></span>Empty</span></div>
+              <div class="info-note warn-note" style="padding:var(--s-3) var(--s-4)"><div>Inventory exhausted — add stock and restart to keep selling.</div></div>
+              <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="btn btn--ghost btn--sm">Add inventory</button></div>
+            </div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–5</strong> of <strong>5</strong></span>
+            <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button class="pg-arrow" aria-label="Next page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+            <span class="perpage"><label>Per page</label><select><option>24</option><option>48</option></select></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Vendors — first load / empty (project-level) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Vendors — first load (empty)</span><span class="d">What you see on first load with no vendors set up. Uses the shared <span class="mono">no_vendors</span> hero, a single CTA — "Set up your first vendor" — plus a short explainer beneath the hero of what a vendor is and how it works.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Vendors</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div class="section-head"><div style="width:100%"><div class="eyebrow">Project · Vendors</div><h2>Vendors.</h2><p class="lede" style="max-width:none">Distribution mechanisms for this project — inventory can come from any of its collections. The public claim side is Launchpad.</p></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_vendors.jpg" alt="Vendors — none yet" onerror="this.parentElement.style.display='none'"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">Get your tokens to collectors.</h3>
+              <p class="empty-hero__sub">A vendor lists your minted tokens on Launchpad for collectors to claim — for a price, or against a rule like a whitelist or a neuron stake.</p>
+              <button class="btn btn--primary" style="margin-top:var(--s-2)">Set up your first vendor</button>
+            </div>
+          </div>
+          <div class="explainer">
+            <div>
+              <div class="eyebrow" style="color:var(--stage-review)">How it works</div>
+              <h3 style="margin-top:.5rem">Rules in, claims out.</h3>
+              <p>A vendor is a project-scoped distribution mechanism. You allocate minted tokens into it — from any of the project's collections — and set what a collector must pay or prove to claim one — a cost, a whitelist, a neuron stake. Once it's set Live, it appears on <strong>Launchpad</strong>, where collectors claim and revenue is split to your beneficiaries after fees. Each token is validated individually at its own go-live, so the vendor itself just needs to be set Live. Launch supports <strong>Market</strong> vendors; Gacha comes later.</p>
+            </div>
+            <div class="visual">
+              <div class="flowstep"><span class="fn">1</span><div><div class="ft">Define costs &amp; rules</div><div class="fd">Per-tier price and claim requirements.</div></div></div>
+              <div class="flowstep"><span class="fn">2</span><div><div class="ft">Allocate inventory</div><div class="fd">Move minted tokens in from any collection.</div></div></div>
+              <div class="flowstep"><span class="fn">3</span><div><div class="ft">Publish to Launchpad</div><div class="fd">Set Live and collectors start claiming.</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Vendor detail + lifecycle controls -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Live vendor — overview (read-only)</span><span class="d">A Live vendor's landing, organised by the <strong>same stage separations as the creation wizard</strong> shown read-only as view/manage tabs. Overview is a concise snapshot — state, the inventory total, and the lifecycle controls; each section (Storefront · Lifecycle · Costs &amp; rules · Revenue) opens on its own tab (03b–03e), and Inventory has its own screens (09–12). Lifecycle controls are gated by Stage + Runtime — unavailable controls are greyed with the reason on hover.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">Spring Launch</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button class="active">Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Market vendor on Launchpad. Read-only view of the vendor's settings — aesthetics stay editable; core policy is locked.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--green"><span class="dot"></span>Running</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>Inventory</h3><button class="btn btn--ghost btn--sm">Manage inventory →</button></div>
+            <div class="row" style="justify-content:space-between;font-size:var(--text-sm)"><span>Claimed</span><span style="font-family:var(--font-emphasis);font-weight:700">142 / 300</span></div>
+            <div class="progress" style="margin-top:.5rem"><div class="fill" style="width:47%"></div></div>
+            <div class="kv" style="margin-top:var(--s-3)"><span>Remaining</span><span class="v">158</span></div>
+            <div class="kv"><span>Inventory policy</span><span class="v">Flexible</span></div>
+            <div class="kv"><span>Drawn from</span><span class="v">Spring Foxes, Night Market, Winter Tales</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card__head"><h3>Lifecycle controls</h3><span class="tiny">Available actions depend on Stage + Runtime</span></div>
+            <div class="controls">
+              <button class="btn btn--ghost" disabled title="Already running">Start</button>
+              <button class="btn btn--primary">Pause</button>
+              <button class="btn btn--ghost" disabled title="Not paused">Resume</button>
+              <button class="btn btn--ghost" disabled title="Only from an empty vendor">Restart</button>
+              <button class="btn btn--danger">End</button>
+            </div>
+            <p class="tiny" style="margin-top:var(--s-3)">Delete isn't available on a Live vendor — only an <strong>ended &amp; empty</strong> vendor can be deleted (see the Ended state).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03b · Storefront tab — editable on Live (full page, not a modal) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03b</span><span class="t">Storefront tab — editable (Live)</span><span class="d">The Storefront tab opens the editable storefront form directly — the same page as the creation step, not a modal. Aesthetics are editable on a Live vendor whether it's <strong>running or paused</strong> — storefront edits don't require pausing. The page auto-saves and changes show on Launchpad immediately; saving a new thumbnail or banner runs the project cycle check (06–08). Lifecycle, Costs &amp; rules and Revenue stay read-only on Live (03c–03e).</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Storefront</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button class="active">Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">How buyers see this vendor on Launchpad. Editable on Live — changes save automatically.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--green"><span class="dot"></span>Running</span><span class="tiny" style="display:inline-flex;align-items:center;gap:.4rem"><span style="width:6px;height:6px;border-radius:50%;background:var(--stage-live)"></span>Saved · just now</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Customise your storefront</h3><span class="lockpill lockpill--edit">Editable on Live</span></div>
+            <div><label class="flabel">Vendor name <span class="tag tag--red">required</span></label><input class="input" value="Spring Launch"></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Tagline</label><input class="input" value="Claim a fox before they're gone"></div>
+            <div style="margin-top:var(--s-4)">
+              <label class="flabel">Thumbnail &amp; banner</label>
+              <div class="media-zones">
+                <button class="dropzone media-thumb"><span class="dz-plus">+</span><span class="dz-lbl">Thumbnail</span></button>
+                <button class="dropzone media-banner"><span class="dz-plus">+</span><span class="dz-lbl">Banner</span></button>
+              </div>
+              <div class="hint">Square thumbnail (min 512×512) and a wide banner. Saving a new image runs the project cycle check — see 06–08.</div>
+            </div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Description</label><textarea class="input">The first public release of Spring Foxes — claim a fox for 1.5 ICP.</textarea></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Claim button label</label><input class="input" value="Claim a Fox"></div>
+            <div style="margin-top:var(--s-4)">
+              <label class="flabel">Social links</label>
+              <div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><select class="input" style="max-width:170px;flex:none"><option>X (Twitter)</option><option>Website</option><option>Discord</option><option>Instagram</option></select><input class="input" style="flex:1" value="@springfoxes"><button class="btn btn--ghost btn--sm" aria-label="Remove">✕</button></div>
+              <div class="row" style="margin-top:var(--s-3)"><button class="btn btn--ghost btn--sm">+ Add social</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03c · Lifecycle tab — read-only (locked on Live) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03c</span><span class="t">Lifecycle tab — read-only (Live)</span><span class="d">The Lifecycle policy on its own tab, read-only because the vendor is Live — collectors are claiming against it, so activation, control mode and end behaviour are frozen. (On a Draft vendor this tab is the editable lifecycle form, same as the creation step.)</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Lifecycle</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button class="active">Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">How this vendor opens and ends. Locked once Live.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+          </div>
+          <div class="info-note lock-note" style="background:var(--surface-canvas-deep)"><span class="ic" style="color:var(--text-muted)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div>Lifecycle policy was fixed when the vendor went Live. Collectors are claiming against it, so it can't change.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Activation — how it opens</h3></div>
+            <div class="kv"><span>Mode</span><span class="v">Start manually</span></div>
+            <div class="kv"><span>Started</span><span class="v">2 Jun 2026 · 09:14</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Control mode — how it runs</h3></div>
+            <div class="kv"><span>Mode</span><span class="v">Admin controlled</span></div>
+            <div class="kv"><span>Earliest stop</span><span class="v">14 Jun 2026 · reached</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>When it stops — unclaimed inventory</h3></div>
+            <div class="kv"><span>End behaviour</span><span class="v">Returns to the collection</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03d · Costs & rules tab — read-only (locked on Live) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03d</span><span class="t">Costs &amp; rules tab — read-only (Live)</span><span class="d">Per-tier claim cost and requirements, copied from the collection's claim defaults at creation and editable per vendor in Draft. Read-only on Live.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Costs &amp; rules</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button class="active">Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">What collectors pay and must prove to claim, per tier. Locked once Live.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Costs &amp; rules</h3><span class="tag tag--green">3 / 3 tiers priced</span></div>
+            <div class="tier-row"><span class="tr-tier" style="color:#475569">Common</span><span class="tr-cost">1.5 ICP</span><span class="tr-reqs"><span class="tag">Open · no gates</span></span></div>
+            <div class="tier-row"><span class="tr-tier" style="color:#1e40af">Rare</span><span class="tr-cost">4 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span></div>
+            <div class="tier-row"><span class="tr-tier" style="color:#6D28D9">Epic</span><span class="tr-cost">8 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span><span class="tag tag--indigo">Whitelist</span></span></div>
+            <p class="tiny" style="margin-top:.6rem">Copied from the collection's claim defaults when the vendor was created, then editable per vendor in Draft. Requirements combine with AND.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03e · Revenue tab — read-only (locked on Live) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03e</span><span class="t">Revenue tab — read-only (Live)</span><span class="d">Where claim proceeds go — the applied revenue preset's fees and royalties — plus what's collected so far. For a time-limited royalty it shows the <strong>time remaining</strong> and the <strong>current (tapered) amount</strong>; once a period <strong>ends</strong> the beneficiary stays on record with a "time period ended" label. Locked on Live.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Revenue</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button class="active">Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Claim proceeds, fees and the beneficiary split. Locked once Live.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Collected</h3><span class="tag">Preset · Founders Split</span></div>
+            <div class="kv"><span>Claims</span><span class="v">142</span></div>
+            <div class="kv"><span>Gross collected</span><span class="v">186.5 ICP</span></div>
+            <div class="kv"><span>Project / cycles funding (3%)</span><span class="v">5.60 ICP</span></div>
+            <div class="kv"><span>Toko contribution (0%)</span><span class="v">0 ICP</span></div>
+            <div class="kv"><span>Net to beneficiaries</span><span class="v">180.90 ICP</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Royalties</h3><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+            <div class="kv" style="align-items:flex-start"><span>Studio Treasury<br><span class="tiny">Linear taper · started 8%</span></span><span class="v" style="text-align:right">5.2% now<br><span class="tiny" style="font-weight:400">4 of 12 months left</span></span></div>
+            <div class="kv" style="align-items:flex-start"><span>Lead Artist<br><span class="tiny">Was 4% for 12 months</span></span><span class="v" style="text-align:right"><span class="sb sb--grey">Time period ended</span></span></div>
+            <div class="kv" style="align-items:flex-start"><span>Community Fund<br><span class="tiny">Forever · no taper</span></span><span class="v" style="text-align:right">3%</span></div>
+            <p class="tiny" style="margin-top:.6rem">Royalties come from the applied preset (Founders Split), copied when this vendor was created. Tapering amounts update over time; an ended period stops paying but the beneficiary stays on record. Locked once Live.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03f · Revenue tab — royalty tapering over time -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03f</span><span class="t">Revenue tab — royalty tapering over time</span><span class="d">A Live vendor whose preset includes a <strong>time-limited, tapering</strong> royalty. The Revenue tab shows the beneficiary's <strong>current (tapered) share vs its starting share</strong>, the taper type, and <strong>time left</strong> in the period. Read-only — the values were copied from the preset at creation; the taper advances automatically with elapsed time.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Revenue</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button class="active">Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Claim proceeds and the beneficiary split. Locked once Live.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Royalties</h3><span class="tag">Preset · Founders Split</span></div>
+            <div style="border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-5)">
+              <div class="row" style="justify-content:space-between;align-items:center"><div style="font-family:var(--font-emphasis);font-weight:700">Studio Treasury <span class="tiny" style="font-weight:400">k1m9…7uvw</span></div><span class="tag tag--indigo">Linear taper</span></div>
+              <div class="row" style="justify-content:space-between;align-items:flex-end;margin-top:var(--s-4)">
+                <div><div class="tiny">Starting share</div><div style="font-family:var(--font-emphasis);font-weight:800;font-size:var(--text-2xl)">8%</div></div>
+                <div style="color:var(--text-muted);align-self:center;font-size:var(--text-xl)">→</div>
+                <div style="text-align:right"><div class="tiny">Current share (now)</div><div style="font-family:var(--font-emphasis);font-weight:800;font-size:var(--text-2xl);color:var(--stage-review)">5.2%</div></div>
+              </div>
+              <div class="row" style="justify-content:space-between;font-size:var(--text-sm);margin-top:var(--s-4)"><span>Period elapsed</span><span style="font-family:var(--font-emphasis);font-weight:700">8 of 12 months · 4 left</span></div>
+              <div class="progress" style="margin-top:.4rem"><div class="fill" style="width:67%"></div></div>
+              <div class="kv" style="margin-top:var(--s-4)"><span>Taper</span><span class="v">Linear · over 12 months</span></div>
+              <div class="kv"><span>Started → ends</span><span class="v">14 Jun 2026 → 14 Jun 2027</span></div>
+              <div class="kv"><span>Paid to date</span><span class="v">62.1 ICP</span></div>
+            </div>
+            <div class="kv" style="margin-top:var(--s-4)"><span>Lead Artist</span><span class="v">7% now · Curve · 2 mo left</span></div>
+            <div class="kv"><span>Community Fund</span><span class="v">3% · forever</span></div>
+            <p class="tiny" style="margin-top:.6rem">Tapering shares recalculate from elapsed time, so the "now" figure updates automatically. Copied from the preset at creation; locked on Live.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03g · Revenue tab — royalty period expired (still shown) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03g</span><span class="t">Revenue tab — royalty period expired</span><span class="d">A Live vendor whose preset includes a <strong>time-limited</strong> royalty that has <strong>reached the end of its period</strong>. The beneficiary stays on the record with a "Time period ended" label and a <strong>0% current share</strong> — it no longer receives a cut, but its history (what it was, how long, total paid) remains visible for transparency.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Revenue</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button class="active">Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Claim proceeds and the beneficiary split. Locked once Live.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Royalties</h3><span class="tag">Preset · Founders Split</span></div>
+            <div style="border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-5);background:var(--surface-canvas-alt)">
+              <div class="row" style="justify-content:space-between;align-items:center"><div style="font-family:var(--font-emphasis);font-weight:700">Lead Artist <span class="tiny" style="font-weight:400">9xa2…b3kk</span></div><span class="sb sb--grey"><span class="dot"></span>Time period ended</span></div>
+              <div class="kv" style="margin-top:var(--s-3)"><span>Current share</span><span class="v">0% <span class="tiny" style="font-weight:400">· no longer paying</span></span></div>
+              <div class="kv"><span>Was</span><span class="v">4% · no taper · 12 months</span></div>
+              <div class="kv"><span>Ran</span><span class="v">10 Jun 2025 → 10 Jun 2026 · ended</span></div>
+              <div class="kv"><span>Total paid</span><span class="v">54.55 ICP</span></div>
+            </div>
+            <div class="kv" style="margin-top:var(--s-4)"><span>Studio Treasury</span><span class="v">5.2% now · Linear · 4 mo left</span></div>
+            <div class="kv"><span>Community Fund</span><span class="v">3% · forever</span></div>
+            <p class="tiny" style="margin-top:.6rem">An ended royalty stays on the record for transparency but pays 0% going forward — it is never removed automatically. Copied from the preset at creation; locked on Live.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Lifecycle action confirms -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Lifecycle confirms — Pause · Resume · Restart · End</span><span class="d">Every lifecycle control and its confirm. Pause and Resume are quick, reversible toggles on claiming. Restart brings an emptied vendor back once it's restocked (and errors if it has no tokens). End is terminal and applies the vendor's end behaviour — unclaimed inventory returns to its collections or is burned, per the lifecycle setting; ending an already-empty vendor just needs a simple confirm.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Pause Spring Launch?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><strong style="color:var(--text-primary)">There are 158 tokens in this vendor — are you sure?</strong> Pausing closes <strong>all claims</strong> on Launchpad immediately. Inventory and configuration are unchanged, and you can resume anytime.</div></div>
+              <div class="kv"><span>Runtime</span><span class="v">Running → Paused</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Pause claims</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Resume Holders Drop?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Re-opens claiming on Launchpad. Requires the vendor to be Live with inventory remaining.</div></div>
+              <div class="kv"><span>Runtime</span><span class="v">Paused → Running</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Resume</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Restart Glitch Drop?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Bring this vendor back to running?</strong> It was emptied and re-stocked, so claiming can re-open on Launchpad.</div></div>
+              <div class="kv"><span>Inventory</span><span class="v">120 tokens staged</span></div>
+              <div class="kv"><span>Runtime</span><span class="v">Empty → Running</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Restart</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Can't restart Glitch Drop</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">This vendor has no tokens, so it can't be restarted.</strong> Its inventory is <strong>Flexible</strong> — add tokens and try again. (A Locked-inventory vendor can't be restocked, so it can only be ended.)</div></div>
+              <div class="kv"><span>Tokens in vendor</span><span class="v">0</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">+ Add tokens</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>End Spring Launch?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">This ends the vendor for good.</strong> Claiming closes and it can't be restarted. This vendor's end behaviour <strong>returns unclaimed tokens to their collections</strong>.</div></div>
+              <div class="kv"><span>Unclaimed inventory</span><span class="v">158 → returned to collections</span></div>
+              <div class="kv"><span>Runtime</span><span class="v">Running → Ended</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">End vendor</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>End Founders Sale?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">This ends the vendor for good.</strong> Claiming closes and it can't be restarted. This vendor's end behaviour <strong>burns unclaimed tokens</strong> — they're permanently destroyed and don't return to any collection.</div></div>
+              <div class="kv"><span>Unclaimed inventory</span><span class="v">84 → burned</span></div>
+              <div class="kv"><span>Runtime</span><span class="v">Running → Ended</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">End &amp; burn</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>End Glitch Drop?</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">This vendor is empty — end it?</strong> Every token has been claimed, so there's nothing to return or burn. Ending closes it for good and it can't be restarted.</div></div>
+              <div class="kv"><span>Unclaimed inventory</span><span class="v">0 · nothing to return</span></div>
+              <div class="kv"><span>Runtime</span><span class="v">Empty → Ended</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">End vendor</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Runtime state on the page — Empty (inventory exhausted) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Runtime state on the page — Empty (inventory exhausted)</span><span class="d">How a runtime state actually appears — in context at the top of the vendor's page, not a modal. The banner pins above the content with the matching badge and actions. <strong>Empty</strong> means every token has been claimed: Restart after restocking, or End. <strong>Low stock</strong> is the same banner on a still-Running vendor that has stock left (additive / flexible only). <strong>Ended</strong> is the terminal state — see 14b.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Glitch Drop</a><span class="sep">/</span><span class="here">Inventory</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Glitch Drop</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button class="active">Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Glitch Drop · every token has been claimed.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey"><span class="dot"></span>Empty</span></div>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Inventory exhausted — all 200 tokens claimed.</strong> Pause to add inventory, then Restart to re-open claiming — or End the vendor. Restart becomes available once at least one token is added.</div><span style="margin-left:auto;align-self:center;display:flex;gap:var(--s-2);flex:none;flex-wrap:wrap"><button class="btn btn--primary btn--sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>Pause to add inventory</button><button class="btn btn--ghost btn--sm" disabled title="Add at least one token to restart">Restart</button><button class="btn btn--danger btn--sm">End</button></span></div>
+          <div class="card">
+            <div class="empty-state">
+              <strong>No tokens left</strong>
+              <p>Every minted token in this vendor has been claimed. Pause to add inventory and Restart to re-open claiming on Launchpad, or End the vendor to close it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 Storefront media edit · cycle check (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Storefront media edit · cycle check (balance OK)</span><span class="d">Replacing a live vendor's thumbnail or banner stores the new image in blob storage, funded from project cycles. Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload (see the Cycles &amp; uploads gallery). With headroom, it saves normally.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-launch-banner.png staged · 2.8 MB · uploaded &amp; held</span>
+            <div class="cyc-est">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.03 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">2.040 T</div></div>
+              <div class="e ok"><div class="k">After upload</div><div class="v">~2.01 T</div></div>
+            </div>
+            <div class="cyc-note cyc-note--ok"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>Enough cycles to store this image and keep your reserve. Toko moves project cycles into blob storage automatically. The previous image is replaced once the new one lands.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload assets</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 Storefront media edit · low balance -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Storefront media edit · low balance</span><span class="d">The estimate exceeds the balance. The new image stays staged — the live vendor keeps its current image until the replacement lands — and the primary action becomes Top up &amp; upload.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-launch-banner.png staged · 2.8 MB · uploaded &amp; held</span>
+            <div class="cyc-est">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.03 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.010 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.02 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="cyc-note cyc-note--warn"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not quite enough cycles to store this image.</strong> It stays staged and the live vendor keeps its current image — top up and the replacement saves straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 Top up to continue · image staged -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, the replacement saves automatically.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>spring-launch-banner.png staged · 2.8 MB · ready to save</span>
+            <div>
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.03 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.010 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div>
+              <span class="cyc-flabel">Top up amount</span>
+              <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="cyc-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged image saves automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 · Inventory — must pause to edit (running) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Inventory — running (must pause to edit)</span><span class="d">A live vendor's inventory, opened while it's Running. The tokens are shown read-only and the add/remove controls are disabled — you must pause claims before altering inventory, so a collector can't buy a token mid-edit. Additive &amp; Flexible vendors only; a Locked-inventory vendor has no edit affordances at all.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Inventory</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button class="active">Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Minted tokens staged in Spring Launch, drawn from across the project's collections. Policy: <strong>Flexible</strong>.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--green"><span class="dot"></span>Running</span></div>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><strong style="color:var(--text-primary)">Pause to change inventory.</strong> This vendor is Running, so adding or removing tokens is locked — a collector could be claiming a token at the same moment. Pause claims, edit inventory, then resume.</div><button class="btn btn--primary btn--sm" style="margin-left:auto;align-self:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>Pause to add inventory</button></div>
+          <div class="row">
+            <div class="inv-filters">
+              <select class="input"><option>All collections · 158</option><option>Spring Foxes · 96</option><option>Night Market · 44</option><option>Winter Tales · 18</option></select>
+              <select class="input"><option>All rarities</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select>
+            </div>
+          </div>
+          <div class="tk-grid">
+            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><div class="meta"><div class="nm">Spring Fox #014</div><div class="rn">Common · Spring Foxes</div></div></div>
+            <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🏮</div><div class="meta"><div class="nm">Night Lantern #221</div><div class="rn">Uncommon · Night Market</div></div></div>
+            <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🦊</div><div class="meta"><div class="nm">Spring Fox #112</div><div class="rn">Rare · Spring Foxes</div></div></div>
+            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">❄️</div><div class="meta"><div class="nm">Winter Tale #006</div><div class="rn">Common · Winter Tales</div></div></div>
+            <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic · Night Market</div></div></div>
+            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><span class="stackn">×4</span><div class="meta"><div class="nm">Spring Fox #051</div><div class="rn">Common · stack</div></div></div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–48</strong> of <strong>158</strong> staged</span>
+            <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+            <span class="perpage"><label>Per page</label><select><option>48</option><option>96</option></select></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Inventory — paused & populated (flexible: select + remove) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Inventory — paused &amp; populated (flexible)</span><span class="d">Paused, so editable. Filter by collection and rarity tier; the grid mirrors the Minted-token management cards. <strong>Flexible</strong> inventory can also remove tokens — Select turns on per-card checkboxes and the bulk bar, and removing returns those tokens to their collections. (An <strong>Additive</strong> vendor shows Add only, no Select/Remove.)</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Inventory</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Spring Launch</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button class="active">Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Spring Launch is paused, so inventory is editable. Policy: <strong>Flexible</strong> — add and remove. Tick a token to start a selection.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--amber"><span class="dot"></span>Paused</span><span class="lockpill lockpill--edit">Editable · paused</span></div>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></span><div><strong style="color:var(--text-primary)">This vendor is paused — claims are closed on Launchpad.</strong> While paused you can add and remove inventory; resume to re-open claiming.</div><button class="btn btn--primary btn--sm" style="margin-left:auto;align-self:center;flex:none">Resume</button></div>
+          <div class="row">
+            <div class="inv-filters">
+              <select class="input"><option>All collections · 158</option><option>Spring Foxes · 96</option><option>Night Market · 44</option><option>Winter Tales · 18</option></select>
+              <select class="input"><option>All rarities</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select>
+            </div>
+            <div class="head-actions" style="margin-left:auto"><button class="btn btn--primary">+ Add tokens</button></div>
+          </div>
+          <div class="bulkbar"><span class="bl"><span class="cbx some"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><line x1="6" y1="12" x2="18" y2="12"/></svg></span><span class="b-count">3 selected</span></span><span class="b-actions"><button class="bb bb--danger">Remove from vendor</button><button class="bb bb--clear">Clear selection</button></span></div>
+          <div class="tk-grid">
+            <div class="tk-card pick sel rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><div class="meta"><div class="nm">Spring Fox #014</div><div class="rn">Common · Spring Foxes</div></div></div>
+            <div class="tk-card pick rar-uncommon"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🏮</div><div class="meta"><div class="nm">Night Lantern #221</div><div class="rn">Uncommon · Night Market</div></div></div>
+            <div class="tk-card pick sel rar-rare"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🦊</div><div class="meta"><div class="nm">Spring Fox #112</div><div class="rn">Rare · Spring Foxes</div></div></div>
+            <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">❄️</div><div class="meta"><div class="nm">Winter Tale #006</div><div class="rn">Common · Winter Tales</div></div></div>
+            <div class="tk-card pick sel rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic · Night Market</div></div></div>
+            <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><span class="stackn">×4</span><div class="meta"><div class="nm">Spring Fox #051</div><div class="rn">Common · stack</div></div></div>
+          </div>
+          <div class="listbar">
+            <span class="results-count">Showing <strong>1–48</strong> of <strong>158</strong> staged</span>
+            <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button>2</button><button>3</button><button>4</button><button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+            <span class="perpage"><label>Per page</label><select><option>48</option><option>96</option></select></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 · Add tokens modal (aligned with vendor creation) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Add tokens (aligned with creation)</span><span class="d">Opened from "+ Add tokens" on a paused vendor — the same picker used in the creation Inventory step. Choose a source collection, multi-select from the minted tokens it holds, page through large collections. Only minted, collection-held tokens appear. The primary button counts the selection.</span></div>
+      <div class="stage single-modal">
+        <div class="modal-card" style="max-width:780px">
+          <header><h4>Add tokens to Spring Launch</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0">Move <strong>minted tokens held by a collection</strong> in <strong>Vault One</strong> into this vendor. Only minted tokens the collection currently holds can be added — unminted definitions and externally-held tokens can't.</p>
+            <div class="row" style="justify-content:space-between;gap:var(--s-4);align-items:flex-end">
+              <div style="flex:1;min-width:220px"><label class="flabel">Source collection</label>
+                <select class="input"><option>Night Market — 620 held</option><option>Spring Foxes — 184 held</option><option>Winter Tales — 0 held</option></select>
+              </div>
+              <div style="text-align:right"><label class="flabel">Selected</label><div style="font-family:var(--font-emphasis);font-weight:700">3 of 620</div></div>
+            </div>
+            <div class="row" style="justify-content:space-between">
+              <label class="selectall"><span class="cbx some"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg></span>Select all on this page</label>
+              <button class="btn btn--ghost btn--sm">Filter</button>
+            </div>
+            <div class="pickscroll">
+              <div class="tk-grid">
+                <div class="tk-card pick sel rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🎭</div><div class="meta"><div class="nm">Festival Mask #001</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #006</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick sel rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art">🏮</div><div class="meta"><div class="nm">Night Lantern #026</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick sel rar-rare"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🧧</div><span class="stackn">×4</span><div class="meta"><div class="nm">Lucky Charm #041</div><div class="rn">Rare · stack</div></div></div>
+                <div class="tk-card pick rar-uncommon"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🥮</div><div class="meta"><div class="nm">Moon Cake #061</div><div class="rn">Uncommon</div></div></div>
+                <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🎭</div><div class="meta"><div class="nm">Festival Mask #076</div><div class="rn">Common</div></div></div>
+                <div class="tk-card pick rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎇</div><div class="meta"><div class="nm">Sky Firework #081</div><div class="rn">Epic</div></div></div>
+              </div>
+            </div>
+            <div class="row" style="justify-content:space-between;border-top:1px solid var(--border-soft);padding-top:var(--s-3);margin-top:var(--s-1)">
+              <span class="results-count">Showing <strong>1–18</strong> of <strong>620</strong> held</span>
+              <nav class="pg" aria-label="Pagination"><button class="pg-arrow" aria-label="Previous page" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button aria-current="page">1</button><button>2</button><button>3</button><button>…</button><button>35</button><button class="pg-arrow" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></nav>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Move 3 tokens</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Remove tokens confirm (flexible) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Remove tokens — confirm (flexible)</span><span class="d">From the bulk bar's "Remove from vendor". Removing returns the tokens to their collections' held inventory — they leave the vendor and can't be claimed here until re-added. Flexible vendors only.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:480px">
+          <header><h4>Remove 3 tokens from Spring Launch?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">These tokens leave the vendor.</strong> They return to their collections' held inventory and can't be claimed here until you add them again. The vendor is paused, so no claim is in flight.</div></div>
+            <div class="kv"><span>Spring Foxes</span><span class="v">2 → returned to collection</span></div>
+            <div class="kv"><span>Night Market</span><span class="v">1 → returned to collection</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove 3 tokens</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 · Scheduled state on a tab (full page) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14</span><span class="t">Scheduled state — on the page</span><span class="d">A Live vendor set to open at a future time, shown on its Overview tab; the banner pins to every tab until it opens. It starts automatically at the set time — collectors can't claim before then — and the creator can start early or reschedule. <strong>Draft</strong> vendors aren't managed in this section at all: the list card's "Continue setup" reopens the creation wizard (see 01 and <span class="mono">vendor-creation-states-gallery</span>) — there's no Draft page here, by design.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Summer Teaser</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Summer Teaser</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button class="active">Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Market vendor · scheduled to open.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--indigo"><span class="dot"></span>Scheduled</span></div>
+          </div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><strong style="color:var(--text-primary)">Live, scheduled to open 20 Jun 2026 · 14:00 UTC.</strong> It starts automatically — collectors can't claim before then. This banner shows on every tab until it opens.</div><button class="btn btn--primary btn--sm" style="margin-left:auto;align-self:center;flex:none">Start now</button></div>
+          <div class="card">
+            <div class="card__head"><h3>Schedule</h3><button class="btn btn--ghost btn--sm">Edit schedule</button></div>
+            <div class="kv"><span>Opens</span><span class="v">20 Jun 2026 · 14:00 UTC</span></div>
+            <div class="kv"><span>Time until open</span><span class="v">2 days</span></div>
+            <div class="kv"><span>Inventory staged</span><span class="v">200</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14b · Ended state on a tab (full page, read-only record) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14b</span><span class="t">Ended state — on the page (read-only record)</span><span class="d">A terminated vendor on its Overview tab. It's a read-only record — <strong>not on Launchpad</strong> (no public link) and, as a Live-stage vendor with on-chain history, it <strong>can't be deleted</strong>. Per its end behaviour, unclaimed tokens were returned to their collections (or burned).</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Winter Drop</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Winter Drop</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button class="active">Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Ended — a read-only record.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey"><span class="dot"></span>Ended</span></div>
+          </div>
+          <div class="info-note lock-note"><span class="ic" style="color:var(--text-muted)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong style="color:var(--text-primary)">This vendor has ended.</strong> Per its end behaviour, unclaimed inventory was returned to its collections. It's no longer on Launchpad, and a Live-stage vendor can't be deleted — this is a read-only record.</div></div>
+          <div class="card">
+            <div class="card__head"><h3>Final record</h3></div>
+            <div class="kv"><span>Ended</span><span class="v">18 Jun 2026 · 11:40 UTC</span></div>
+            <div class="kv"><span>Claimed</span><span class="v">142</span></div>
+            <div class="kv"><span>Returned to collections</span><span class="v">158</span></div>
+            <div class="kv"><span>Revenue collected</span><span class="v">186.5 ICP</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14c · Paused state on a tab (full page) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14c</span><span class="t">Paused state — on the page (banner on every tab)</span><span class="d">A paused vendor on its Overview tab. Claims are closed on Launchpad and the banner pins to the top of <strong>every tab</strong> — Overview, Storefront, Lifecycle, Inventory, Costs &amp; rules, Revenue — until it's resumed. Resume re-opens claiming; while paused, aesthetics and inventory stay editable.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Holders Drop</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="section">
+          <div>
+            <div class="eyebrow">Project · Vendor — Holders Drop</div>
+            <div class="vtabs" style="margin-top:var(--s-3)"><button class="active">Overview</button><button>Storefront</button><button>Lifecycle</button><button>Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+          </div>
+          <div class="section-head" style="align-items:center">
+            <div><p class="lede" style="margin:0">Market vendor · paused.</p></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--amber"><span class="dot"></span>Paused</span></div>
+          </div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></span><div><strong style="color:var(--text-primary)">This vendor is paused — claims are closed on Launchpad.</strong> This banner shows on every tab until you resume.</div><button class="btn btn--primary btn--sm" style="margin-left:auto;align-self:center;flex:none">Resume</button></div>
+          <div class="card">
+            <div class="card__head"><h3>Inventory</h3><button class="btn btn--ghost btn--sm">Manage inventory →</button></div>
+            <div class="row" style="justify-content:space-between;font-size:var(--text-sm)"><span>Claimed</span><span style="font-family:var(--font-emphasis);font-weight:700">60 / 120</span></div>
+            <div class="progress" style="margin-top:.5rem"><div class="fill" style="width:50%"></div></div>
+            <div class="kv" style="margin-top:var(--s-3)"><span>Remaining</span><span class="v">60</span></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><h3>Lifecycle controls</h3></div>
+            <div class="controls">
+              <button class="btn btn--ghost" disabled title="Live — use Resume">Start</button>
+              <button class="btn btn--ghost" disabled title="Already paused">Pause</button>
+              <button class="btn btn--primary">Resume</button>
+              <button class="btn btn--ghost" disabled title="Only from an empty vendor">Restart</button>
+              <button class="btn btn--danger">End</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

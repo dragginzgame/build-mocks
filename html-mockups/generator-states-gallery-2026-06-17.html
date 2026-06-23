@@ -1,0 +1,1770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Generators · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  /* ---- Two fonts only: Anton (headers + titles) + Mona Sans (everything else), from the cleaned /Fonts folder ---- */
+  :root {
+    --surface-page: #EAEAEA; --surface-canvas: #FFFFFF; --surface-canvas-alt: #FAFAFA; --surface-canvas-deep: #F2F2F2;
+    --text-primary: #1D1D1D; --text-secondary: #6B6B6B; --text-muted: #A0A0A0; --text-inverse: #FFFFFF;
+    --border-soft: #E5E5E5; --border-strong: #1D1D1D; --notify-error: #EF4444;
+    --stage-draft: #F59E0B; --stage-review: #6366F1; --stage-live: #10B981; --stage-stale: #B45309;
+    --s-1:0.25rem; --s-2:0.5rem; --s-3:0.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --shadow-2: 0 8px 30px -16px rgba(0,0,0,.25);
+    --font-display: "Anton",system-ui,sans-serif;
+    --font-emphasis: "Mona Sans",system-ui,sans-serif;
+    --font-body: "Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --text-3xs:0.625rem; --text-2xs:0.6875rem; --text-xs:0.75rem; --text-sm:0.8125rem;
+    --text-base:0.875rem; --text-md:0.9375rem; --text-lg:1rem; --text-xl:1.125rem;
+    --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem; --text-5xl:2.75rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+  html, body { margin: 0; }
+  body { font-family: var(--font-body); font-size: var(--text-md); line-height: 1.5; color: var(--text-primary); background: #DCDCDC; -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  h1,h2,h3,h4 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; text-transform: uppercase; line-height: 1.05; }
+  .ttl { text-transform: uppercase; letter-spacing: .02em; }
+  .eyebrow { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-2xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); }
+  .tiny { font-size: var(--text-xs); color: var(--text-secondary); }
+  .spread { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+
+  /* ---- shared chrome (page shell) ---- */
+  .context-bar { background: var(--surface-canvas); border-bottom: 1px solid var(--border-soft); padding: var(--s-4) var(--s-8); display: flex; align-items: center; gap: var(--s-4); }
+  .context-bar .crumb { display: flex; align-items: center; gap: 0.375rem; font-size: var(--text-sm); color: var(--text-secondary); }
+  .context-bar .crumb a:hover { color: var(--text-primary); }
+  .context-bar .crumb .sep { color: var(--text-muted); }
+  .context-bar .actions { margin-left: auto; display: flex; align-items: center; gap: var(--s-2); }
+  .context-bar .divider { width: 1px; height: 22px; background: var(--border-soft); margin: 0 0.25rem; flex: none; }
+  .section { padding: var(--s-8); }
+  .row { display: flex; align-items: center; gap: var(--s-3); }
+  .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-6); }
+  .section-head h2 { font-size: var(--text-4xl); }
+  .section-head .lede { color: var(--text-secondary); margin-top: 0.5rem; font-size: var(--text-base); max-width: 64ch; }
+  .section-head .row { flex-wrap: wrap; justify-content: flex-end; }
+  .section-head .search { width: 240px; max-width: 100%; }
+  @media (max-width: 680px) { .section-head { flex-direction: column; align-items: stretch; } .section-head .row { justify-content: flex-start; } .section-head .search { width: 100%; } }
+
+  .input { border: 1px solid var(--border-soft); background: var(--surface-canvas); border-radius: var(--r-2); padding: 0.625rem 0.875rem; font-family: var(--font-body); font-size: var(--text-base); }
+  .segmented { display: inline-flex; background: var(--surface-canvas-alt); border-radius: var(--r-pill); padding: 0.25rem; border: 1px solid var(--border-soft); }
+  .segmented button { border: 0; background: transparent; padding: 0.375rem 0.75rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-xs); letter-spacing: .04em; color: var(--text-secondary); white-space: nowrap; }
+  .segmented button[aria-pressed="true"] { background: var(--text-primary); color: var(--text-inverse); }
+
+
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; letter-spacing: .04em; font-size: var(--text-sm); border: 1px solid transparent; }
+  .btn--primary { background: var(--text-primary); color: #fff; }
+  .btn--ghost { background: transparent; color: var(--text-primary); border-color: var(--border-soft); }
+  .btn--sm { padding: 0.375rem 0.75rem; font-size: var(--text-xs); }
+  .btn--lg { padding: 0.75rem 1.25rem; font-size: var(--text-base); }
+  .btn--danger { background: var(--notify-error); color: #fff; border-color: var(--notify-error); }
+
+  /* ---- art swatches (self-contained gradients) ---- */
+  .art--coll-1 { background: linear-gradient(135deg, #1D1D1D, #6366F1); }
+  .art--coll-2 { background: radial-gradient(circle at 30% 30%, #FBBF24, #B91C1C 70%); }
+  .art--coll-3 { background: linear-gradient(135deg, #6EE7B7, #064E3B); }
+  .art--coll-4 { background: repeating-linear-gradient(45deg, #1D1D1D 0 12px, #FDE68A 12px 24px); }
+  .art--coll-5 { background: conic-gradient(from 210deg at 50% 50%, #F472B6, #6366F1, #38BDF8, #F472B6); }
+
+  /* ---- generator cards (canonical coll-card from project-studio-tabs) ---- */
+  .gen-grid { display: grid; gap: var(--s-5); grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .coll-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); overflow: hidden; cursor: pointer; transition: transform .15s, box-shadow .15s; display: block; }
+  .coll-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+  .coll-card .pic { aspect-ratio: 5/3; }
+  .coll-card .meta { padding: var(--s-4) var(--s-5); }
+  .coll-card .meta .spread { margin-bottom: 0.25rem; }
+  .coll-card .meta .ttl { font-family: var(--font-display); font-weight: 400; font-size: var(--text-lg); }
+  .coll-card .meta .sub { color: var(--text-secondary); font-size: var(--text-xs); margin-top: 0.125rem; }
+  .coll-card .meta .stats { display: flex; gap: var(--s-4); margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--border-soft); font-size: var(--text-xs); color: var(--text-secondary); }
+  .coll-card .meta .stats .n { color: var(--text-primary); font-weight: 600; font-family: var(--font-emphasis); }
+  /* generator batch facts (replaces collection-style stage badges — generators have no Draft/Review/Live) */
+  .gen-facts { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: var(--s-3); }
+  .gf { display: inline-flex; align-items: center; gap: 0.3125rem; font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-3xs); letter-spacing: .06em; text-transform: uppercase; padding: 0.1875rem 0.5rem; border-radius: var(--r-pill); background: var(--surface-canvas-alt); color: var(--text-secondary); border: 1px solid var(--border-soft); }
+  .gf .n { color: var(--text-primary); }
+  .gf--muted { color: var(--text-muted); }
+  .gf--export { background: var(--text-primary); color: var(--text-inverse); border-color: transparent; }
+  .coll-card--new { border: 2px dashed var(--border-soft); background: var(--surface-canvas); border-radius: var(--r-4); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s-2); text-align: center; color: var(--text-secondary); min-height: 220px; padding: var(--s-6); transition: border-color .15s, color .15s; }
+  .coll-card--new:hover { border-color: var(--text-primary); color: var(--text-primary); }
+  .coll-card--new .plus { font-size: 1.875rem; line-height: 1; }
+  .coll-card--new .lbl { font-family: var(--font-display); font-size: var(--text-xl); letter-spacing: .04em; text-transform: uppercase; }
+
+  /* ---- flow screen bits (build / batches / export) ---- */
+  .panel { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); }
+  .panel--pad { padding: var(--s-6); }
+  .parts-grid { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+  .part { border: 1px solid var(--border-soft); border-radius: var(--r-3); overflow: hidden; background: var(--surface-canvas); }
+  .part .sw { aspect-ratio: 1; }
+  .part .lab { padding: 0.375rem 0.5rem; display: flex; align-items: center; justify-content: space-between; font-size: var(--text-2xs); color: var(--text-secondary); }
+  .part .lab .w { font-weight: 700; color: var(--text-primary); }
+  .layer-rail { display: flex; flex-direction: column; gap: var(--s-2); }
+  .layer-rail .lr { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); padding: 0.5rem 0.75rem; border: 1px solid var(--border-soft); border-radius: var(--r-2); font-size: var(--text-sm); background: var(--surface-canvas); }
+  .layer-rail .lr.active { border-color: var(--text-primary); }
+  .layer-rail .lr .c { font-size: var(--text-2xs); color: var(--text-muted); }
+  /* layer rail controls: drag handle (reorder), options menu, add layer */
+  .layer-rail .lr { position: relative; }
+  .lr-grip { color: var(--text-muted); flex: none; cursor: grab; line-height: 1; font-size: 0.95rem; }
+  .lr-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .lr-main .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lr-acts { display: flex; align-items: center; gap: 1px; flex: none; }
+  .lr-btn { width: 24px; height: 24px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); background: transparent; border: 0; cursor: pointer; }
+  .lr-btn:hover { background: var(--surface-canvas-alt); color: var(--text-primary); }
+  .lr-btn[disabled] { color: var(--border-soft); cursor: not-allowed; }
+  .lr-btn.is-danger:hover { background: rgba(239,68,68,0.12); color: var(--notify-error); }
+  .lr-add { display: flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.5rem; margin-top: var(--s-1); border: 1.5px dashed var(--border-soft); border-radius: var(--r-2); color: var(--text-secondary); background: transparent; font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-xs); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; width: 100%; }
+  .lr-add:hover { border-color: var(--text-primary); color: var(--text-primary); }
+  .lr-menu { position: absolute; right: 6px; top: calc(100% - 2px); z-index: 6; width: 190px; background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-2); box-shadow: var(--shadow-2); padding: var(--s-2); }
+  .lr-menu button { display: flex; align-items: center; gap: 0.625rem; width: 100%; text-align: left; padding: 0.5rem 0.625rem; border-radius: var(--r-1); font-size: var(--text-sm); color: var(--text-primary); background: transparent; border: 0; cursor: pointer; }
+  .lr-menu button:hover { background: var(--surface-canvas-alt); }
+  .lr-menu button[disabled] { color: var(--text-muted); cursor: not-allowed; }
+  .lr-menu button[disabled]:hover { background: transparent; }
+  .lr-menu .sep { height: 1px; background: var(--border-soft); margin: var(--s-2) 0; }
+  .lr-menu svg { flex: none; color: var(--text-secondary); }
+  .lr-menu .danger { color: var(--notify-error); }
+  .lr-menu .danger svg { color: var(--notify-error); }
+  .build-cols { display: grid; grid-template-columns: 220px 1fr; gap: var(--s-5); }
+  @media (max-width: 720px) { .build-cols { grid-template-columns: 1fr; } }
+
+  /* ---- rich build panel: tabs, part tiles, select mode, compatibility ---- */
+  .parts-tabs { display: flex; gap: 0; padding: 0 var(--s-4); border-bottom: 1px solid var(--border-soft); background: var(--surface-canvas); border-radius: var(--r-4) var(--r-4) 0 0; }
+  .parts-tabs button { padding: 0.75rem 0.875rem; color: var(--text-secondary); position: relative; font-family: var(--font-emphasis); font-size: var(--text-xs); letter-spacing: .1em; text-transform: uppercase; font-weight: 600; background: transparent; border: 0; cursor: pointer; }
+  .parts-tabs button.active { color: var(--text-primary); }
+  .parts-tabs button.active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; background: var(--text-primary); }
+  .ptoolbar { padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--border-soft); background: var(--surface-canvas); display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .ptoolbar .lbl { font-family: var(--font-emphasis); font-size: var(--text-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; }
+  .ptoolbar .lbl strong { color: var(--text-primary); font-weight: 700; }
+  .ptoolbar.is-selecting { background: var(--text-primary); color: var(--text-inverse); }
+  .ptoolbar .sel-count { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-sm); letter-spacing: .08em; text-transform: uppercase; color: var(--text-inverse); }
+  .ptoolbar .sel-actions { display: flex; gap: var(--s-2); margin-left: auto; }
+  .ptoolbar.is-selecting .btn--ghost { color: var(--text-inverse); border-color: rgba(255,255,255,0.35); background: transparent; }
+  .ptoolbar .btn--danger { background: var(--notify-error); border-color: var(--notify-error); color: #fff; }
+  .ptoolbar .btn[disabled] { opacity: .5; }
+  .pbody { padding: var(--s-5); }
+
+  .compat-prompt { display: grid; grid-template-columns: 22px 1fr auto; gap: var(--s-3); align-items: center; padding: var(--s-3) var(--s-4); margin-bottom: var(--s-4); background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); border-radius: var(--r-3); }
+  .compat-prompt .ic { color: var(--stage-review); width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; }
+  .compat-prompt .bd { font-size: var(--text-sm); line-height: 1.45; color: var(--text-primary); }
+  .compat-prompt .bd .muted { color: var(--text-secondary); }
+  @media (max-width: 720px) { .compat-prompt { grid-template-columns: 22px 1fr; } .compat-prompt .btn { grid-column: 2; justify-self: start; margin-top: 0.25rem; } }
+
+  .pgrid { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .part-tile { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-3); overflow: hidden; display: flex; flex-direction: column; transition: border-color .15s; position: relative; }
+  .part-tile:hover { border-color: var(--text-primary); }
+  .part-tile.add { border-style: dashed; cursor: pointer; align-items: center; justify-content: center; color: var(--text-secondary); min-height: 150px; text-align: center; }
+  .part-tile.add .plus { font-size: 1.5rem; line-height: 1; }
+  .part-tile .img { aspect-ratio: 1/1; padding: var(--s-3); background: var(--surface-canvas-deep); position: relative; }
+  .part-art { width: 100%; aspect-ratio: 1/1; border-radius: var(--r-2); position: relative; overflow: hidden; }
+  .part-art::after { content: ""; position: absolute; inset: 18%; background: rgba(0,0,0,0.14); border-radius: 50%; }
+  .part-tile .badge-row { position: absolute; top: 6px; left: 6px; right: 6px; display: flex; justify-content: flex-end; gap: 0.375rem; }
+  /* warnings pin top-left so a problem is never lost among config chips; config (cap, rules) stays top-right */
+  .part-tile .badge-warn { position: absolute; top: 6px; left: 6px; display: flex; gap: 0.375rem; z-index: 2; }
+  .part-tile .meta { padding: var(--s-3); }
+  .part-tile .meta .name { font-weight: 600; font-size: var(--text-sm); line-height: 1.2; }
+  .part-tile .controls { display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border-soft); }
+  .weight-pill { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.1875rem 0.5rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-size: var(--text-3xs); letter-spacing: .08em; text-transform: uppercase; background: var(--surface-canvas-alt); color: var(--text-primary); font-weight: 700; }
+  .ico-btn { width: 26px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); background: transparent; border: 0; cursor: pointer; }
+  .ico-btn:hover { background: var(--surface-canvas-alt); color: var(--text-primary); }
+  .ico-btn.is-danger:hover { background: rgba(239,68,68,0.12); color: var(--notify-error); }
+  .tile-actions { display: inline-flex; gap: 0.125rem; }
+  .tile-check { position: absolute; top: 8px; left: 8px; width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,0.92); border: 1.5px solid var(--border-strong); display: inline-flex; align-items: center; justify-content: center; color: var(--text-primary); z-index: 3; }
+  /* empty checkbox for unselected tiles — only the checked state shows the tick */
+  .part-tile:not(.is-selected) .tile-check svg, .out-tile:not(.is-selected) .tile-check svg { display: none; }
+  .part-tile.is-selected { border-color: var(--text-primary); box-shadow: 0 0 0 2px var(--text-primary) inset; }
+  .part-tile.is-selected .tile-check { background: var(--text-primary); border-color: var(--text-primary); color: var(--text-inverse); }
+
+  /* chip warn/err modifiers (reuse the gallery .chip base) */
+  .chip--warn { background: rgba(245,158,11,0.15); color: var(--stage-draft); border-color: transparent; }
+  .chip--err  { background: rgba(239,68,68,0.12); color: var(--notify-error); border-color: transparent; }
+
+  /* compatibility tab */
+  .compat-summary { display: flex; gap: var(--s-5); align-items: center; padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--border-soft); background: var(--surface-canvas-alt); font-size: var(--text-sm); flex-wrap: wrap; }
+  .compat-summary .stat { display: flex; gap: 0.375rem; align-items: center; }
+  .compat-summary .stat .n { font-family: var(--font-display); font-size: var(--text-xl); letter-spacing: .04em; color: var(--text-primary); }
+  .compat-summary .stat .l { color: var(--text-secondary); }
+  .compat-summary .stat .ok { color: var(--stage-live); display: inline-flex; align-items: center; gap: 0.25rem; }
+  .compat-filters { padding: var(--s-3) var(--s-4); display: flex; gap: 0.375rem; flex-wrap: wrap; border-bottom: 1px solid var(--border-soft); }
+  .compat-filters button { font-family: var(--font-emphasis); font-size: var(--text-3xs); letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 0.3125rem 0.625rem; border-radius: var(--r-pill); color: var(--text-secondary); background: transparent; border: 1px solid var(--border-soft); cursor: pointer; }
+  .compat-filters button[aria-pressed="true"] { background: var(--text-primary); color: var(--text-inverse); border-color: transparent; }
+  .rule-group { padding: var(--s-5); border-bottom: 1px solid var(--border-soft); }
+  .rule-group:last-child { border-bottom: 0; }
+  .rule-group .head { font-family: var(--font-emphasis); font-size: var(--text-2xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; margin-bottom: var(--s-3); }
+  .rule-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-3); display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto; gap: var(--s-3); align-items: center; }
+  .rule-card .ep { display: flex; align-items: center; gap: 0.625rem; background: var(--surface-canvas-alt); border-radius: var(--r-2); padding: 0.5rem 0.625rem; min-width: 0; }
+  .rule-card .ep .swatch { width: 28px; height: 28px; border-radius: 6px; background: var(--surface-canvas-deep); border: 1px solid var(--border-soft); flex: none; }
+  .rule-card .ep .nm { font-weight: 600; font-size: var(--text-sm); line-height: 1.1; }
+  .rule-card .ep .ly { font-family: var(--font-emphasis); font-size: var(--text-3xs); letter-spacing: .12em; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; margin-top: 0.125rem; }
+  .rel { font-family: var(--font-emphasis); font-size: var(--text-3xs); letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 0.3125rem 0.625rem; border-radius: var(--r-pill); text-align: center; white-space: nowrap; }
+  .rel--req { background: rgba(99,102,241,0.12); color: var(--stage-review); }
+  .rel--exc { background: rgba(239,68,68,0.12); color: var(--notify-error); }
+  .rule-card .acts { display: flex; gap: 0.25rem; }
+  .rule-card .acts button { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); background: transparent; border: 0; cursor: pointer; }
+  .rule-card .acts button:hover { background: var(--surface-canvas-alt); color: var(--text-primary); }
+  .rule-reason { font-size: var(--text-xs); color: var(--text-secondary); padding: 0 var(--s-3); margin-top: 0.5rem; font-style: italic; }
+  .validation-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .v-row { display: flex; gap: 0.625rem; align-items: center; font-size: var(--text-sm); color: var(--text-secondary); }
+  .v-row svg { color: var(--stage-live); flex: none; }
+  @media (max-width: 720px) { .rule-card { grid-template-columns: 1fr; gap: 0.5rem; } }
+
+  /* ---- preflight · batch generation ---- */
+  .step-rail { background: var(--surface-canvas); border-bottom: 1px solid var(--border-soft); padding: 0 var(--s-8); display: flex; align-items: stretch; flex-wrap: wrap; }
+
+  /* ---- flow sub-bar: page-specific status + step progression, sits directly under the step rail ---- */
+  .flow-substatus { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; background: var(--surface-canvas-alt); border-bottom: 1px solid var(--border-soft); padding: var(--s-3) var(--s-8); }
+  .flow-substatus .status-info { font-size: var(--text-sm); color: var(--text-secondary); display: inline-flex; align-items: center; gap: 0.5rem; }
+  .flow-substatus .status-info .saved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--stage-live); flex: none; }
+  .flow-substatus .status-info svg { flex: none; color: var(--text-muted); }
+  .flow-substatus .actions { margin-left: auto; display: flex; align-items: center; gap: var(--s-3); }
+  .step { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 0; padding-right: 2.25rem; margin-right: 1.5rem; color: var(--text-muted); font-size: var(--text-sm); position: relative; white-space: nowrap; background: none; border: 0; cursor: pointer; }
+  .step .num { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-canvas-alt); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-2xs); flex: none; border: 1px solid var(--border-soft); }
+  .step .name { font-family: var(--font-emphasis); font-weight: 600; font-size: var(--text-xs); letter-spacing: .1em; text-transform: uppercase; }
+  .step.done { color: var(--text-primary); } .step.done .num { background: var(--text-primary); color: var(--text-inverse); border-color: transparent; }
+  .step.active { color: var(--text-primary); } .step.active .num { background: var(--text-primary); color: var(--text-inverse); border-color: transparent; }
+  .step.active::after { content: ""; position: absolute; left: 0; right: 24px; bottom: -1px; height: 2px; background: var(--text-primary); }
+  .step:not(:last-child)::before { content: ""; position: absolute; right: 0; top: 50%; width: 20px; height: 1px; background: var(--border-soft); }
+
+  .batch-form .gen-mode { background: var(--surface-canvas); padding: var(--s-5); }
+  .batch-form .gen-mode + .gen-mode { margin-top: var(--s-4); }
+  .batch-form .gen-mode header h4 { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-base); letter-spacing: .08em; text-transform: uppercase; }
+  .batch-form .gen-mode .desc { margin: 0.25rem 0 var(--s-3); }
+  .frow { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+  .fld { padding: 0.5rem 0.75rem; border-radius: var(--r-2); border: 1px solid var(--border-soft); background: var(--surface-canvas-alt); font: inherit; min-width: 220px; flex: 1; }
+  .seed-label { display: block; font-family: var(--font-emphasis); font-size: var(--text-2xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.375rem; }
+  .seed-or { display: flex; align-items: center; gap: 0.75rem; margin: var(--s-4) 0; color: var(--text-muted); font-size: var(--text-2xs); font-family: var(--font-emphasis); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  .seed-or::before, .seed-or::after { content: ""; flex: 1; height: 1px; background: var(--border-soft); }
+  .pick-list { display: flex; flex-direction: column; gap: var(--s-2); margin-bottom: var(--s-3); }
+  .pick-row { display: grid; grid-template-columns: 36px 1fr 1fr 32px; gap: var(--s-2); align-items: center; padding: 0.375rem; background: var(--surface-canvas-alt); border: 1px solid var(--border-soft); border-radius: var(--r-2); }
+  .pick-row .thumb { width: 36px; height: 36px; border-radius: 6px; border: 1px solid var(--border-soft); }
+  .pick-row select { padding: 0.375rem 0.625rem; border-radius: var(--r-2); border: 1px solid var(--border-soft); background: var(--surface-canvas); font: inherit; min-width: 0; }
+  .row-icon-btn { width: 30px; height: 30px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); background: transparent; border: 0; cursor: pointer; }
+  .row-icon-btn:hover { background: var(--surface-canvas-alt); color: var(--text-primary); }
+  @media (max-width:560px) { .pick-row { grid-template-columns: 28px 1fr 32px; } .pick-row select:nth-of-type(1) { grid-column: 2 / 3; } }
+
+  /* ---- curate · output grid ---- */
+  .art { position: relative; overflow: hidden; background-size: cover; background-position: center; }
+  .art-square { aspect-ratio: 1/1; }
+  .art--composed-1 { background: radial-gradient(circle at 50% 60%, #1D1D1D 18%, transparent 19%), radial-gradient(circle at 35% 40%, #FFFFFF 8%, transparent 9%), radial-gradient(circle at 65% 40%, #FFFFFF 8%, transparent 9%), linear-gradient(135deg, #FDE68A, #FCA5A5); }
+  .art--composed-2 { background: radial-gradient(circle at 50% 65%, #FFFFFF 22%, transparent 23%), radial-gradient(circle at 50% 55%, #1D1D1D 15%, transparent 16%), linear-gradient(135deg, #93C5FD, #A78BFA); }
+  .art--composed-3 { background: radial-gradient(circle at 50% 60%, #1D1D1D 18%, transparent 19%), linear-gradient(135deg, #6EE7B7, #38BDF8); }
+  .art--composed-4 { background: radial-gradient(circle at 50% 60%, #6366F1 18%, transparent 19%), linear-gradient(135deg, #FDE68A, #F472B6); }
+  .art--composed-5 { background: radial-gradient(circle at 50% 60%, #FFFFFF 14%, transparent 15%), linear-gradient(135deg, #1D1D1D, #6366F1); }
+  .art--composed-6 { background: radial-gradient(circle at 50% 60%, #1D1D1D 16%, transparent 17%), linear-gradient(180deg, #F59E0B, #EF4444); }
+
+  .batch-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); background: var(--surface-canvas); border-bottom: 1px solid var(--border-soft); padding: var(--s-5) var(--s-8); flex-wrap: wrap; }
+  .batch-head h2 { font-size: var(--text-2xl); }
+  .meta-row { display: flex; gap: var(--s-6); align-items: center; flex-wrap: wrap; }
+  .meta-row .item .lbl { font-family: var(--font-emphasis); font-size: var(--text-3xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; }
+  .meta-row .item .val { font-family: var(--font-display); font-size: var(--text-2xl); letter-spacing: .04em; }
+  .meta-row .item .val small { font-family: var(--font-body); font-size: var(--text-2xs); color: var(--text-secondary); letter-spacing: .06em; margin-left: 0.25rem; }
+
+  .curate-toolbar { background: var(--surface-canvas); border-bottom: 1px solid var(--border-soft); padding: var(--s-3) var(--s-8); display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+  .curate-toolbar .default-bar { display: flex; align-items: center; flex: 1; gap: var(--s-3); flex-wrap: wrap; }
+  .curate-toolbar .select-bar { display: none; }
+  .curate-toolbar.is-selecting { background: var(--text-primary); color: var(--text-inverse); }
+  .curate-toolbar.is-selecting .default-bar { display: none; }
+  .curate-toolbar.is-selecting .select-bar { display: flex; align-items: center; flex: 1; gap: var(--s-3); }
+  .curate-toolbar .sel-count { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-sm); letter-spacing: .08em; text-transform: uppercase; color: var(--text-inverse); }
+  .curate-toolbar .sel-actions { display: flex; gap: var(--s-2); margin-left: auto; }
+  .curate-toolbar.is-selecting .btn--ghost { color: var(--text-inverse); border-color: rgba(255,255,255,0.35); background: transparent; }
+  .curate-toolbar .btn--danger { background: var(--notify-error); border-color: var(--notify-error); color: #fff; }
+  .curate-sel { padding: 0.375rem 0.75rem; border-radius: var(--r-2); border: 1px solid var(--border-soft); background: var(--surface-canvas); font: inherit; font-size: var(--text-sm); }
+
+  .output-grid { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); padding: var(--s-6) var(--s-8); }
+  .out-tile { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-3); overflow: hidden; position: relative; transition: border-color .12s, transform .12s; }
+  .out-tile:hover { border-color: var(--text-primary); transform: translateY(-2px); }
+  .out-tile .img { aspect-ratio: 1/1; position: relative; }
+  .out-tile .pin { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.9); display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); border: 1px solid var(--border-soft); cursor: pointer; font-size: 0.875rem; }
+  .out-tile.is-pinned .pin { background: var(--text-primary); color: var(--text-inverse); border-color: transparent; }
+  .out-tile .meta { padding: 0.625rem 0.75rem; font-family: var(--font-emphasis); font-size: var(--text-2xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+  .out-tile .meta .id { color: var(--text-primary); }
+  .out-tile.is-selected { border-color: var(--text-primary); box-shadow: 0 0 0 2px var(--text-primary) inset; }
+  .out-tile.is-selected .tile-check { background: var(--text-primary); border-color: var(--text-primary); color: var(--text-inverse); }
+
+  .flow-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); background: var(--surface-canvas); border-top: 1px solid var(--border-soft); padding: var(--s-4) var(--s-8); flex-wrap: wrap; }
+  .flow-bar .status-info { font-size: var(--text-sm); color: var(--text-secondary); }
+  .flow-bar .actions { display: flex; gap: var(--s-3); align-items: center; }
+
+  /* static modal preview cards */
+  .modal-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); width: 100%; max-width: 460px; overflow: hidden; box-shadow: 0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display: flex; align-items: center; justify-content: space-between; padding: var(--s-5); border-bottom: 1px solid var(--border-soft); }
+  .modal-card header h4 { font-size: var(--text-xl); }
+  .modal-card .mbody { padding: var(--s-5); }
+  .modal-card .footer-row { display: flex; justify-content: flex-end; gap: var(--s-3); padding: var(--s-5); border-top: 1px solid var(--border-soft); align-items: center; }
+  .modal-card .mbody.scroll { max-height: 60vh; overflow-y: auto; }
+
+  /* modal form scaffolding (shared by layer / part / compatibility modals) */
+  .m-field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .m-field + .m-field { margin-top: var(--s-5); }
+  .m-field .hint { font-size: var(--text-xs); color: var(--text-secondary); margin: 0; }
+  .m-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+  .m-grid-2 .m-field + .m-field { margin-top: 0; }
+  @media (max-width: 520px) { .m-grid-2 { grid-template-columns: 1fr; gap: var(--s-5); } }
+  select.input { appearance: auto; background: var(--surface-canvas); width: 100%; }
+
+  /* lightweight modal tabs (Add part: Single / Batch upload) */
+  .mtabs { display: flex; gap: var(--s-5); border-bottom: 1px solid var(--border-soft); margin-bottom: var(--s-5); }
+  .mtabs button { padding: 0 0 var(--s-3); font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-sm); color: var(--text-secondary); border: 0; background: transparent; position: relative; cursor: pointer; }
+  .mtabs button.active { color: var(--text-primary); }
+  .mtabs button.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--text-primary); }
+
+  /* radio choice cards (rule scope, inclusion policy) */
+  .choice { display: grid; grid-template-columns: 20px 1fr; gap: var(--s-3); align-items: start; border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); cursor: pointer; background: var(--surface-canvas); }
+  .choice + .choice { margin-top: var(--s-3); }
+  .choice.sel { border-color: var(--border-strong); background: var(--surface-canvas-alt); box-shadow: 0 0 0 1px var(--border-strong); }
+  .choice.is-disabled { opacity: .55; cursor: not-allowed; }
+  .choice .radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--text-muted); margin-top: 1px; position: relative; flex: none; }
+  .choice.sel .radio { border-color: var(--text-primary); }
+  .choice.sel .radio::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--text-primary); }
+  .choice .ttl { display: block; font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-md); text-transform: none; letter-spacing: 0; }
+  .choice .desc { display: block; color: var(--text-secondary); font-size: var(--text-sm); margin-top: 0.25rem; line-height: 1.45; }
+  .choice .desc select { display: block; margin-top: var(--s-3); max-width: 260px; }
+
+  /* asset drop zone */
+  .dropzone { border: 1.5px dashed var(--border-soft); border-radius: var(--r-3); padding: var(--s-8) var(--s-4); text-align: center; color: var(--text-secondary); font-size: var(--text-base); }
+  .dropzone strong { color: var(--text-primary); font-weight: 700; }
+  .ulink { text-decoration: underline; text-underline-offset: 2px; font-size: var(--text-sm); color: var(--text-primary); cursor: pointer; }
+
+  /* confirm (destructive) modal body */
+  .modal-card .confirm { text-align: center; padding: var(--s-8) var(--s-6) var(--s-6); display: flex; flex-direction: column; align-items: center; gap: var(--s-3); }
+  .modal-card .confirm img { width: 148px; height: auto; }
+  .modal-card .confirm h3 { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; letter-spacing: .02em; font-size: var(--text-2xl); margin: 0; }
+  .modal-card .confirm p { margin: 0; font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.55; max-width: 44ch; }
+
+  /* file-type reference cards (supported file types modal) */
+  .ft-card { border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); }
+  .ft-card + .ft-card { margin-top: var(--s-3); }
+  .ft-card h4 { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-md); text-transform: none; letter-spacing: 0; }
+  .ft-card p { margin: 0.25rem 0 var(--s-3); font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.45; }
+  .ft-card .exts { font-family: ui-monospace, monospace; font-size: var(--text-xs); color: var(--text-primary); }
+  .ft-card .exts span { color: var(--text-muted); }
+
+  /* batch history cards */
+  .batch-grid { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .batch-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); }
+  .batch-card .top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-2); }
+  .batch-card .bm-name { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; letter-spacing: .02em; font-size: var(--text-lg); line-height: 1.05; }
+  .batch-card .date { font-family: ui-monospace, monospace; font-size: var(--text-xs); color: var(--text-secondary); }
+  .batch-card .bm-ico { color: var(--text-primary); flex: none; }
+  .batch-card .stat { font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--s-2); }
+  .batch-card .stat .n { color: var(--text-primary); font-weight: 700; font-family: var(--font-emphasis); }
+  .batch-card .acts { display: flex; gap: 0.25rem; margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--border-soft); }
+  .panel-block { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); padding: var(--s-5); }
+  .panel-block + .panel-block { margin-top: var(--s-5); }
+  .panel-block .ph { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-4); }
+  .panel-block .ph h3 { font-size: var(--text-xl); }
+  .panel-block .ph .count { font-size: var(--text-xs); color: var(--text-secondary); font-family: var(--font-emphasis); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* batch preview grid */
+  .preview-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-2); }
+  .preview-grid .art { border-radius: var(--r-2); }
+  @media (max-width: 520px) { .preview-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  /* ---- notification bell ---- */
+  .notif-bell { position: relative; width: 36px; height: 36px; border-radius: var(--r-2); background: transparent; border: 1px solid var(--border-soft); color: var(--text-primary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background .15s, border-color .15s; }
+  .notif-bell:hover { background: var(--surface-canvas-alt); border-color: var(--border-strong); }
+  .notif-bell .badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 0.3125rem; border-radius: 999px; background: var(--notify-error); color: #fff; font-size: var(--text-3xs); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-emphasis); }
+
+  /* ---- export · send to collection ---- */
+  .chip--info { background: rgba(99,102,241,0.12); color: var(--stage-review); border-color: transparent; }
+  .export-wrap { max-width: 920px; margin: 0 auto; padding: var(--s-10) var(--s-8); }
+  .collection-pick { border-radius: var(--r-3); border: 1px solid var(--border-soft); background: var(--surface-canvas); overflow: hidden; }
+  .coll-row { display: grid; grid-template-columns: 48px 1fr auto auto; gap: var(--s-4); align-items: center; padding: var(--s-4) var(--s-5); cursor: pointer; }
+  .coll-row + .coll-row { border-top: 1px solid var(--border-soft); }
+  .coll-row.is-selected { background: var(--surface-canvas-deep); }
+  .coll-row .av { width: 48px; height: 48px; border-radius: var(--r-2); background: linear-gradient(135deg, #6366F1, #10B981); }
+  .coll-row .name { font-weight: 600; font-size: var(--text-md); }
+  .coll-row .sub { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 0.125rem; }
+  .coll-row .ok { color: var(--stage-live); font-size: var(--text-xl); }
+  .snapshot-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-6); margin-top: var(--s-6); }
+  .snapshot-card h3 { font-size: var(--text-xl); margin-bottom: var(--s-4); }
+  .snapshot-card .kv { display: grid; grid-template-columns: 180px 1fr; row-gap: 0.75rem; column-gap: var(--s-6); font-size: var(--text-base); }
+  .snapshot-card .kv .k { color: var(--text-secondary); font-family: var(--font-emphasis); font-size: var(--text-2xs); letter-spacing: .1em; text-transform: uppercase; font-weight: 700; align-self: center; }
+  .snapshot-card .kv .v { font-weight: 600; }
+  .info-panel { margin-top: var(--s-4); background: rgba(99,102,241,0.06); border: 1px solid transparent; border-radius: var(--r-3); padding: var(--s-4); display: flex; gap: var(--s-3); }
+  .info-panel .ic { color: var(--stage-review); flex: none; }
+  .info-panel .t { font-weight: 600; }
+  .info-panel--warn { background: rgba(245,158,11,0.1); }
+  .info-panel--warn .ic { color: var(--stage-draft); }
+  .info-panel--err { background: rgba(239,68,68,0.08); }
+  .info-panel--err .ic { color: var(--notify-error); }
+  .info-panel--ok { background: rgba(16,185,129,0.08); }
+  .info-panel--ok .ic { color: var(--stage-live); }
+  .info-panel .tiny { line-height: 1.5; }
+
+  /* ---- cycles guard (estimate → check → inline top-up) — shared with cycle-tracking gallery ---- */
+  .staged { display: inline-flex; align-items: center; gap: var(--s-2); padding: .45rem .85rem; border-radius: var(--r-pill); background: var(--surface-canvas-deep); font-size: var(--text-xs); font-weight: 700; font-family: var(--font-emphasis); color: var(--text-secondary); }
+  .staged .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--stage-live); flex: none; }
+  .est { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--s-3); }
+  @media (max-width: 560px) { .est { grid-template-columns: 1fr; } }
+  .est .e { background: var(--surface-canvas-alt); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); }
+  .est .e.warn { border-color: rgba(245,158,11,.5); background: rgba(245,158,11,.08); }
+  .est .e.ok { border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.06); }
+  .est .e .k { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-2xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); }
+  .est .e .v { font-family: var(--font-emphasis); font-weight: 800; font-size: var(--text-xl); margin-top: .3rem; }
+  .est .e .v small { font-size: var(--text-xs); color: var(--text-secondary); font-weight: 600; }
+  .cyc-kv { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: .65rem 0; border-top: 1px solid var(--border-soft); font-size: var(--text-base); }
+  .cyc-kv:first-child { border-top: 0; }
+  .cyc-kv .v { font-family: var(--font-emphasis); font-weight: 700; }
+  .cyc-kv .v.warn { color: var(--stage-draft); }
+  .amount { display: flex; align-items: flex-end; gap: var(--s-4); flex-wrap: wrap; }
+  .amount input { font-family: var(--font-emphasis); font-weight: 800; font-size: var(--text-2xl); border: 1.5px solid var(--border-soft); border-radius: var(--r-2); padding: .4rem .75rem; width: 150px; text-align: center; }
+  .amount .conv { color: var(--text-secondary); font-size: var(--text-sm); }
+  .amount .conv b { color: var(--text-primary); font-family: var(--font-emphasis); }
+  .presets { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+  .presets button { border: 1px solid var(--border-soft); border-radius: var(--r-pill); padding: .35rem .8rem; font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-xs); color: var(--text-secondary); }
+  .presets button.active { background: var(--text-primary); color: #fff; border-color: transparent; }
+  .cyc-link { color: var(--info); font-weight: 700; font-size: var(--text-sm); }
+  .progress { height: 10px; background: var(--surface-canvas-deep); border-radius: var(--r-pill); overflow: hidden; }
+  .progress .f { height: 100%; background: var(--text-primary); border-radius: var(--r-pill); }
+  .progress .f.warn { background: var(--stage-draft); }
+  .progress .f.ok { background: var(--stage-live); }
+  .cyc-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-3xs); letter-spacing: .08em; text-transform: uppercase; background: var(--surface-canvas-deep); color: var(--text-secondary); }
+  .cyc-tag--amber { background: rgba(245,158,11,.16); color: var(--stage-draft); }
+  .cyc-tag--green { background: rgba(16,185,129,.14); color: var(--stage-live); }
+  .modal-card .footer-row .right { margin-left: auto; display: flex; gap: var(--s-3); }
+  .file-pick { display: flex; align-items: center; gap: var(--s-3); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-3) var(--s-4); }
+  .file-pick .thumb { width: 34px; height: 34px; border-radius: 6px; flex: none; }
+  .file-pick .nm { font-weight: 700; color: var(--text-primary); }
+  .used-row { display: grid; grid-template-columns: 120px 1fr 56px; gap: var(--s-3); align-items: center; padding: 0.5rem 0; border-top: 1px solid var(--border-soft); }
+  .used-row:first-child { border-top: 0; }
+  .used-row .ul-nm { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-sm); }
+  .used-row .ul-nm .opt { color: var(--text-muted); font-weight: 600; font-size: var(--text-3xs); text-transform: uppercase; letter-spacing: .06em; margin-left: 0.25rem; }
+  .used-row .ul-bar { height: 6px; background: var(--surface-canvas-deep); border-radius: var(--r-pill); overflow: hidden; }
+  .used-row .ul-bar .f { height: 100%; background: var(--text-primary); border-radius: var(--r-pill); }
+  .used-row .ul-bar .f.low { background: var(--stage-draft); }
+  .used-row .ul-ct { text-align: right; font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-sm); color: var(--text-secondary); }
+  @media (max-width:560px) { .snapshot-card .kv { grid-template-columns: 1fr; row-gap: 0.25rem; } .snapshot-card .kv .k { margin-top: var(--s-3); } .coll-row { grid-template-columns: 40px 1fr; } .coll-row .chip, .coll-row .ok { grid-column: 2; } }
+
+  .ghost-tile { border: 2px dashed var(--border-soft); border-radius: var(--r-3); display: flex; align-items: center; justify-content: center; color: var(--text-muted); aspect-ratio: 1; font-size: var(--text-3xs); text-transform: uppercase; letter-spacing: .1em; }
+  .field { display: flex; flex-direction: column; gap: 0.375rem; }
+  .field label { font-size: var(--text-sm); font-weight: 600; }
+  .gen-mode { border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); }
+  .gen-mode + .gen-mode { margin-top: var(--s-3); }
+  .gen-mode.sel { border-color: var(--text-primary); background: var(--surface-canvas-alt); }
+  .gen-mode header { display: flex; align-items: center; gap: var(--s-2); }
+  .gen-mode header h4 { font-size: var(--text-lg); }
+  .gen-mode .desc { color: var(--text-secondary); font-size: var(--text-sm); margin-top: 0.25rem; }
+  .chip { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-3xs); letter-spacing: .08em; text-transform: uppercase; background: var(--surface-canvas-alt); color: var(--text-secondary); border: 1px solid var(--border-soft); }
+  .chip--ghost { background: transparent; }
+
+  .progress { height: 10px; border-radius: var(--r-pill); background: var(--surface-canvas-alt); overflow: hidden; border: 1px solid var(--border-soft); }
+  .progress > span { display: block; height: 100%; background: var(--text-primary); }
+  .readiness { display: grid; gap: var(--s-2); }
+  .readiness .rr { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-sm); }
+  .readiness .rr .ic { width: 18px; height: 18px; flex: none; }
+  .ok { color: var(--stage-live); }
+  .warn { color: var(--stage-stale); }
+
+  .banner { display: flex; gap: var(--s-3); align-items: flex-start; border-radius: var(--r-3); padding: var(--s-4); font-size: var(--text-sm); }
+  .banner svg { flex: none; margin-top: 2px; }
+  .banner--warn { background: rgba(180,83,9,.08); border: 1px solid rgba(180,83,9,.3); color: #7c4a06; }
+  .banner .acts { margin-left: auto; display: flex; gap: var(--s-2); }
+
+  /* ---- empty state ---- */
+  .empty { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); padding: var(--s-10); text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--s-4); }
+  .empty img { width: 132px; height: auto; }
+  .empty .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--s-4); margin-top: var(--s-2); width: 100%; max-width: 720px; }
+  .empty .step-card { background: var(--surface-canvas-alt); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); text-align: left; }
+  .empty .step-card .num { font-family: var(--font-display); font-size: var(--text-2xl); color: var(--text-muted); }
+  .empty .step-card h4 { font-size: var(--text-lg); margin-top: 0.25rem; }
+  .empty .step-card .desc { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 0.25rem; }
+  @media (max-width: 680px) { .empty .steps { grid-template-columns: 1fr; } }
+
+  /* ===== empty-state hero (shared template) ===== */
+  .empty-hero { background:#fff; border:1px solid #E5E5E5; border-radius:16px; overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:"Anton",sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; color:#1D1D1D; margin:0; }
+  .empty-hero__sub { font-family:"Mona Sans",sans-serif; color:#6B6B6B; font-size:0.9375rem; line-height:1.5; max-width:48ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .eh-btn { display:inline-flex; align-items:center; gap:8px; font-family:"Mona Sans",sans-serif; font-weight:700; font-size:0.875rem; letter-spacing:.02em; border-radius:9999px; padding:12px 22px; border:2px solid transparent; cursor:pointer; text-decoration:none; background:#1D1D1D; color:#fff; }
+  .eh-btn:hover { opacity:.92; }
+  .eh-btn--ghost { background:transparent; color:#1D1D1D; border-color:#E5E5E5; }
+  .empty-hero .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:100%; max-width:680px; margin-top:8px; text-align:left; }
+  .empty-hero .step-card { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:12px; padding:16px; }
+  .empty-hero .step-card .num { font-family:"Anton",sans-serif; font-size:1.375rem; color:var(--text-muted); }
+  .empty-hero .step-card h4 { font-family:"Anton",sans-serif; font-weight:400; letter-spacing:.02em; text-transform:uppercase; font-size:1rem; line-height:1.1; margin:0.25rem 0 0; }
+  .empty-hero .step-card .desc { font-family:"Mona Sans",sans-serif; font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem; }
+  @media (max-width:560px) { .empty-hero__img { aspect-ratio:4/3; } .empty-hero__ttl { font-size:1.5rem; } .empty-hero .steps { grid-template-columns:1fr; } }
+
+  /* ---- gallery framing ---- */
+  .gallery { max-width: 1240px; margin: 0 auto; padding: var(--s-10) var(--s-6) 5rem; }
+  .gallery > header { margin-bottom: var(--s-8); }
+  .gallery > header h1 { font-size: var(--text-5xl); }
+  .gallery > header p { color: var(--text-secondary); max-width: 72ch; margin-top: var(--s-3); }
+  .gallery code { background: var(--surface-canvas-alt); border: 1px solid var(--border-soft); border-radius: var(--r-1); padding: 0.05rem 0.35rem; font-size: 0.85em; }
+  .frame { margin-top: var(--s-10); }
+  .frame-cap { display: flex; align-items: baseline; gap: var(--s-3); margin-bottom: var(--s-3); flex-wrap: wrap; }
+  .frame-cap .num { font-family: var(--font-display); font-size: 1.25rem; color: var(--text-muted); }
+  .frame-cap .t { font-family: var(--font-emphasis); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: var(--text-base); }
+  .frame-cap .d { color: var(--text-secondary); font-size: var(--text-sm); }
+  .screen { background: var(--surface-page); border: 1px solid #cfcfcf; border-radius: var(--r-4); overflow: hidden; box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 8px 30px -16px rgba(0,0,0,.18); }
+  .screen .context-bar { position: static; }
+  .stage { background: var(--surface-page); border: 1px solid #cfcfcf; border-radius: var(--r-4); padding: var(--s-8); display: flex; flex-wrap: wrap; gap: var(--s-5); align-items: flex-start; }
+  .stage.col { flex-direction: column; }
+  .card-w { width: 300px; max-width: 100%; }
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); }
+  @media (max-width: 820px) { .cols-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Generators — states &amp; flow.</h1>
+      <p>Every key state of the Generator surface, each framed on its own so they can be reviewed and screenshotted side by side. The index page is rebuilt on the shared page shell (grey body, white breadcrumb bar, header on grey, white cards) from <code>style-guide/page-shell.md</code> — fixing the divergence where the live generator flow rendered its own <code>dash-head</code> / <code>h1</code> header and a detached toolbar instead of matching the Generators tab in the project studio.</p>
+    </header>
+
+    <!-- 01 — Index, corrected -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Generators index · populated</span><span class="d">Shell-consistent: breadcrumb bar + header on grey + search/filter row + card grid. Matches the project-studio Generators tab.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>All projects</a><span class="sep">/</span><a>Ipsum Studio</a><span class="sep">/</span><span>Generators</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Project · Generators</div>
+              <h2>Generators.</h2>
+              <p class="lede">Recipes for deterministic token batches. Build layers, generate, curate, export.</p>
+            </div>
+            <div class="row">
+              <input class="input search" placeholder="Search generators…">
+              <div class="segmented"><button aria-pressed="true">All · 4</button><button>No batches · 1</button><button>Generated · 3</button><button>Exported · 2</button></div>
+            </div>
+          </div>
+          <div class="gen-grid">
+            <button class="coll-card--new"><span class="plus">+</span><span class="lbl">New generator</span><span class="tiny">Build layers &amp; parts</span></button>
+            <a class="coll-card">
+              <div class="pic art--coll-1"></div>
+              <div class="meta">
+                <div class="spread"><div class="ttl">Lorem Drop No. 1</div></div>
+                <div class="sub">6 layers · 48 parts</div>
+                <div class="gen-facts">
+                  <span class="gf"><span class="n">3</span> batches</span>
+                  <span class="gf"><span class="n">12</span> pinned</span>
+                  <span class="gf gf--muted">Not exported</span>
+                </div>
+              </div>
+            </a>
+            <a class="coll-card">
+              <div class="pic art--coll-2"></div>
+              <div class="meta">
+                <div class="spread"><div class="ttl">Dolor Series II</div></div>
+                <div class="sub">8 layers · 62 parts</div>
+                <div class="gen-facts">
+                  <span class="gf"><span class="n">5</span> batches</span>
+                  <span class="gf"><span class="n">40</span> pinned</span>
+                  <span class="gf gf--export">Exported · Spring set →</span>
+                </div>
+              </div>
+            </a>
+            <a class="coll-card">
+              <div class="pic art--coll-3"></div>
+              <div class="meta">
+                <div class="spread"><div class="ttl">Consectetur Pack</div></div>
+                <div class="sub">4 layers · 22 parts</div>
+                <div class="gen-facts">
+                  <span class="gf gf--muted">No batches yet</span>
+                </div>
+              </div>
+            </a>
+            <a class="coll-card">
+              <div class="pic art--coll-4"></div>
+              <div class="meta">
+                <div class="spread"><div class="ttl">Elit Collective</div></div>
+                <div class="sub">10 layers · 80 parts</div>
+                <div class="gen-facts">
+                  <span class="gf"><span class="n">5</span> batches</span>
+                  <span class="gf"><span class="n">60</span> pinned</span>
+                  <span class="gf gf--export">Exported · Elit drop →</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — Card states -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Generator card · batch facts</span><span class="d">New card (always top-left), then generators surfacing their own facts — batches, pinned outputs, and export state. Generators have no Draft/Review/Live lifecycle; those belong to collections.</span></div>
+      <div class="stage" style="align-items:stretch">
+        <button class="coll-card--new card-w" style="min-height:0"><span class="plus">+</span><span class="lbl">New generator</span><span class="tiny">Build layers &amp; parts</span></button>
+        <a class="coll-card card-w">
+          <div class="pic art--coll-3"></div>
+          <div class="meta">
+            <div class="spread"><div class="ttl">Consectetur Pack</div></div>
+            <div class="sub">4 layers · 22 parts</div>
+            <div class="gen-facts">
+              <span class="gf gf--muted">No batches yet</span>
+            </div>
+          </div>
+        </a>
+        <a class="coll-card card-w">
+          <div class="pic art--coll-1"></div>
+          <div class="meta">
+            <div class="spread"><div class="ttl">Lorem Drop No. 1</div></div>
+            <div class="sub">6 layers · 48 parts</div>
+            <div class="gen-facts">
+              <span class="gf"><span class="n">3</span> batches</span>
+              <span class="gf"><span class="n">12</span> pinned</span>
+              <span class="gf gf--muted">Not exported</span>
+            </div>
+          </div>
+        </a>
+        <a class="coll-card card-w">
+          <div class="pic art--coll-2"></div>
+          <div class="meta">
+            <div class="spread"><div class="ttl">Dolor Series II</div></div>
+            <div class="sub">8 layers · 62 parts</div>
+            <div class="gen-facts">
+              <span class="gf"><span class="n">5</span> batches</span>
+              <span class="gf"><span class="n">40</span> pinned</span>
+              <span class="gf gf--export">Exported · Spring set →</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- 03 — Filter bar -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Batch-fact filter</span><span class="d">Shared control bar — generators filter by their own facts: All / No batches / Generated / Exported. No Draft/Review/Live (those are collection states).</span></div>
+      <div class="stage col">
+        <div class="row"><input class="input search" placeholder="Search generators…"><div class="segmented"><button aria-pressed="true">All · 4</button><button>No batches · 1</button><button>Generated · 3</button><button>Exported · 2</button></div></div>
+        <div class="row"><input class="input search" placeholder="Search generators…"><div class="segmented"><button>All · 4</button><button>No batches · 1</button><button aria-pressed="true">Generated · 3</button><button>Exported · 2</button></div></div>
+        <div class="row"><input class="input search" placeholder="Search generators…"><div class="segmented"><button>All · 4</button><button>No batches · 1</button><button>Generated · 3</button><button aria-pressed="true">Exported · 2</button></div></div>
+      </div>
+    </section>
+
+    <!-- 04 — Build, populated -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Build · Parts tab</span><span class="d">Layer rail + tabbed panel (Parts / Compatibility), weight pills, cap &amp; exclusion badges, and the compatibility nudge.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Ipsum Studio</a><span class="sep">/</span><a>Generators</a><span class="sep">/</span><span>Lorem Drop No. 1</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="step-rail">
+          <button class="step active"><span class="num">1</span><span class="name">Build</span></button>
+          <button class="step"><span class="num">2</span><span class="name">Preflight</span></button>
+          <button class="step"><span class="num">3</span><span class="name">Curate</span></button>
+          <button class="step"><span class="num">4</span><span class="name">Export</span></button>
+          <button class="step"><span class="num">5</span><span class="name">Batches</span></button>
+        </div>
+        <div class="flow-substatus">
+          <span class="status-info"><span class="saved-dot"></span>Saved · just now</span>
+          <div class="actions"><button class="btn btn--primary btn--sm">Continue to Preflight →</button></div>
+        </div>
+        <div class="section">
+          <div class="build-cols">
+            <div class="layer-rail">
+              <div class="lr">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Background</span><span class="c">8 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <div class="lr active">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Body</span><span class="c">12 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <div class="lr">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Head</span><span class="c">10 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <div class="lr">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Mouth</span><span class="c">Optional · 6 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <div class="lr">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Hat</span><span class="c">Optional · 8 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <div class="lr">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Accessory</span><span class="c">Optional · 4 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <div class="lr">
+                <span class="lr-grip" title="Drag to reorder">⠿</span>
+                <div class="lr-main"><span class="nm">Effects</span><span class="c" style="color:var(--stage-draft)">Optional · 0 parts</span></div>
+                <div class="lr-acts">
+                  <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                </div>
+              </div>
+              <button class="lr-add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add layer</button>
+            </div>
+            <div class="panel" style="overflow:hidden">
+              <div class="parts-tabs"><button class="active">Parts · 12</button><button>Compatibility · 2</button></div>
+              <div class="ptoolbar">
+                <span class="lbl">Layer · <strong>Body</strong></span>
+                <button class="btn btn--ghost btn--sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Select</button>
+              </div>
+              <div class="pbody">
+                <div class="compat-prompt">
+                  <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span>
+                  <div class="bd"><strong>Decide which parts can appear together.</strong> <span class="muted">Once you have a few parts in each layer, set up compatibility rules — e.g. "Lilac body excludes the Hat layer" — so the generator never produces awkward combinations.</span></div>
+                  <button class="btn btn--ghost btn--sm">Set up compatibility →</button>
+                </div>
+                <div class="pgrid">
+                  <div class="part-tile add"><div><div class="plus">+</div><div class="tiny">Add part</div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#E5E7EB"></div></div><div class="meta"><div class="name">Body · Base 01</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#FCD34D"></div><div class="badge-row"><span class="chip">Cap 15%</span></div></div><div class="meta"><div class="name">Body · Sun glow</div><div class="controls"><span class="weight-pill">w 2 · Infrequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#93C5FD"></div></div><div class="meta"><div class="name">Body · Cobalt</div><div class="controls"><span class="weight-pill">w 5 · Frequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#FCA5A5"></div></div><div class="meta"><div class="name">Body · Coral</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#A78BFA"></div><div class="badge-row"><span class="chip">Excludes hat</span></div></div><div class="meta"><div class="name">Body · Lilac</div><div class="controls"><span class="weight-pill">w 2 · Infrequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#6EE7B7"></div></div><div class="meta"><div class="name">Body · Mint</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#1D1D1D"></div><div class="badge-row"><span class="chip chip--err">Cap 5</span></div></div><div class="meta"><div class="name">Body · Obsidian</div><div class="controls"><span class="weight-pill">w 1 · Very infrequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#F472B6"></div></div><div class="meta"><div class="name">Body · Rose</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#38BDF8"></div><div class="badge-warn"><span class="chip chip--warn" style="gap:4px" title="JPEG — doesn't support transparency. Parts on the layers below this one are hidden behind it."><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg>Opaque</span></div><div class="badge-row"><span class="chip">Cap 10%</span><span class="chip" title="Excludes Hat · Excludes Glasses">2 rules</span></div></div><div class="meta"><div class="name">Body · Sky</div><div class="controls"><span class="weight-pill">w 5 · Frequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#FBBF24"></div></div><div class="meta"><div class="name">Body · Amber</div><div class="controls"><span class="weight-pill">w 8 · Very frequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                  <div class="part-tile"><div class="img"><div class="part-art" style="background:#EF4444"></div></div><div class="meta"><div class="name">Body · Crimson</div><div class="controls"><span class="weight-pill">w 1 · Very infrequent</span><span class="tile-actions"><button class="ico-btn" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn is-danger" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04b — Build · layer options menu -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04b</span><span class="t">Layer · move, rename, delete</span><span class="d">Per-layer controls in the build rail: drag the grip to reorder the render stack, and an options menu for rename &amp; delete. Add layer sits at the bottom. Rename opens the Edit-layer modal; Delete opens the destructive confirm.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="layer-rail" style="width:280px;max-width:100%">
+          <div class="lr">
+            <span class="lr-grip" title="Drag to reorder">⠿</span>
+            <div class="lr-main"><span class="nm">Background</span><span class="c">8 parts</span></div>
+            <div class="lr-acts">
+              <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+            </div>
+          </div>
+          <div class="lr active">
+            <span class="lr-grip" title="Drag to reorder">⠿</span>
+            <div class="lr-main"><span class="nm">Body</span><span class="c">12 parts</span></div>
+            <div class="lr-acts">
+              <button class="lr-btn" title="Layer options" style="background:var(--surface-canvas-alt);color:var(--text-primary)"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+            </div>
+            <div class="lr-menu">
+              <button><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Rename…</button>
+              <div class="sep"></div>
+              <button class="danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>Delete layer</button>
+            </div>
+          </div>
+          <div class="lr">
+            <span class="lr-grip" title="Drag to reorder">⠿</span>
+            <div class="lr-main"><span class="nm">Head</span><span class="c">10 parts</span></div>
+            <div class="lr-acts">
+              <button class="lr-btn" title="Layer options"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+            </div>
+          </div>
+          <button class="lr-add"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add layer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 — Build · select mode -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Build · select mode</span><span class="d">Multi-select toolbar (Select all / Cancel / Delete N) with checkable tiles — 3 selected.</span></div>
+      <div class="stage col">
+        <div class="panel" style="overflow:hidden;width:100%">
+          <div class="parts-tabs"><button class="active">Parts · 12</button><button>Compatibility · 2</button></div>
+          <div class="ptoolbar is-selecting">
+            <span class="sel-count">3 selected</span>
+            <div class="sel-actions">
+              <button class="btn btn--ghost btn--sm">Select all</button>
+              <button class="btn btn--ghost btn--sm">Cancel</button>
+              <button class="btn btn--sm btn--danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>Delete 3</button>
+            </div>
+          </div>
+          <div class="pbody">
+            <div class="pgrid">
+              <div class="part-tile is-selected"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#E5E7EB"></div></div><div class="meta"><div class="name">Body · Base 01</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span></div></div></div>
+              <div class="part-tile"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#FCD34D"></div><div class="badge-row"><span class="chip">Cap 15%</span></div></div><div class="meta"><div class="name">Body · Sun glow</div><div class="controls"><span class="weight-pill">w 2 · Infrequent</span></div></div></div>
+              <div class="part-tile is-selected"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#93C5FD"></div></div><div class="meta"><div class="name">Body · Cobalt</div><div class="controls"><span class="weight-pill">w 5 · Frequent</span></div></div></div>
+              <div class="part-tile"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#FCA5A5"></div></div><div class="meta"><div class="name">Body · Coral</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span></div></div></div>
+              <div class="part-tile"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#A78BFA"></div><div class="badge-row"><span class="chip">Excludes hat</span></div></div><div class="meta"><div class="name">Body · Lilac</div><div class="controls"><span class="weight-pill">w 2 · Infrequent</span></div></div></div>
+              <div class="part-tile"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#6EE7B7"></div></div><div class="meta"><div class="name">Body · Mint</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span></div></div></div>
+              <div class="part-tile"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#1D1D1D"></div><div class="badge-row"><span class="chip chip--err">Cap 5</span></div></div><div class="meta"><div class="name">Body · Obsidian</div><div class="controls"><span class="weight-pill">w 1 · Very infrequent</span></div></div></div>
+              <div class="part-tile is-selected"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="img"><div class="part-art" style="background:#F472B6"></div></div><div class="meta"><div class="name">Body · Rose</div><div class="controls"><span class="weight-pill">w 3 · Balanced</span></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 — Build · Compatibility tab -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Build · Compatibility tab</span><span class="d">Rule summary, type filters, Part→Part / Part→Layer rules, and validation checks.</span></div>
+      <div class="stage col">
+        <div class="panel" style="overflow:hidden;width:100%">
+          <div class="parts-tabs"><button>Parts · 12</button><button class="active">Compatibility · 2</button></div>
+          <div class="compat-summary">
+            <div class="stat"><span class="n">2</span><span class="l">active rules</span></div>
+            <div class="stat"><span class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>No conflicts</span></div>
+            <div class="stat"><span class="n">0</span><span class="l">unreachable</span></div>
+            <div style="margin-left:auto"><button class="btn btn--primary btn--sm">+ Add rule</button></div>
+          </div>
+          <div class="compat-filters">
+            <button aria-pressed="true">All · 2</button>
+            <button aria-pressed="false">Requires · 1</button>
+            <button aria-pressed="false">Excludes · 1</button>
+            <button aria-pressed="false">Part → Part · 1</button>
+            <button aria-pressed="false">Part → Layer · 1</button>
+          </div>
+          <div class="rule-group">
+            <div class="head">Part → Layer · 1 rule</div>
+            <div class="rule-card">
+              <div class="ep"><div class="swatch" style="background:#A78BFA"></div><div><div class="nm">Lilac</div><div class="ly">Body · part</div></div></div>
+              <span class="rel rel--exc">Excludes</span>
+              <div class="ep"><div class="swatch" style="background:linear-gradient(180deg,#1D1D1D,#6366F1)"></div><div><div class="nm">Hat</div><div class="ly">Layer</div></div></div>
+              <div class="acts"><button title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            </div>
+            <div class="rule-reason">"Lilac body looks weird with any hat — exclude the Hat layer entirely."</div>
+          </div>
+          <div class="rule-group">
+            <div class="head">Part → Part · 1 rule</div>
+            <div class="rule-card">
+              <div class="ep"><div class="swatch" style="background:#1D1D1D"></div><div><div class="nm">Obsidian</div><div class="ly">Body · part</div></div></div>
+              <span class="rel rel--req">Requires</span>
+              <div class="ep"><div class="swatch" style="background:linear-gradient(135deg,#6EE7B7,#38BDF8)"></div><div><div class="nm">Round eyes</div><div class="ly">Head · part</div></div></div>
+              <div class="acts"><button title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div>
+            </div>
+            <div class="rule-reason">"Obsidian body only reads correctly with the Round eyes head."</div>
+          </div>
+          <div class="rule-group" style="background:var(--surface-canvas-alt)">
+            <div class="head" style="margin-bottom:var(--s-3)">Validation</div>
+            <div class="validation-list">
+              <div class="v-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>No contradictions between requires/excludes</div>
+              <div class="v-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>No self-referencing rules</div>
+              <div class="v-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>All rule targets exist</div>
+              <div class="v-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>No unreachable selections under current weights</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 — Empty generator (no layers) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Build · no layers yet</span><span class="d">A fresh generator before any layers are added.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Ipsum Studio</a><span class="sep">/</span><a>Generators</a><span class="sep">/</span><span>Untitled generator</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="step-rail">
+          <button class="step active"><span class="num">1</span><span class="name">Build</span></button>
+          <button class="step"><span class="num">2</span><span class="name">Preflight</span></button>
+          <button class="step"><span class="num">3</span><span class="name">Curate</span></button>
+          <button class="step"><span class="num">4</span><span class="name">Export</span></button>
+          <button class="step"><span class="num">5</span><span class="name">Batches</span></button>
+        </div>
+        <!-- No-layers state: progression CTA is intentionally hidden — you need at least one layer with parts before you can generate. -->
+        <div class="flow-substatus">
+          <span class="status-info"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Add a layer with parts to continue to Preflight.</span>
+        </div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Generator · Build</div><h2>Build.</h2><p class="lede" style="max-width:none">A generator is a recipe. Stack layers, upload parts, set weights, and decide which parts can appear together. Composition evidence here is canonical — scores derive from it.</p></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_layers.jpg" alt="Build — no layers yet"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">No layers yet.</h3>
+              <p class="empty-hero__sub">Layers stack from back to front — background first, accessories last. Each layer holds a set of interchangeable parts.</p>
+              <div class="empty-hero__cta"><a class="eh-btn">+ Add first layer</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 — Layer with no parts -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Build · layer has no parts</span><span class="d">Layer exists but is empty — upload prompt in the parts panel.</span></div>
+      <div class="stage col">
+        <div class="panel panel--pad" style="width:100%">
+          <div class="spread" style="margin-bottom:var(--s-4)"><h4 style="font-size:var(--text-xl)">Head</h4><span class="tiny">0 parts</span></div>
+          <div class="parts-grid">
+            <div class="ghost-tile">Drop PNGs</div>
+            <div class="ghost-tile">or</div>
+            <div class="ghost-tile">+ Upload</div>
+          </div>
+          <p class="tiny" style="margin-top:var(--s-3);max-width:50ch">Upload transparent PNGs at a consistent canvas size. Weights default to 1 and can be tuned per part.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 — Preflight · configure batch -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Preflight · configure batch</span><span class="d">Step rail + four ways to generate: limited number, from seed / bookmarked batch, from CSV, and single token. Pressing <strong>Generate</strong> in any mode first runs the project cycles estimate (rendering + storing outputs costs cycles) — see 09b–09e.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Generators</a><span class="sep">/</span><a>Lorem Drop No. 1</a><span class="sep">/</span><span>Preflight</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="step-rail">
+          <button class="step done"><span class="num">✓</span><span class="name">Build</span></button>
+          <button class="step active"><span class="num">2</span><span class="name">Preflight</span></button>
+          <button class="step"><span class="num">3</span><span class="name">Curate</span></button>
+          <button class="step"><span class="num">4</span><span class="name">Export</span></button>
+          <button class="step"><span class="num">5</span><span class="name">Batches</span></button>
+        </div>
+        <div class="flow-substatus">
+          <span class="status-info"><span class="saved-dot"></span>Saved · just now</span>
+        </div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Generator · Preflight</div><h2>Batch generation.</h2><p class="lede" style="max-width:none">What sort of batch do you want to create?</p></div></div>
+          <div class="batch-form">
+            <div class="gen-mode">
+              <header><h4>Limited number</h4></header>
+              <p class="desc">How many tokens do you want to generate in this run?</p>
+              <div class="frow"><input class="fld" type="number" placeholder="Enter value" min="1"><button class="btn btn--primary">Generate</button></div>
+            </div>
+
+            <div class="gen-mode">
+              <header><h4>From seed</h4></header>
+              <p class="desc">Replay a previous run. Either enter a seed manually, <em>or</em> pick from your bookmarked batches — not both.</p>
+              <div class="seed-option">
+                <label class="seed-label">Enter a seed</label>
+                <div class="frow"><input class="fld" type="text" placeholder="Enter seed"><button class="btn btn--primary">Generate</button></div>
+              </div>
+              <div class="seed-or"><span>or</span></div>
+              <div class="seed-option">
+                <label class="seed-label">Choose a bookmarked batch</label>
+                <div class="frow"><select class="fld"><option>Select batch…</option><option>Spring run · 0x4F2A 8EFA 11B7 …</option><option>Hat tweaks · 0xA1B0 3D9C C022 …</option><option>v2 candidates · 0x77E3 9911 028D …</option></select><button class="btn btn--primary">Generate</button></div>
+              </div>
+            </div>
+
+            <div class="gen-mode">
+              <header><h4>From CSV</h4></header>
+              <p class="desc">Upload a CSV with the exact combination of layers and parts you wish to include. Download an example template to see how the data should be set out, plus a list of every layer and part name in this generator so your data matches.</p>
+              <div class="frow" style="margin-bottom:var(--s-3)">
+                <button class="btn btn--ghost btn--sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download template</button>
+                <button class="btn btn--ghost btn--sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download layer data</button>
+                <button class="btn btn--ghost btn--sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>
+              </div>
+              <p class="tiny" style="margin-bottom:var(--s-3)">You have not uploaded any files.</p>
+              <button class="btn btn--ghost" disabled style="opacity:.5;cursor:not-allowed">Generate</button>
+            </div>
+
+            <div class="gen-mode">
+              <header><h4>Single generation</h4></header>
+              <p class="desc">Generate one token with these exact layers and parts.</p>
+              <div class="pick-list">
+                <div class="pick-row"><span class="thumb art--coll-4"></span><select><option>Layer 1: Hat</option><option>Layer 2: Head</option><option>Layer 3: Background</option></select><select><option>Orange Beanie</option><option>Knit cap</option><option>None</option></select><button class="row-icon-btn" title="Edit row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
+                <div class="pick-row"><span class="thumb art--coll-2"></span><select><option>Layer 2: Head</option></select><select><option>Relaxed Smile</option><option>Wink</option><option>Frown</option></select><button class="row-icon-btn" title="Edit row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
+                <div class="pick-row"><span class="thumb art--coll-1"></span><select><option>Layer 3: Background</option></select><select><option>Black Tuxedo</option><option>White</option><option>Sunset</option></select><button class="row-icon-btn" title="Edit row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
+                <button class="btn btn--ghost btn--sm" style="align-self:flex-start"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add row</button>
+              </div>
+              <button class="btn btn--primary">Generate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09b — Generate · cycle estimate (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09b</span><span class="t">Generate · cycle estimate (balance OK)</span><span class="d">Pressing Generate first estimates what the run costs to render and store, then checks it against the project balance. With headroom, the batch starts normally — same guard used for every upload (see cycle-tracking gallery).</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Generate batch</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0;font-size:var(--text-sm);line-height:1.55">A limited run of <strong>200 tokens</strong>. Outputs are rendered and stored in the project's blob storage, which is funded from project cycles.</p>
+            <div class="est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.85 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">9.452 T</div></div>
+              <div class="e ok"><div class="k">After run</div><div class="v">~8.60 T</div></div>
+            </div>
+            <div class="info-panel info-panel--ok"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tiny">Enough cycles to render and store all 200 outputs and keep your reserve.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Generate 200</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09c — Generate · low balance (inline) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09c</span><span class="t">Generate · low balance (inline)</span><span class="d">The estimate exceeds the available balance. The run isn't abandoned — the configuration is held and the primary action becomes Top up &amp; generate.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Generate batch</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0;font-size:var(--text-sm);line-height:1.55">A limited run of <strong>200 tokens</strong>. Outputs are rendered and stored in the project's blob storage, which is funded from project cycles.</p>
+            <div class="est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.85 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.300 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.55 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="info-panel info-panel--warn"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="tiny"><strong style="color:var(--text-primary)">Not enough cycles to generate this batch.</strong> Lower the count, or top up — your run stays configured and starts straight away once cycles land.</div></div>
+          </div>
+          <div class="footer-row"><div class="right"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; generate 200</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09d — Top up to continue · run queued -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09d</span><span class="t">Top up to continue · run queued</span><span class="d">The inline top-up. The configured run is held at the top so nothing is lost; once cycles land in blob storage, the batch generates automatically.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Top up to continue</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><span class="staged" style="align-self:flex-start"><span class="dot"></span>200-token run queued · ready to generate</span></div>
+            <div class="m-field">
+              <div class="cyc-kv"><span>This run (est.)</span><span class="v">~0.85 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.300 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div class="m-field">
+              <span class="eyebrow">Top up amount</span>
+              <div class="amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="info-panel"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div class="tiny">Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the run starts automatically.</div></div>
+          </div>
+          <div class="footer-row"><div class="right"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09e — Topped up · run completes -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09e</span><span class="t">Topped up · run completes</span><span class="d">After the top-up lands, the queued batch generates automatically and finishes — confirmed in the same window, with cycles used and balance remaining.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Topped up — generating</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="info-panel info-panel--ok" style="margin-top:0"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tiny"><strong style="color:var(--text-primary)">Added 1.000 T cycles.</strong> Balance is now 1.300 T. The queued run is generating now.</div></div>
+            <div style="margin-top:var(--s-4)">
+              <div style="display:flex;justify-content:space-between;font-size:var(--text-sm);margin-bottom:.4rem"><span><strong>200 / 200</strong> generated</span><span class="cyc-tag cyc-tag--green">Complete</span></div>
+              <div class="progress"><div class="f ok" style="width:100%"></div></div>
+            </div>
+            <div style="margin-top:var(--s-2)">
+              <div class="cyc-kv"><span>Cycles used</span><span class="v">0.85 T</span></div>
+              <div class="cyc-kv"><span>Balance remaining</span><span class="v">0.45 T</span></div>
+            </div>
+          </div>
+          <div class="footer-row"><div class="right"><button class="btn btn--primary">Open in Curate →</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 — Curate · pin & filter -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Curate · pin &amp; filter</span><span class="d">Step rail + stats + filter toolbar + output grid with pin states + export bar.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>Generators</a><span class="sep">/</span><a>Lorem Drop No. 1</a><span class="sep">/</span><span>Curate</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
+        <div class="step-rail">
+          <button class="step done"><span class="num">✓</span><span class="name">Build</span></button>
+          <button class="step done"><span class="num">✓</span><span class="name">Preflight</span></button>
+          <button class="step active"><span class="num">3</span><span class="name">Curate</span></button>
+          <button class="step"><span class="num">4</span><span class="name">Export</span></button>
+          <button class="step"><span class="num">5</span><span class="name">Batches</span></button>
+        </div>
+        <div class="flow-substatus">
+          <span class="status-info"><span class="saved-dot"></span>Saved · just now</span>
+        </div>
+        <div class="section" style="padding-bottom:var(--s-6)">
+          <div class="section-head" style="margin-bottom:0">
+            <div><div class="eyebrow">Generator · Curate</div><h2>Curate.</h2><p class="lede" style="max-width:none">Pinned outputs from any of this generator's batches are the ones that will be exported. Click a tile to preview and pin, or filter by source batch below.</p></div>
+            <div class="meta-row">
+              <div class="item"><div class="lbl">Pinned</div><div class="val">12<small>across 4 batches</small></div></div>
+              <div class="item"><div class="lbl">Unpinned</div><div class="val">2,221</div></div>
+              <div class="item"><div class="lbl">Source batches</div><div class="val">4<small>generated</small></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="curate-toolbar">
+          <div class="default-bar">
+            <div class="segmented"><button aria-pressed="true">All · 2,233</button><button>Pinned · 12</button><button>Unpinned · 2,221</button></div>
+            <select class="curate-sel"><option>All batches</option><option>Spring run · 200</option><option>Hat tweaks · 80</option><option>v2 candidates · 500</option></select>
+            <div style="margin-left:auto;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+              <button class="btn btn--ghost btn--sm">Pin all visible</button>
+              <button class="btn btn--ghost btn--sm">Unpin all visible</button>
+              <button class="btn btn--ghost btn--sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Select</button>
+              <button class="btn btn--ghost btn--sm" style="color:var(--notify-error);border-color:var(--notify-error)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>Delete all unpinned</button>
+            </div>
+          </div>
+        </div>
+        <div class="output-grid">
+          <div class="out-tile is-pinned"><div class="img"><div class="art art-square art--composed-1" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0001</span><span>Pinned</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-2" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0002</span><span>—</span></div></div>
+          <div class="out-tile is-pinned"><div class="img"><div class="art art-square art--composed-3" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0003</span><span>Pinned</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-4" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0004</span><span>—</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-5" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0005</span><span>—</span></div></div>
+          <div class="out-tile is-pinned"><div class="img"><div class="art art-square art--composed-6" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0006</span><span>Pinned</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-2" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0007</span><span>—</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-1" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0008</span><span>—</span></div></div>
+          <div class="out-tile is-pinned"><div class="img"><div class="art art-square art--composed-4" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0009</span><span>Pinned</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-3" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0010</span><span>—</span></div></div>
+          <div class="out-tile"><div class="img"><div class="art art-square art--composed-6" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0011</span><span>—</span></div></div>
+          <div class="out-tile is-pinned"><div class="img"><div class="art art-square art--composed-5" style="position:absolute;inset:0"></div><button class="pin">★</button></div><div class="meta"><span class="id">#0012</span><span>Pinned</span></div></div>
+        </div>
+        <div class="flow-bar">
+          <div class="status-info"><strong style="color:var(--text-primary);font-family:var(--font-emphasis);text-transform:uppercase;letter-spacing:.1em">12 of 200 pinned</strong> · only pinned outputs are exported</div>
+          <div class="actions"><button class="btn btn--ghost">← Back to batches</button><button class="btn btn--primary">Export 12 pinned →</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 — Curate · select mode + modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Curate · select &amp; modals</span><span class="d">Multi-select toolbar, the single-output preview (pin / unpin), and the delete-outputs warning.</span></div>
+      <div class="stage col">
+        <div class="curate-toolbar is-selecting" style="width:100%;border:1px solid var(--border-soft);border-radius:var(--r-3)">
+          <div class="select-bar">
+            <span class="sel-count">3 selected</span>
+            <div class="sel-actions">
+              <button class="btn btn--ghost btn--sm">Select all</button>
+              <button class="btn btn--ghost btn--sm">Cancel</button>
+              <button class="btn btn--sm btn--danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>Delete 3</button>
+            </div>
+          </div>
+        </div>
+        <div class="output-grid is-selecting" style="width:100%;padding:var(--s-5) 0">
+          <div class="out-tile is-selected"><div class="img"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art art-square art--composed-1" style="position:absolute;inset:0"></div></div><div class="meta"><span class="id">#0001</span><span>Pinned</span></div></div>
+          <div class="out-tile"><div class="img"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art art-square art--composed-2" style="position:absolute;inset:0"></div></div><div class="meta"><span class="id">#0002</span><span>—</span></div></div>
+          <div class="out-tile is-selected"><div class="img"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art art-square art--composed-3" style="position:absolute;inset:0"></div></div><div class="meta"><span class="id">#0003</span><span>Pinned</span></div></div>
+          <div class="out-tile"><div class="img"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art art-square art--composed-4" style="position:absolute;inset:0"></div></div><div class="meta"><span class="id">#0004</span><span>—</span></div></div>
+          <div class="out-tile"><div class="img"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art art-square art--composed-5" style="position:absolute;inset:0"></div></div><div class="meta"><span class="id">#0005</span><span>—</span></div></div>
+          <div class="out-tile is-selected"><div class="img"><span class="tile-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art art-square art--composed-6" style="position:absolute;inset:0"></div></div><div class="meta"><span class="id">#0006</span><span>Pinned</span></div></div>
+        </div>
+      </div>
+      <div class="cols-2" style="margin-top:var(--s-6)">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Single output preview</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p class="tiny" style="margin:0 0 var(--s-3)">Pin this output if you are happy with it.</p>
+              <div style="position:relative;width:100%;aspect-ratio:1/1;border-radius:var(--r-3);overflow:hidden;border:1px solid var(--border-soft)"><div class="art art--composed-1" style="position:absolute;inset:0"></div><span style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.6);color:#fff;padding:0.25rem 0.5rem;border-radius:var(--r-pill);font-family:ui-monospace,monospace;font-size:var(--text-xs)">#0001</span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Unpin</button><button class="btn btn--primary">Pin</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card" style="max-width:520px">
+            <header><h4>Delete outputs</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div style="display:flex;gap:var(--s-3);align-items:flex-start">
+                <span style="color:var(--notify-error);flex:none;margin-top:2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                <p style="margin:0;font-size:var(--text-sm);line-height:1.55">You are about to delete <strong>12 outputs</strong>. Are you sure? This cannot be undone. Pinned outputs will not be erased.</p>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" style="background:var(--notify-error);border-color:var(--notify-error)">Delete</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 — Export · send to collection -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">12</span><span class="t">Export · send to collection</span><span class="d">Target-collection picker (link-state badges), export snapshot, one-way banner — plus the confirm &amp; progress modals.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Generators</a><span class="sep">/</span><a>Lorem Drop No. 1</a><span class="sep">/</span><span>Export</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="step-rail">
+          <button class="step done"><span class="num">✓</span><span class="name">Build</span></button>
+          <button class="step done"><span class="num">✓</span><span class="name">Preflight</span></button>
+          <button class="step done"><span class="num">✓</span><span class="name">Curate</span></button>
+          <button class="step active"><span class="num">4</span><span class="name">Export</span></button>
+          <button class="step"><span class="num">5</span><span class="name">Batches</span></button>
+        </div>
+        <div class="flow-substatus">
+          <span class="status-info"><span class="saved-dot"></span>Saved · just now</span>
+        </div>
+        <div class="section">
+          <div class="section-head" style="margin-bottom:var(--s-5)"><div><div class="eyebrow">Generator · Export</div><h2>Export.</h2><p class="lede" style="max-width:none">Send 12 pinned outputs to a collection. Pinned outputs become draft token definitions in the target collection. You can keep editing each token's name, attributes, and imagery on the collection side — exports preserve provenance (which generator, batch, and seed each token came from), but parts and layers stay editable. A collection can only be linked to one generator.</p></div></div>
+          <div class="field" style="margin-bottom:var(--s-5)">
+            <label>Target collection</label>
+            <div class="collection-pick">
+              <div class="coll-row is-selected"><div class="av"></div><div><div class="name">Lorem Drop No. 1 · Spring set</div><div class="sub">Project · Ipsum Studio · Draft · 0 tokens</div></div><span class="chip chip--info">No generator linked</span><span class="ok">✓</span></div>
+              <div class="coll-row"><div class="av" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></div><div><div class="name">Dolor Series II</div><div class="sub">Project · Sit Amet · Draft · 320 tokens</div></div><span class="chip chip--err">Linked to a different generator</span><span></span></div>
+              <div class="coll-row"><div class="av" style="background:linear-gradient(135deg,#A78BFA,#38BDF8)"></div><div><div class="name">Consectetur Pack</div><div class="sub">Project · Adipiscing Lab · Draft · 0 tokens</div></div><span class="chip chip--info">No generator linked</span><span></span></div>
+            </div>
+          </div>
+          <div class="snapshot-card">
+            <h3>What will be exported</h3>
+            <div class="kv">
+              <div class="k">Outputs</div><div class="v">12 pinned</div>
+              <div class="k">Source generator</div><div class="v">Lorem Drop No. 1</div>
+              <div class="k">Source batches</div><div class="v">4 batches · Spring run (4) · Hat tweaks (4) · v2 candidates (3) · Solo dropouts (1)</div>
+              <div class="k">Provenance preserved</div><div class="v">Generator id · batch id · seed · per-output composition</div>
+            </div>
+            <p class="tiny" style="margin-top:var(--s-3)">Pinned outputs from multiple batches are exported as a single grouped operation. Each token on the collection side keeps its source batch attached as metadata.</p>
+          </div>
+          <div class="info-panel">
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span>
+            <div><div class="t">Export is one-way, but tokens stay editable</div><div class="tiny">Pinned outputs become <strong>draft token definitions</strong> in the target collection. You can edit each token's name, attributes, and imagery on the collection side, and keep iterating on this generator to export more later. What you can't do is push tokens <em>back</em> into the generator — it's a one-way relationship.</div></div>
+          </div>
+        </div>
+        <div class="flow-bar">
+          <div class="status-info"><strong style="color:var(--text-primary);font-family:var(--font-emphasis);text-transform:uppercase;letter-spacing:.1em">12 pinned outputs</strong> · target: Lorem Drop No. 1 · Spring set</div>
+          <div class="actions"><button class="btn btn--ghost">← Back to Curate</button><button class="btn btn--primary">Export 12 to collection →</button></div>
+        </div>
+      </div>
+      <div class="cols-2" style="margin-top:var(--s-6)">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Confirm export</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0 0 var(--s-4)">You're about to export <strong>12 pinned outputs</strong> to <strong>Lorem Drop No. 1 · Spring set</strong> as draft token definitions.</p>
+              <div style="background:var(--surface-canvas-alt);border-radius:var(--r-3);padding:var(--s-4)"><ul style="margin:0;padding-left:1.125rem;font-size:var(--text-base);line-height:1.7"><li>This collection becomes permanently linked to <strong>Lorem Drop No. 1</strong> — a collection can only be linked to one generator.</li><li>Each token's name, attributes, and imagery can still be edited on the collection side.</li><li>You can keep iterating on this generator and export more tokens later.</li></ul></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Export 12 tokens</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card" style="max-width:560px">
+            <header><h4>Exporting to Lorem Drop No. 1 · Spring set</h4><button aria-label="Close" title="Run in background">✕</button></header>
+            <div class="mbody">
+              <div class="spread" style="margin-bottom:0.5rem"><div style="font-weight:600;font-size:var(--text-base)">Creating token <strong>7</strong> of <strong>12</strong>…</div><div class="tiny" style="font-family:ui-monospace,monospace">58%</div></div>
+              <div class="progress"><span style="width:58%"></span></div>
+              <h4 style="font-family:var(--font-emphasis);font-size:var(--text-2xs);letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin:var(--s-5) 0 var(--s-3)">Per-batch progress</h4>
+              <div style="display:grid;grid-template-columns:1fr auto auto;gap:0.5rem var(--s-4);font-size:var(--text-sm)">
+                <div>Spring run</div><div style="color:var(--text-secondary);font-family:ui-monospace,monospace">4 / 4</div><div style="color:var(--stage-live);display:inline-flex;align-items:center;gap:0.25rem"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Done</div>
+                <div>Hat tweaks</div><div style="color:var(--text-secondary);font-family:ui-monospace,monospace">3 / 4</div><div style="color:var(--text-primary)">In progress…</div>
+                <div>v2 candidates</div><div style="color:var(--text-secondary);font-family:ui-monospace,monospace">0 / 3</div><div style="color:var(--text-muted)">Pending</div>
+                <div>Solo dropouts</div><div style="color:var(--text-secondary);font-family:ui-monospace,monospace">0 / 1</div><div style="color:var(--text-muted)">Pending</div>
+              </div>
+              <div class="info-panel" style="margin-top:var(--s-5)"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="tiny">You can close this and the export will keep running in the background. We'll notify you when it's complete.</div></div>
+            </div>
+            <div class="footer-row" style="justify-content:stretch"><button class="btn btn--primary" style="width:100%">Run in background</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 — Empty state -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">13</span><span class="t">Empty state · no generators</span><span class="d">Character moment + the three-step build/generate/export story + primary CTA.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>All projects</a><span class="sep">/</span><a>Ipsum Studio</a><span class="sep">/</span><span>Generators</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Generators</div><h2>Generators.</h2><p class="lede">Recipes for deterministic token batches.</p></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_generators.jpg" alt="Generators — none yet"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">No generators yet.</h3>
+              <p class="empty-hero__sub">A generator is a recipe for tokens. Define layers and parts, then generate deterministic batches you can curate and export into a collection.</p>
+              <div class="steps">
+                <div class="step-card"><span class="num">1</span><h4>Build</h4><p class="desc">Stack layers, upload parts, set weights and compatibility rules.</p></div>
+                <div class="step-card"><span class="num">2</span><h4>Generate</h4><p class="desc">Run a deterministic batch. Pin what you love, delete the rest, regenerate.</p></div>
+                <div class="step-card"><span class="num">3</span><h4>Export</h4><p class="desc">Send the tokens you keep to a collection.</p></div>
+              </div>
+              <div class="empty-hero__cta"><a class="eh-btn">+ Create your first generator</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 — Divergence: before / after -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">14</span><span class="t">Layout divergence · corrected</span><span class="d">What the live generator flow does (left) vs the shell it should use (right).</span></div>
+      <div class="cols-2">
+        <div>
+          <div class="tiny" style="margin-bottom:var(--s-2);font-weight:700;color:var(--notify-error)">✕ Before — diverges from the shell</div>
+          <div class="screen">
+            <div class="section" style="padding-bottom:var(--s-4)">
+              <div class="eyebrow">Studio · Generators</div>
+              <h1 style="font-size:var(--text-4xl);margin-top:0.5rem">Generators</h1>
+              <p class="lede" style="color:var(--text-secondary);margin-top:0.5rem;font-size:var(--text-base)">A generator owns layers, parts, weights and compatibility…</p>
+            </div>
+            <div class="section" style="padding-top:0"><div class="row" style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-2);padding:var(--s-3)"><input class="input search" placeholder="Search by name" style="border:0"><div class="segmented"><button aria-pressed="true">All</button><button>Exported</button><button>Not exported</button><button>Archived</button></div></div></div>
+          </div>
+          <ul class="tiny" style="margin-top:var(--s-3);padding-left:1.1rem">
+            <li>No white breadcrumb bar — page opens straight onto the title.</li>
+            <li>Title is an <code>h1</code> in a custom <code>dash-head</code>; shell uses <code>h2</code> in <code>section-head</code>.</li>
+            <li>Search + filter sit in a detached <code>dash-toolbar</code> instead of the header row.</li>
+            <li>Search + filter sit in a bespoke detached toolbar instead of the header row; the studio standardizes on batch-fact filters.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tiny" style="margin-bottom:var(--s-2);font-weight:700;color:var(--stage-live)">✓ After — page shell</div>
+          <div class="screen">
+            <div class="context-bar"><div class="crumb"><a>All projects</a><span class="sep">/</span><a>Ipsum Studio</a><span class="sep">/</span><span>Generators</span></div></div>
+            <div class="section" style="padding-bottom:var(--s-4)">
+              <div class="section-head" style="margin-bottom:0">
+                <div><div class="eyebrow">Project · Generators</div><h2 style="font-size:var(--text-4xl)">Generators.</h2><p class="lede">Recipes for deterministic token batches.</p></div>
+                <div class="row"><input class="input search" placeholder="Search generators…"><div class="segmented"><button aria-pressed="true">All · 4</button><button>Generated · 3</button><button>Exported · 2</button></div></div>
+              </div>
+            </div>
+          </div>
+          <ul class="tiny" style="margin-top:var(--s-3);padding-left:1.1rem">
+            <li>White breadcrumb bar is the only white strip at the top.</li>
+            <li><code>h2</code> "Generators." in <code>section-head</code>, on the grey.</li>
+            <li>Search + segmented filter live in the header <code>.row</code>.</li>
+            <li>Search + batch-fact filter live in the header <code>.row</code>, matching the rest of the studio.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 — Create generator · modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">15</span><span class="t">Create generator · modal</span><span class="d">The "New generator" dialog (name + private notes) rebuilt on the shared <code>modal-card</code> — Anton title, Mona Sans labels/body, standard ghost/primary footer buttons.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>New generator</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:var(--s-5)">
+              <label class="eyebrow" for="ng-name"><strong style="color:var(--text-primary)">Name</strong> · Required</label>
+              <input id="ng-name" class="input" style="width:100%" placeholder="e.g. Icy Peas OGs">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              <label class="eyebrow" for="ng-notes"><strong style="color:var(--text-primary)">Notes</strong> · Optional</label>
+              <textarea id="ng-notes" class="input" style="width:100%;min-height:96px;resize:vertical;font-family:var(--font-body)" placeholder="e.g. Icy Peas version 1, using animated gifs for the hardest to get layers."></textarea>
+              <p class="tiny" style="margin:0.125rem 0 0">Just for your eyes — these notes are never shown to the public.</p>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Create &amp; open</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 — Layer modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">16</span><span class="t">Layer modals · new &amp; edit</span><span class="d">Add a layer (name, inclusion policy, stack order) and edit an existing one — option titles in Mona Sans like the Preflight gen-modes, modal titles in Anton.</span></div>
+      <div class="cols-2">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>New layer</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="m-field">
+                <label class="eyebrow" for="nl-name"><strong style="color:var(--text-primary)">Layer name</strong> · Required</label>
+                <input id="nl-name" class="input" style="width:100%" value="Layer A">
+                <p class="hint">Use the default name or enter your own. You can always change it later.</p>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Inclusion policy</span>
+                <label class="choice sel"><span class="radio"></span><span><span class="ttl">Always include</span><span class="desc">Every output picks one part from this layer.</span></span></label>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Optional with probability</span><span class="desc">Include this layer for a portion of outputs. Uses the same preset scale as part weights.<select class="input"><option>Very infrequent · 10%</option><option>Infrequent · 30%</option><option selected>Balanced · 50%</option><option>Frequent · 70%</option><option>Very frequent · 90%</option></select></span></span></label>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Order</span>
+                <label class="choice is-disabled"><span class="radio"></span><span><span class="ttl">First layer in the stack</span><span class="desc">There are no other layers yet — order will apply once you add a second layer. Drag the layer rows in the build view to reorder them anytime.</span></span></label>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add layer</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Edit layer · Body</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="m-field">
+                <label class="eyebrow" for="el-name"><strong style="color:var(--text-primary)">Layer name</strong> · Required</label>
+                <input id="el-name" class="input" style="width:100%" value="Body">
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Inclusion policy</span>
+                <label class="choice sel"><span class="radio"></span><span><span class="ttl">Always include</span><span class="desc">Every output picks one part from this layer.</span></span></label>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Optional with probability</span><span class="desc">Include this layer for a portion of outputs. Uses the same preset scale as part weights.<select class="input"><option>Very infrequent · 10%</option><option>Infrequent · 30%</option><option>Balanced · 50%</option><option selected>Frequent · 70%</option><option>Very frequent · 90%</option></select></span></span></label>
+              </div>
+              <p class="hint" style="margin-top:var(--s-5)">To reorder this layer in the stack, drag its row by the grip handle in the build view.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 — Add part modal (Single / Batch upload) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17</span><span class="t">Add part · single &amp; batch</span><span class="d">The add-part dialog for a layer — single part with weight preset + cap, and the batch-upload tab. Both surface the transparency warning when opaque files (JPEGs) are selected. Pressing <strong>Add part(s)</strong> runs the project cycles estimate before the files are stored — see 17b–17d.</span></div>
+      <div class="cols-2">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Add part · Body</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="mtabs"><button class="active">Single</button><button>Batch upload</button></div>
+              <div class="m-field">
+                <label class="eyebrow" for="ap-name"><strong style="color:var(--text-primary)">Part name</strong> · Required</label>
+                <input id="ap-name" class="input" style="width:100%" placeholder="e.g. Crimson">
+                <p class="hint">Must be unique within this layer.</p>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Asset</span>
+                <div class="file-pick"><span class="thumb" style="background:linear-gradient(135deg,#fde68a,#b45309)"></span><span><span class="nm">blossom.jpg</span><br><span class="tiny">JPEG · 512 × 512</span></span><button class="btn btn--ghost btn--sm" style="margin-left:auto">Replace</button></div>
+                <div class="info-panel info-panel--warn"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="tiny"><strong>blossom.jpg doesn't support transparency.</strong> "Body" stacks above other layers, so anything on the layers below will be hidden behind this part. For parts that stack on top, use <strong>.png</strong>, <strong>.webp</strong>, <strong>.apng</strong> or <strong>.svg</strong>.</div></div>
+                <span class="ulink">See supported file types →</span>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Weight</span>
+                <div class="segmented" style="flex-wrap:wrap"><button>Very infrequent · 1</button><button>Infrequent · 2</button><button aria-pressed="true">Balanced · 3</button><button>Frequent · 5</button><button>Very frequent · 8</button></div>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Cap · Optional</span>
+                <div class="m-grid-2"><select class="input"><option>None</option><option>Percentage</option><option>Fixed count</option></select><input class="input" placeholder="e.g. 15"></div>
+                <p class="hint">Limits how often this part appears in a batch.</p>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add part</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Add part · Body</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="mtabs"><button>Single</button><button class="active">Batch upload</button></div>
+              <div class="m-field">
+                <span class="eyebrow">Assets · 12 added</span>
+                <div class="dropzone" style="padding:var(--s-4)"><strong>Drop more files</strong> or browse. <span class="tiny">Each file becomes a part, named from its filename.</span></div>
+                <div class="info-panel info-panel--warn"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="tiny"><strong>2 of these files don't support transparency</strong> (<span class="mono">sun.jpg</span>, <span class="mono">sky.jpg</span>). Parts on the layers below them will be hidden behind them — replace with .png, .webp, .apng or .svg, or remove them from the batch.</div></div>
+                <span class="ulink">See supported file types →</span>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Default weight for uploaded parts</span>
+                <div class="segmented" style="flex-wrap:wrap"><button>Very infrequent · 1</button><button>Infrequent · 2</button><button aria-pressed="true">Balanced · 3</button><button>Frequent · 5</button><button>Very frequent · 8</button></div>
+              </div>
+              <p class="hint">10 transparent · <span style="color:var(--stage-draft);font-weight:700">2 opaque</span>. You can still add all 12 — each opaque part keeps the warning badge in the grid.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add 12 parts</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17b — Add parts · cycle estimate (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17b</span><span class="t">Add parts · cycle estimate (balance OK)</span><span class="d">Committing a batch upload runs the same estimate → check guard. The files are uploaded and held; storing them in blob storage is funded from project cycles. With headroom, they store normally.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Add 12 parts · Body</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><span class="staged" style="align-self:flex-start"><span class="dot"></span>12 parts staged · 18 MB · uploaded &amp; held</span></div>
+            <div class="est" style="margin-top:var(--s-1)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.05 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">9.452 T</div></div>
+              <div class="e ok"><div class="k">After upload</div><div class="v">~9.40 T</div></div>
+            </div>
+            <div class="info-panel info-panel--ok"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tiny">Enough cycles to store these 12 parts and keep your reserve. Toko moves project cycles into blob storage automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add 12 parts</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17c — Add parts · low balance (inline) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17c</span><span class="t">Add parts · low balance (inline)</span><span class="d">Estimate exceeds the balance. The upload is never cancelled — the 12 files stay staged and the primary action becomes Top up &amp; add parts.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Add 12 parts · Body</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><span class="staged" style="align-self:flex-start"><span class="dot"></span>12 parts staged · 18 MB · uploaded &amp; held</span></div>
+            <div class="est" style="margin-top:var(--s-1)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.05 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.030 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.02 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="info-panel info-panel--warn"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="tiny"><strong style="color:var(--text-primary)">Not quite enough cycles for this upload.</strong> Your 12 files stay staged — top up and they'll store straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><div class="right"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; add 12 parts</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17d — Top up to continue · parts staged -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17d</span><span class="t">Top up to continue · parts staged</span><span class="d">The inline top-up for parts. The staged upload is shown at the top so it's clear nothing was cancelled; topping up resumes the store automatically.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Top up to continue upload</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><span class="staged" style="align-self:flex-start"><span class="dot"></span>12 parts staged · 18 MB · ready to send</span></div>
+            <div class="m-field">
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.05 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.030 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div class="m-field">
+              <span class="eyebrow">Top up amount</span>
+              <div class="amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="info-panel"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div class="tiny">Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged parts store automatically.</div></div>
+          </div>
+          <div class="footer-row"><div class="right"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 — Supported file types modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">18</span><span class="t">Supported file types</span><span class="d">Reference modal opened from "See supported file types" — image, animation, vector and audio formats.</span></div>
+      <div class="stage" style="justify-content:center">
+        <div class="modal-card" style="max-width:560px">
+          <header><h4>Supported file types</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0 0 var(--s-4);font-size:var(--text-sm);line-height:1.55">Toko accepts a range of image, animation, vector and audio formats for layer parts. A layer doesn't have to be visual — a "Soundtrack" layer with audio parts is a valid use of the same composition model.</p>
+            <div class="ft-card"><h4>Still images</h4><p>For most visual parts — body shapes, backgrounds, hats, accessories.</p><div class="exts">.png <span>·</span> .jpg <span>·</span> .jpeg <span>·</span> .webp</div></div>
+            <div class="ft-card"><h4>Animated</h4><p>For visual parts that move — sparkle effects, blinking eyes, flowing capes. Animation plays in the token preview and on the secondary marketplace.</p><div class="exts">.gif <span>·</span> animated .webp <span>·</span> .apng</div></div>
+            <div class="ft-card"><h4>Vector</h4><p>Crisp at any size — good for geometric shapes or text-based parts.</p><div class="exts">.svg</div></div>
+            <div class="ft-card"><h4>Audio</h4><p>For sound layers — soundtracks, voice clips, ambient loops. Plays alongside the visual composition in the token preview.</p><div class="exts">.mp3 <span>·</span> .wav <span>·</span> .ogg <span>·</span> .m4a <span>·</span> .flac</div></div>
+            <div class="info-panel" style="margin-top:var(--s-4)"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="tiny"><strong>Heads up:</strong> for parts that stack on top of other layers (bodies, hats, accessories), use a format that supports transparency — .png, .webp, animated .webp, .apng, .gif, or .svg. A JPEG-on-top will paint over the layers underneath.</div></div>
+            <p class="tiny" style="margin-top:var(--s-3)">Max file size and per-extension limits — TBD. Final list will be confirmed once asset-pipeline support is locked.</p>
+          </div>
+          <div class="footer-row" style="justify-content:stretch"><button class="btn btn--primary" style="width:100%">Got it</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 — Compatibility rule modals (new / edit) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">19</span><span class="t">Compatibility rule · new &amp; edit</span><span class="d">Scope chooser (part→part / part→layer), the if/relation/target selects, an optional reason, and the save-time validation note.</span></div>
+      <div class="cols-2">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card" style="max-width:520px">
+            <header><h4>New compatibility rule</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="m-field">
+                <span class="eyebrow">Rule scope</span>
+                <label class="choice sel"><span class="radio"></span><span><span class="ttl">Part to part</span><span class="desc">A specific part requires or excludes another specific part.</span></span></label>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Part to layer</span><span class="desc">A specific part requires or excludes a whole layer.</span></span></label>
+              </div>
+              <div class="m-grid-2" style="margin-top:var(--s-5)">
+                <div class="m-field"><span class="eyebrow">If this part is selected</span><select class="input"><option>Body · Lilac</option><option>Body · Obsidian</option><option>Head · Round eyes</option></select></div>
+                <div class="m-field"><span class="eyebrow">Relation</span><select class="input"><option>Excludes</option><option>Requires</option></select></div>
+              </div>
+              <div class="m-field" style="margin-top:var(--s-5)"><span class="eyebrow">Target</span><select class="input"><option>Layer · Hat</option><option>Layer · Accessory</option><option>Part · Round eyes</option></select></div>
+              <div class="m-field"><span class="eyebrow">Reason · Optional, shown to creators on the rule card</span><input class="input" style="width:100%" placeholder="e.g. Lilac body looks weird with any hat"></div>
+              <div class="info-panel" style="margin-top:var(--s-5)"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="tiny">When you save, we'll check for contradictions, self-references, missing targets, and unreachable selections — and reject the rule if any apply.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add rule</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card" style="max-width:520px">
+            <header><h4>Edit compatibility rule</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="m-field">
+                <span class="eyebrow">Rule scope</span>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Part to part</span><span class="desc">A specific part requires or excludes another specific part.</span></span></label>
+                <label class="choice sel"><span class="radio"></span><span><span class="ttl">Part to layer</span><span class="desc">A specific part requires or excludes a whole layer.</span></span></label>
+              </div>
+              <div class="m-grid-2" style="margin-top:var(--s-5)">
+                <div class="m-field"><span class="eyebrow">If this part is selected</span><select class="input"><option>Body · Lilac</option><option>Body · Obsidian</option></select></div>
+                <div class="m-field"><span class="eyebrow">Relation</span><select class="input"><option>Excludes</option><option>Requires</option></select></div>
+              </div>
+              <div class="m-field" style="margin-top:var(--s-5)"><span class="eyebrow">Target</span><select class="input"><option>Layer · Hat</option><option>Layer · Accessory</option></select></div>
+              <div class="m-field"><span class="eyebrow">Reason · Optional, shown to creators on the rule card</span><input class="input" style="width:100%" value="Lilac body looks weird with any hat"></div>
+              <div class="info-panel" style="margin-top:var(--s-5)"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="tiny">When you save, we'll re-check for contradictions, self-references, missing targets, and unreachable selections — and reject the change if any apply.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 — Destructive confirmations -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">20</span><span class="t">Destructive confirmations</span><span class="d">Shared "are you sure?" template with the <code>anxious/</code> character frame and a red confirm button — delete part, bulk delete, delete layer, delete rule.</span></div>
+      <div class="cols-2">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Delete part · Body · Cobalt?</h4><button aria-label="Close">✕</button></header>
+            <div class="confirm">
+              <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+              <h3>Are you sure?</h3>
+              <p>This will permanently delete <strong>Cobalt</strong> from the Body layer. Compatibility rules referencing this part will also be removed. You can't undo this.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete part</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Delete 11 parts?</h4><button aria-label="Close">✕</button></header>
+            <div class="confirm">
+              <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+              <h3>Are you sure?</h3>
+              <p>This will permanently delete <strong>11 parts</strong> from the Body layer. Compatibility rules referencing any of these parts will also be removed. You can't undo this.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete 11 parts</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Delete layer · Body?</h4><button aria-label="Close">✕</button></header>
+            <div class="confirm">
+              <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+              <h3>Are you sure?</h3>
+              <p>This will permanently delete the <strong>Body</strong> layer and all <strong>12 parts</strong> inside it. Compatibility rules referencing this layer will also be removed. You can't undo this.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete layer</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Delete this rule?</h4><button aria-label="Close">✕</button></header>
+            <div class="confirm">
+              <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+              <h3>Are you sure?</h3>
+              <p>This will permanently remove this compatibility rule. Future batches may produce combinations this rule previously prevented. You can't undo this — but you can re-add the rule from scratch.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete rule</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21 — Batches · history (step 5) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">21</span><span class="t">Batches · history</span><span class="d">Step 5 of the flow, rebuilt on the page shell: bookmarked batches up top, full batch history below. Bookmark names are Anton; dates are monospace.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Generators</a><span class="sep">/</span><a>Lorem Drop No. 1</a><span class="sep">/</span><span>Batches</span></div>
+          <div class="actions"><button class="notif-bell" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div>
+        </div>
+        <div class="step-rail">
+          <button class="step done"><span class="num">✓</span><span class="name">Build</span></button>
+          <button class="step done"><span class="num">✓</span><span class="name">Preflight</span></button>
+          <button class="step done"><span class="num">✓</span><span class="name">Curate</span></button>
+          <button class="step done"><span class="num">✓</span><span class="name">Export</span></button>
+          <button class="step active"><span class="num">5</span><span class="name">Batches</span></button>
+        </div>
+        <div class="flow-substatus">
+          <span class="status-info"><span class="saved-dot"></span>Saved · just now</span>
+        </div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Generator · Batches</div><h2>Batch history.</h2></div><p class="lede" style="margin:0">Review previous batches, copy seeds or bookmark your favourites to make future regenerations easier.</p></div>
+          <div class="panel-block">
+            <div class="ph"><h3>Your bookmarks</h3><span class="count">4 bookmarks</span></div>
+            <div class="batch-grid">
+              <div class="batch-card">
+                <div class="top"><div><div class="bm-name">Spring run</div><div class="date">May 26 · 14:30</div></div><span class="bm-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span></div>
+                <div class="stat"><span class="n">200</span> outputs · <span class="n">12</span> pinned</div>
+                <div class="acts"><button class="ico-btn" title="Edit bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Remove bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></button></div>
+              </div>
+              <div class="batch-card">
+                <div class="top"><div><div class="bm-name">Hat tweaks</div><div class="date">May 24 · 11:08</div></div><span class="bm-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span></div>
+                <div class="stat"><span class="n">80</span> outputs · <span class="n">4</span> pinned</div>
+                <div class="acts"><button class="ico-btn" title="Edit bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Remove bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></button></div>
+              </div>
+              <div class="batch-card">
+                <div class="top"><div><div class="bm-name">V2 candidates</div><div class="date">May 22 · 09:42</div></div><span class="bm-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span></div>
+                <div class="stat"><span class="n">500</span> outputs · <span class="n">38</span> pinned</div>
+                <div class="acts"><button class="ico-btn" title="Edit bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Remove bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></button></div>
+              </div>
+              <div class="batch-card">
+                <div class="top"><div><div class="bm-name">Solo dropouts</div><div class="date">May 19 · 17:55</div></div><span class="bm-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span></div>
+                <div class="stat"><span class="n">1</span> output · <span class="n">1</span> pinned</div>
+                <div class="acts"><button class="ico-btn" title="Edit bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Remove bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></button></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-block">
+            <div class="ph"><h3>View all batches</h3><span class="count">20 batches</span></div>
+            <div class="batch-grid">
+              <div class="batch-card"><div class="top"><div class="date">May 27 · 14:30</div></div><div class="stat">Limited · <span class="n">50</span> · <span class="n">0</span> pinned</div><div class="acts"><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button></div></div>
+              <div class="batch-card"><div class="top"><div class="date">May 27 · 11:02</div></div><div class="stat">Limited · <span class="n">100</span> · <span class="n">6</span> pinned</div><div class="acts"><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button></div></div>
+              <div class="batch-card"><div class="top"><div class="date">May 26 · 16:18</div></div><div class="stat">CSV · <span class="n">34</span> · <span class="n">0</span> pinned</div><div class="acts"><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button></div></div>
+              <div class="batch-card"><div class="top"><div class="date">May 25 · 22:01</div></div><div class="stat">Limited · <span class="n">20</span> · <span class="n">2</span> pinned</div><div class="acts"><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button></div></div>
+              <div class="batch-card"><div class="top"><div class="date">May 25 · 10:33</div></div><div class="stat">Single · <span class="n">1</span> · <span class="n">1</span> pinned</div><div class="acts"><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button></div></div>
+              <div class="batch-card"><div class="top"><div class="date">May 24 · 18:47</div></div><div class="stat">Limited · <span class="n">75</span> · <span class="n">3</span> pinned</div><div class="acts"><button class="ico-btn" title="Preview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="ico-btn" title="Copy seed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ico-btn" title="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22 — Batch modals -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">22</span><span class="t">Batch modals</span><span class="d">Batch preview (jump into Curate), parts-used breakdown, plus add / edit / remove-bookmark dialogs.</span></div>
+      <div class="stage" style="justify-content:center;margin-bottom:var(--s-6)">
+        <div class="modal-card" style="max-width:560px">
+          <header><h4>Batch preview</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0 0 var(--s-4);font-size:var(--text-sm);line-height:1.55">A quick overview of the outputs in this batch. To pin, delete unpinned, or export, open the batch in Curate.</p>
+            <div class="preview-grid">
+              <div class="art art-square art--composed-1"></div><div class="art art-square art--composed-2"></div><div class="art art-square art--composed-3"></div><div class="art art-square art--composed-4"></div><div class="art art-square art--composed-5"></div><div class="art art-square art--composed-6"></div>
+              <div class="art art-square art--composed-1"></div><div class="art art-square art--composed-2"></div><div class="art art-square art--composed-3"></div><div class="art art-square art--composed-4"></div><div class="art art-square art--composed-5"></div><div class="art art-square art--composed-6"></div>
+              <div class="art art-square art--composed-2"></div><div class="art art-square art--composed-1"></div><div class="art art-square art--composed-3"></div><div class="art art-square art--composed-5"></div><div class="art art-square art--composed-4"></div><div class="art art-square art--composed-6"></div>
+              <div class="art art-square art--composed-1"></div><div class="art art-square art--composed-3"></div><div class="art art-square art--composed-2"></div><div class="art art-square art--composed-6"></div><div class="art art-square art--composed-5"></div><div class="art art-square art--composed-4"></div>
+              <div class="art art-square art--composed-1"></div><div class="art art-square art--composed-3"></div><div class="art art-square art--composed-2"></div><div class="art art-square art--composed-5"></div><div class="art art-square art--composed-6"></div><div class="art art-square art--composed-4"></div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">Open in Curate →</button></div>
+        </div>
+      </div>
+      <div class="stage" style="justify-content:center;margin-bottom:var(--s-6)">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Parts used in this batch</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <p style="margin:0 0 var(--s-4);font-size:var(--text-sm);line-height:1.55">How many distinct parts from each layer appeared across this 250-token batch (used / available). A layer that barely moved may mean a cap or weight needs tuning.</p>
+            <div>
+              <div class="used-row"><span class="ul-nm">Background</span><span class="ul-bar"><span class="f" style="width:75%"></span></span><span class="ul-ct">6 / 8</span></div>
+              <div class="used-row"><span class="ul-nm">Body</span><span class="ul-bar"><span class="f" style="width:42%"></span></span><span class="ul-ct">5 / 12</span></div>
+              <div class="used-row"><span class="ul-nm">Head</span><span class="ul-bar"><span class="f" style="width:90%"></span></span><span class="ul-ct">9 / 10</span></div>
+              <div class="used-row"><span class="ul-nm">Mouth <span class="opt">Optional</span></span><span class="ul-bar"><span class="f" style="width:67%"></span></span><span class="ul-ct">4 / 6</span></div>
+              <div class="used-row"><span class="ul-nm">Hat <span class="opt">Optional</span></span><span class="ul-bar"><span class="f" style="width:25%"></span></span><span class="ul-ct">2 / 8</span></div>
+              <div class="used-row"><span class="ul-nm">Accessory <span class="opt">Optional</span></span><span class="ul-bar"><span class="f low" style="width:10%"></span></span><span class="ul-ct" style="color:var(--stage-draft)">1 / 10</span></div>
+            </div>
+            <div class="info-panel info-panel--warn" style="margin-top:var(--s-4)"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div class="tiny"><strong>Accessory only used 1 of 10 parts.</strong> If you expected more variety, check that layer's weights and caps.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">Open in Curate →</button></div>
+        </div>
+      </div>
+      <div class="cols-2">
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Add bookmark</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0 0 var(--s-4);font-size:var(--text-sm);line-height:1.55">Bookmark and rename this batch for easy access. Bookmarks appear at the top of your Batch History, and their seed will show in the dropdown when generating new batches.</p>
+              <div class="m-field"><span class="eyebrow">Custom name · Optional</span><input class="input" style="width:100%" placeholder="e.g. Spring run, or leave blank to keep the timestamp"></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save bookmark</button></div>
+          </div>
+        </div>
+        <div class="stage" style="justify-content:center">
+          <div class="modal-card">
+            <header><h4>Edit bookmark</h4><button aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <p style="margin:0 0 var(--s-4);font-size:var(--text-sm);line-height:1.55">Rename your bookmark.</p>
+              <div class="m-field"><span class="eyebrow">Custom name · Optional</span><input class="input" style="width:100%" value="Spring run"></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="stage" style="justify-content:center;margin-top:var(--s-6)">
+        <div class="modal-card" style="max-width:520px">
+          <header><h4>Remove bookmark</h4><button aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="banner banner--warn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div>This batch will no longer appear at the top of your Batch History, or in the dropdown when generating new batches. Removing a bookmark also clears the custom name — but you'll still be able to find this batch by its creation date and time.</div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove bookmark</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

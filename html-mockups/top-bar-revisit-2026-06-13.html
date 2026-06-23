@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Top bar (connected + not connected)</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+  --page:#EAEAEA; --canvas:#FFFFFF; --canvas-alt:#FAFAFA;
+  --ink:#1D1D1D; --txt2:#6B6B6B; --txt3:#A0A0A0; --border:#E5E5E5;
+  --cyan:#06B0E6; --draft:#F59E0B; --live:#10B981; --err:#EF4444;
+  --font-display:"Anton",system-ui,sans-serif;
+  --font-emph:"Mona Sans",system-ui,sans-serif;
+  --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*,*::before,*::after { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {
+  font-family:var(--font-body); color:var(--ink); background:var(--page);
+  font-size:0.9375rem; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+img { display:block; max-width:100%; }
+button { font-family:inherit; }
+
+/* ---------- page layout ---------- */
+.wrap { max-width:1000px; margin:0 auto; padding:3rem 1.5rem 5rem; }
+.eyebrow {
+  font-family:var(--font-emph); font-weight:700; font-size:0.75rem;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--txt3);
+}
+h1 {
+  font-family:var(--font-display); font-weight:400; font-size:2.875rem;
+  line-height:1.02; letter-spacing:0.01em; text-transform:uppercase;
+  margin:0.625rem 0 0;
+}
+.lede { color:var(--txt2); font-size:1rem; max-width:64ch; margin:0.875rem 0 0; }
+
+.card {
+  background:var(--canvas); border:1px solid var(--border);
+  border-radius:16px; padding:1.625rem; margin-top:1.5rem;
+}
+.card h2 {
+  font-family:var(--font-emph); font-weight:800; font-size:0.8125rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--txt3);
+  margin:0 0 0.875rem;
+}
+
+/* section header */
+.shead { display:flex; align-items:baseline; gap:0.875rem; flex-wrap:wrap; }
+.skey {
+  font-family:var(--font-emph); font-size:0.6875rem; font-weight:800; line-height:1;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:#fff; background:var(--ink); border-radius:7px; padding:0.4375rem 0.5625rem; flex:none;
+}
+.skey.is-rec { background:var(--cyan); color:#001318; }
+.stitle { font-family:var(--font-display); font-weight:400; font-size:1.5625rem; text-transform:uppercase; letter-spacing:0.01em; }
+.ssum { color:var(--txt2); margin:0.5rem 0 0; max-width:72ch; }
+
+/* change / decision list */
+.changes { margin:1rem 0 0; padding:0; list-style:none; }
+.changes li {
+  position:relative; padding:0.4375rem 0 0.4375rem 1.625rem; font-size:0.9063rem;
+  border-top:1px solid var(--border);
+}
+.changes li:first-child { border-top:0; }
+.changes li::before {
+  content:""; position:absolute; left:3px; top:14px;
+  width:9px; height:9px; border-radius:2px; background:var(--cyan);
+}
+.changes li.fix::before  { background:var(--live); }
+.changes li.add::before  { background:var(--draft); }
+.changes li.cut::before  { background:var(--err); }
+.changes li.done::before { background:var(--live); border-radius:9999px; }
+.changes li b { font-weight:700; }
+
+/* notes */
+.note {
+  margin-top:0.875rem; padding:0.75rem 1rem; border-radius:10px;
+  font-size:0.8438rem; border-left:3px solid var(--txt3); background:var(--canvas-alt);
+}
+.note--good { border-left-color:var(--live);  background:#EFFaf4; }
+.note b { font-family:var(--font-emph); font-weight:800; letter-spacing:0.04em; text-transform:uppercase; font-size:0.6875rem; }
+
+/* ---------- frame (container query host) ---------- */
+.framelabel {
+  font-family:var(--font-emph); font-weight:700; font-size:0.6875rem;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--txt3);
+  margin:1.375rem 0 0.5rem;
+}
+.frame {
+  container-type:inline-size; container-name:bar;
+  border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#0A0A0A;
+}
+.frame--d { width:100%; }
+.frame--m { width:375px; }
+.m-scroll { overflow-x:auto; }
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar {
+  display:flex; align-items:center; gap:0.5rem;
+  width:100%; height:56px; padding:0 1.25rem;
+  background:#0A0A0A; color:#fff;
+}
+.tb-brand { display:inline-flex; align-items:center; gap:0.75rem; text-decoration:none; margin-right:1.25rem; flex:none; }
+.tb-face { height:26px; width:auto; }
+.tb-word { height:14px; width:auto; }
+
+.tb-nav { display:inline-flex; align-items:center; gap:0.125rem; }
+.tb-link {
+  display:inline-flex; align-items:center; white-space:nowrap; text-decoration:none;
+  color:#B5B5B5; font-size:0.875rem; font-weight:500; padding:0.4375rem 0.8125rem; border-radius:9999px;
+}
+.tb-link:hover { background:rgba(255,255,255,0.07); color:#fff; }
+.tb-link.is-active { background:rgba(255,255,255,0.10); color:#fff; }
+
+.tb-spacer { flex:1; }
+.tb-end { display:inline-flex; align-items:center; gap:0.5rem; flex:none; }
+.tb-div { width:1px; height:22px; background:rgba(255,255,255,0.12); flex:none; margin:0 0.125rem; }
+
+.tb-icon {
+  width:36px; height:36px; flex:none; border:0; border-radius:9999px; cursor:pointer;
+  background:rgba(255,255,255,0.06); color:#fff;
+  display:inline-flex; align-items:center; justify-content:center; position:relative;
+}
+.tb-icon:hover { background:rgba(255,255,255,0.12); }
+.tb-menu {
+  display:none; width:36px; height:36px; flex:none; border:0; border-radius:9999px; cursor:pointer;
+  background:rgba(255,255,255,0.06); color:#fff;
+  align-items:center; justify-content:center;
+}
+.tb-menu:hover { background:rgba(255,255,255,0.12); }
+.tb-badge {
+  position:absolute; top:1px; right:1px; min-width:15px; height:15px; padding:0 0.1875rem;
+  background:var(--err); color:#fff; border:2px solid #0A0A0A; border-radius:9999px;
+  font-size:0.5625rem; font-weight:700; line-height:11px; text-align:center;
+}
+.tb-wallet {
+  display:inline-flex; align-items:center; gap:0.4375rem;
+  background:var(--cyan); color:#001318; border:0; cursor:pointer;
+  padding:0.5rem 0.875rem; border-radius:9999px;
+  font-weight:700; font-size:0.8125rem; font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.tb-wallet:hover { background:#0CC0F9; }
+.tb-connect {
+  display:inline-flex; align-items:center; gap:0.4375rem;
+  background:#FFFFFF; color:#0A0A0A; border:0; cursor:pointer;
+  padding:0.5rem 1rem; border-radius:9999px;
+  font-weight:700; font-size:0.8125rem; white-space:nowrap;
+}
+.tb-connect:hover { background:#E8E8E8; }
+
+/* ---------- container-query: narrow / mobile ---------- */
+@container bar (max-width: 768px) {
+  .topbar { padding:0 1rem; }
+  .topbar .tb-nav { display:none; }
+  .topbar .tb-end .tb-link { display:none; }   /* Studio link folds into the drawer */
+  .topbar .tb-div { display:none; }
+  .topbar .tb-menu { display:inline-flex; }
+  .topbar .tb-brand { margin-right:0.5rem; }
+  .topbar.tb--rec .tb-icon,
+  .topbar.tb--rec .tb-menu  { width:44px; height:44px; }
+  .topbar.tb--rec .tb-theme { display:none; }   /* theme toggle lives in the drawer */
+}
+
+/* ============================================================
+   MOBILE MENU DRAWER
+   ============================================================ */
+.drawers { display:flex; gap:1.25rem; flex-wrap:wrap; margin-top:1.125rem; }
+.draw {
+  width:288px; background:#141414; border:1px solid #2A2A2A;
+  border-radius:16px; padding:1.25rem; color:#fff;
+}
+.draw-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.draw-head img { height:24px; width:auto; }
+.draw-x {
+  width:30px; height:30px; border:0; border-radius:9999px; cursor:pointer;
+  background:rgba(255,255,255,0.06); color:#fff; font-size:1rem; line-height:1;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.seg { display:inline-flex; background:rgba(255,255,255,0.07); border-radius:9999px; padding:0.1875rem; gap:0.125rem; }
+.seg.is-hl { outline:2px solid var(--cyan); outline-offset:3px; }
+.seg span { padding:0.3125rem 0.9375rem; border-radius:9999px; font-size:0.75rem; font-weight:600; color:#8C8C8C; }
+.seg span.on { background:#fff; color:#0A0A0A; }
+.draw-tip {
+  font-family:var(--font-emph); font-weight:700; font-size:0.625rem;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--cyan); margin:0.5625rem 0 0;
+}
+.draw-cta {
+  display:flex; align-items:center; justify-content:center; gap:0.4375rem;
+  width:100%; background:#fff; color:#0A0A0A; border:0; border-radius:9999px;
+  padding:0.6875rem; font-weight:700; font-size:0.875rem; cursor:pointer; margin:1rem 0 0.125rem;
+}
+.draw-prof {
+  display:flex; align-items:center; gap:0.625rem;
+  background:rgba(255,255,255,0.05); border:1px solid #2A2A2A;
+  border-radius:12px; padding:0.6875rem; margin:1rem 0 0.125rem;
+}
+.draw-av { width:36px; height:36px; border-radius:50%; flex:none; background:linear-gradient(140deg,#3B82F6,#10B981); }
+.draw-prof .pn { font-weight:700; font-size:0.875rem; }
+.draw-prof .pp { font-size:0.75rem; color:#8C8C8C; font-variant-numeric:tabular-nums; margin-top:0.0625rem; }
+.draw-h5 {
+  font-family:var(--font-emph); font-weight:800; font-size:0.625rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:#7A7A7A; margin:1.125rem 0 0.125rem;
+}
+.draw-item { padding:0.5625rem 0.125rem; font-size:0.875rem; font-weight:500; color:#D6D6D6; }
+
+/* footer */
+.foot { margin-top:2.125rem; color:var(--txt3); font-size:0.8125rem; text-align:center; }
+@media (max-width:560px){
+  h1 { font-size:2.0625rem; }
+  .wrap { padding:2rem 1rem 4rem; }
+  .card { padding:1.125rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Toko · Navigation</div>
+    <h1>The top bar — both states</h1>
+    <p class="lede">The horizontal tool bar, defined for the two states it has: <b style="color:var(--ink);font-weight:700;">connected</b> and <b style="color:var(--ink);font-weight:700;">not connected</b>. Search is dropped, Studio stays right-aligned, the notifications bell is kept. Every bar is responsive — resize the window to watch it flip between desktop and mobile.</p>
+  </header>
+
+  <!-- ===================== SPEC AT A GLANCE ===================== -->
+  <section class="card">
+    <h2>The spec at a glance</h2>
+    <ul class="changes">
+      <li><b>Two states.</b> Connected and not connected — both fully defined here.</li>
+      <li><b>Connected:</b> brand · Launchpad / Marketplace · Studio · divider · notifications bell · theme · cyan wallet pill.</li>
+      <li><b>Not connected:</b> the same skeleton, but no bell, and the wallet becomes a white Connect button.</li>
+      <li><b>Below 768px</b> the nav, the Studio link and the theme toggle fold into the hamburger drawer; the bell and the wallet stay in the bar.</li>
+    </ul>
+    <div class="note"><b>Light + dark</b> &nbsp;The bar is always dark and renders identically in light and dark themes — it never recolours. The light/dark control itself lives on the bar at desktop and moves into the drawer on mobile.</div>
+  </section>
+
+  <!-- ===================== CURRENT ===================== -->
+  <section class="card">
+    <div class="shead">
+      <span class="skey">Now</span>
+      <span class="stitle">Current top bar</span>
+    </div>
+    <p class="ssum">The bar as it ships today, connected — shown for comparison.</p>
+
+    <div class="framelabel">Connected · Desktop ≥ 768px</div>
+    <div class="frame frame--d">
+      <div class="topbar tb--legacy">
+        <button class="tb-menu" aria-label="Open menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <a class="tb-brand" href="#" aria-label="Toko home">
+          <img class="tb-face" src="../style-guide/logos/2026-05 - face.svg" alt="" />
+          <img class="tb-word" src="../style-guide/logos/app-name.png" alt="Toko" />
+        </a>
+        <nav class="tb-nav">
+          <a class="tb-link is-active" href="#">Launchpad</a>
+          <a class="tb-link" href="#">Marketplace</a>
+        </nav>
+        <span class="tb-spacer"></span>
+        <div class="tb-end">
+          <a class="tb-link" href="#">Studio</a>
+          <button class="tb-icon tb-theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg></button>
+          <button class="tb-wallet">tk-3f4…91a2</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="framelabel">Connected · Mobile &lt; 768px</div>
+    <div class="m-scroll">
+      <div class="frame frame--m">
+        <div class="topbar tb--legacy">
+          <button class="tb-menu" aria-label="Open menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+          <a class="tb-brand" href="#" aria-label="Toko home">
+            <img class="tb-face" src="../style-guide/logos/2026-05 - face.svg" alt="" />
+            <img class="tb-word" src="../style-guide/logos/app-name.png" alt="Toko" />
+          </a>
+          <nav class="tb-nav">
+            <a class="tb-link is-active" href="#">Launchpad</a>
+            <a class="tb-link" href="#">Marketplace</a>
+          </nav>
+          <span class="tb-spacer"></span>
+          <div class="tb-end">
+            <a class="tb-link" href="#">Studio</a>
+            <button class="tb-icon tb-theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg></button>
+            <button class="tb-wallet">tk-3f4…91a2</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RECOMMENDED — CONNECTED ===================== -->
+  <section class="card">
+    <div class="shead">
+      <span class="skey is-rec">A</span>
+      <span class="stitle">Connected</span>
+    </div>
+    <p class="ssum">A wallet is connected. The right cluster reads: Studio, a hairline divider, then the account controls — notifications, theme, and the wallet.</p>
+    <ul class="changes">
+      <li class="add"><b>Notifications bell</b> with an unread count, between the divider and the theme toggle. It stays in the bar on mobile too, so the count is always glanceable.</li>
+      <li><b>Studio</b> stays right-aligned, set off from the account controls by the divider.</li>
+      <li><b>Wallet control</b> keeps the connected principal and gains a wallet glyph.</li>
+      <li class="fix"><b>Mobile:</b> hamburger, brand, bell, wallet. Theme toggle moves to the drawer; touch targets are 44px.</li>
+    </ul>
+
+    <div class="framelabel">Connected · Desktop ≥ 768px</div>
+    <div class="frame frame--d">
+      <div class="topbar tb--rec">
+        <button class="tb-menu" aria-label="Open menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <a class="tb-brand" href="#" aria-label="Toko home">
+          <img class="tb-face" src="../style-guide/logos/2026-05 - face.svg" alt="" />
+          <img class="tb-word" src="../style-guide/logos/app-name.png" alt="Toko" />
+        </a>
+        <nav class="tb-nav">
+          <a class="tb-link is-active" href="#">Launchpad</a>
+          <a class="tb-link" href="#">Marketplace</a>
+        </nav>
+        <span class="tb-spacer"></span>
+        <div class="tb-end">
+          <a class="tb-link" href="#">Studio</a>
+          <span class="tb-div"></span>
+          <button class="tb-icon tb-bell" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span class="tb-badge">3</span>
+          </button>
+          <button class="tb-icon tb-theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg></button>
+          <button class="tb-wallet">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+            tk-3f4…91a2
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="framelabel">Connected · Mobile &lt; 768px</div>
+    <div class="m-scroll">
+      <div class="frame frame--m">
+        <div class="topbar tb--rec">
+          <button class="tb-menu" aria-label="Open menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+          <a class="tb-brand" href="#" aria-label="Toko home">
+            <img class="tb-face" src="../style-guide/logos/2026-05 - face.svg" alt="" />
+            <img class="tb-word" src="../style-guide/logos/app-name.png" alt="Toko" />
+          </a>
+          <nav class="tb-nav">
+            <a class="tb-link is-active" href="#">Launchpad</a>
+            <a class="tb-link" href="#">Marketplace</a>
+          </nav>
+          <span class="tb-spacer"></span>
+          <div class="tb-end">
+            <a class="tb-link" href="#">Studio</a>
+            <span class="tb-div"></span>
+            <button class="tb-icon tb-bell" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              <span class="tb-badge">3</span>
+            </button>
+            <button class="tb-icon tb-theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg></button>
+            <button class="tb-wallet">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+              tk-3f4…91a2
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RECOMMENDED — NOT CONNECTED ===================== -->
+  <section class="card">
+    <div class="shead">
+      <span class="skey is-rec">B</span>
+      <span class="stitle">Not connected</span>
+    </div>
+    <p class="ssum">No wallet connected — what a first-time or signed-out visitor sees. Same skeleton as the connected bar, with three deliberate differences.</p>
+    <ul class="changes">
+      <li class="cut"><b>No notifications bell.</b> There's nothing to notify before a wallet is connected, so the bell is absent — not greyed out.</li>
+      <li class="add"><b>Wallet control becomes a white Connect button.</b> White, not cyan, so the primary call-to-action stands out against the dark bar.</li>
+      <li><b>Studio still shows.</b> Tapping it starts the connect flow — signed-out visitors see as much as possible before connecting.</li>
+      <li><b>Unchanged:</b> brand, Launchpad / Marketplace nav, theme toggle, the 768px breakpoint and 44px mobile targets.</li>
+    </ul>
+
+    <div class="framelabel">Not connected · Desktop ≥ 768px</div>
+    <div class="frame frame--d">
+      <div class="topbar tb--rec">
+        <button class="tb-menu" aria-label="Open menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <a class="tb-brand" href="#" aria-label="Toko home">
+          <img class="tb-face" src="../style-guide/logos/2026-05 - face.svg" alt="" />
+          <img class="tb-word" src="../style-guide/logos/app-name.png" alt="Toko" />
+        </a>
+        <nav class="tb-nav">
+          <a class="tb-link is-active" href="#">Launchpad</a>
+          <a class="tb-link" href="#">Marketplace</a>
+        </nav>
+        <span class="tb-spacer"></span>
+        <div class="tb-end">
+          <a class="tb-link" href="#">Studio</a>
+          <span class="tb-div"></span>
+          <button class="tb-icon tb-theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg></button>
+          <button class="tb-connect">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+            Connect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="framelabel">Not connected · Mobile &lt; 768px</div>
+    <div class="m-scroll">
+      <div class="frame frame--m">
+        <div class="topbar tb--rec">
+          <button class="tb-menu" aria-label="Open menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+          <a class="tb-brand" href="#" aria-label="Toko home">
+            <img class="tb-face" src="../style-guide/logos/2026-05 - face.svg" alt="" />
+            <img class="tb-word" src="../style-guide/logos/app-name.png" alt="Toko" />
+          </a>
+          <nav class="tb-nav">
+            <a class="tb-link is-active" href="#">Launchpad</a>
+            <a class="tb-link" href="#">Marketplace</a>
+          </nav>
+          <span class="tb-spacer"></span>
+          <div class="tb-end">
+            <a class="tb-link" href="#">Studio</a>
+            <span class="tb-div"></span>
+            <button class="tb-icon tb-theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 1.6v3M12 19.4v3M4.3 4.3l2.1 2.1M17.6 17.6l2.1 2.1M1.6 12h3M19.4 12h3M4.3 19.7l2.1-2.1M17.6 6.4l2.1-2.1"/></svg></button>
+            <button class="tb-connect">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+              Connect
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note"><b>Note</b> &nbsp;On mobile the bar is hamburger · brand · Connect. Studio and the theme toggle fold into the drawer; the white Connect button is the one thing held in the bar.</div>
+  </section>
+
+  <!-- ===================== MOBILE DRAWER ===================== -->
+  <section class="card">
+    <div class="shead">
+      <span class="skey is-rec">C</span>
+      <span class="stitle">Mobile menu drawer</span>
+    </div>
+    <p class="ssum">Below 768px the hamburger opens this drawer. It carries everything that left the bar — and the <b style="color:var(--ink);font-weight:700;">light / dark toggle sits right at the top</b>, under the header, in both states.</p>
+
+    <div class="drawers">
+      <div>
+        <div class="framelabel">Not connected</div>
+        <div class="draw">
+          <div class="draw-head">
+            <img src="../style-guide/logos/2026-05 - face.svg" alt="Toko" />
+            <button class="draw-x" aria-label="Close menu">&times;</button>
+          </div>
+          <div class="seg is-hl"><span class="on">Light</span><span>Dark</span></div>
+          <p class="draw-tip">Light / dark lives here</p>
+          <button class="draw-cta">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 12h3"/></svg>
+            Connect
+          </button>
+          <div class="draw-item">Launchpad</div>
+          <div class="draw-item">Marketplace</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="framelabel">Connected</div>
+        <div class="draw">
+          <div class="draw-head">
+            <img src="../style-guide/logos/2026-05 - face.svg" alt="Toko" />
+            <button class="draw-x" aria-label="Close menu">&times;</button>
+          </div>
+          <div class="seg is-hl"><span class="on">Light</span><span>Dark</span></div>
+          <p class="draw-tip">Light / dark lives here</p>
+          <div class="draw-prof">
+            <span class="draw-av"></span>
+            <div><div class="pn">Donna</div><div class="pp">tk-3f4…91a2</div></div>
+          </div>
+          <div class="draw-item">Launchpad</div>
+          <div class="draw-item">Marketplace</div>
+          <div class="draw-item">Studio</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DECISIONS ===================== -->
+  <section class="card">
+    <h2>Decisions</h2>
+    <ul class="changes">
+      <li class="done"><b>Button label:</b> the not-connected control reads <b>Connect</b>.</li>
+      <li class="done"><b>Breakpoint:</b> 768px — the Bootstrap / Tailwind <i>md</i> value, the de-facto web standard. Both the style guide and the app shell now use it.</li>
+      <li class="done"><b>Studio when signed out:</b> stays visible, so logged-out visitors see as much as possible before connecting.</li>
+      <li class="done"><b>Theme toggle on mobile:</b> lives in the menu drawer, not the bar.</li>
+      <li class="done"><b>Light + dark:</b> the bar is identical in both — it never recolours.</li>
+    </ul>
+    <div class="note note--good"><b>Spec</b> &nbsp;styleguide.html §Navigation and styleguide.css have been updated to this spec — the style guide stays the source of truth.</div>
+  </section>
+
+  <p class="foot">Toko · top bar · connected + not connected · resize to see each state flip between desktop and mobile.</p>
+
+</div>
+</body>
+</html>

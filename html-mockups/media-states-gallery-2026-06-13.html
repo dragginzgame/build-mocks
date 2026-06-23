@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Media library · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:64ch; }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-3xl); }
+  .search { width:240px; max-width:100%; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .search.input { width:240px; }
+  select.input { appearance:auto; }
+  .segmented { display:inline-flex; background:var(--surface-canvas-alt); border-radius:var(--r-pill); padding:4px; border:1px solid var(--border-soft); }
+  .segmented button { border:0; background:transparent; padding:.375rem .75rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); }
+  .segmented button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-strong); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .btn--danger-solid { background:var(--notify-error); color:#fff; border-color:var(--notify-error); }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); }
+  .icon-btn:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .icon-btn--danger { color:var(--notify-error); border-color:rgba(239,68,68,.4); }
+  .chip { display:inline-flex; align-items:center; padding:2px 8px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-alt); color:var(--text-secondary); border:1px solid var(--border-soft); }
+  .chip--unused { background:var(--stage-draft); color:#fff; border-color:transparent; }
+
+  /* cost note */
+  .cost-note { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.25); border-radius:var(--r-3); padding:.75rem 1rem; margin-bottom:var(--s-5); }
+  .cost-note .ico { color:var(--stage-draft); flex:none; display:flex; }
+  .cost-note p { font-size:var(--text-sm); color:var(--text-secondary); margin:0; flex:1; min-width:240px; line-height:1.5; }
+
+  /* kind sub-nav — split the library by asset kind */
+  .kind-bar { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:var(--s-5); }
+  .kind-bar button { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .875rem; border-radius:var(--r-pill); border:1px solid var(--border-soft); background:var(--surface-canvas); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); }
+  .kind-bar button .ct { font-size:var(--text-2xs); color:var(--text-muted); }
+  .kind-bar button[aria-pressed="true"] { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .kind-bar button[aria-pressed="true"] .ct { color:rgba(255,255,255,.7); }
+
+  /* art swatches */
+  .art-square { aspect-ratio:1/1; }
+  .art--media-a { background:linear-gradient(135deg,#FDE68A,#F472B6); }
+  .art--media-b { background:linear-gradient(135deg,#93C5FD,#6366F1); }
+  .art--media-c { background:linear-gradient(135deg,#6EE7B7,#064E3B); }
+  .art--media-d { background:linear-gradient(135deg,#FCA5A5,#B91C1C); }
+  .art--media-e { background:repeating-linear-gradient(45deg,#1D1D1D 0 8px,#FAFAFA 8px 16px); }
+  .art--media-f { background:radial-gradient(circle,#FBBF24,#EF4444 70%); }
+  .art--media-g { background:linear-gradient(135deg,#1D1D1D,#6366F1); }
+  .art--media-h { background:conic-gradient(from 210deg,#F472B6,#6366F1,#38BDF8,#F472B6); }
+
+  /* media layout */
+  .media-layout { display:grid; grid-template-columns:200px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:820px){ .media-layout { grid-template-columns:1fr; } }
+  .media-sidebar { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); align-self:start; }
+  .media-sidebar .group { margin-bottom:var(--s-5); } .media-sidebar .group:last-child { margin-bottom:0; }
+  .media-sidebar h4 { font-family:var(--font-emphasis); font-size:var(--text-3xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin:0 0 var(--s-3); }
+  .media-sidebar .opt { display:flex; align-items:center; justify-content:space-between; padding:.5rem .75rem; border-radius:var(--r-2); font-size:var(--text-base); cursor:pointer; }
+  .media-sidebar .opt:hover { background:var(--surface-canvas-alt); }
+  .media-sidebar .opt.active { background:var(--surface-canvas-alt); font-weight:600; }
+  .media-sidebar .opt .ct { font-family:var(--font-emphasis); font-size:var(--text-2xs); color:var(--text-secondary); }
+
+  .media-grid { display:grid; gap:var(--s-3); grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); align-content:start; }
+  .media-grid.banners { grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); }
+  .media-tile { position:relative; border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; background:var(--surface-canvas); }
+  .media-tile .pic { aspect-ratio:1/1; }
+  .media-tile.banner .pic { aspect-ratio:16/6; }      /* banners are wide header images, not square */
+  .media-tile .meta { padding:.5rem .625rem; font-size:var(--text-xs); }
+  .media-tile .meta .nm { font-weight:600; font-size:var(--text-sm); font-family:ui-monospace,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .media-tile .meta .used { color:var(--text-secondary); margin-top:.125rem; }
+  .media-upload { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--text-secondary); cursor:pointer; }
+  .media-upload .pic { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; }
+  .media-tile.banner .media-upload-inner, .banners .media-upload .pic { aspect-ratio:16/6; }
+  .media-upload .up-inner { display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:var(--s-4); }
+  .media-upload .plus { font-size:1.625rem; line-height:1; }
+  .media-upload .up-label { font-family:var(--font-emphasis); font-size:var(--text-xs); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+  .media-badge { position:absolute; top:8px; left:8px; z-index:1; font-family:var(--font-emphasis); font-size:.5625rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; background:var(--stage-draft); color:#fff; padding:.1875rem .4375rem; border-radius:var(--r-pill); }
+  .media-del { position:absolute; top:6px; right:6px; z-index:1; }
+
+  /* list view */
+  .media-list { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .media-list .row { display:grid; grid-template-columns:44px 1.6fr .8fr 1fr 1.3fr auto; gap:var(--s-4); align-items:center; padding:.625rem var(--s-5); }
+  .media-list .row + .row { border-top:1px solid var(--border-soft); }
+  .media-list .row.head { background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-size:var(--text-3xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; }
+  .media-list .thumb { width:40px; height:40px; border-radius:6px; border:1px solid var(--border-soft); }
+  .media-list .thumb.wide { width:56px; height:32px; }
+  .media-list .nm { font-weight:600; font-size:var(--text-sm); font-family:ui-monospace,monospace; }
+  @media (max-width:820px){ .media-list .row { grid-template-columns:44px 1fr auto; } .media-list .c-hide { display:none; } }
+
+  /* modals */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-8); display:flex; flex-wrap:wrap; gap:var(--s-5); align-items:flex-start; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.wide { max-width:600px; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:space-between; align-items:center; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .dropzone { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-10) var(--s-4); text-align:center; color:var(--text-secondary); font-size:var(--text-base); }
+  .dropzone strong { color:var(--text-primary); font-weight:700; }
+  .up-row { display:grid; grid-template-columns:32px 1fr auto; gap:var(--s-3); align-items:center; padding:.5rem 0; }
+  .up-row + .up-row { border-top:1px solid var(--border-soft); }
+  .up-row .ic { width:32px; height:32px; border-radius:6px; }
+  .up-row .nm { font-family:ui-monospace,monospace; font-size:var(--text-sm); font-weight:600; }
+  .up-row .pct { font-family:ui-monospace,monospace; font-size:var(--text-xs); color:var(--text-secondary); }
+  .progress { height:6px; border-radius:var(--r-pill); background:var(--surface-canvas-alt); overflow:hidden; margin-top:.25rem; }
+  .progress > span { display:block; height:100%; background:var(--text-primary); }
+  .kv { display:grid; grid-template-columns:130px 1fr; row-gap:var(--s-3); column-gap:var(--s-5); font-size:var(--text-base); }
+  .kv .k { color:var(--text-secondary); font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; font-weight:700; align-self:center; }
+  .kv .v { font-weight:600; }
+  .kv .v.mono { font-family:ui-monospace,monospace; font-weight:400; font-size:var(--text-sm); }
+  .modal-card .confirm { text-align:center; padding:var(--s-8) var(--s-6) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .modal-card .confirm img { width:140px; height:auto; }
+  .modal-card .confirm h3 { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); }
+  .modal-card .confirm p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); line-height:1.55; max-width:42ch; }
+
+  /* empty-state */
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:54ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .fact-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); margin-top:var(--s-6); }
+  .fact-strip .fact { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .fact-strip .fact .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .fact-strip .fact h4 { font-size:var(--text-lg); margin:.5rem 0; letter-spacing:0; text-transform:none; font-family:var(--font-body); font-weight:700; }
+  .fact-strip .fact p { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.5; margin:0; }
+  @media (max-width:680px){ .fact-strip { grid-template-columns:1fr; } }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-link { color:var(--info,#2563EB); font-weight:700; font-size:var(--text-sm); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Media library — states &amp; stages.</h1>
+      <p>The shared asset library for a project. Assets come in different shapes, so the library is split by kind — <strong>banners</strong> are wide header images for collection / vendor / project pages, <strong>thumbnails</strong> are square, and <strong>other</strong> covers the rest. Storage is paid for on-chain, so an unused filter and easy clean-up are first-class.</p>
+    </header>
+
+    <!-- 01 BANNERS (wide) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Library · banners</span><span class="d">Kind switcher up top; banners render as wide header cards (16:6), not squares. Sidebar holds status &amp; tags.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Media library</span></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Media</div><h2>Media library.</h2><p class="lede">A shared library for project, collection, generator, and vendor presentation assets. Reuse across collections so you don't re-upload.</p></div>
+            <div class="row"><input class="input search" placeholder="Search by name or tag…"><div class="segmented"><button aria-pressed="true">Grid</button><button>List</button></div></div>
+          </div>
+          <div class="kind-bar">
+            <button aria-pressed="true">Banners <span class="ct">14</span></button>
+            <button>Thumbnails <span class="ct">7</span></button>
+            <button>Other <span class="ct">21</span></button>
+          </div>
+          <div class="cost-note">
+            <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span>
+            <p>Removing unused files reduces the cost of maintaining your collections. On the Internet Computer you pay for the data you store, so trimming unused images adds up over time.</p>
+            <button class="btn btn--secondary btn--sm">Show unused · 3</button>
+            <button class="btn btn--ghost btn--sm" style="color:var(--notify-error);border-color:rgba(239,68,68,.4)">Delete unused · 3</button>
+          </div>
+          <div class="media-layout">
+            <aside class="media-sidebar">
+              <div class="group"><h4>Status</h4><div class="opt active">All banners <span class="ct">14</span></div><div class="opt">Unused only <span class="ct">1</span></div></div>
+              <div class="group"><h4>Used on</h4><div class="opt">Project page <span class="ct">1</span></div><div class="opt">Collection pages <span class="ct">5</span></div><div class="opt">Vendor pages <span class="ct">8</span></div></div>
+              <div class="group"><h4>Tags</h4><div class="opt">Spring <span class="ct">6</span></div><div class="opt">Lorem <span class="ct">3</span></div><div class="opt">Dolor <span class="ct">2</span></div></div>
+            </aside>
+            <div class="media-grid banners">
+              <button class="media-upload"><div class="pic"><div class="up-inner"><span class="plus">+</span><span class="up-label">Upload banner</span></div></div></button>
+              <div class="media-tile banner"><div class="pic art--media-g"></div><div class="meta"><div class="nm">project-header.png</div><div class="used">Ipsum Studio · project page</div></div></div>
+              <div class="media-tile banner"><div class="pic art--media-a"></div><div class="meta"><div class="nm">lorem-header.png</div><div class="used">Lorem Drop No. 1</div></div></div>
+              <div class="media-tile banner"><div class="pic art--media-d"></div><div class="meta"><div class="nm">dolor-header.png</div><div class="used">Dolor Series II</div></div></div>
+              <div class="media-tile banner"><div class="pic art--media-b"></div><div class="meta"><div class="nm">spring-vendor.png</div><div class="used">Spring drop vendor</div></div></div>
+              <div class="media-tile banner"><div class="pic art--media-h"></div><div class="meta"><div class="nm">elit-header.png</div><div class="used">Elit Collective</div></div></div>
+              <div class="media-tile banner"><span class="media-badge">Unused</span><button class="icon-btn icon-btn--danger media-del" title="Delete banner"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button><div class="pic art--media-e"></div><div class="meta"><div class="nm">old-promo-banner.png</div><div class="used">Unused</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 THUMBNAILS & OTHER (square) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Library · thumbnails &amp; other</span><span class="d">Same switcher set to Thumbnails — square cards. "Other" shares this square layout.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Media library</span></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Media</div><h2>Media library.</h2></div>
+            <div class="row"><input class="input search" placeholder="Search by name or tag…"><div class="segmented"><button aria-pressed="true">Grid</button><button>List</button></div></div>
+          </div>
+          <div class="kind-bar">
+            <button>Banners <span class="ct">14</span></button>
+            <button aria-pressed="true">Thumbnails <span class="ct">7</span></button>
+            <button>Other <span class="ct">21</span></button>
+          </div>
+          <div class="media-layout">
+            <aside class="media-sidebar">
+              <div class="group"><h4>Status</h4><div class="opt active">All thumbnails <span class="ct">7</span></div><div class="opt">Unused only <span class="ct">1</span></div></div>
+              <div class="group"><h4>Used on</h4><div class="opt">Project <span class="ct">1</span></div><div class="opt">Collections <span class="ct">4</span></div><div class="opt">Vendors <span class="ct">2</span></div></div>
+              <div class="group"><h4>Tags</h4><div class="opt">Lorem <span class="ct">2</span></div><div class="opt">Dolor <span class="ct">2</span></div><div class="opt">Drafts <span class="ct">3</span></div></div>
+            </aside>
+            <div class="media-grid">
+              <button class="media-upload"><div class="pic"><div class="up-inner"><span class="plus">+</span><span class="up-label">Upload</span></div></div></button>
+              <div class="media-tile"><div class="pic art-square art--media-c"></div><div class="meta"><div class="nm">studio-thumb.png</div><div class="used">Project thumbnail</div></div></div>
+              <div class="media-tile"><div class="pic art-square art--media-a"></div><div class="meta"><div class="nm">lorem-thumb.png</div><div class="used">Lorem Drop No. 1</div></div></div>
+              <div class="media-tile"><div class="pic art-square art--media-d"></div><div class="meta"><div class="nm">dolor-thumb.png</div><div class="used">Dolor Series II</div></div></div>
+              <div class="media-tile"><div class="pic art-square art--media-b"></div><div class="meta"><div class="nm">elit-thumb.png</div><div class="used">Elit Collective</div></div></div>
+              <div class="media-tile"><div class="pic art-square art--media-h"></div><div class="meta"><div class="nm">vendor-icon.png</div><div class="used">Spring drop vendor</div></div></div>
+              <div class="media-tile"><span class="media-badge">Unused</span><button class="icon-btn icon-btn--danger media-del" title="Delete thumbnail"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button><div class="pic art-square art--media-f"></div><div class="meta"><div class="nm">consectetur-thumb.png</div><div class="used">Unused</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 LIST · all assets -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">List · all assets</span><span class="d">List view shows every kind together with a Kind column — the place to see everything at once.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Media library</span></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Media</div><h2>Media library.</h2></div>
+            <div class="row"><input class="input search" placeholder="Search by name or tag…"><div class="segmented"><button>Grid</button><button aria-pressed="true">List</button></div></div>
+          </div>
+          <div class="media-list">
+            <div class="row head"><div></div><div>Name</div><div class="c-hide">Kind</div><div class="c-hide">Type · size</div><div class="c-hide">Used on</div><div></div></div>
+            <div class="row"><span class="thumb wide art--media-g"></span><div class="nm">project-header.png</div><div class="c-hide"><span class="chip">Banner</span></div><div class="c-hide tiny">PNG · 412 KB</div><div class="c-hide tiny">Project page</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="row"><span class="thumb art--media-c"></span><div class="nm">studio-thumb.png</div><div class="c-hide"><span class="chip">Thumbnail</span></div><div class="c-hide tiny">PNG · 96 KB</div><div class="c-hide tiny">Project thumbnail</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="row"><span class="thumb wide art--media-a"></span><div class="nm">lorem-header.png</div><div class="c-hide"><span class="chip">Banner</span></div><div class="c-hide tiny">PNG · 388 KB</div><div class="c-hide tiny">Lorem Drop No. 1</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="row"><span class="thumb art--media-e"></span><div class="nm">pattern-stripe.png</div><div class="c-hide"><span class="chip">Other</span></div><div class="c-hide tiny">PNG · 54 KB</div><div class="c-hide tiny">3 places</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="row"><span class="thumb art--media-f"></span><div class="nm">consectetur-thumb.png <span class="chip chip--unused" style="margin-left:.25rem">Unused</span></div><div class="c-hide"><span class="chip">Thumbnail</span></div><div class="c-hide tiny">PNG · 142 KB</div><div class="c-hide tiny">—</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 UNUSED · cleanup (list) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Unused · clean-up</span><span class="d">All unused assets across every kind, as a list with sizes and a bulk delete — files in use are hidden.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Media library</span></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Media · unused</div><h2>Unused assets.</h2><p class="lede">3 files (586 KB) aren't referenced by any collection, generator, or vendor. Safe to delete — nothing breaks.</p></div>
+            <div class="row"><button class="btn btn--ghost btn--sm">Back to library</button><button class="btn btn--danger-solid btn--sm">Delete all 3</button></div>
+          </div>
+          <div class="media-list">
+            <div class="row head"><div></div><div>Name</div><div class="c-hide">Kind</div><div class="c-hide">Size</div><div class="c-hide">Last used</div><div></div></div>
+            <div class="row"><span class="thumb wide art--media-e"></span><div class="nm">old-promo-banner.png</div><div class="c-hide"><span class="chip">Banner</span></div><div class="c-hide tiny">364 KB</div><div class="c-hide tiny">Never</div><div class="row"><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="row"><span class="thumb art--media-f"></span><div class="nm">consectetur-thumb.png</div><div class="c-hide"><span class="chip">Thumbnail</span></div><div class="c-hide tiny">142 KB</div><div class="c-hide tiny">Removed 12 Apr</div><div class="row"><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="row"><span class="thumb art--media-e"></span><div class="nm">testpattern.png</div><div class="c-hide"><span class="chip">Other</span></div><div class="c-hide tiny">64 KB</div><div class="c-hide tiny">Never</div><div class="row"><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 ASSET DETAIL (banner, wide) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Asset detail · banner</span><span class="d">Preview in the asset's own aspect (wide for a banner), metadata, where it's used, replace / download / delete.</span></div>
+      <div class="stage">
+        <div class="modal-card wide">
+          <header><h4>spring-vendor.png</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div style="aspect-ratio:16/6;border-radius:var(--r-3);overflow:hidden;border:1px solid var(--border-soft);margin-bottom:var(--s-5)"><div class="art--media-b" style="width:100%;height:100%"></div></div>
+            <div class="kv">
+              <div class="k">Kind</div><div class="v"><span class="chip">Banner</span></div>
+              <div class="k">Type · size</div><div class="v">PNG · 412 KB</div>
+              <div class="k">Dimensions</div><div class="v mono">2400 × 900</div>
+              <div class="k">Tags</div><div class="v"><span class="chip">Spring</span> <span class="chip">Vendor</span></div>
+              <div class="k">Used on</div><div class="v">Spring drop vendor · Lorem Drop No. 1 header</div>
+              <div class="k">Uploaded</div><div class="v"><span class="mono">2026-04-02</span> · by Mara</div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost btn--sm" style="color:var(--notify-error);border-color:rgba(239,68,68,.4)">Delete</button><div class="row"><button class="btn btn--ghost btn--sm">Replace</button><button class="btn btn--primary btn--sm">Download</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 UPLOAD -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Upload</span><span class="d">Drop zone, a kind it's being added as, and in-progress uploads with per-file progress.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="dropzone"><strong>Drop files</strong> or browse. <br><span class="tiny">PNG, JPG, WEBP, SVG, GIF — up to 10 MB each.</span></div>
+            <div style="margin-top:var(--s-5)">
+              <span class="flabel">Add as</span>
+              <div class="segmented"><button aria-pressed="true">Banner</button><button>Thumbnail</button><button>Other</button></div>
+            </div>
+            <div style="margin-top:var(--s-5)">
+              <div class="flabel">Uploading 2 of 3</div>
+              <div class="up-row"><span class="ic art--media-a"></span><div><div class="nm">summer-header.png</div><div class="progress"><span style="width:100%"></span></div></div><span class="pct" style="color:var(--stage-live)">Done</span></div>
+              <div class="up-row"><span class="ic art--media-b"></span><div><div class="nm">launch-hero.jpg</div><div class="progress"><span style="width:62%"></span></div></div><span class="pct">62%</span></div>
+              <div class="up-row"><span class="ic art--media-c"></span><div><div class="nm">teaser-wide.png</div><div class="progress"><span style="width:0%"></span></div></div><span class="pct" style="color:var(--text-muted)">Queued</span></div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Done</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 DELETE confirms -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Delete · asset &amp; unused</span><span class="d">Single-asset delete and the bulk "delete unused" clean-up — files in use are never touched.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Delete asset?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="confirm">
+            <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+            <h3>Are you sure?</h3>
+            <p>This permanently deletes <strong>old-promo-banner.png</strong>. It isn't used anywhere, so nothing breaks. You can't undo this.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid">Delete asset</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Delete 3 unused assets?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="confirm">
+            <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+            <h3>Are you sure?</h3>
+            <p>This permanently deletes all <strong>3 unused files</strong> (586 KB) and frees their storage. Files in use are never touched. You can't undo this.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid">Delete 3 unused</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 EMPTY -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Empty</span><span class="d">Page title + intro, then the hero, then the message, CTA, and reuse / cost / drag-drop facts underneath.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Media library</span></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Media</div><h2>Media library.</h2><p class="lede">A shared library for project, collection, generator, and vendor presentation assets.</p></div></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_media.jpg" alt="Media library — empty"></div>
+            <div class="empty-hero__body">
+              <h3 class="empty-hero__ttl">No media yet.</h3>
+              <p class="empty-hero__sub">Upload the banners, thumbnails, and covers your collections and vendors show off with. Anything here can be reused across the whole project, so you upload once and pick it anywhere.</p>
+              <div class="empty-hero__cta"><button class="btn btn--primary">Upload your first asset</button></div>
+            </div>
+          </div>
+          <div class="fact-strip">
+            <div class="fact"><div class="num">01</div><h4>Sorted by kind</h4><p>Banners are wide header images; thumbnails are square; "other" is everything else. Each kind is shown in the shape it'll actually appear.</p></div>
+            <div class="fact"><div class="num">02</div><h4>Upload once, reuse anywhere</h4><p>An asset in the library can be picked from any collection, generator, or vendor — no re-uploading per drop.</p></div>
+            <div class="fact"><div class="num">03</div><h4>You pay for what you store</h4><p>Assets live on-chain, so storage has a real cost. The library flags unused files and makes clean-up one click.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 Upload · cycle check (balance OK) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Upload · cycle check (balance OK)</span><span class="d">Media assets live on-chain, so every upload uses blob storage funded from project cycles. Pressing Upload first estimates the batch cost and checks the balance — the shared guard from the Cycles &amp; uploads gallery. With headroom, the batch stores normally.</span></div>
+      <div class="stage">
+        <div class="modal-card wide">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>3 assets staged · 9.6 MB · uploaded &amp; held</span>
+            <div class="cyc-est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.09 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v">2.040 T</div></div>
+              <div class="e ok"><div class="k">After upload</div><div class="v">~1.95 T</div></div>
+            </div>
+            <div class="cyc-note cyc-note--ok" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>Enough cycles to store these 3 assets and keep your reserve. Toko moves project cycles into blob storage automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload 3 assets</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 Upload · low balance -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Upload · low balance</span><span class="d">Estimate exceeds the balance. The 3 files stay staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
+      <div class="stage">
+        <div class="modal-card wide">
+          <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>3 assets staged · 9.6 MB · uploaded &amp; held</span>
+            <div class="cyc-est" style="margin-top:var(--s-4)">
+              <div class="e"><div class="k">Estimated cost</div><div class="v">~0.09 T <small>cycles</small></div></div>
+              <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.030 T</div></div>
+              <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.07 T <small>+ reserve</small></div></div>
+            </div>
+            <div class="cyc-note cyc-note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not quite enough cycles for this upload.</strong> Your 3 files stay staged — top up and they'll store straight away. Nothing is lost if you top up now.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; upload</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 Top up to continue · assets staged -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">11</span><span class="t">Top up to continue · assets staged</span><span class="d">The inline top-up. The staged batch is shown at the top so it's clear nothing was cancelled; once cycles land, the assets store automatically.</span></div>
+      <div class="stage">
+        <div class="modal-card wide">
+          <header><h4>Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <span class="cyc-staged"><span class="dot"></span>3 assets staged · 9.6 MB · ready to send</span>
+            <div style="margin-top:var(--s-4)">
+              <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.09 T</span></div>
+              <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.030 T</span></div>
+              <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+            </div>
+            <div style="margin-top:var(--s-4)">
+              <span class="cyc-flabel">Top up amount</span>
+              <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+              <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+            </div>
+            <div class="cyc-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged assets store automatically.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

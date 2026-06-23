@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — User Profile · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA;
+    --surface-inverse:#1D1D1D;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
+    --text-inverse:#FFFFFF; --text-inverse-2:#B5B5B5;
+    --border-soft:#E5E5E5; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --health-crit:#EF4444;
+    --s-1:.25rem;--s-2:.5rem;--s-3:.75rem;--s-4:1rem;--s-5:1.25rem;--s-6:1.5rem;--s-8:2rem;--s-10:2.5rem;--s-12:3rem;
+    --r-1:4px;--r-2:8px;--r-3:12px;--r-4:16px;--r-pill:9999px;
+    --shadow-2: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-3: 0 18px 44px rgba(0,0,0,0.20), 0 6px 14px rgba(0,0,0,0.10);
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif;
+    --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif;
+    --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  html,body { margin:0; padding:0; }
+  body { font-family:var(--font-body); font-size:0.9375rem; line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-weight:400; letter-spacing:0.01em; }
+  button { font-family:inherit; font-size:inherit; cursor:pointer; }
+  a { color:inherit; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn { display:inline-flex; align-items:center; gap:var(--s-2); border:1px solid transparent; border-radius:var(--r-pill); padding:0.5625rem 1rem; font-size:0.8125rem; font-weight:600; background:transparent; color:var(--text-primary); }
+  .btn svg { flex:none; }
+  .btn--primary { background:var(--text-primary); color:var(--text-inverse); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--ghost { background:transparent; color:var(--text-primary); }
+  .btn--danger { background:var(--health-crit); color:#fff; border-color:var(--health-crit); }
+  .btn--sm { padding:0.375rem 0.75rem; font-size:0.75rem; }
+
+  /* ---------- PROFILE PAGE ---------- */
+  .page { max-width:880px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-12); }
+  .view-note { display:flex; align-items:center; gap:0.5rem; font-size:0.7813rem; color:var(--text-secondary); margin-bottom:var(--s-4); }
+  .view-note svg { flex:none; color:var(--text-muted); }
+
+  .pcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8); display:flex; gap:var(--s-8); align-items:flex-start; }
+  .pavatar { width:128px; height:128px; border-radius:50%; flex:none; background:linear-gradient(140deg,#6366F1,#10B981); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:2.875rem; color:#fff; letter-spacing:0.02em; border:3px solid #fff; box-shadow:var(--shadow-2); }
+  .pavatar.alt { background:linear-gradient(140deg,#F59E0B,#EF4444); }
+  .pavatar.alt2 { background:linear-gradient(140deg,#06B6D4,#6366F1); }
+  .pinfo { flex:1; min-width:0; }
+  .pname-row { display:flex; align-items:flex-start; gap:var(--s-3); flex-wrap:wrap; }
+  .pname { font-family:var(--font-display); font-size:2.5rem; letter-spacing:0.02em; text-transform:uppercase; line-height:1; }
+  .pname-row .spacer { flex:1; }
+  .pjoined { color:var(--text-secondary); font-size:0.8125rem; margin-top:0.5rem; }
+  .idchips { display:flex; gap:var(--s-2); flex-wrap:wrap; margin-top:var(--s-3); }
+  .copychip { display:inline-flex; align-items:center; gap:var(--s-2); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:0.375rem 0.5rem 0.375rem 0.625rem; font-size:0.75rem; }
+  .copychip .ck-label { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size:0.5625rem; color:var(--text-muted); }
+  .copychip .ck-val { font-family:ui-monospace,Menlo,monospace; color:var(--text-primary); }
+  .copychip .ck-btn { border:0; background:rgba(0,0,0,0.05); border-radius:var(--r-1); width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .pabout { margin-top:var(--s-4); color:var(--text-primary); font-size:0.875rem; max-width:62ch; }
+  .pabout.empty { color:var(--text-muted); font-style:italic; }
+  .plinks { display:flex; align-items:center; gap:var(--s-3); margin-top:var(--s-4); flex-wrap:wrap; }
+  .weblink { display:inline-flex; align-items:center; gap:0.375rem; font-size:0.8125rem; font-weight:600; color:var(--text-primary); text-decoration:none; }
+  .socials { display:inline-flex; gap:0.375rem; }
+  .socials a { width:34px; height:34px; border-radius:var(--r-pill); border:1px solid var(--border-soft); background:var(--surface-canvas); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .pdivider { width:1px; height:20px; background:var(--border-soft); }
+
+  /* nudge banner (owner, incomplete profile) */
+  .nudge { display:flex; align-items:center; gap:var(--s-3); background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.25); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); margin-top:var(--s-4); font-size:0.8125rem; color:var(--text-secondary); }
+  .nudge svg { flex:none; color:var(--stage-review); }
+  .nudge .spacer { flex:1; }
+
+  /* ---------- OWNER PRIVATE SECTIONS ---------- */
+  .privcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); margin-top:var(--s-4); }
+  .privcard .ph { display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-4); }
+  .privcard .ph h3 { font-family:var(--font-display); font-size:1.25rem; letter-spacing:0.02em; text-transform:uppercase; }
+  .privcard .ph .spacer { flex:1; }
+  .privcard .ph .sub { font-size:0.7813rem; color:var(--text-secondary); }
+  .private-tag { display:inline-flex; align-items:center; gap:0.3125rem; font-family:var(--font-emphasis); font-size:0.625rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; background:rgba(0,0,0,0.06); color:var(--text-secondary); padding:0.25rem 0.5625rem; border-radius:var(--r-pill); }
+  .addr-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:var(--s-3); }
+  .addr { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); font-size:0.8125rem; position:relative; }
+  .addr .addr-label { font-family:var(--font-emphasis); font-size:0.625rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); margin-bottom:0.375rem; display:flex; align-items:center; gap:0.375rem; }
+  .addr .addr-label .def { background:var(--text-primary); color:#fff; border-radius:var(--r-1); padding:0.0625rem 0.375rem; letter-spacing:0.06em; }
+  .addr .addr-body { color:var(--text-secondary); line-height:1.55; }
+  .addr .addr-body b { color:var(--text-primary); font-weight:600; }
+  .addr .addr-actions { display:flex; gap:var(--s-3); margin-top:var(--s-3); flex-wrap:wrap; }
+  .addr .addr-actions button { background:0; border:0; color:var(--text-secondary); font-size:0.75rem; font-weight:600; padding:0; }
+  .addr .addr-actions button.danger:hover { color:var(--health-crit); }
+  .addr-add { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); display:flex; align-items:center; justify-content:center; gap:0.5rem; color:var(--text-secondary); font-weight:600; font-size:0.8125rem; min-height:118px; cursor:pointer; }
+  .addr-empty { grid-column:1 / -1; border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; color:var(--text-secondary); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .addr-empty strong { font-family:var(--font-display); font-weight:400; font-size:1.125rem; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.02em; }
+  .addr-empty p { margin:0; font-size:0.8125rem; max-width:46ch; }
+
+  /* ---------- EMPTY / ERROR PAGE STATES ---------- */
+  .state-pad { padding:var(--s-12) var(--s-6); display:flex; justify-content:center; }
+  .state-box { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-10) var(--s-8); text-align:center; max-width:520px; width:100%; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .state-box .ic { width:56px; height:56px; border-radius:50%; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); display:flex; align-items:center; justify-content:center; color:var(--text-muted); margin-bottom:var(--s-2); }
+  .state-box h3 { font-family:var(--font-display); font-size:1.5rem; text-transform:uppercase; letter-spacing:0.02em; }
+  .state-box p { margin:0; color:var(--text-secondary); font-size:0.875rem; max-width:42ch; }
+
+  /* skeleton loading */
+  .sk { background:#E3E3E3; border-radius:var(--r-2); position:relative; overflow:hidden; }
+  .sk::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.65),transparent); transform:translateX(-100%); animation:shimmer 1.4s infinite; }
+  @keyframes shimmer { 100% { transform:translateX(100%); } }
+  .sk-avatar { width:128px; height:128px; border-radius:50%; flex:none; }
+
+  /* ---------- MODAL (rendered statically in a stage) ---------- */
+  .modal { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:560px; box-shadow:var(--shadow-3); overflow:hidden; }
+  .modal.narrow { max-width:440px; }
+  .modal-h { padding:var(--s-5) var(--s-6); border-bottom:1px solid var(--border-soft); display:flex; align-items:center; }
+  .modal-h h2 { font-family:var(--font-display); font-size:1.375rem; letter-spacing:0.02em; text-transform:uppercase; }
+  .modal-h .spacer { flex:1; }
+  .modal-x { border:0; background:rgba(0,0,0,0.05); width:32px; height:32px; border-radius:var(--r-2); font-size:1.0625rem; color:var(--text-secondary); }
+  .modal-b { padding:var(--s-6); }
+  .modal-f { padding:var(--s-4) var(--s-6); border-top:1px solid var(--border-soft); display:flex; gap:var(--s-2); justify-content:flex-end; background:var(--surface-canvas-alt); }
+  .img-row { display:flex; align-items:center; gap:var(--s-4); margin-bottom:var(--s-5); }
+  .img-row .iv { width:72px; height:72px; border-radius:50%; flex:none; background:linear-gradient(140deg,#6366F1,#10B981); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.625rem; color:#fff; }
+  .field { margin-bottom:var(--s-4); }
+  .field .flabel { display:flex; align-items:center; margin-bottom:0.375rem; }
+  .field .flabel label { font-size:0.75rem; font-weight:700; color:var(--text-secondary); }
+  .field .flabel .counter { margin-left:auto; font-size:0.6875rem; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+  .field .flabel .counter.over { color:var(--health-crit); font-weight:700; }
+  .field input, .field textarea, .field select { width:100%; font-family:inherit; font-size:0.875rem; color:var(--text-primary); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:0.625rem 0.75rem; outline:none; }
+  .field input.bad, .field input:focus { border-color:var(--text-secondary); }
+  .field input.bad { border-color:var(--health-crit); }
+  .field textarea { resize:vertical; min-height:84px; }
+  .field .help { font-size:0.7188rem; color:var(--text-muted); margin-top:0.3125rem; }
+  .field .help.bad { color:var(--health-crit); }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-3); }
+  .social-input { position:relative; }
+  .social-input .sift { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-muted); display:inline-flex; }
+  .social-input input { padding-left:2.125rem; }
+  .section-label { font-family:var(--font-emphasis); font-size:0.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-secondary); margin:var(--s-5) 0 var(--s-3); }
+  .check-row { display:flex; align-items:center; gap:var(--s-2); font-size:0.8125rem; color:var(--text-primary); margin-top:var(--s-2); }
+  .check-row input { width:16px; height:16px; }
+  .warn-box { background:rgba(239,68,68,0.08); border-radius:var(--r-2); padding:var(--s-3) var(--s-4); font-size:0.8125rem; color:var(--text-secondary); line-height:1.5; }
+  .warn-box b { color:var(--text-primary); }
+  .remove-target { display:flex; align-items:flex-start; gap:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); font-size:0.8125rem; margin-bottom:var(--s-4); }
+  .remove-target .rt-label { font-family:var(--font-emphasis); font-size:0.625rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); margin-bottom:0.25rem; }
+  .remove-target .rt-body { color:var(--text-secondary); line-height:1.5; }
+  .remove-target .rt-body b { color:var(--text-primary); }
+
+  /* ---------- SOCIAL LINKS (matches project overview) ---------- */
+  .social-list { display:flex; flex-direction:column; gap:var(--s-2); margin-bottom:var(--s-4); }
+  .social-item { display:flex; align-items:center; gap:var(--s-3); padding:.5rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); font-size:0.8125rem; }
+  .social-item .plat { font-family:var(--font-emphasis); font-weight:700; font-size:0.625rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); width:96px; flex:none; }
+  .social-item .handle { font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .social-item .acts { display:flex; gap:.25rem; }
+  .social-item .ib { width:28px; height:28px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .social-item .ib:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .social-item .ib.danger:hover { color:var(--health-crit); border-color:rgba(239,68,68,.4); }
+  .social-row { display:grid; grid-template-columns:1fr 1fr auto; gap:var(--s-3); align-items:end; }
+  .social-row .add-s { width:40px; height:40px; flex:none; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-primary); font-size:1.25rem; line-height:1; display:inline-flex; align-items:center; justify-content:center; }
+  .social-row .add-s:hover { background:var(--surface-canvas-alt); }
+  @media (max-width:560px){ .social-row { grid-template-columns:1fr; } }
+
+  /* ---------- GALLERY SCAFFOLD ---------- */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:0.6875rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .gallery > header h1 { font-family:var(--font-display); font-size:2.75rem; text-transform:uppercase; letter-spacing:0.02em; margin-top:var(--s-2); }
+  .gallery > header p { color:var(--text-secondary); max-width:78ch; margin-top:var(--s-3); }
+  .group-cap { margin-top:var(--s-10); padding-bottom:var(--s-3); border-bottom:2px solid var(--text-primary); }
+  .group-cap .ge { font-family:var(--font-emphasis); font-weight:700; font-size:0.6875rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .group-cap h2 { font-family:var(--font-display); font-weight:400; font-size:2rem; text-transform:uppercase; letter-spacing:0.02em; margin-top:0.25rem; }
+  .group-cap p { color:var(--text-secondary); font-size:0.8125rem; margin-top:0.35rem; max-width:74ch; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:1.125rem; color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; font-size:0.875rem; }
+  .frame-cap .d { color:var(--text-secondary); font-size:0.8125rem; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,0.18); }
+  .screen .page { padding-top:var(--s-8); padding-bottom:var(--s-8); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-6); display:flex; justify-content:center; box-shadow:0 8px 30px -16px rgba(0,0,0,0.18); }
+
+  @media (max-width:760px) {
+    .pcard { flex-direction:column; gap:var(--s-5); padding:var(--s-5); align-items:stretch; }
+    .pavatar { width:96px; height:96px; font-size:2.125rem; }
+    .pname { font-size:1.875rem; }
+    .field-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <div class="eyebrow">Toko · Consistency reference</div>
+    <h1>User profile — states &amp; stages.</h1>
+    <p>The <b>/profile/:principal</b> page — one base profile shared by collectors and creators. <b>Public view</b> is what any visitor sees; <b>Owner view</b> adds private sections (copyable IDs, shipping addresses) that only the account holder can see. Grouped below: Public, Owner, system states, then the modals — edit profile and add / edit / remove address.</p>
+  </header>
+
+  <!-- ============ GROUP: PUBLIC ============ -->
+  <div class="group-cap">
+    <div class="ge">View A</div>
+    <h2>Public</h2>
+    <p>What any visitor sees. No edit affordances, no copyable IDs, no private sections. Empty optional fields (about, website, socials) simply don't render.</p>
+  </div>
+
+  <!-- 01 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Public · full profile</span><span class="d">A rich public profile — about, website and social links all set. This is the visitor's default.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="view-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Public view — this is what anyone visiting /profile/:principal sees.</div>
+        <div class="pcard">
+          <div class="pavatar">RA</div>
+          <div class="pinfo">
+            <div class="pname-row"><h1 class="pname">Riya Anand</h1></div>
+            <div class="pjoined">Joined March 2025</div>
+            <p class="pabout">Independent pixel artist and collection creator. Building small, characterful creature worlds on Toko — and collecting a few along the way. Commissions occasionally open.</p>
+            <div class="plinks">
+              <a class="weblink" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>riya.studio</a>
+              <span class="pdivider"></span>
+              <span class="socials">
+                <a href="#" title="X / Twitter"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H17l-5-7-5.8 7H3l7.5-9L2.5 2H9l4.5 6.4L18.9 2zm-1.1 18h1.7L7.4 4H5.6l12.2 16z"/></svg></a>
+                <a href="#" title="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+                <a href="#" title="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.3 5.3A16 16 0 0 0 15.4 4l-.3.5a12 12 0 0 1 3.4 1.7 11 11 0 0 0-9 0A12 12 0 0 1 13 4.5L12.6 4a16 16 0 0 0-3.9 1.3C5.3 9 4.6 12.6 4.9 16.1a16 16 0 0 0 4.8 2.4l.6-1a10 10 0 0 1-1.8-.9l.4-.3a11.4 11.4 0 0 0 9.8 0l.4.3a10 10 0 0 1-1.8.9l.6 1a16 16 0 0 0 4.8-2.4c.5-4-.7-7.6-3.2-10.8zM9.7 14c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6 1.4.7 1.4 1.6S10.5 14 9.7 14zm5 0c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6 1.4.7 1.4 1.6S15.5 14 14.7 14z"/></svg></a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Public · sparse profile</span><span class="d">A collector who only minted a name. No about, website or socials — those rows simply don't appear.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="view-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Public view — minimal profile.</div>
+        <div class="pcard">
+          <div class="pavatar alt2">MV</div>
+          <div class="pinfo">
+            <div class="pname-row"><h1 class="pname">Mara Vint</h1></div>
+            <div class="pjoined">Joined June 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GROUP: OWNER ============ -->
+  <div class="group-cap">
+    <div class="ge">View B</div>
+    <h2>Owner</h2>
+    <p>The account holder's own view. Adds the Edit profile button, copyable Principal / User ID, and the private Shipping addresses section — none of which are visible to the public.</p>
+  </div>
+
+  <!-- 03 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Owner · full</span><span class="d">Everything populated: identity chips, about, links, and two saved addresses with a default.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="view-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>Your view — including private sections only you can see.</div>
+        <div class="pcard">
+          <div class="pavatar">RA</div>
+          <div class="pinfo">
+            <div class="pname-row">
+              <h1 class="pname">Riya Anand</h1>
+              <span class="spacer"></span>
+              <button class="btn btn--secondary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit profile</button>
+            </div>
+            <div class="pjoined">Joined March 2025</div>
+            <div class="idchips">
+              <span class="copychip"><span class="ck-label">Principal</span><span class="ck-val">k7m2x-9q4dp&hellip;aaaaq-cai</span><button class="ck-btn" aria-label="Copy principal"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+              <span class="copychip"><span class="ck-label">User ID</span><span class="ck-val">usr_01H8R2K4FM9C</span><button class="ck-btn" aria-label="Copy user ID"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+            </div>
+            <p class="pabout">Independent pixel artist and collection creator. Building small, characterful creature worlds on Toko — and collecting a few along the way. Commissions occasionally open.</p>
+            <div class="plinks">
+              <a class="weblink" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>riya.studio</a>
+              <span class="pdivider"></span>
+              <span class="socials">
+                <a href="#" title="X / Twitter"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H17l-5-7-5.8 7H3l7.5-9L2.5 2H9l4.5 6.4L18.9 2zm-1.1 18h1.7L7.4 4H5.6l12.2 16z"/></svg></a>
+                <a href="#" title="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="privcard">
+          <div class="ph">
+            <div><h3>Shipping addresses</h3><div class="sub">Used when a token you hold is redeemed for a physical item.</div></div>
+            <span class="spacer"></span>
+            <span class="private-tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Private — only you</span>
+          </div>
+          <div class="addr-grid">
+            <div class="addr">
+              <div class="addr-label">Home <span class="def">Default</span></div>
+              <div class="addr-body"><b>Riya Anand</b><br>14 Marlowe Court, Flat 3<br>Bristol, BS1 4QA<br>United Kingdom</div>
+              <div class="addr-actions"><button>Edit</button><button class="danger">Remove</button></div>
+            </div>
+            <div class="addr">
+              <div class="addr-label">Studio</div>
+              <div class="addr-body"><b>Riya Anand</b><br>Unit 7, Paintworks<br>Bristol, BS4 3EH<br>United Kingdom</div>
+              <div class="addr-actions"><button>Edit</button><button>Set default</button><button class="danger">Remove</button></div>
+            </div>
+            <div class="addr-add"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add address</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Owner · no addresses yet</span><span class="d">Identity is set, but no shipping address has been added. Empty state prompts the first one.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="view-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>Your view — including private sections only you can see.</div>
+        <div class="pcard">
+          <div class="pavatar">RA</div>
+          <div class="pinfo">
+            <div class="pname-row"><h1 class="pname">Riya Anand</h1><span class="spacer"></span><button class="btn btn--secondary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit profile</button></div>
+            <div class="pjoined">Joined March 2025</div>
+            <p class="pabout">Independent pixel artist and collection creator. Building small, characterful creature worlds on Toko.</p>
+          </div>
+        </div>
+
+        <div class="privcard">
+          <div class="ph">
+            <div><h3>Shipping addresses</h3><div class="sub">Used when a token you hold is redeemed for a physical item.</div></div>
+            <span class="spacer"></span>
+            <span class="private-tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Private — only you</span>
+          </div>
+          <div class="addr-grid">
+            <div class="addr-empty">
+              <strong>No addresses yet</strong>
+              <p>Add a shipping address so a physical redemption can reach you. You can store several and pick a default.</p>
+              <button class="btn btn--primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add address</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Owner · new / incomplete</span><span class="d">Just created an account. Name only; about, links and addresses unset. A nudge invites completing the profile.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="view-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>Your view — your profile is looking a little empty.</div>
+        <div class="pcard">
+          <div class="pavatar alt">MV</div>
+          <div class="pinfo">
+            <div class="pname-row"><h1 class="pname">Mara Vint</h1><span class="spacer"></span><button class="btn btn--primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit profile</button></div>
+            <div class="pjoined">Joined today</div>
+            <div class="idchips">
+              <span class="copychip"><span class="ck-label">Principal</span><span class="ck-val">v9p4t-2m7kc&hellip;bbbbq-cai</span><button class="ck-btn" aria-label="Copy principal"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+            </div>
+            <p class="pabout empty">No bio yet — tell collectors who you are and what you make.</p>
+            <div class="nudge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg>
+              <div>Add a bio, website and social links so people recognise you across Toko.</div>
+              <span class="spacer"></span>
+              <button class="btn btn--secondary btn--sm">Complete profile</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="privcard">
+          <div class="ph">
+            <div><h3>Shipping addresses</h3><div class="sub">Used when a token you hold is redeemed for a physical item.</div></div>
+            <span class="spacer"></span>
+            <span class="private-tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Private — only you</span>
+          </div>
+          <div class="addr-grid">
+            <div class="addr-empty">
+              <strong>No addresses yet</strong>
+              <p>Optional until you redeem a physical item — you can add one any time.</p>
+              <button class="btn btn--secondary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add address</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Owner · brand-new account</span><span class="d">The very first view after sign-up — no name or details yet, only the principal and user ID exist. Everything points at setting up.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="view-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>Your view — welcome to Toko. Let's set up your profile.</div>
+        <div class="pcard">
+          <div class="pavatar" style="background:var(--surface-canvas-alt);color:var(--text-muted);border-color:var(--border-soft)"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></div>
+          <div class="pinfo">
+            <div class="pname-row"><h1 class="pname" style="color:var(--text-muted)">Unnamed</h1><span class="spacer"></span><button class="btn btn--primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Edit profile</button></div>
+            <div class="pjoined">Joined today</div>
+            <div class="idchips">
+              <span class="copychip"><span class="ck-label">Principal</span><span class="ck-val">a3f8k-2p9wd&hellip;ccccq-cai</span><button class="ck-btn" aria-label="Copy principal"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+              <span class="copychip"><span class="ck-label">User ID</span><span class="ck-val">usr_01J0XQ7M2A4D</span><button class="ck-btn" aria-label="Copy user ID"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+            </div>
+            <div class="nudge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg>
+              <div>Your principal and user ID are ready. Add a name so collectors can find you — everything else (avatar, bio, links, addresses) is optional.</div>
+              <span class="spacer"></span>
+              <button class="btn btn--primary btn--sm">Set up profile</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GROUP: SYSTEM STATES ============ -->
+  <div class="group-cap">
+    <div class="ge">System</div>
+    <h2>Loading &amp; not found</h2>
+    <p>Cross-cutting states for the page itself: a skeleton while the profile loads, and the not-found state for an unknown principal.</p>
+  </div>
+
+  <!-- 06 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Loading</span><span class="d">Skeleton placeholder for the identity card while the profile is fetched.</span></div>
+    <div class="screen">
+      <div class="page">
+        <div class="pcard">
+          <div class="sk sk-avatar"></div>
+          <div class="pinfo" style="display:flex;flex-direction:column;gap:0.75rem;padding-top:0.5rem;">
+            <div class="sk" style="height:34px;width:46%;"></div>
+            <div class="sk" style="height:12px;width:26%;"></div>
+            <div class="sk" style="height:12px;width:88%;margin-top:0.5rem;"></div>
+            <div class="sk" style="height:12px;width:80%;"></div>
+            <div class="sk" style="height:12px;width:60%;"></div>
+            <div class="sk" style="height:34px;width:40%;border-radius:9999px;margin-top:0.75rem;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Profile not found</span><span class="d">The principal in the URL doesn't match any account.</span></div>
+    <div class="screen">
+      <div class="state-pad">
+        <div class="state-box">
+          <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg></div>
+          <h3>Profile not found</h3>
+          <p>We couldn't find a profile for that principal. The link may be mistyped, or the account may no longer exist.</p>
+          <button class="btn btn--primary" style="margin-top:0.5rem;">Back to Toko</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GROUP: MODALS ============ -->
+  <div class="group-cap">
+    <div class="ge">Reference</div>
+    <h2>Modals</h2>
+    <p>Owner-only dialogs: edit profile (default and validation), and the add / edit / remove flows for shipping addresses.</p>
+  </div>
+
+  <!-- 08 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Edit profile</span><span class="d">Opened from Edit profile. Avatar, username, about (with counter), website, and social links.</span></div>
+    <div class="stage">
+      <div class="modal">
+        <div class="modal-h"><h2>Edit profile</h2><span class="spacer"></span><button class="modal-x" aria-label="Close">&times;</button></div>
+        <div class="modal-b">
+          <div class="img-row">
+            <div class="iv">RA</div>
+            <div>
+              <button class="btn btn--secondary btn--sm">Upload new image</button>
+              <div class="help" style="margin-top:0.375rem;">JPG or PNG, square, up to 4&nbsp;MB.</div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Username</label><span class="counter">11 / 50</span></div>
+            <input type="text" value="Riya Anand" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>About</label><span class="counter">211 / 1500</span></div>
+            <textarea>Independent pixel artist and collection creator. Building small, characterful creature worlds on Toko — and collecting a few along the way. Commissions occasionally open.</textarea>
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Website URL</label></div>
+            <input type="url" value="https://riya.studio" placeholder="https://" />
+            <div class="help">Must be a valid URL beginning with http:// or https://</div>
+          </div>
+          <div class="section-label">Social links</div>
+          <div class="social-list">
+            <div class="social-item"><span class="plat">X / Twitter</span><span class="handle">@riyamakes</span><div class="acts"><button class="ib" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="social-item"><span class="plat">Instagram</span><span class="handle">riya.makes</span><div class="acts"><button class="ib" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+            <div class="social-item"><span class="plat">Discord</span><span class="handle">riya#2048</span><div class="acts"><button class="ib" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ib danger" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
+          </div>
+          <div class="social-row">
+            <div class="field" style="margin-bottom:0;"><div class="flabel"><label>Add a social platform</label></div><select><option>Select an option</option><option>X / Twitter</option><option>Discord</option><option>Instagram</option><option>Telegram</option><option>YouTube</option></select></div>
+            <div class="field" style="margin-bottom:0;"><div class="flabel"><label>Handle</label></div><input type="text" placeholder="@yourhandle" /></div>
+            <button class="add-s" title="Add social">+</button>
+          </div>
+          <div class="help">Pick a platform, enter your handle, and add it. Added links show on your public profile; remove any to hide them.</div>
+        </div>
+        <div class="modal-f"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Edit profile · validation</span><span class="d">Save blocked: the website isn't a valid URL and About is over the limit. Errors shown inline.</span></div>
+    <div class="stage">
+      <div class="modal">
+        <div class="modal-h"><h2>Edit profile</h2><span class="spacer"></span><button class="modal-x" aria-label="Close">&times;</button></div>
+        <div class="modal-b">
+          <div class="field">
+            <div class="flabel"><label>Username</label><span class="counter">11 / 50</span></div>
+            <input type="text" value="Riya Anand" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>About</label><span class="counter over">1542 / 1500</span></div>
+            <textarea>Independent pixel artist and collection creator, building small characterful creature worlds on Toko and collecting a few along the way — commissions occasionally open, drop me a line if a brief sparks something… (and a good deal more text that pushes this bio just past the fifteen-hundred character ceiling the field allows).</textarea>
+            <div class="help bad">About is 42 characters over the limit.</div>
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Website URL</label></div>
+            <input type="url" class="bad" value="riya dot studio" placeholder="https://" />
+            <div class="help bad">That doesn't look like a valid URL.</div>
+          </div>
+        </div>
+        <div class="modal-f"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled style="opacity:.5;cursor:not-allowed;">Save changes</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">11</span><span class="t">Add address</span><span class="d">Empty form to add a new shipping address, with an option to make it the default.</span></div>
+    <div class="stage">
+      <div class="modal">
+        <div class="modal-h"><h2>Add address</h2><span class="spacer"></span><button class="modal-x" aria-label="Close">&times;</button></div>
+        <div class="modal-b">
+          <div class="field">
+            <div class="flabel"><label>Label</label></div>
+            <input type="text" placeholder="e.g. Home, Studio, Parents'" />
+            <div class="help">A short name so you can tell addresses apart.</div>
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Full name</label></div>
+            <input type="text" placeholder="Recipient name" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Address line 1</label></div>
+            <input type="text" placeholder="Street and number" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Address line 2 <span style="font-weight:500;color:var(--text-muted);">(optional)</span></label></div>
+            <input type="text" placeholder="Flat, unit, building" />
+          </div>
+          <div class="field-row">
+            <div class="field"><div class="flabel"><label>City</label></div><input type="text" placeholder="City" /></div>
+            <div class="field"><div class="flabel"><label>Postal code</label></div><input type="text" placeholder="Postcode / ZIP" /></div>
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Country</label></div>
+            <select><option value="">Select a country…</option><option>United Kingdom</option><option>United States</option><option>Canada</option><option>Australia</option><option>Germany</option><option>Japan</option></select>
+          </div>
+          <label class="check-row"><input type="checkbox" /> Set as my default shipping address</label>
+        </div>
+        <div class="modal-f"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add address</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">12</span><span class="t">Edit address</span><span class="d">Same form, pre-filled from a saved address. The default toggle reflects current state.</span></div>
+    <div class="stage">
+      <div class="modal">
+        <div class="modal-h"><h2>Edit address</h2><span class="spacer"></span><button class="modal-x" aria-label="Close">&times;</button></div>
+        <div class="modal-b">
+          <div class="field">
+            <div class="flabel"><label>Label</label></div>
+            <input type="text" value="Home" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Full name</label></div>
+            <input type="text" value="Riya Anand" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Address line 1</label></div>
+            <input type="text" value="14 Marlowe Court" />
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Address line 2 <span style="font-weight:500;color:var(--text-muted);">(optional)</span></label></div>
+            <input type="text" value="Flat 3" />
+          </div>
+          <div class="field-row">
+            <div class="field"><div class="flabel"><label>City</label></div><input type="text" value="Bristol" /></div>
+            <div class="field"><div class="flabel"><label>Postal code</label></div><input type="text" value="BS1 4QA" /></div>
+          </div>
+          <div class="field">
+            <div class="flabel"><label>Country</label></div>
+            <select><option selected>United Kingdom</option><option>United States</option><option>Canada</option><option>Australia</option><option>Germany</option><option>Japan</option></select>
+          </div>
+          <label class="check-row"><input type="checkbox" checked /> Set as my default shipping address</label>
+        </div>
+        <div class="modal-f"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save changes</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">13</span><span class="t">Remove address · confirm</span><span class="d">Deliberate confirm before deleting. Shows the address being removed; removing the default promotes another.</span></div>
+    <div class="stage">
+      <div class="modal narrow">
+        <div class="modal-h"><h2>Remove address?</h2><span class="spacer"></span><button class="modal-x" aria-label="Close">&times;</button></div>
+        <div class="modal-b">
+          <div class="remove-target">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);margin-top:2px;flex:none;"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div>
+              <div class="rt-label">Studio</div>
+              <div class="rt-body"><b>Riya Anand</b> · Unit 7, Paintworks, Bristol, BS4 3EH, United Kingdom</div>
+            </div>
+          </div>
+          <div class="warn-box">Removing an address can't be undone. You'll need to re-enter it if you redeem a physical item to this location later.</div>
+        </div>
+        <div class="modal-f"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove address</button></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

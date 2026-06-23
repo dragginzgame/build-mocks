@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Beneficiaries · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  /* ---- Two fonts only: Anton (headers + titles) + Mona Sans (everything else), from the cleaned /Fonts folder ---- */
+  :root {
+    --surface-page: #EAEAEA; --surface-canvas: #FFFFFF; --surface-canvas-alt: #FAFAFA; --surface-canvas-deep: #F2F2F2;
+    --text-primary: #1D1D1D; --text-secondary: #6B6B6B; --text-muted: #A0A0A0;
+    --border-soft: #E5E5E5; --border-strong: #1D1D1D; --notify-error: #EF4444;
+    --stage-draft: #F59E0B; --stage-review: #6366F1; --stage-live: #10B981;
+    --s-1:0.25rem; --s-2:0.5rem; --s-3:0.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --font-display: "Anton",system-ui,sans-serif;
+    --font-emphasis: "Mona Sans",system-ui,sans-serif;
+    --font-body: "Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --text-3xs:0.625rem; --text-2xs:0.6875rem; --text-xs:0.75rem; --text-sm:0.8125rem;
+    --text-base:0.875rem; --text-md:0.9375rem; --text-lg:1rem; --text-xl:1.125rem;
+    --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem; --text-5xl:2.75rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+  html, body { margin: 0; }
+  body { font-family: var(--font-body); font-size: var(--text-md); line-height: 1.5; color: var(--text-primary); background: #DCDCDC; -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; }
+  button { font: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  h1,h2,h3,h4 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; text-transform: uppercase; line-height: 1.05; }
+  .ttl { text-transform: uppercase; letter-spacing: .02em; }
+  .eyebrow { font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-2xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); }
+  .tiny { font-size: var(--text-xs); color: var(--text-secondary); }
+
+  /* ---- shared chrome ---- */
+  .context-bar { background: var(--surface-canvas); border-bottom: 1px solid var(--border-soft); padding: var(--s-4) var(--s-8); display: flex; align-items: center; gap: var(--s-4); }
+  .context-bar .crumb { display: flex; align-items: center; gap: 0.375rem; font-size: var(--text-sm); color: var(--text-secondary); }
+  .context-bar .crumb .sep { color: var(--text-muted); }
+  .section { padding: var(--s-8); }
+  .row { display: flex; align-items: center; gap: var(--s-3); }
+  .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-6); }
+  .section-head h2 { font-size: var(--text-4xl); }
+  .section-head .lede { color: var(--text-secondary); margin-top: 0.5rem; font-size: var(--text-base); max-width: 64ch; }
+  .section-head .row { flex-wrap: wrap; justify-content: flex-end; }
+  .section-head .search { width: 240px; max-width: 100%; }
+
+  .input { border: 1px solid var(--border-soft); background: var(--surface-canvas); border-radius: var(--r-2); padding: 0.625rem 0.875rem; font-family: var(--font-body); font-size: var(--text-base); }
+  .segmented { display: inline-flex; background: var(--surface-canvas-alt); border-radius: var(--r-pill); padding: 0.25rem; border: 1px solid var(--border-soft); }
+  .segmented button { border: 0; background: transparent; padding: 0.375rem 0.75rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-xs); letter-spacing: .04em; color: var(--text-secondary); }
+  .segmented button[aria-pressed="true"] { background: var(--text-primary); color: #fff; }
+
+  .status { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; font-size: var(--text-2xs); letter-spacing: .08em; text-transform: uppercase; background: var(--surface-canvas-alt); color: var(--text-secondary); border: 1px solid var(--border-soft); }
+  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .status--draft { background: rgba(245,158,11,.15); color: var(--stage-draft); border-color: transparent; }
+  .status--live  { background: rgba(16,185,129,.12); color: var(--stage-live); border-color: transparent; }
+
+  .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: var(--r-2); border: 1px solid var(--border-soft); background: var(--surface-canvas); color: var(--text-secondary); }
+  .icon-btn--danger:hover { border-color: var(--notify-error); color: var(--notify-error); }
+
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; border-radius: var(--r-pill); font-family: var(--font-emphasis); font-weight: 700; letter-spacing: .04em; font-size: var(--text-sm); border: 1px solid transparent; }
+  .btn--primary { background: var(--text-primary); color: #fff; }
+  .btn--ghost { background: transparent; color: var(--text-primary); border-color: var(--border-soft); }
+  .btn--sm { padding: 0.375rem 0.75rem; font-size: var(--text-xs); }
+
+  .field { display: flex; flex-direction: column; gap: 0.375rem; }
+  .field label { font-size: var(--text-sm); font-weight: 600; }
+  .field label .req { color: var(--notify-error); margin-left: 0.125rem; }
+  .field .hint { font-size: var(--text-xs); color: var(--text-secondary); }
+
+  /* ---- beneficiary cards (from project-studio-tabs.html) ---- */
+  .benef-grid { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .benef-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-3); }
+  .benef-card .head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); }
+  .benef-card .head .top { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--s-3); }
+  .benef-card .head .top .ttl, .benef-card .head .top .sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .benef-card .av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,#6366F1,#10B981); flex: none; }
+  .benef-card .av.benef--charity { background: linear-gradient(135deg,#F472B6,#6366F1); }
+  .benef-card .av.benef--studio { background: linear-gradient(135deg,#FBBF24,#EF4444); }
+  .benef-card .ttl { font-family: var(--font-display); font-weight: 400; font-size: var(--text-lg); line-height: 1.1; }
+  .benef-card .sub { font-size: var(--text-xs); color: var(--text-secondary); font-family: ui-monospace, monospace; margin-top: 0.125rem; }
+  .benef-card .status { flex: none; }
+  .benef-card .desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; margin: -0.125rem 0 0.125rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .benef-card .split-row { display: flex; align-items: center; justify-content: space-between; font-size: var(--text-xs); color: var(--text-secondary); }
+  .benef-card .split-row .pct { font-family: var(--font-display); font-size: var(--text-xl); color: var(--text-primary); letter-spacing: .04em; }
+  .benef-card .split-bar { height: 8px; background: var(--surface-canvas-alt); border-radius: var(--r-pill); overflow: hidden; }
+  .benef-card .split-bar > span { display: block; height: 100%; background: var(--text-primary); }
+  .benef-card .used { margin-top: 0.25rem; padding-top: var(--s-3); border-top: 1px solid var(--border-soft); display: flex; align-items: center; justify-content: space-between; font-size: var(--text-xs); color: var(--text-secondary); }
+  .benef-card .used .n { color: var(--text-primary); font-weight: 600; }
+  .benef-card .used .acts { display: flex; gap: 0.375rem; }
+  .benef-locked { display: inline-flex; align-items: center; gap: 0.375rem; font-size: var(--text-2xs); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--text-secondary); }
+  .benef-add { border: 1.5px dashed var(--border-soft); background: var(--surface-canvas); border-radius: var(--r-3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.375rem; text-align: center; padding: var(--s-5); min-height: 200px; color: var(--text-secondary); }
+  .benef-add .plus { font-size: 1.875rem; line-height: 1.05; font-weight: 300; }
+  .benef-add .t { font-family: var(--font-emphasis); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: var(--text-xs); color: var(--text-primary); }
+  .benef-card .split-row .ovr, .flow-diagram .row .ovr { font-family: var(--font-body); font-size: var(--text-3xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--stage-draft); margin-left: 0.375rem; }
+
+  /* ---- sale flow ---- */
+  .flow-diagram { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); padding: var(--s-6); }
+  .flow-diagram h3 { margin-bottom: var(--s-2); font-size: var(--text-2xl); }
+  .flow-diagram .desc { color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: var(--s-5); }
+  .flow-strip { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; align-items: stretch; }
+  .flow-strip .node { background: var(--surface-canvas-alt); border: 1px solid var(--border-soft); border-radius: var(--r-3); padding: var(--s-4); text-align: center; }
+  .flow-strip .node.target { background: var(--surface-canvas); border: 1px solid var(--text-primary); }
+  .flow-strip .node .lbl { font-family: var(--font-emphasis); font-size: var(--text-3xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; }
+  .flow-strip .node .n { font-family: var(--font-display); font-size: var(--text-2xl); margin-top: 0.25rem; letter-spacing: .04em; }
+  .flow-strip .arr { display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+  .flow-strip .split-list { margin-top: 0.5rem; display: grid; gap: 0.25rem; text-align: left; font-size: var(--text-xs); color: var(--text-secondary); }
+  .flow-strip .split-list .row { display: flex; align-items: center; justify-content: space-between; }
+  .flow-strip .split-list .row .pct { color: var(--text-primary); font-weight: 600; }
+
+  /* empty-state explainer + facts (info underneath the hero) */
+  .explainer { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-8); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8); margin-top:var(--s-8); }
+  .explainer h3 { margin-bottom:var(--s-3); font-size:var(--text-2xl); }
+  .explainer p { color:var(--text-secondary); font-size:var(--text-base); line-height:1.6; }
+  .explainer .visual { background:var(--surface-canvas-alt); border-radius:var(--r-3); padding:var(--s-5); display:flex; align-items:center; justify-content:center; }
+  @media (max-width:760px){ .explainer { grid-template-columns:1fr; } }
+  .fact-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); margin-top:var(--s-6); }
+  .fact-strip .fact { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .fact-strip .fact .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .fact-strip .fact h4 { font-size:var(--text-lg); margin:.5rem 0; letter-spacing:0; text-transform:none; font-family:var(--font-body); font-weight:700; }
+  .fact-strip .fact p { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.5; margin:0; }
+  @media (max-width:680px){ .fact-strip { grid-template-columns:1fr; } }
+
+  /* ---- modal preview (static) ---- */
+  .modal-card { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); width: 100%; max-width: 460px; overflow: hidden; box-shadow: 0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display: flex; align-items: center; justify-content: space-between; padding: var(--s-5); border-bottom: 1px solid var(--border-soft); }
+  .modal-card header h3 { font-size: 1.25rem; }
+  .modal-card .body { padding: var(--s-5); display: grid; gap: var(--s-4); }
+  .modal-card .footer-row { display: flex; justify-content: flex-end; gap: var(--s-3); padding: var(--s-5); border-top: 1px solid var(--border-soft); }
+
+  /* detail views + destructive confirm (added) */
+  .panel { background: var(--surface-canvas); border: 1px solid var(--border-soft); border-radius: var(--r-4); padding: var(--s-6); }
+  .status--review { background: rgba(99,102,241,.12); color: var(--stage-review); border-color: transparent; }
+  .lock-banner { display: flex; align-items: flex-start; gap: .75rem; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.25); border-radius: var(--r-3); padding: .875rem 1rem; margin-bottom: var(--s-6); }
+  .lock-banner .ic { color: var(--stage-live); flex: none; margin-top: 1px; }
+  .kv { display: grid; grid-template-columns: 170px 1fr; row-gap: var(--s-4); column-gap: var(--s-5); font-size: var(--text-base); }
+  .kv .k { color: var(--text-secondary); font-family: var(--font-emphasis); font-size: var(--text-2xs); letter-spacing: .1em; text-transform: uppercase; font-weight: 700; align-self: start; padding-top: 2px; }
+  .kv .v { font-weight: 600; }
+  .kv .v .mono { font-family: ui-monospace, monospace; font-weight: 400; font-size: var(--text-sm); }
+  .kv .v .normal { font-weight: 400; color: var(--text-secondary); }
+  @media (max-width: 560px) { .kv { grid-template-columns: 1fr; row-gap: .25rem; } .kv .k { margin-top: var(--s-3); } }
+  .modal-card .confirm { text-align: center; padding: var(--s-8) var(--s-6) var(--s-6); display: flex; flex-direction: column; align-items: center; gap: var(--s-3); }
+  .modal-card .confirm img { width: 140px; height: auto; }
+  .modal-card .confirm h3 { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; letter-spacing: .02em; font-size: var(--text-2xl); }
+  .modal-card .confirm p { margin: 0; font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.55; max-width: 42ch; }
+  .btn--danger-solid { background: var(--notify-error); color: #fff; border-color: var(--notify-error); }
+
+  /* ---- gallery framing ---- */
+  .gallery { max-width: 1240px; margin: 0 auto; padding: var(--s-10) var(--s-6) 5rem; }
+  .gallery > header { margin-bottom: var(--s-8); }
+  .gallery > header h1 { font-size: var(--text-5xl); }
+  .gallery > header p { color: var(--text-secondary); max-width: 70ch; margin-top: var(--s-3); }
+  .frame { margin-top: var(--s-10); }
+  .frame-cap { display: flex; align-items: baseline; gap: var(--s-3); margin-bottom: var(--s-3); }
+  .frame-cap .num { font-family: var(--font-display); font-size: 1.25rem; color: var(--text-muted); }
+  .frame-cap .t { font-family: var(--font-emphasis); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: var(--text-base); }
+  .frame-cap .d { color: var(--text-secondary); font-size: var(--text-sm); }
+  /* the "screen": simulates a studio page on the grey body */
+  .screen { background: var(--surface-page); border: 1px solid #cfcfcf; border-radius: var(--r-4); overflow: hidden; box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 8px 30px -16px rgba(0,0,0,.18); }
+  .screen .context-bar { position: static; }
+  /* a tighter stage for single components on grey */
+  .stage { background: var(--surface-page); border: 1px solid #cfcfcf; border-radius: var(--r-4); padding: var(--s-8); display: flex; flex-wrap: wrap; gap: var(--s-5); align-items: flex-start; }
+  .stage.center { justify-content: center; }
+  .card-w { width: 340px; max-width: 100%; }
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); }
+  @media (max-width: 800px) { .cols-2 { grid-template-columns: 1fr; } .flow-strip { grid-template-columns: 1fr; } .flow-strip .arr { transform: rotate(90deg); padding: 0.375rem 0; } }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Beneficiaries — states &amp; stages.</h1>
+      <p>Every key state of the Beneficiaries surface, each framed on its own so they can be reviewed and screenshotted side by side. Built with the shared page shell (grey body, white breadcrumb bar, header on grey, white cards) defined in <code>style-guide/page-shell.md</code>.</p>
+    </header>
+
+    <!-- 1. Full page -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Full page · populated</span><span class="d">Shell + control bar + card grid + add card.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Beneficiaries</span></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Project · Beneficiaries</div>
+              <h2>Beneficiaries.</h2>
+              <p class="lede">Payout identities that earn a royalty on each sale, after fees. Set them up once at the project level, then assign royalties per vendor or per collection.</p>
+            </div>
+            <div class="row">
+              <input class="input search" placeholder="Search beneficiaries…">
+              <div class="segmented"><button aria-pressed="true">All · 4</button><button>Draft · 2</button><button>Live · 2</button></div>
+            </div>
+          </div>
+          <div class="benef-grid">
+            <button class="benef-add"><span class="plus">+</span><span class="t">Add beneficiary</span><span class="tiny">Name, description, type, and payout account</span></button>
+            <div class="benef-card">
+              <div class="head"><div class="top"><span class="av benef--studio"></span><div><div class="ttl">Ipsum Studio (treasury)</div><div class="sub">p2x9…hb4q · creator</div></div></div><span class="status status--live"><span class="dot"></span>Live</span></div>
+              <p class="desc">Creator remainder. Keeps whatever is left after up to 20% in beneficiary royalties and the 1% project cycles fee.</p>
+              <div class="split-row"><span>Creator · remainder</span><span class="pct">75%</span></div>
+              <div class="split-bar"><span style="width:75%"></span></div>
+              <div class="used"><span>Used by <span class="n">3 vendors</span> · 2 collections</span></div>
+            </div>
+            <div class="benef-card">
+              <div class="head"><div class="top"><span class="av"></span><div><div class="ttl">Mara Okafor</div><div class="sub">k1m9…7uvw · person</div></div></div><span class="status status--live"><span class="dot"></span>Live</span></div>
+              <p class="desc">Lead artist on the founding collection. Paid a standing royalty across every drop she contributes to.</p>
+              <div class="split-row"><span>Royalty · % of sale</span><span class="pct">10%</span></div>
+              <div class="split-bar"><span style="width:10%"></span></div>
+              <div class="used"><span>Used by <span class="n">3 vendors</span> · 2 collections</span><span class="benef-locked"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked</span></div>
+            </div>
+            <div class="benef-card">
+              <div class="head"><div class="top"><span class="av" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></span><div><div class="ttl">Kai Nguyen</div><div class="sub">b8x4…aaae · person</div></div></div><span class="status status--draft"><span class="dot"></span>Draft</span></div>
+              <p class="desc">Collaborating engineer. Drafted for the next series — not assigned to a vendor yet.</p>
+              <div class="split-row"><span>Royalty · % of sale</span><span class="pct">7%</span></div>
+              <div class="split-bar"><span style="width:7%"></span></div>
+              <div class="used"><span>Used by <span class="n">Not used yet</span></span><span class="acts"><button class="icon-btn" title="Change stage"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn" title="Edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            </div>
+            <div class="benef-card">
+              <div class="head"><div class="top"><span class="av benef--charity"></span><div><div class="ttl">Open Tools Foundation</div><div class="sub">q9y7…aaae · charity</div></div></div><span class="status status--draft"><span class="dot"></span>Draft</span></div>
+              <p class="desc">Open-source grants partner. A portion of each sale is earmarked for tooling the community depends on.</p>
+              <div class="split-row"><span>Royalty · % of sale</span><span class="pct">3%</span></div>
+              <div class="split-bar"><span style="width:3%"></span></div>
+              <div class="used"><span>Used by <span class="n">Not used yet</span></span><span class="acts"><button class="icon-btn" title="Change stage"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn" title="Edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 & 3. Card states -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Card stages</span><span class="d">Creator remainder (Live, no actions) · Live + in use (locked).</span></div>
+      <div class="stage">
+        <div class="benef-card card-w">
+          <div class="head"><div class="top"><span class="av benef--studio"></span><div><div class="ttl">Ipsum Studio (treasury)</div><div class="sub">p2x9…hb4q · creator</div></div></div><span class="status status--live"><span class="dot"></span>Live</span></div>
+          <p class="desc">Creator remainder. Keeps whatever is left after up to 20% in beneficiary royalties and the 1% project cycles fee — referral bonuses and per-vendor overrides can reduce it further.</p>
+          <div class="split-row"><span>Creator · remainder</span><span class="pct">75%</span></div>
+          <div class="split-bar"><span style="width:75%"></span></div>
+          <div class="used"><span>Used by <span class="n">3 vendors</span> · 2 collections</span></div>
+        </div>
+        <div class="benef-card card-w">
+          <div class="head"><div class="top"><span class="av"></span><div><div class="ttl">Mara Okafor</div><div class="sub">k1m9…7uvw · person</div></div></div><span class="status status--live"><span class="dot"></span>Live</span></div>
+          <p class="desc">Lead artist on the founding collection. Paid a standing royalty across every drop she contributes to.</p>
+          <div class="split-row"><span>Royalty · % of sale</span><span class="pct">10%</span></div>
+          <div class="split-bar"><span style="width:10%"></span></div>
+          <div class="used"><span>Used by <span class="n">3 vendors</span> · 2 collections</span><span class="benef-locked"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Card stages</span><span class="d">Draft (editable: change stage · edit · delete) · Add card.</span></div>
+      <div class="stage">
+        <div class="benef-card card-w">
+          <div class="head"><div class="top"><span class="av" style="background:linear-gradient(135deg,#FBBF24,#EF4444)"></span><div><div class="ttl">Kai Nguyen</div><div class="sub">b8x4…aaae · person</div></div></div><span class="status status--draft"><span class="dot"></span>Draft</span></div>
+          <p class="desc">Collaborating engineer. Drafted for the next series — not assigned to a vendor yet.</p>
+          <div class="split-row"><span>Royalty · % of sale</span><span class="pct">7%</span></div>
+          <div class="split-bar"><span style="width:7%"></span></div>
+          <div class="used"><span>Used by <span class="n">Not used yet</span></span><span class="acts"><button class="icon-btn" title="Change stage"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn" title="Edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></span></div>
+        </div>
+        <button class="benef-add card-w"><span class="plus">+</span><span class="t">Add beneficiary</span><span class="tiny">Name, description, type, and payout account</span></button>
+      </div>
+    </section>
+
+    <!-- 4. Filter states -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Status filter</span><span class="d">Shared control bar — All / Draft / Live selected.</span></div>
+      <div class="stage" style="flex-direction:column;gap:var(--s-4)">
+        <div class="row"><input class="input search" placeholder="Search beneficiaries…"><div class="segmented"><button aria-pressed="true">All · 4</button><button>Draft · 2</button><button>Live · 2</button></div></div>
+        <div class="row"><input class="input search" placeholder="Search beneficiaries…"><div class="segmented"><button>All · 4</button><button aria-pressed="true">Draft · 2</button><button>Live · 2</button></div></div>
+        <div class="row"><input class="input search" placeholder="Search beneficiaries…"><div class="segmented"><button>All · 4</button><button>Draft · 2</button><button aria-pressed="true">Live · 2</button></div></div>
+      </div>
+    </section>
+
+    <!-- 5. Sale flow -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">How a sale flows</span><span class="d">Real-data worked example with a per-vendor 5% override (default 10%).</span></div>
+      <div class="stage" style="display:block">
+        <div class="flow-diagram">
+          <h3>How a sale flows.</h3>
+          <p class="desc">A live worked example using the <strong>Spring drop</strong> vendor on Lorem Drop No. 1. Fee and referral percentages are read from that vendor's revenue configuration and the project's cycles setting — real values, not sample data. Mara's royalty is overridden to 5% for this vendor (her project default is 10%). With no vendor assigned, this falls back to platform defaults and is shown for illustration only.</p>
+          <div class="flow-strip">
+            <div class="node target"><div class="lbl">Sale</div><div class="n">1.000 ICP</div><div class="tiny" style="margin-top:0.375rem">One mint from the Spring drop vendor</div></div>
+            <div class="arr"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            <div class="node"><div class="lbl">Fees</div><div class="split-list"><div class="row"><span>Project · cycles</span><span class="pct">1%</span></div><div class="row" style="color:var(--text-muted)"><span>Toko Studios · optional</span><span class="pct" style="color:var(--text-muted)">—</span></div><div class="row" style="color:var(--text-muted)"><span>Referral · optional</span><span class="pct" style="color:var(--text-muted)">—</span></div></div><div class="tiny" style="margin-top:0.375rem">0.010 ICP · cycles keep the collection running</div></div>
+            <div class="arr"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+            <div class="node"><div class="lbl">To recipients</div><div class="n">0.990<small style="font-family:var(--font-body);font-size:var(--text-2xs);color:var(--text-secondary);margin-left:0.25rem">ICP</small></div><div class="split-list"><div class="row"><span>Ipsum Studio · creator</span><span class="pct">84%</span></div><div class="row"><span>Mara · royalty <span class="ovr">was 10%</span></span><span class="pct">5%</span></div><div class="row"><span>Kai · royalty</span><span class="pct">7%</span></div><div class="row"><span>Charity · royalty</span><span class="pct">3%</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Add modal -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Add beneficiary modal</span><span class="d">Display name and principal are required — no raw-principal title fallback.</span></div>
+      <div class="stage center">
+        <div class="modal-card">
+          <header><h3>Add beneficiary</h3><button aria-label="Close">✕</button></header>
+          <div class="body">
+            <div class="field"><label>Display name <span class="req">*</span></label><input class="input" placeholder="e.g. Open Tools Foundation"><div class="hint">Required. Shown wherever this beneficiary appears in splits — so it never falls back to the raw principal.</div></div>
+            <div class="field"><label>Principal / address <span class="req">*</span></label><input class="input" placeholder="p2x9-hcvz-7uvw-…" style="font-family:ui-monospace,monospace;font-size:var(--text-sm)"><div class="hint">Required. Settlement goes directly to this principal.</div></div>
+            <div class="field"><label>Type</label><select class="input"><option>Person</option><option>Charity</option><option>External partner</option></select></div>
+            <div class="field"><label>Royalty (% of sale)</label><input class="input" placeholder="e.g. 5"><div class="hint">0.1–10% per beneficiary; royalties total at most 20% across the project.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add beneficiary</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Empty state -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Empty state</span><span class="d">No beneficiaries yet — character moment + primary CTA.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Beneficiaries</span></div></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Project · Beneficiaries</div><h2>Beneficiaries.</h2><p class="lede">Payout identities that earn a royalty on each sale, after fees.</p></div></div>
+          <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-4);overflow:hidden;text-align:center">
+            <div style="aspect-ratio:16/6;background:#0A0A0A"><img src="../style-guide/empty-state-hero/no_beneficiaries.jpg" alt="Beneficiaries — none yet" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.style.display='none'"></div>
+            <div style="padding:28px 24px 32px;display:flex;flex-direction:column;align-items:center;gap:10px">
+              <h3 style="font-size:1.75rem">Set up who gets paid.</h3>
+              <p class="tiny" style="max-width:56ch;font-size:var(--text-md)">A beneficiary is a payout identity — you, a collaborator, your studio, a charity. Define each one once with a name and a principal, then assign royalties in your vendors. Primary sales and secondary royalties flow to them after fees — the project cycles fee that keeps the collection running, plus an optional Toko Studios fee.</p>
+              <button class="btn btn--primary" style="margin-top:8px">Add a beneficiary</button>
+            </div>
+          </div>
+          <div class="explainer">
+            <div>
+              <div class="eyebrow" style="color:var(--stage-review)">How splits flow</div>
+              <h3 style="margin-top:.5rem">Sale → Fees → Beneficiary splits.</h3>
+              <p>Every primary sale first subtracts fees — a project cycles fee (1–10%) that funds the canister keeping your collection running, plus an optional Toko Studios fee and an optional referral bonus. Beneficiaries then earn a royalty on the sale — each 0.1–10%, up to 20% in total — and the creator keeps the remainder. You can override these per vendor or per collection — useful when one drop is a charity benefit or a collaboration.</p>
+              <p style="margin-top:var(--s-3)">Secondary trades carry their own configurable royalty split, capped at 20% of the sale to beneficiaries, paid to the same identities. Settlement is on-chain to each principal — there's no separate Toko wallet in the middle.</p>
+            </div>
+            <div class="visual">
+              <div style="width:100%;text-align:center">
+                <div style="display:inline-flex;flex-direction:column;gap:.5rem;align-items:stretch">
+                  <div style="background:var(--text-primary);color:#fff;padding:.875rem 1.375rem;border-radius:var(--r-3);font-family:var(--font-display);font-size:var(--text-2xl);letter-spacing:.04em">SALE · 1.00 ICP</div>
+                  <div style="display:flex;justify-content:center;color:var(--text-muted)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 13l7 7 7-7"/></svg></div>
+                  <div style="background:rgba(245,158,11,.12);color:var(--stage-draft);padding:.625rem 1.375rem;border-radius:var(--r-3);font-size:var(--text-sm);font-weight:600;text-align:left">— Project cycles fee 3%<br>— Toko Studios fee 2% <span style="font-weight:400;opacity:.8">(optional)</span><span style="display:block;font-weight:400;opacity:.8;margin-top:.125rem">(+ optional referral)</span></div>
+                  <div style="display:flex;justify-content:center;color:var(--text-muted)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 13l7 7 7-7"/></svg></div>
+                  <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);padding:.875rem 1.375rem;border-radius:var(--r-3);text-align:left">
+                    <div class="tiny" style="margin-bottom:.375rem">0.95 ICP to recipients:</div>
+                    <div style="display:grid;gap:.25rem;font-size:var(--text-sm)">
+                      <div style="display:flex;justify-content:space-between;gap:var(--s-4)"><span>Studio · creator</span><span style="font-family:var(--font-display);font-size:var(--text-lg)">75%</span></div>
+                      <div style="display:flex;justify-content:space-between;gap:var(--s-4)"><span>You · royalty</span><span style="font-family:var(--font-display);font-size:var(--text-lg)">10%</span></div>
+                      <div style="display:flex;justify-content:space-between;gap:var(--s-4)"><span>Collaborator · royalty</span><span style="font-family:var(--font-display);font-size:var(--text-lg)">7%</span></div>
+                      <div style="display:flex;justify-content:space-between;gap:var(--s-4)"><span>Charity · royalty</span><span style="font-family:var(--font-display);font-size:var(--text-lg)">3%</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fact-strip">
+            <div class="fact"><div class="num">01</div><h4>Project-scoped, vendor-overridable</h4><p>Set default splits at the project. Override per vendor for one-off collaborations or charity drops.</p></div>
+            <div class="fact"><div class="num">02</div><h4>Secondary royalties, set separately</h4><p>Secondary trades use their own configurable royalty split, capped at 20% of the sale, paid to the same beneficiaries.</p></div>
+            <div class="fact"><div class="num">03</div><h4>Cycles keep it running</h4><p>The project fee funds the canister behind your collection. Settlement is on-chain, direct to each principal — no platform wallet in the middle.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Detail · draft / review (editable) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">08</span><span class="t">Detail · draft / review (editable)</span><span class="d">Not yet Live — name, type, description and royalty are editable; change stage or delete.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Beneficiaries</span><span class="sep">/</span><span>Kai Nguyen</span></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Beneficiary</div><h2 style="font-size:var(--text-2xl);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">Kai Nguyen <span class="status status--review"><span class="dot"></span>Review</span></h2><p class="lede">b8x4…aaae · person · not assigned to a vendor yet.</p></div>
+            <div class="row"><button class="btn btn--ghost btn--sm">Change stage</button><button class="btn btn--ghost btn--sm" style="color:var(--notify-error);border-color:rgba(239,68,68,.4)">Delete</button><button class="btn btn--primary btn--sm">Save changes</button></div>
+          </div>
+          <div class="panel">
+            <div class="field" style="margin-bottom:var(--s-5)"><label>Display name <span class="req">*</span></label><input class="input" value="Kai Nguyen"><div class="hint">Shown wherever this beneficiary appears in splits.</div></div>
+            <div class="field" style="margin-bottom:var(--s-5)"><label>Principal / address</label><input class="input" value="b8x4-aaae-zzzu-pp1m-aaaa-aaae-q" readonly style="font-family:ui-monospace,monospace;font-size:var(--text-sm)"><div class="hint">Settlement goes directly to this principal. Locked once set.</div></div>
+            <div class="field" style="margin-bottom:var(--s-5)"><label>Type</label><select class="input"><option>Person</option><option>Charity</option><option>External partner</option></select></div>
+            <div class="field" style="margin-bottom:var(--s-5)"><label>Description</label><textarea class="input" style="min-height:72px;resize:vertical">Collaborating engineer. Drafted for the next series.</textarea></div>
+            <div class="field"><label>Royalty (% of sale)</label><input class="input" value="7" style="max-width:160px"><div class="hint">0.1–10% per beneficiary; royalties total at most 20% across the project.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Detail · live (locked) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">09</span><span class="t">Detail · live (locked)</span><span class="d">Live and in use by vendors — read-only; duplicate to make an editable copy.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Beneficiaries</span><span class="sep">/</span><span>Mara Okafor</span></div></div>
+        <div class="section">
+          <div class="section-head">
+            <div><div class="eyebrow">Project · Beneficiary</div><h2 style="font-size:var(--text-2xl);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">Mara Okafor <span class="status status--live"><span class="dot"></span>Live</span></h2><p class="lede">k1m9…7uvw · person</p></div>
+          </div>
+          <div class="lock-banner"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><div style="font-weight:600">This beneficiary is Live and in use — locked.</div><div class="tiny" style="margin-top:.125rem">It's referenced by active vendor splits, so its details and royalty can't be changed.</div></div></div>
+          <div class="panel">
+            <div class="kv">
+              <div class="k">Display name</div><div class="v">Mara Okafor</div>
+              <div class="k">Principal</div><div class="v"><span class="mono">k1m9-7uvw-aaa1-bb2k-cdef-aaae-q</span></div>
+              <div class="k">Type</div><div class="v">Person</div>
+              <div class="k">Description</div><div class="v"><span class="normal">Lead artist on the founding collection. Paid a standing royalty across every drop she contributes to.</span></div>
+              <div class="k">Royalty · % of sale</div><div class="v">10%<div style="height:8px;background:var(--surface-canvas-alt);border-radius:var(--r-pill);overflow:hidden;max-width:240px;margin-top:.5rem"><span style="display:block;height:100%;width:10%;background:var(--text-primary)"></span></div></div>
+              <div class="k">Used by</div><div class="v">3 vendors · 2 collections</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Delete confirm (draft / review only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">10</span><span class="t">Delete beneficiary · confirm</span><span class="d">Draft / review only — a Live, in-use beneficiary is locked and can't be deleted.</span></div>
+      <div class="stage center">
+        <div class="modal-card">
+          <header><h3>Delete beneficiary?</h3><button aria-label="Close">✕</button></header>
+          <div class="confirm">
+            <img src="../style-guide/bot-images/anxious/IMG_4839.png" alt="Anxious Toko bot">
+            <h3>Are you sure?</h3>
+            <p>This permanently deletes the <strong>Kai Nguyen</strong> beneficiary. It isn't assigned to any vendor yet, so no live splits change. You can't undo this.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger-solid">Delete beneficiary</button></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
