@@ -16,6 +16,7 @@
   var isMockups = /index\.html$/.test(path) || /\/html-mockups\//.test(path) || /\/$/.test(path);
   var isGuide   = /styleguide\.html$/.test(path);
   var isFaq     = /faq\.html$/.test(path);
+  var isLearn   = /\/learn(\.html|-|$)/.test(path);
 
   var css =
     '.site-nav{background:#0A0A0A;color:#fff;padding:1rem 2rem;display:flex;align-items:center;gap:.75rem;font-family:"Mona Sans",system-ui,sans-serif;position:relative;z-index:50;}' +
@@ -38,6 +39,7 @@
     '</a>' +
     '<nav class="links">' +
       '<a href="' + p + 'index.html"' + here(isMockups) + '>Mockups</a>' +
+      '<a href="' + p + 'learn.html"' + here(isLearn) + '>Learn</a>' +
       '<a href="' + p + 'style-guide/styleguide.html"' + here(isGuide) + '>Style guide</a>' +
       '<a href="' + p + 'faq.html"' + here(isFaq) + '>FAQ</a>' +
     '</nav>';
