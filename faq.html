@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — FAQ</title>
+<style>
+  @font-face { font-family:"Anton"; src:url("fonts/Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Mona Sans"; src:url("fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  :root{
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --info:#2563EB; --brand-cyan:#06B0E6; --stage-draft:#F59E0B; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;} html{font-size:100%;}
+  body{font-family:var(--font-body); font-size:var(--text-md); line-height:1.55; color:var(--text-primary); background:var(--surface-page); -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none;}
+  button{font:inherit; cursor:pointer; border:0; background:transparent; color:inherit;}
+  h1,h2{margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05;}
+
+  /* top bar (public page chrome) */
+  .topbar{background:#0A0A0A; color:#fff; padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-3);}
+  .topbar a.brand{display:flex; align-items:center; gap:var(--s-3);}
+  .topbar img.face{height:30px; width:auto;}
+  .topbar img.word{height:15px; width:auto;}
+  .topbar .nav{margin-left:auto; display:flex; gap:var(--s-5); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:#cfcfcf;}
+  .topbar .nav a:hover{color:#fff;}
+  .topbar .nav a.here{color:#fff;}
+
+  .wrap{max-width:980px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-12);}
+
+  /* header on grey */
+  .faq-head .eyebrow{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.16em; text-transform:uppercase; color:var(--text-secondary);}
+  .faq-head h1{font-size:var(--text-4xl); margin-top:.4rem;}
+  .faq-head p{color:var(--text-secondary); font-size:var(--text-lg); max-width:70ch; margin:var(--s-3) 0 0;}
+
+  /* ============ reusable FAQ component (.faq-*) ============ */
+  .faq-chips{display:flex; flex-wrap:wrap; gap:var(--s-2); margin:var(--s-8) 0 var(--s-6);}
+  .faq-chip{display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .9rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); background:var(--surface-canvas); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); transition:border-color .12s, color .12s, background .12s;}
+  .faq-chip:hover{border-color:#cdcdcd; color:var(--text-primary);}
+  .faq-chip.active{background:var(--text-primary); color:#fff; border-color:var(--text-primary);}
+  .faq-chip .wip-dot{width:7px; height:7px; border-radius:50%; background:var(--stage-draft);}
+
+  .faq-cat{margin-top:var(--s-8);}
+  .faq-cat:first-of-type{margin-top:0;}
+  .faq-cat > h2{font-size:var(--text-2xl); display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-4);}
+  .faq-catnote{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--stage-draft); background:rgba(245,158,11,.14); border-radius:var(--r-pill); padding:3px 9px;}
+
+  .faq-card{background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden;}
+  .faq-item{border-top:1px solid var(--border-soft);}
+  .faq-item:first-child{border-top:0;}
+  .faq-q{width:100%; display:flex; align-items:flex-start; gap:var(--s-4); padding:var(--s-5) var(--s-6); text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-lg); color:var(--text-primary); line-height:1.4;}
+  .faq-q:hover{background:var(--surface-canvas-alt);}
+  .faq-q .qtext{flex:1;}
+  .faq-q .wip{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--stage-draft); background:rgba(245,158,11,.14); border-radius:var(--r-pill); padding:2px 8px; margin-left:.5rem; white-space:nowrap; vertical-align:middle;}
+  .faq-q .chev{flex:none; width:20px; height:20px; color:var(--text-muted); transition:transform .18s ease; margin-top:2px;}
+  .faq-item.open .faq-q .chev{transform:rotate(180deg); color:var(--text-primary);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .22s ease;}
+  .faq-a .inner{padding:0 var(--s-6) var(--s-5); color:var(--text-secondary); font-size:var(--text-base); max-width:74ch;}
+  .faq-a .inner strong{color:var(--text-primary); font-weight:700;}
+  .faq-item.open .faq-a{max-height:600px;}
+
+  /* help / contact card with character */
+  .faq-help{display:flex; align-items:center; gap:var(--s-6); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8); margin-top:var(--s-12);}
+  .faq-help img{width:96px; height:auto; flex:none;}
+  .faq-help h3{font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); margin:0;}
+  .faq-help p{color:var(--text-secondary); font-size:var(--text-sm); margin:.35rem 0 0; max-width:52ch;}
+  .faq-help .cta{margin-left:auto; flex:none;}
+  .btn{display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1.2rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap;}
+
+  footer.page{max-width:980px; margin:0 auto; padding:var(--s-8) var(--s-6) var(--s-12); color:var(--text-muted); font-size:var(--text-xs);}
+
+  @media (max-width:680px){
+    .topbar .nav{display:none;}
+    .faq-help{flex-direction:column; text-align:center; align-items:center;}
+    .faq-help .cta{margin-left:0;}
+    .faq-q{font-size:var(--text-base);}
+  }
+  @media (prefers-reduced-motion:reduce){ .faq-a, .faq-q .chev{transition:none;} }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <img class="face" src="style-guide/logos/2026-05 - face.svg" alt="" onerror="this.style.display='none'">
+      <img class="word" src="style-guide/logos/app-name.png" alt="Toko" onerror="this.style.display='none'">
+    </a>
+    <nav class="nav">
+      <a href="index.html">Mockups</a>
+      <a href="style-guide/styleguide.html">Style guide</a>
+      <a href="faq.html" class="here">FAQ</a>
+    </nav>
+  </div>
+
+  <main class="wrap">
+    <div class="faq-head">
+      <div class="eyebrow">Help · Toko</div>
+      <h1>Frequently asked questions.</h1>
+      <p>How Toko works — for collectors and creators. Items tagged <strong>WIP</strong> are still being built and may change. Filter by topic below.</p>
+    </div>
+
+    <!-- The reusable FAQ component renders here from faq-data.js -->
+    <div id="faq" data-faq></div>
+
+    <div class="faq-help">
+      <img src="style-guide/bot-images/question/IMG_5522.png" alt="" onerror="this.style.display='none'">
+      <div>
+        <h3>Still stuck?</h3>
+        <p>Can't find your answer here? Reach the team and we'll help — and your question might end up on this page.</p>
+      </div>
+      <span class="cta"><a class="btn" href="https://discord.gg/toko" target="_blank" rel="noopener noreferrer">Join our Discord</a></span>
+    </div>
+  </main>
+
+  <footer class="page">Toko · FAQ. Answers are drawn from the product design documentation; WIP items are subject to change.</footer>
+
+  <script src="faq-data.js"></script>
+  <script>
+  /* ============================================================
+     Reusable FAQ component. Renders TOKO_FAQ (from faq-data.js)
+     into any element with [data-faq]. To reuse elsewhere: include
+     faq-data.js + this script and add <div data-faq></div>.
+     Search is intentionally omitted — add it here when the list
+     grows past ~30–50 questions (filter `data.items` by `q`/`a`).
+     ============================================================ */
+  (function () {
+    function renderFAQ(mount, data) {
+      if (!mount || !data) return;
+      var cats = data.categories || [];
+      var items = data.items || [];
+      var catById = {};
+      cats.forEach(function (c) { catById[c.id] = c; });
+
+      // only categories that actually have items, in declared order
+      var used = cats.filter(function (c) {
+        return items.some(function (it) { return it.cat === c.id; });
+      });
+
+      var uid = 0;
+      var state = { active: "all" };
+
+      // ---- category filter chips ----
+      var chips = document.createElement("div");
+      chips.className = "faq-chips";
+      function chip(id, label, wip) {
+        var b = document.createElement("button");
+        b.className = "faq-chip" + (id === state.active ? " active" : "");
+        b.type = "button";
+        b.dataset.cat = id;
+        b.innerHTML = (wip ? '<span class="wip-dot"></span>' : "") + label;
+        b.addEventListener("click", function () { setActive(id); });
+        return b;
+      }
+      chips.appendChild(chip("all", "All", false));
+      used.forEach(function (c) { chips.appendChild(chip(c.id, c.label, c.wip)); });
+
+      // ---- category sections ----
+      var sections = document.createElement("div");
+      used.forEach(function (c) {
+        var sec = document.createElement("section");
+        sec.className = "faq-cat";
+        sec.dataset.cat = c.id;
+
+        var h = document.createElement("h2");
+        h.textContent = c.label;
+        if (c.wip) {
+          var n = document.createElement("span");
+          n.className = "faq-catnote";
+          n.textContent = "WIP · subject to change";
+          h.appendChild(n);
+        }
+        sec.appendChild(h);
+
+        var card = document.createElement("div");
+        card.className = "faq-card";
+        items.filter(function (it) { return it.cat === c.id; })
+          .forEach(function (it) {
+            uid++;
+            var pid = "faq-a-" + uid;
+            var item = document.createElement("div");
+            item.className = "faq-item";
+
+            var q = document.createElement("button");
+            q.className = "faq-q";
+            q.type = "button";
+            q.setAttribute("aria-expanded", "false");
+            q.setAttribute("aria-controls", pid);
+            var qt = document.createElement("span");
+            qt.className = "qtext";
+            qt.textContent = it.q;
+            if (it.wip) {
+              var w = document.createElement("span");
+              w.className = "wip";
+              w.textContent = "WIP";
+              qt.appendChild(w);
+            }
+            q.appendChild(qt);
+            q.insertAdjacentHTML("beforeend",
+              '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+
+            var a = document.createElement("div");
+            a.className = "faq-a";
+            a.id = pid;
+            a.setAttribute("role", "region");
+            var inner = document.createElement("div");
+            inner.className = "inner";
+            inner.innerHTML = it.a;
+            a.appendChild(inner);
+
+            q.addEventListener("click", function () {
+              var open = item.classList.toggle("open");
+              q.setAttribute("aria-expanded", open ? "true" : "false");
+            });
+
+            item.appendChild(q);
+            item.appendChild(a);
+            card.appendChild(item);
+          });
+        sec.appendChild(card);
+        sections.appendChild(sec);
+      });
+
+      function setActive(id) {
+        state.active = id;
+        chips.querySelectorAll(".faq-chip").forEach(function (b) {
+          b.classList.toggle("active", b.dataset.cat === id);
+        });
+        sections.querySelectorAll(".faq-cat").forEach(function (s) {
+          s.style.display = (id === "all" || s.dataset.cat === id) ? "" : "none";
+        });
+        if (id !== "all") {
+          window.scrollTo({ top: mount.offsetTop - 16, behavior: "smooth" });
+        }
+      }
+
+      mount.innerHTML = "";
+      mount.appendChild(chips);
+      mount.appendChild(sections);
+    }
+
+    document.querySelectorAll("[data-faq]").forEach(function (el) {
+      renderFAQ(el, window.TOKO_FAQ);
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -86,3 +86,10 @@ loading, populated, error, locked, etc.) on a single page. Grouped by area, as o
 - Match the page-shell rules (e.g. only the breadcrumb bar, cards, and list/
   pagination bar are white; the page header sits on the grey background).
 
+## Deploy
+
+This is a pure static site. On **Cloudflare Pages**: connect the repo, set
+**Framework preset: None**, leave the build command empty, and set **build output
+directory to `/`**. Pushes to the default branch redeploy automatically. (Use the
+**Pages** product, not a Workers/Wrangler project, so the `.git` directory is
+excluded from the upload.)
