@@ -38,9 +38,9 @@ window.TOKO_FAQ = {
   items: [
     /* ===================== ABOUT (both) ===================== */
     { aud: "both", cat: "about", q: "What is Toko?",
-      a: "Toko is a digital asset platform on the Internet Computer. It brings together a <strong>Generator</strong> for building collectibles from layered artwork, a <strong>Wallet</strong> for holding them, a <strong>Launchpad</strong> for launching and claiming new collections, and a secondary <strong>Marketplace</strong> for peer-to-peer trading." },
+      a: "Toko is a digital asset platform on the Internet Computer. It helps creators build, launch, hold, and trade digital collectibles. It brings together a <strong>Generator</strong> for building collectibles from layered artwork, a <strong>Wallet</strong> for holding them, a <strong>Launchpad</strong> for launching and claiming new collections, and a secondary <strong>Marketplace</strong> for peer-to-peer trading." },
     { aud: "both", cat: "about", q: "How is Toko structured — Project, Collection, Vendor?",
-      a: "Three layers. A <strong>Project</strong> is the top-level creator workspace (team, media, whitelists, beneficiaries, and vendors). A <strong>Collection</strong> is the policy boundary for one set of tokens — its attributes, rarity, and supply. A <strong>Vendor</strong> is the “stall” that distributes tokens. The <strong>Generator</strong> sits beside the collection: its job is the art, while the collection owns the rules." },
+      a: "<strong>Project</strong> is the top-level creator workspace for team settings, media, whitelists, beneficiaries, and vendors. <strong>Collection</strong> is the policy boundary for one set of tokens. This is where you determine its attributes, rarity, and supply. <strong>Vendor</strong> is the “shop” that distributes your tokens.  <strong>Generators</strong> sits beside the collection.  They can optionally help you create art assets which can then be bought into one or more collections." },
     { aud: "both", cat: "about", q: "Do I need to sign in?",
       a: "Public surfaces (Launchpad, collection pages) are browsable, but wallet routes (“My Tokens”) are protected — you sign in with your Internet Computer identity, and ownership always resolves against your principal." },
 
