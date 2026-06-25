@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What is a Project on Toko? — Toko Learn</title>
+<meta name="description" content="The project is your whole creator workshop on Toko: how Project, Collection and Vendor nest together, what a project owns and shares, and where the Generator fits." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .proj{border:2px solid var(--border-strong); border-radius:var(--r-3); padding:var(--s-5); position:relative; margin-top:var(--s-2);}
+  .proj > .plabel{position:absolute; top:-11px; left:16px; background:var(--surface-canvas); padding:0 8px; font-family:var(--font-display); text-transform:uppercase; letter-spacing:.04em; font-size:var(--text-sm); color:var(--text-primary);}
+  .cols{display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:.4rem;}
+  .coll{flex:1 1 220px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); padding:var(--s-4);}
+  .coll .cl{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); margin-bottom:.5rem; display:flex; align-items:center; gap:.4rem;}
+  .coll .cl .tag{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); background:var(--surface-canvas-deep); border-radius:var(--r-pill); padding:1px 7px;}
+  .vchips{display:flex; flex-wrap:wrap; gap:.35rem;}
+  .vchip{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:#1e3a5f; background:rgba(37,99,235,.1); border:1px solid rgba(37,99,235,.22); border-radius:var(--r-pill); padding:.3rem .6rem;}
+  .genside{display:flex; align-items:center; gap:var(--s-3); margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary);}
+  .genbox{font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-sm); border:1px dashed var(--border-strong); border-radius:var(--r-2); padding:.5rem .8rem; color:var(--text-primary); flex:none;}
+  .owns{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:var(--s-3);}
+  .own{background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4);}
+  .own .on{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm);}
+  .own .od{font-size:var(--text-xs); color:var(--text-muted); margin-top:.2rem;}
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>What is a Project?</h1>
+      <p class="dek">The project is your whole workshop on Toko. Here's how Project, Collection and Vendor nest together, and what the project owns and shares.</p>
+      <div class="meta"><span>Project</span><span class="dot"></span><span>~5 min read</span><span class="dot"></span><span>Creator-leaning</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">Everything you build on Toko lives inside a <strong>project</strong> — your top-level creator workspace. You make one once and work inside it. It holds your collections, your team, your artwork, and your payout details, so you never have to set those up twice.</p>
+
+      <h2>Three boxes that nest</h2>
+      <p>Toko has only three big pieces, and they sit inside each other like a set of boxes — with the Generator beside them:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Project · Collection · Vendor</div>
+        <div class="proj">
+          <span class="plabel">Project — your workshop</span>
+          <div class="cols">
+            <div class="coll">
+              <div class="cl">Collection <span class="tag">Moss Droplets</span></div>
+              <div class="vchips"><span class="vchip">Spring Sale · vendor</span><span class="vchip">Mystery Packet · vendor</span></div>
+            </div>
+            <div class="coll">
+              <div class="cl">Collection <span class="tag">Fungus Friends</span></div>
+              <div class="vchips"><span class="vchip">Launch · vendor</span></div>
+            </div>
+          </div>
+          <div class="genside"><span class="genbox">Generator</span> sits beside the collections — it makes the art, then exports into one.</div>
+        </div>
+        <div class="fig-cap">A <strong>project</strong> holds many <strong>collections</strong>; a <strong>vendor</strong> is the stall that distributes tokens. On Toko a vendor is project-scoped, so one vendor can hand out tokens drawn from more than one of the project's collections.</div>
+      </div>
+
+      <p>A quick way to remember it: a <strong>project</strong> is your workshop, a <strong>collection</strong> is a set you made, and a <strong>vendor</strong> is the stall where people pick one up.</p>
+
+      <h2>What a project owns</h2>
+      <p>The project owns everything that should be shared across all of your work. Set these up once, use them everywhere:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Shared, project-scoped resources</div>
+        <div class="owns">
+          <div class="own"><div class="on">Team &amp; access</div><div class="od">Members and their roles.</div></div>
+          <div class="own"><div class="on">Media library</div><div class="od">Reusable images and files.</div></div>
+          <div class="own"><div class="on">Whitelists</div><div class="od">Allow-lists for gated drops.</div></div>
+          <div class="own"><div class="on">Beneficiaries</div><div class="od">Who receives payouts.</div></div>
+          <div class="own"><div class="on">Revenue presets</div><div class="od">Reusable split templates.</div></div>
+          <div class="own"><div class="on">Vendors</div><div class="od">Distribution across collections.</div></div>
+        </div>
+        <div class="fig-cap">Collections and generators inherit the project context, and a vendor draws on the project's whitelists, beneficiaries and revenue presets — so a change in one place doesn't quietly break another.</div>
+      </div>
+
+      <h2>Starting out: the Studio</h2>
+      <p>The <strong>Studio</strong> is the door into your projects. From there you create a new project — it needs a name, a description, and a thumbnail — or open an existing one. Studio may cap how many projects you can have; when you've reached the limit, the “Create new project” button is disabled with a short explanation.</p>
+
+      <h2>Why it's built this way</h2>
+      <p>Each box owns the things that should be shared at its level. A <strong>project</strong> owns what every collection needs (team, media, whitelists, beneficiaries, vendors). A <strong>collection</strong> owns the promises that apply to a whole set (its attributes, rarity model, supply). A <strong>vendor</strong> owns the details of one drop (its price, schedule, who's allowed in). This nesting means you never repeat yourself, and changing a vendor never touches the collection behind it.</p>
+
+      <div class="tldr">
+        <h2>In short</h2>
+        <ul>
+          <li><strong>Project</strong> = your top-level workspace; you create it once and work inside it.</li>
+          <li>It nests: <strong>Project → Collection → Vendor</strong>, with the <strong>Generator</strong> beside, feeding art into a collection.</li>
+          <li>The project owns the <strong>shared resources</strong>: team, media, whitelists, beneficiaries, revenue presets, and (project-scoped) vendors.</li>
+          <li>You enter through the <strong>Studio</strong>; a new project needs a name, description and thumbnail.</li>
+          <li>Each level owns what's shared at that level, so you never repeat yourself.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <div class="rl">Keep reading</div>
+        <p><a href="learn-token-types.html">Token types</a> · <a href="learn-rarity.html">Rarity</a> · <a href="learn-generator.html">The Generator</a> · <a href="faq.html#for-creators">Creator FAQ</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>

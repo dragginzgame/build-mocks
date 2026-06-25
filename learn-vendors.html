@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vendors &amp; revenue, explained — Toko Learn</title>
+<meta name="description" content="How tokens get distributed on Toko: what a vendor is, the claim rules and tiers, the vendor lifecycle, and how revenue presets, royalties and buyback decide where the money goes." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .life{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem;}
+  .lbadge{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; text-transform:uppercase; padding:.4rem .8rem; border-radius:var(--r-pill);}
+  .lb-setup{background:var(--surface-canvas-deep); color:var(--text-secondary);}
+  .lb-run{background:rgba(16,185,129,.16); color:#0a6b4f;}
+  .lb-pause{background:rgba(245,158,11,.18); color:#92580b;}
+  .lb-empty{background:var(--surface-canvas-alt); color:var(--text-muted); border:1px solid var(--border-soft);}
+  .lb-end{background:var(--text-primary); color:#fff;}
+  .lb-fault{background:rgba(239,68,68,.14); color:#b91c1c;}
+  .life .arr{color:var(--text-muted); font-weight:700;}
+  .life .off{margin-left:.4rem; font-size:var(--text-xs); color:var(--text-muted);}
+
+  .splitbar{display:flex; height:48px; border-radius:8px; overflow:hidden; border:1px solid var(--border-soft);}
+  .splitbar i{display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); white-space:nowrap; overflow:hidden;}
+  .splitkey{display:flex; flex-wrap:wrap; gap:var(--s-4); margin-top:var(--s-4); font-size:var(--text-xs); color:var(--text-secondary);}
+  .splitkey span{display:inline-flex; align-items:center; gap:.45rem;}
+  .splitkey i{width:13px; height:13px; border-radius:3px; flex:none;}
+
+  .tapers{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-3); margin-top:.2rem;}
+  .taper{background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3) var(--s-3) var(--s-2);}
+  .taper svg{display:block; width:100%; height:42px;}
+  .taper .tn{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); margin-top:.4rem; color:var(--text-primary);}
+  .taper .td{font-size:var(--text-2xs); color:var(--text-muted); margin-top:.1rem; line-height:1.35;}
+  @media (max-width:560px){ .tapers{grid-template-columns:repeat(2,1fr);} }
+
+  .tierclaim{width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas);}
+  .tierclaim th, .tierclaim td{border:1px solid var(--border-soft); padding:.55rem .7rem; text-align:left; vertical-align:top;}
+  .tierclaim thead th{background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary);}
+  .tierclaim tbody th{font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary);}
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>Vendors &amp; revenue.</h1>
+      <p class="dek">How tokens actually reach people, and how the money is split when they do. Vendors are the stalls; revenue presets are the rules that decide who gets paid.</p>
+      <div class="meta"><span>Vendors &amp; revenue</span><span class="dot"></span><span>~8 min read</span><span class="dot"></span><span>Creator-leaning</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">A collection is a set you made; a <strong>vendor</strong> is where someone picks one up. It's the stall that hands out tokens — on a schedule, under rules you set, for a price you choose. When a token leaves the stall, a <strong>revenue preset</strong> decides where the proceeds go. This article covers both halves: distribution, then payout.</p>
+
+      <h2>What a vendor is</h2>
+      <p>A vendor distributes tokens that have <strong>already been minted</strong> into a collection. It doesn't create tokens — it holds inventory and hands it out under a <strong>claim</strong> policy. On Toko a vendor is <strong>project-scoped</strong>: it lives at the project level (decided 2026-06-22), so a single vendor can distribute tokens drawn from more than one of the project's collections, and it settles into its own account.</p>
+
+      <div class="callout">
+        <div class="ct">Vendor, not mint</div>
+        <p>Minting puts tokens into a collection; the vendor is a separate step that gives them out. Keeping the two apart means you can prepare inventory quietly, then open the stall when you're ready — and close it without touching the collection behind it.</p>
+      </div>
+
+      <h2>Two kinds of stall</h2>
+      <p>Toko is building toward more than one vendor style. The first is the straightforward one; the others are designed but not yet live:</p>
+      <ul>
+        <li><strong>Market vendor</strong> — a direct stall: a claimer picks a token (or a tier) and claims it under the rules you set. This is the vendor type available today.</li>
+        <li><strong>Gacha vendor</strong> <em>(designed, not yet live)</em> — a lucky-dip: the claimer pays for a draw from a visible prize pool and receives a random token. Draws are deterministic and auditable, so the odds are honest. Still in WIP design.</li>
+      </ul>
+
+      <h2>The vendor lifecycle</h2>
+      <p>A vendor has two clocks. Like everything else on Toko it moves through <strong>Draft → Review → Live</strong> as you build and approve it. Once Live, it also has a <strong>runtime status</strong> that you drive with start / pause / resume / stop:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Runtime status, once a vendor is Live</div>
+        <div class="life">
+          <span class="lbadge lb-setup">Setup</span>
+          <span class="arr">→</span>
+          <span class="lbadge lb-run">Running</span>
+          <span class="arr">⇄</span>
+          <span class="lbadge lb-pause">Paused</span>
+          <span class="arr">→</span>
+          <span class="lbadge lb-empty">Empty</span>
+          <span class="arr">→</span>
+          <span class="lbadge lb-end">Ended</span>
+          <span class="off">· <span class="lbadge lb-fault">Faulted</span> if something needs attention</span>
+        </div>
+        <div class="fig-cap">There's no separate approval gate at runtime — validation happens per token as inventory is staged. <strong>Running</strong> hands out tokens; <strong>Paused</strong> holds the queue without losing state; <strong>Empty</strong> means inventory is exhausted; <strong>Ended</strong> is closed. When a vendor ends, its <em>termination policy</em> decides whether unclaimed tokens are returned to the project or burned.</div>
+      </div>
+
+      <h2>Claim rules: who can claim, and what it costs</h2>
+      <p>The claim policy is where you shape the drop. Rules can be set for the whole vendor or <strong>per tier</strong>, and tiers inherit sensible defaults so you only override what you need:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">What a claim rule can set</div>
+        <table class="tierclaim">
+          <thead><tr><th>Lever</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><th>Cost</th><td>The price to claim — can differ by tier, or be free.</td></tr>
+            <tr><th>Requirements</th><td>Gates a claimer must pass: holdings, staking, or an allowlist entry — set per tier.</td></tr>
+            <tr><th>Restrictions</th><td>Limits like per-principal claim caps, so one wallet can't take everything.</td></tr>
+            <tr><th>Rewards</th><td>Extras granted on claim, where the design calls for them.</td></tr>
+          </tbody>
+        </table>
+        <div class="fig-cap">Allowlists come from the project's <a href="learn-project.html">shared whitelists</a>, so the same gated audience can be reused across drops. A tier with no explicit rule falls back to the vendor's default.</div>
+      </div>
+
+      <h2>Revenue presets: where the money goes</h2>
+      <p>When a claim is paid, the proceeds are split according to a <strong>revenue preset</strong> — a named split template that lives at the project level. You build presets once and reuse them. A vendor picks a <strong>Live</strong> preset when it's created, and that choice is <strong>snapshotted</strong> onto the vendor. Editing the preset later won't silently rewrite the terms of vendors already using it.</p>
+
+      <div class="callout callout--key">
+        <div class="ct">Snapshot, not a live link</div>
+        <p>Because the split is captured at creation, a claimer's terms can't change underneath them after they've claimed, and you can safely evolve your presets for the next drop without disturbing the last one.</p>
+      </div>
+
+      <h2>What's in a split</h2>
+      <p>Proceeds come off the top as <strong>fees</strong>, and the rest goes to your <strong>beneficiaries</strong> — only beneficiaries who are <strong>Live</strong> qualify to be paid:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Where a claim's proceeds go</div>
+        <div class="splitbar">
+          <i style="width:6%; background:#2563eb" title="Project / cycles"></i>
+          <i style="width:2%; background:#7c3aed" title="Toko"></i>
+          <i style="width:92%; background:#16a34a">Your beneficiaries · 92%</i>
+        </div>
+        <div class="splitkey">
+          <span><i style="background:#2563eb"></i> Project / cycles — required, ~1–10%</span>
+          <span><i style="background:#7c3aed"></i> Toko contribution — optional, 0–10%</span>
+          <span><i style="background:#16a34a"></i> Beneficiaries — the remainder</span>
+        </div>
+        <div class="fig-cap">Figures are illustrative. The project/cycles fee is required; the Toko contribution is optional. Where royalties are configured, each is capped at ~10%, with total royalties ≤20% (and non-project royalties bounded separately) — caps that keep any single split honest.</div>
+      </div>
+
+      <h2>Royalties over time</h2>
+      <p>Royalties don't have to last forever — or they can. A royalty runs either <strong>Forever</strong> or for a <strong>fixed period</strong> (1, 3, 6, 9, 12 or 24 months), and over that period it can <strong>taper</strong> so the cut shrinks as time passes. The clock starts when the vendor is <strong>Running</strong>.</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Taper shapes</div>
+        <div class="tapers">
+          <div class="taper">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,8 L100,8" fill="none" stroke="var(--brand-cyan)" stroke-width="3"/></svg>
+            <div class="tn">Forever / No taper</div>
+            <div class="td">Flat — the same cut the whole time.</div>
+          </div>
+          <div class="taper">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,8 L70,8 L70,34 L100,34" fill="none" stroke="var(--brand-cyan)" stroke-width="3"/></svg>
+            <div class="tn">Cliff</div>
+            <div class="td">Holds, then drops at the end.</div>
+          </div>
+          <div class="taper">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,8 L100,34" fill="none" stroke="var(--brand-cyan)" stroke-width="3"/></svg>
+            <div class="tn">Linear</div>
+            <div class="td">Eases down evenly to zero.</div>
+          </div>
+          <div class="taper">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,8 C42,10 66,22 100,34" fill="none" stroke="var(--brand-cyan)" stroke-width="3"/></svg>
+            <div class="tn">Curve</div>
+            <div class="td">Stays high, then falls away faster.</div>
+          </div>
+        </div>
+        <div class="fig-cap">A taper lets you reward early activity more heavily without cutting creators off abruptly. Pick the shape that matches how you want the drop to age.</div>
+      </div>
+
+      <h2>Buyback</h2>
+      <p>A vendor can also run a <strong>buyback</strong> — an offer to buy tokens back from holders, set as a percentage (around 1–20%) over a duration. Buyback proceeds are held in the vendor's own subaccount, so the funds backing an offer are kept distinct from the rest of the project's balances.</p>
+
+      <div class="callout">
+        <div class="ct">One technical note</div>
+        <p>Because a vendor settles from its own subaccount, that account can double as the escrow account per ledger — which is why the design keys it by something unique like <code>collection_id + tier + payment_ledger</code>. You don't need to think about this to run a drop; it's how the plumbing stays separated underneath.</p>
+      </div>
+
+      <div class="tldr">
+        <h2>In short</h2>
+        <ul>
+          <li>A <strong>vendor</strong> distributes already-minted tokens; it's <strong>project-scoped</strong>, so one stall can span collections.</li>
+          <li><strong>Market</strong> vendors are live today; <strong>Gacha</strong> (auditable lucky-dip) is designed but not yet live.</li>
+          <li>Vendors go <strong>Draft → Review → Live</strong>, then run through <strong>Setup → Running ⇄ Paused → Empty → Ended</strong>.</li>
+          <li><strong>Claim rules</strong> set cost, requirements, restrictions and rewards — per vendor or per tier, with allowlists from the project.</li>
+          <li><strong>Revenue presets</strong> are project-level split templates, snapshotted onto a vendor; fees come off the top, beneficiaries get the rest.</li>
+          <li><strong>Royalties</strong> can run forever or for a fixed period with a taper; <strong>buyback</strong> repurchases tokens from a vendor subaccount.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <div class="rl">Keep reading</div>
+        <p><a href="learn-project.html">Project</a> · <a href="learn-rarity.html">Rarity</a> · <a href="learn-token-types.html">Token types</a> · <a href="faq.html#for-creators">Creator FAQ</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>

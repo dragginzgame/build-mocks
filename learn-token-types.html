@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Token types, explained — Toko Learn</title>
+<meta name="description" content="What a token type is on Toko: grouping tokens that share an attribute set, assigning attributes per type (required / optional / unassigned), and how scoring and rarity work per type." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .mx{width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas);}
+  .mx th, .mx td{border:1px solid var(--border-soft); padding:.6rem .7rem; text-align:center; vertical-align:middle;}
+  .mx thead th{background:var(--surface-canvas-alt); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary);}
+  .mx tbody th{text-align:left; font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary);}
+  .badge2{display:inline-block; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; text-transform:uppercase; padding:2px 9px; border-radius:var(--r-pill);}
+  .b-req{background:rgba(16,185,129,.16); color:#0a6b4f;}
+  .b-opt{background:var(--surface-canvas-deep); color:var(--text-secondary);}
+  .b-un{color:var(--text-muted); font-weight:700;}
+  .mxkey{display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-4); font-size:var(--text-xs); color:var(--text-secondary);}
+  .mxkey span{display:inline-flex; align-items:center; gap:.4rem;}
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>Token types, explained.</h1>
+      <p class="dek">One collection can hold more than one kind of token. Here's how token types group tokens, control which attributes apply, and keep scoring and rarity fair.</p>
+      <div class="meta"><span>Token types</span><span class="dot"></span><span>~5 min read</span><span class="dot"></span><span>Creator-leaning</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">A <strong>token type</strong> is a group of tokens that share the same set of attributes. Every collection has at least one, and every token belongs to exactly one type. If your set is uniform — all characters, say — you'll never think about it. But the moment a collection mixes <em>kinds</em> of token, types are what keep them tidy.</p>
+
+      <h2>Why more than one type?</h2>
+      <p>Imagine a collection with <strong>Characters</strong> and <strong>Items</strong>. A character has Strength and an Element; an item has a Material. They shouldn't share one flat list of attributes — a character has no Material, an item has no Strength. Token types let both live in the same collection while each carries only the attributes that make sense for it.</p>
+
+      <h2>One schema, assigned per type</h2>
+      <p>Attributes are defined <strong>once</strong> in the collection's master schema — never duplicated per type. Then, for each token type, every attribute is one of three things:</p>
+      <ul>
+        <li><strong>Required</strong> — every token of this type must have it.</li>
+        <li><strong>Optional</strong> — allowed, but not mandatory.</li>
+        <li><strong>Unassigned</strong> — not available on this type at all.</li>
+      </ul>
+
+      <div class="fig">
+        <div class="fig-ttl">The same attributes, assigned differently by type</div>
+        <table class="mx">
+          <thead><tr><th>Attribute</th><th>Character</th><th>Item</th></tr></thead>
+          <tbody>
+            <tr><th>Strength</th><td><span class="badge2 b-req">Required</span></td><td><span class="b-un">—</span></td></tr>
+            <tr><th>Element</th><td><span class="badge2 b-opt">Optional</span></td><td><span class="badge2 b-req">Required</span></td></tr>
+            <tr><th>Material</th><td><span class="b-un">—</span></td><td><span class="badge2 b-req">Required</span></td></tr>
+            <tr><th>Power</th><td><span class="badge2 b-opt">Optional</span></td><td><span class="badge2 b-opt">Optional</span></td></tr>
+          </tbody>
+        </table>
+        <div class="mxkey">
+          <span><span class="badge2 b-req">Required</span> must be present</span>
+          <span><span class="badge2 b-opt">Optional</span> allowed</span>
+          <span><span class="b-un">—</span> not available on this type</span>
+        </div>
+        <div class="fig-cap">When you edit a token, the attribute editor shows only the attributes assigned to its type, with required ones enforced — so you can't accidentally give an Item a Strength.</div>
+      </div>
+
+      <h2>It stays out of your way until you need it</h2>
+      <p>With a <strong>single</strong> token type, Toko keeps things effortless: any new attribute you create is auto-assigned to that type as <strong>optional</strong>. The moment you add a <strong>second</strong> type, that auto-magic stops — new types start with no assignments, and new attributes aren't auto-added to anything. From then on you assign each attribute to each type deliberately. Existing assignments are never disturbed by the switch.</p>
+
+      <div class="callout">
+        <div class="ct">Assign individually or in bulk</div>
+        <p>You can set a token's type one at a time in its editor, or select many tokens and move them to a target type at once. A bulk move runs a dry-run first: any token that wouldn't satisfy the target type's rules is reported with the reason and left untouched.</p>
+      </div>
+
+      <h2>Validation and locking</h2>
+      <p>Token type is part of what's checked when a token moves <strong>Draft → Review</strong>. A token must have a type, carry all of that type's <strong>required</strong> attributes, and carry none that are <strong>unassigned</strong> for it; the transition is blocked otherwise. You can change a token's type while it's a <strong>Draft</strong>; after Review it's locked, because attributes and identity are settling for go-live.</p>
+
+      <h2>Scoring and rarity are per type</h2>
+      <p>This is the quietly important part. Because different types have different attributes, Toko scores and ranks them <strong>within each type</strong> — never pooled across the whole collection. A type with five scoring attributes would otherwise always outscore one with a single attribute and sweep the top tiers. In Weighted rarity, the per-tier quotas are evaluated per type too.</p>
+
+      <div class="callout callout--key">
+        <div class="ct">Why per-type matters</div>
+        <p>Score Rank reads as “within Character · 312 tokens”, not across everything — so a humble Item can still be the rarest Item. See <a href="learn-score.html">Token score</a> and <a href="learn-rarity.html">Rarity</a> for how that flows through.</p>
+      </div>
+
+      <div class="tldr">
+        <h2>In short</h2>
+        <ul>
+          <li>A <strong>token type</strong> groups tokens that share an attribute set; every collection has at least one, every token has exactly one.</li>
+          <li>Attributes are defined <strong>once</strong>, then set per type as <strong>required</strong>, <strong>optional</strong>, or <strong>unassigned</strong>.</li>
+          <li>One type auto-assigns new attributes as optional; adding a second type switches to explicit assignment.</li>
+          <li><strong>Draft → Review</strong> checks the token has its type's required attributes and none it shouldn't; type is editable only in Draft.</li>
+          <li><strong>Scoring and rarity are evaluated per type</strong>, never pooled across the collection.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <div class="rl">Keep reading</div>
+        <p><a href="learn-score.html">Token score</a> · <a href="learn-rarity.html">Rarity</a> · <a href="learn-project.html">Project</a> · <a href="faq.html#for-creators">Creator FAQ</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>

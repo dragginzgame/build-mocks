@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How token score works — Toko Learn</title>
+<meta name="description" content="How Toko computes a token's score: the attribute score (Add / Multiply / Highest), the layer multiplier, ranking within a token type, and what makes a score go stale." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .eq{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.5rem .7rem; padding:var(--s-3) 0 var(--s-2);}
+  .eq-term{font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); padding:.35rem .8rem; border-radius:var(--r-2); color:#fff; line-height:1;}
+  .eq-final{background:var(--text-primary);}
+  .eq-attr{background:#2563EB;}
+  .eq-mult{background:#7C3AED;}
+  .eq-op{font-family:var(--font-display); font-size:var(--text-2xl); color:var(--text-muted);}
+  .eq-notes{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-3); margin-top:var(--s-4);}
+  .eq-note{font-size:var(--text-xs); color:var(--text-secondary); line-height:1.5;}
+  .eq-note b{font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary);}
+  .methods{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-3);}
+  .method{background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); text-align:center;}
+  .method .mn{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm);}
+  .method .mf{font-size:var(--text-xs); color:var(--text-muted); margin:.2rem 0 .5rem;}
+  .method .mr{font-family:var(--font-display); font-size:var(--text-3xl); color:var(--text-primary); line-height:1;}
+  .ranks{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4);}
+  .rankcol{background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4);}
+  .rankcol .rh{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-secondary); margin-bottom:var(--s-2);}
+  .rankrow{display:flex; justify-content:space-between; gap:var(--s-3); font-size:var(--text-sm); padding:.35rem 0; border-top:1px solid var(--border-soft);}
+  .rankrow:first-of-type{border-top:0;}
+  .rankrow .rp{font-family:var(--font-emphasis); font-weight:700; color:var(--text-muted);}
+  .rankrow .rv{font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums;}
+  .life{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem .7rem;}
+  .life .pill{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); padding:.5rem .9rem; border-radius:var(--r-pill);}
+  .life .pill--fresh{background:rgba(16,185,129,.14); color:#0a6b4f;}
+  .life .pill--stale{background:rgba(245,158,11,.16); color:#92580b;}
+  .life .lab{font-size:var(--text-xs); color:var(--text-muted);}
+  @media (max-width:560px){ .methods{grid-template-columns:1fr;} .ranks{grid-template-columns:1fr;} .eq-notes{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>How token score works.</h1>
+      <p class="dek">Score is the number behind rarity. Here's how Toko computes it from a token's attributes, how it ranks, and why it sometimes goes “stale”.</p>
+      <div class="meta"><span>Token score</span><span class="dot"></span><span>~6 min read</span><span class="dot"></span><span>Creator-leaning</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">A token's <strong>score</strong> is a single number derived from its attributes. It's not shown by default and it isn't rarity by itself — it's the <em>input</em>. In a <strong>Weighted</strong> collection the score decides which tier a token lands in; in a <strong>Tiered</strong> one it's shown as guidance while you assign by hand; in <strong>Uniform</strong> it isn't used at all.</p>
+
+      <div class="callout callout--key">
+        <div class="ct">Score vs rarity</div>
+        <p>Score is a measurement; <strong>rarity is the policy that may use it</strong>. The same score can drive an automatic tier (Weighted), merely advise you (Tiered), or be ignored (Uniform). Whether collectors even see the score is a separate per-collection setting. <a href="learn-rarity.html">See the rarity article →</a></p>
+      </div>
+
+      <h2>The formula</h2>
+      <p>Every token's final score is two pieces multiplied together:</p>
+
+      <div class="fig">
+        <div class="eq">
+          <span class="eq-term eq-final">Final score</span>
+          <span class="eq-op">=</span>
+          <span class="eq-term eq-attr">Attribute score</span>
+          <span class="eq-op">×</span>
+          <span class="eq-term eq-mult">Layer multiplier</span>
+        </div>
+        <div class="eq-notes">
+          <div class="eq-note"><b>Attribute score</b> — built from the numbers you map onto the token's attributes (step 1 below).</div>
+          <div class="eq-note"><b>Layer multiplier</b> — an optional weighting from the generator layers (step 2). It's <code>1.0</code> when no generator is linked, so the final score just equals the attribute score.</div>
+        </div>
+      </div>
+
+      <h2>Step 1 — the attribute score</h2>
+      <p>On the Attributes page you give attribute values a number (“Apply Values”), then pick how those numbers combine into one figure. Three methods:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Same values, three methods</div>
+        <div class="methods">
+          <div class="method"><div class="mn">Add Values</div><div class="mf">sum</div><div class="mr">10</div></div>
+          <div class="method"><div class="mn">Multiply</div><div class="mf">product</div><div class="mr">30</div></div>
+          <div class="method"><div class="mn">Highest</div><div class="mf">max</div><div class="mr">5</div></div>
+        </div>
+        <div class="fig-cap">A token with mapped values <code>3</code>, <code>5</code>, <code>2</code>. Add sums them (10), Multiply takes the product (30), Highest takes the single biggest (5). <strong>Multiply</strong> spreads scores out fastest; <strong>Highest</strong> rewards one standout trait.</div>
+      </div>
+
+      <p>One rule trips people up: a <strong>missing or unmapped value is left out</strong> of the calculation — it is <em>not</em> treated as zero, unless you explicitly map it to zero. If a token has no mapped values at all, its attribute score is empty, and so is its final score.</p>
+
+      <h2>Step 2 — the layer multiplier</h2>
+      <p>If the collection is linked to a generator, you can weight whole <strong>layers</strong> on the Layer Multipliers tab — say, make the “Background” layer matter less than “Body”. Each token's multiplier comes from its own composition and those layer weights, and it scales the attribute score into the final score. No generator linked? Every token's multiplier is <code>1.0</code> and this step does nothing.</p>
+
+      <div class="callout">
+        <div class="ct">Not the same as generator weighting</div>
+        <p>The layer multiplier is about how much a layer contributes to <em>score</em>. It has nothing to do with the generator's part-selection weighting (how often a part appears in the art) — that never feeds score.</p>
+      </div>
+
+      <h2>Reading the rank</h2>
+      <p>Score on its own is just a number; what matters is a token's <strong>rank</strong>. Crucially, rank is computed <strong>within a single token type</strong> — never across the whole collection. A type with five scoring attributes would otherwise always outscore a type with one, and sweep the top tiers.</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Ranked per type, not pooled</div>
+        <div class="ranks">
+          <div class="rankcol">
+            <div class="rh">Character · 3 tokens</div>
+            <div class="rankrow"><span class="rp">#1 / 3</span><span>Aurelia</span><span class="rv">42</span></div>
+            <div class="rankrow"><span class="rp">#2 / 3</span><span>Bram</span><span class="rv">31</span></div>
+            <div class="rankrow"><span class="rp">#3 / 3</span><span>Caro</span><span class="rv">18</span></div>
+          </div>
+          <div class="rankcol">
+            <div class="rh">Item · 3 tokens</div>
+            <div class="rankrow"><span class="rp">#1 / 3</span><span>Sunblade</span><span class="rv">9</span></div>
+            <div class="rankrow"><span class="rp">#2 / 3</span><span>Lantern</span><span class="rv">6</span></div>
+            <div class="rankrow"><span class="rp">#3 / 3</span><span>Key</span><span class="rv">4</span></div>
+          </div>
+        </div>
+        <div class="fig-cap">Sunblade's score (9) is far below Bram's (31), but it's still <strong>#1 among Items</strong>. The UI always labels the scope, e.g. “Score Rank is within Character · 3 tokens”. In Weighted, tier quotas are filled per type too.</div>
+      </div>
+
+      <h2>Fresh vs stale</h2>
+      <p>A score is only meaningful if it reflects the token's current inputs, so every token carries a freshness flag. Change something that feeds the score and it flips to <strong>stale</strong> until it's recomputed:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">The freshness loop</div>
+        <div class="life">
+          <span class="pill pill--fresh">Fresh</span>
+          <span class="lab">→ you change an input →</span>
+          <span class="pill pill--stale">Stale</span>
+          <span class="lab">→ Refresh / recompute →</span>
+          <span class="pill pill--fresh">Fresh</span>
+        </div>
+        <div class="fig-cap">Triggers: editing composition or attribute values (while Draft), changing the value→number mapping, changing layer weights, or switching the calculation method. A bulk <strong>Refresh all stale</strong> recomputes in one go (and reports any per-token failures).</div>
+      </div>
+
+      <div class="callout callout--warn">
+        <div class="ct">Stale blocks go-live</div>
+        <p>A token <strong>can't move Review → Live while its score is stale</strong> (or while a recompute is running). That's deliberate — it guarantees every live token's tier and score reflect its real, current inputs, not a half-finished edit.</p>
+      </div>
+
+      <h2>Deterministic and stable</h2>
+      <p>Two guarantees make scores trustworthy. <strong>Stability:</strong> adding more tokens to a collection never changes an existing token's score — only that token's own inputs can. <strong>Determinism:</strong> when Weighted assigns tiers it orders tokens by final score, breaking ties by creation time then token id, so a rebalance produces the exact same result every time it's run on the same inputs.</p>
+
+      <div class="tldr">
+        <h2>In short</h2>
+        <ul>
+          <li><strong>Score is an input, not rarity.</strong> Weighted uses it to assign tiers; Tiered shows it as guidance; Uniform ignores it.</li>
+          <li><strong>final score = attribute score × layer multiplier</strong> (multiplier is 1.0 with no generator).</li>
+          <li><strong>Attribute score</strong> combines mapped values by Add, Multiply, or Highest; unmapped values are skipped, not zeroed.</li>
+          <li><strong>Rank is within a token type</strong>, never across the whole collection.</li>
+          <li><strong>Stale scores block go-live</strong> until recomputed; scores are stable and assignment is deterministic.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <div class="rl">Keep reading</div>
+        <p><a href="learn-rarity.html">Rarity</a> · <a href="faq.html#for-creators">Creator FAQ</a> · The Generator <em style="color:var(--text-muted);font-weight:400">(article coming soon)</em></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>

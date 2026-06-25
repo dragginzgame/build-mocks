@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What is rarity on Toko? — Toko Learn</title>
+<meta name="description" content="How Toko decides which tokens are rare: the three rarity models, the maths behind the Weighted curve, and why a tier is a mint budget, not just a label." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  /* article-specific visuals */
+  .ratiorow{display:flex; align-items:center; gap:var(--s-3); margin:.55rem 0;}
+  .ratiorow .rl{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); width:74px; flex:none; color:var(--text-secondary);}
+  .rbar{flex:1; display:flex; height:26px; border-radius:6px; overflow:hidden; gap:2px;}
+  .rbar i{display:block;}
+  .flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:.4rem;}
+  .flow-step{flex:1 1 120px; min-width:108px; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:.7rem .8rem; font-size:var(--text-xs); display:flex; flex-direction:column; gap:.2rem;}
+  .flow-step .fs-t{font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary);}
+  .flow-step .fs-d{color:var(--text-muted);}
+  .flow .arrow{align-self:center; color:var(--text-muted); font-weight:700; font-size:var(--text-lg);}
+  .defchips{display:flex; flex-wrap:wrap; gap:.4rem; margin:.2rem 0 var(--s-4);}
+  .defchip{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:#1e3a5f; background:rgba(37,99,235,.1); border:1px solid rgba(37,99,235,.25); border-radius:var(--r-pill); padding:.35rem .7rem;}
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>What is rarity on Toko?</h1>
+      <p class="dek">How Toko decides which tokens are scarce — the three models, the maths behind the Weighted curve, and why a tier is a budget, not just a label.</p>
+      <div class="meta"><span>Rarity</span><span class="dot"></span><span>~7 min read</span><span class="dot"></span><span>Collectors &amp; creators</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">Rarity is how a collection says <em>“this token is scarcer than that one.”</em> On Toko it isn't a label a creator sprinkles on by feel — it's a policy the collection enforces, with a model you choose and rules the platform applies the same way every time.</p>
+
+      <div class="callout callout--key">
+        <div class="ct">The one thing to get right</div>
+        <p><strong>Weighting is not rarity.</strong> In the Generator, “weighting” controls how <em>often</em> a part is picked when art is assembled — it's a composition setting. Rarity is a separate, collection-level decision about how scarce a finished token is. A part can be common in the art and still sit in a rare token, and vice-versa. <a href="learn-weighting-vs-rarity.html">Watch the 25-second explainer →</a></p>
+      </div>
+
+      <h2>Rarity is a collection decision</h2>
+      <p>Every collection on Toko has a rarity model, set once at the collection level. New collections start in <strong>Uniform</strong> — no rarity at all — and you switch deliberately, with a confirmation step, because changing the model resets any rarity assignments you'd made. Rarity lives next to the collection's other promises (supply, attributes, the guardian), and like them it <strong>locks when the collection goes Live</strong>, so buyers can trust the scarcity they bought into.</p>
+
+      <h2>Three ways to do rarity</h2>
+      <p>Toko gives you three models, from “none” to “fully automatic”:</p>
+
+      <table class="cmp">
+        <thead><tr><th>Model</th><th>Who assigns the tier</th><th>Tiers</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><th>Uniform</th><td>No tiers — every token is equal.</td><td>None</td><td>Sets where scarcity isn't the point.</td></tr>
+          <tr><th>Tiered</th><td><strong>You</strong>, by hand. The system shows score guidance, but never picks for you.</td><td>Your own — custom names and colours.</td><td>Curated sets where you decide what's rare by judgement.</td></tr>
+          <tr><th>Weighted</th><td><strong>The system</strong>, deterministically, by score.</td><td>Toko's official set (see below).</td><td>Generative collections where rarity should follow the maths.</td></tr>
+        </tbody>
+      </table>
+
+      <p>With <strong>Tiered</strong>, you invent the tiers (say <em>General → Colonel → Major</em>) and place every token yourself. Toko shows each token's Final Score and its rank to help, but there's deliberately no “suggested tier” — only you know your intended criteria. With <strong>Weighted</strong>, you don't place anything: you shape a curve and the system ranks tokens by score and fills the tiers.</p>
+
+      <h2>How Weighted actually works</h2>
+      <p>Weighted uses Toko's <strong>fixed official tiers</strong>. Three are available to everyone; two more unlock later:</p>
+
+      <div class="tiers">
+        <span class="tier"><span class="sw" style="background:#64748B"></span>Common</span>
+        <span class="tier"><span class="sw" style="background:#16A34A"></span>Uncommon</span>
+        <span class="tier"><span class="sw" style="background:#2563EB"></span>Rare</span>
+        <span class="tier"><span class="sw" style="background:#7C3AED"></span>Epic <em style="font-weight:400;color:var(--text-muted)">· unlockable</em></span>
+        <span class="tier"><span class="sw" style="background:#F59E0B"></span>Legendary <em style="font-weight:400;color:var(--text-muted)">· unlockable</em></span>
+      </div>
+
+      <p>You don't set the per-tier counts directly. Instead you shape the distribution with two dials, and Toko computes the quotas read-only over your <strong>Max Supply</strong>:</p>
+      <ul>
+        <li><strong>Ratio</strong> — how much scarcer each rarer tier is than the one below it.</li>
+        <li><strong>Accelerator</strong> — how much the curve steepens toward the rarest tiers.</li>
+      </ul>
+      <p>The moment you choose Weighted, Toko applies sensible defaults — <strong>Max Supply 1,000, ratio 3, accelerator 1.0</strong> — which gives this split on the three-tier set:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">The default Weighted split — ratio 3, of 1,000</div>
+        <svg viewBox="0 0 720 56" role="img" aria-label="Common 69.2 percent, Uncommon 23.1 percent, Rare 7.7 percent">
+          <rect x="0" y="6" width="494" height="44" rx="6" fill="#64748B"/>
+          <rect x="498" y="6" width="165" height="44" rx="6" fill="#16A34A"/>
+          <rect x="667" y="6" width="53" height="44" rx="6" fill="#2563EB"/>
+          <text x="247" y="33" text-anchor="middle" fill="#fff" font-family="Mona Sans, sans-serif" font-weight="700" font-size="15">Common · 69.2%</text>
+          <text x="580" y="33" text-anchor="middle" fill="#fff" font-family="Mona Sans, sans-serif" font-weight="700" font-size="14">23.1%</text>
+          <text x="693" y="33" text-anchor="middle" fill="#fff" font-family="Mona Sans, sans-serif" font-weight="700" font-size="12">7.7%</text>
+        </svg>
+        <div class="fig-cap">≈ 692 Common · 231 Uncommon · 77 Rare. The raw tier weights are 9&nbsp;:&nbsp;3&nbsp;:&nbsp;1 — each tier a third of the one below, because the ratio is 3.</div>
+      </div>
+
+      <p>Turn the ratio up and the curve gets steeper — the rarest tier becomes much harder to land:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">What the ratio does</div>
+        <div class="ratiorow"><span class="rl">Ratio 2</span><div class="rbar"><i style="width:57.1%;background:#64748B"></i><i style="width:28.6%;background:#16A34A"></i><i style="width:14.3%;background:#2563EB"></i></div></div>
+        <div class="ratiorow"><span class="rl">Ratio 3</span><div class="rbar"><i style="width:69.2%;background:#64748B"></i><i style="width:23.1%;background:#16A34A"></i><i style="width:7.7%;background:#2563EB"></i></div></div>
+        <div class="ratiorow"><span class="rl">Ratio 8</span><div class="rbar"><i style="width:87.7%;background:#64748B"></i><i style="width:11.0%;background:#16A34A"></i><i style="width:1.4%;background:#2563EB"></i></div></div>
+        <div class="fig-cap">Same three tiers, three ratios. At ratio 8, Rare is barely 1.4% of supply. (Ratio ranges 2–8; accelerator 1.0–2.0 adds extra steepening toward the top.)</div>
+      </div>
+
+      <p>Unlocking <strong>Epic</strong> and <strong>Legendary</strong> extends the set to five tiers (weights 81&nbsp;:&nbsp;27&nbsp;:&nbsp;9&nbsp;:&nbsp;3&nbsp;:&nbsp;1 at ratio 3 ≈ 67% / 22% / 7% / 2.5% / 0.8%). The names and colours of the Weighted tiers are reserved — you tune the curve, not the labels.</p>
+
+      <h2>A tier is a budget, not a label</h2>
+      <p>This is the part that surprises people. In Weighted, a tier's quota is a <strong>mint budget</strong> — a cap on how many <em>copies</em> across that whole tier may ever be minted. It is <em>not</em> a cap on how many token definitions can carry the tier. Each definition gets exactly one tier and its own supply policy, and you're allowed to <strong>oversubscribe</strong>:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Oversubscription — by design</div>
+        <div class="defchips">
+          <span class="defchip">Frost Drake · cap 30</span>
+          <span class="defchip">Ember Drake · cap 30</span>
+          <span class="defchip">Storm Drake · cap 30</span>
+          <span class="defchip">= 90 possible</span>
+        </div>
+        <svg viewBox="0 0 720 64" role="img" aria-label="Rare budget 77 of 90 possible, 50 minted">
+          <rect x="0" y="14" width="616" height="30" rx="6" fill="#EAEAEA" stroke="#E5E5E5"/>
+          <rect x="0" y="14" width="342" height="30" rx="6" fill="#2563EB"/>
+          <line x1="616" y1="6" x2="616" y2="58" stroke="#1D1D1D" stroke-width="2" stroke-dasharray="3 3"/>
+          <text x="171" y="34" text-anchor="middle" fill="#fff" font-family="Mona Sans, sans-serif" font-weight="700" font-size="13">50 minted</text>
+          <text x="624" y="20" fill="#1D1D1D" font-family="Mona Sans, sans-serif" font-weight="700" font-size="12">Budget: 77</text>
+          <text x="624" y="40" fill="#6B6B6B" font-family="Mona Sans, sans-serif" font-size="11">27 left</text>
+        </svg>
+        <div class="fig-cap">Three Rare definitions could mint 90 copies on paper, but the Rare budget is 77. The first 77 Rare copies minted across all of them win; after that, none of those definitions can mint another, even though their own caps have room.</div>
+      </div>
+
+      <p>The budget is drawn down and enforced <strong>only at mint</strong> — first-come, in one atomic transaction — and it's frozen the moment the collection goes Live. That's what keeps the meaning of “Rare” honest no matter how many Rare definitions you author.</p>
+
+      <div class="callout callout--warn">
+        <div class="ct">The trade-off: stranded capacity</div>
+        <p>Because you can oversubscribe, you can author definitions you'll never fully mint. That's acceptable only because the Live management view always shows, per tier, <strong>budget · minted · remaining</strong> and a per-definition <strong>“mintable now”</strong> — so the limit is never a surprise.</p>
+      </div>
+
+      <h2>How a token gets its tier</h2>
+      <p>In Tiered you place tokens by hand. In Weighted, assignment is driven by a token's <strong>score</strong> and is fully deterministic — same inputs, same tiers, every time:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">From attributes to a tier (Weighted)</div>
+        <div class="flow">
+          <div class="flow-step"><span class="fs-t">Mapped values</span><span class="fs-d">numbers you assign to attributes</span></div>
+          <span class="arrow">›</span>
+          <div class="flow-step"><span class="fs-t">Attribute score</span><span class="fs-d">Add / Multiply / Highest</span></div>
+          <span class="arrow">›</span>
+          <div class="flow-step"><span class="fs-t">Final score</span><span class="fs-d">× layer multiplier</span></div>
+          <span class="arrow">›</span>
+          <div class="flow-step"><span class="fs-t">Rank</span><span class="fs-d">within the token type</span></div>
+          <span class="arrow">›</span>
+          <div class="flow-step"><span class="fs-t">Tier</span><span class="fs-d">filled by quota</span></div>
+        </div>
+        <div class="fig-cap">Ties break consistently (score, then creation order, then id), so a rebalance is reproducible. Rank is always computed <em>within a single token type</em> — types with more scoring attributes would otherwise outrank everything else.</div>
+      </div>
+
+      <p>A few rules keep this predictable. Tiers never re-shuffle in the background: only the transitioning token is auto-assigned as it moves to Review, and a collection-wide reshuffle happens <strong>only when you run an explicit Rebalance</strong>. You can also <strong>override</strong> any token to a tier by hand; an overridden token is flagged and excluded from rebalance until you undo it.</p>
+
+      <h2>What's locked, and when</h2>
+      <p>Everything that defines scarcity freezes at collection go-live: the rarity model, Max Supply, the ratio and accelerator, the unlocked tier set, and each token's tier (written once as its permanent <code>locked_tier</code>). After Live, rarity is read-only — there's no “expand supply” later, which is exactly why the curve is worth getting right before you launch. The roster still stays open: you can keep authoring and going Live with new definitions, but always against the budgets you already froze.</p>
+
+      <div class="tldr">
+        <h2>In short</h2>
+        <ul>
+          <li><strong>Rarity ≠ weighting.</strong> Weighting is how often a part appears in the art; rarity is collection scarcity policy.</li>
+          <li><strong>Three models:</strong> Uniform (none), Tiered (you assign, custom tiers), Weighted (the system assigns by score, fixed tiers).</li>
+          <li><strong>Weighted is shaped by two dials</strong> — ratio and accelerator — over Max Supply. Defaults (1,000 / 3 / 1.0) give ≈ 69% / 23% / 8%.</li>
+          <li><strong>A tier is a mint budget</strong> of copies, enforced first-come at mint. Oversubscription is allowed by design.</li>
+          <li><strong>It's deterministic and frozen.</strong> No silent re-tiering; tiers and the whole curve lock at go-live.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <div class="rl">Keep reading</div>
+        <p><a href="faq.html#for-creators">Creator FAQ</a> · Token score and scoring methods <em style="color:var(--text-muted);font-weight:400">(article coming soon)</em> · The Generator <em style="color:var(--text-muted);font-weight:400">(coming soon)</em></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>

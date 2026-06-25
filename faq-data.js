@@ -9,7 +9,8 @@
             Creators view shows    creator   + both
      cat  : category id (see `categories` below)
      q    : question (plain text)
-     a    : answer (may contain simple inline <strong> / <em>)
+     a    : answer — a template literal (`...`) of simple HTML: <p>, <ul>/<li>,
+            <strong>, <a>. Each item object MUST end with a comma.
      wip  : true if the feature is still being built / subject to change
 
    The Creators view goes deeper into the product design; the Collectors view
@@ -36,124 +37,886 @@ window.TOKO_FAQ = {
   ],
 
   items: [
+
     /* ===================== ABOUT (both) ===================== */
-    { aud: "both", cat: "about", q: "What is Toko?",
-      a: "Toko is a digital asset platform on the Internet Computer. It helps creators build, launch, hold, and trade digital collectibles. It brings together a <strong>Generator</strong> for building collectibles from layered artwork, a <strong>Wallet</strong> for holding them, a <strong>Launchpad</strong> for launching and claiming new collections, and a secondary <strong>Marketplace</strong> for peer-to-peer trading." },
-    { aud: "both", cat: "about", q: "How is Toko structured — Project, Collection, Vendor?",
-      a: "<strong>Project</strong> is the top-level creator workspace for team settings, media, whitelists, beneficiaries, and vendors. <strong>Collection</strong> is the policy boundary for one set of tokens. This is where you determine its attributes, rarity, and supply. <strong>Vendor</strong> is the “shop” that distributes your tokens.  <strong>Generators</strong> sits beside the collection.  They can optionally help you create art assets which can then be bought into one or more collections." },
-    { aud: "both", cat: "about", q: "Do I need to sign in?",
-      a: "Public surfaces (Launchpad, collection pages) are browsable, but wallet routes (“My Tokens”) are protected — you sign in with your Internet Computer identity, and ownership always resolves against your principal." },
+    {
+      aud: "both",
+      cat: "about",
+      q: "What is Toko?",
+      a: `
+        <p>
+          Toko is a digital asset platform built on the Internet Computer.
+        </p>
+        <p>
+          It gives creators the tools to create, launch, manage, and trade digital collectibles from one place.
+        </p>
+        <p>
+          Toko includes a <strong>Generator</strong> for layered artwork, a <strong>Wallet</strong> for holding assets,
+          a <strong>Launchpad</strong> for new drops, and a <strong>Marketplace</strong> for peer-to-peer trading.
+        </p>
+      `
+    },
+    {
+      aud: "both",
+      cat: "about",
+      q: "How is Toko structured — Project, Collection, Vendor?",
+      a: `
+        <p>
+          Toko is organized into three main layers:
+        </p>
+        <p>
+          <strong>Project</strong><br>
+          The top-level creator workspace. This is where teams manage media, whitelists, beneficiaries, and vendors.
+        </p>
+        <p>
+          <strong>Collection</strong><br>
+          The rule layer for a specific set of tokens. It defines things like attributes, rarity, supply, and token policy.
+        </p>
+        <p>
+          <strong>Vendor</strong><br>
+          The distribution layer. A vendor acts like a stall where tokens can be sold, claimed, or distributed.
+        </p>
+        <p>
+          The <strong>Generator</strong> sits alongside the collection. It handles the artwork, while the collection controls the rules.
+        </p>
+      `
+    },
+    {
+      aud: "both",
+      cat: "about",
+      q: "Do I need to sign in?",
+      a: `
+        <p>
+          You can browse public areas like the Launchpad and collection pages without signing in.
+        </p>
+        <p>
+          To use wallet features such as <strong>My Tokens</strong>, you need to sign in with your Internet Computer identity.
+        </p>
+        <p>
+          Once signed in, Toko checks ownership against your principal, so your tokens are linked directly to your identity.
+        </p>
+      `
+    },
 
     /* ===================== WALLET (collector) ===================== */
-    { aud: "collector", cat: "wallet", q: "Where do I see what I own?",
-      a: "In <strong>My Tokens</strong>, from the authenticated sidebar. It shows the tokens currently owned by your principal, your fungible balances (ICRC1 and NNS), and a transaction history — all in one place." },
-    { aud: "collector", cat: "wallet", q: "What can I do with a token I own?",
-      a: "Today: <strong>Transfer</strong> it to another principal, or <strong>Burn</strong> it, both with a confirmation step. Selling actions (list for sale / auction) and stack operations (split, unstack, merge, combine, compact) are designed but not finalized.", wip: true },
-    { aud: "collector", cat: "wallet", q: "Is burning reversible?",
-      a: "No. A burn is permanent and the token can't be recovered. The record is kept in ledger history (status Burned) so supply accounting and provenance stay intact." },
-    { aud: "collector", cat: "wallet", q: "What are the balances in my wallet?",
-      a: "Your fungible token balances — ICRC1 and NNS — shown with symbol/name and amount. In this version balances are <strong>view-only</strong>; sending and swapping fungibles is out of scope for now." },
-    { aud: "collector", cat: "wallet", q: "What's in the transaction history?",
-      a: "Recent transfers for both your NFTs and fungible balances: type (sent, received, mint, burn), amount, from/to principal, timestamp, and a transaction reference where available. View everything together or filter to NFT-only or fungible-only." },
-    { aud: "collector", cat: "wallet", q: "I just claimed a token — when does it appear?",
-      a: "On claim, ownership moves to your principal in the ledger and the token shows up in My Tokens on refresh/reload (or via live update where available)." },
-    { aud: "collector", cat: "wallet", q: "Why might an action be blocked?",
-      a: "Before any wallet action, Toko re-checks current ownership, status, and lock state. If something changed since the page loaded, the action fails safely with “Token state changed. Refresh and try again.” A token listed for sale is also locked against transfer/burn until you cancel the listing.", wip: true },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "Where do I see what I own?",
+      a: `
+        <p>
+          Open <strong>My Tokens</strong> from the authenticated sidebar to view everything owned by your account.
+        </p>
+        <p>
+          You'll see your NFTs, fungible token balances (ICRC1 and NNS), and your recent transaction history all in one place.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "What can I do with a token I own?",
+      a: `
+        <p>
+          You can currently:
+        </p>
+        <ul>
+          <li><strong>Transfer</strong> a token to another principal.</li>
+          <li><strong>Burn</strong> a token permanently.</li>
+        </ul>
+        <p>
+          Both actions require confirmation before they are processed.
+        </p>
+        <p>
+          Additional features such as marketplace listings, auctions, token splitting, merging, and other advanced operations are planned for future releases.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "Is burning reversible?",
+      a: `
+        <p>
+          No. Burning a token is permanent and cannot be undone.
+        </p>
+        <p>
+          The token is removed from circulation, while a historical record of the burn remains on the ledger to preserve provenance and supply tracking.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "What are the balances in my wallet?",
+      a: `
+        <p>
+          Your wallet displays the fungible tokens associated with your account, including ICRC1 and NNS balances.
+        </p>
+        <p>
+          Each balance shows the token name, symbol, and current amount held.
+        </p>
+        <p>
+          In the current release, balances are <strong>view-only</strong>. Sending, swapping, and other fungible token operations are not yet available.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "What's in the transaction history?",
+      a: `
+        <p>
+          Transaction history provides a record of recent activity across your NFTs and fungible tokens.
+        </p>
+        <p>
+          Each entry may include:
+        </p>
+        <ul>
+          <li>Transaction type (received, sent, minted, burned)</li>
+          <li>Amount or token involved</li>
+          <li>Sender and recipient principals</li>
+          <li>Timestamp</li>
+          <li>Transaction reference, where available</li>
+        </ul>
+        <p>
+          You can view all activity together or filter by asset type.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "I just claimed a token — when does it appear?",
+      a: `
+        <p>
+          Claimed tokens usually appear in <strong>My Tokens</strong> shortly after the claim is confirmed.
+        </p>
+        <p>
+          If you don't see the token immediately, refresh the page. Some areas of Toko may also update automatically when ownership changes.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "wallet",
+      q: "Why might an action be blocked?",
+      a: `
+        <p>
+          Before processing a transfer, burn, or other wallet action, Toko verifies that the token is still in a valid state.
+        </p>
+        <p>
+          An action may be blocked if:
+        </p>
+        <ul>
+          <li>Ownership has changed.</li>
+          <li>The token's status has changed.</li>
+          <li>The token is temporarily locked.</li>
+          <li>The token is listed for sale and cannot be transferred or burned.</li>
+        </ul>
+        <p>
+          If this happens, refresh the page and try again.
+        </p>
+      `
+    },
 
     /* ===================== BUYING / LAUNCHPAD (collector) ===================== */
-    { aud: "collector", cat: "launchpad", q: "What is the Launchpad?",
-      a: "The public place to discover and claim drops. The default view is a gallery of all live vendor drops, plus a Coming Soon rail and a Recently Ended rail. It's intentionally editorial and collectible-first, not a dense trading screen." },
-    { aud: "collector", cat: "launchpad", q: "What do the labels mean (Live, Coming soon, Ending soon, Sold out, Ended)?",
-      a: "They're derived from the vendor's real state: <strong>Coming soon</strong> (scheduled, before start), <strong>Live</strong> (claimable now), <strong>Ending soon</strong> (running with roughly ≤2 hours left), <strong>Sold out</strong> (inventory exhausted), and <strong>Ended</strong> (shown only during a short retention window after it finishes). Paused and faulted vendors are hidden." },
-    { aud: "collector", cat: "launchpad", q: "How do I claim a token?",
-      a: "From a vendor's Launchpad detail page. If you're eligible and the drop is live with inventory, the button reads <strong>Claim now</strong>; the claim is explicit, shows your wallet/payment context before you confirm, and consumes inventory atomically. If you're not eligible it reads <strong>View requirements</strong>." },
-    { aud: "collector", cat: "launchpad", q: "Why can't I claim — what are “requirements”?",
-      a: "Creators can attach programmable conditions to a drop: token-holding requirements, staking, an allowlist, or a per-person claim limit. If you don't meet them, the button shows View requirements instead of Claim. Eligibility is checked again live at claim time." },
-    { aud: "collector", cat: "launchpad", q: "What ranking and discovery sections exist?",
-      a: "Live vendors, Coming Soon, and Recently Ended are available today. Featured, Trending, Newest, and Recently Claimed are planned and the curation tooling isn't built yet.", wip: true },
+    {
+      aud: "collector",
+      cat: "launchpad",
+      q: "What is the Launchpad?",
+      a: `
+        <p>
+          The Launchpad is where you discover and claim new drops on Toko.
+        </p>
+        <p>
+          The default view is a gallery of all live vendor drops, alongside a Coming Soon rail and a Recently Ended rail.
+        </p>
+        <p>
+          It's designed to feel editorial and collectible-first, rather than a dense trading interface.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "launchpad",
+      q: "What do the labels mean (Live, Coming soon, Ending soon, Sold out, Ended)?",
+      a: `
+        <p>
+          Each label reflects a vendor's real state:
+        </p>
+        <ul>
+          <li><strong>Coming soon</strong> — scheduled, before its start time.</li>
+          <li><strong>Live</strong> — running and claimable now.</li>
+          <li><strong>Ending soon</strong> — running with roughly two hours or less remaining.</li>
+          <li><strong>Sold out</strong> — inventory is exhausted.</li>
+          <li><strong>Ended</strong> — finished, and shown only for a short retention window afterwards.</li>
+        </ul>
+        <p>
+          Paused and faulted vendors are hidden from the Launchpad.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "launchpad",
+      q: "How do I claim a token?",
+      a: `
+        <p>
+          Open a vendor's Launchpad detail page and, if the drop is live and you're eligible, the button reads <strong>Claim now</strong>.
+        </p>
+        <p>
+          Claiming is explicit: you'll see your wallet and payment context before confirming, and inventory is consumed atomically.
+        </p>
+        <p>
+          If you don't meet the drop's requirements, the button reads <strong>View requirements</strong> instead.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "launchpad",
+      q: "Why can't I claim — what are \"requirements\"?",
+      a: `
+        <p>
+          Creators can attach conditions to a drop, such as:
+        </p>
+        <ul>
+          <li>Holding a particular token</li>
+          <li>Staking</li>
+          <li>Being on an allowlist</li>
+          <li>A per-person claim limit</li>
+        </ul>
+        <p>
+          If you don't meet them, you'll see View requirements rather than Claim. Eligibility is always re-checked at the moment you claim.
+        </p>
+      `
+    },
+    {
+      aud: "collector",
+      cat: "launchpad",
+      q: "What ranking and discovery sections exist?",
+      a: `
+        <p>
+          Live vendors, Coming Soon, and Recently Ended are available today.
+        </p>
+        <p>
+          Featured, Trending, Newest, and Recently Claimed are planned, but the curation tooling behind them isn't built yet.
+        </p>
+      `,
+      wip: true
+    },
 
     /* ===================== TRADING / MARKETPLACE (collector, wip) ===================== */
-    { aud: "collector", cat: "marketplace", q: "What is the Marketplace?",
-      a: "Toko's peer-to-peer trading layer for already-minted tokens: collector-to-collector sales, offers, auctions, and price/provenance transparency. It's a projection over ownership and listing state, not a separate ownership system.", wip: true },
-    { aud: "collector", cat: "marketplace", q: "Is it custodial — do I hand over my token to list it?",
-      a: "No. It's <strong>non-custodial</strong>: ownership stays with you until a sale settles. While listed, the token is locked against conflicting actions; cancel the listing to act on it again. Settlement is atomic — it executes fully or fails fully.", wip: true },
-    { aud: "collector", cat: "marketplace", q: "What selling formats are planned?",
-      a: "Fixed price (Buy Now), Auction (starting bid, duration, increment, optional buy-now), and Offers (make/accept/refuse/counter). A vendor buyback is modeled as an offer in the same system. If a listing ends unsold, the seller chooses whether it returns to the wallet or burns.", wip: true },
-    { aud: "collector", cat: "marketplace", q: "How is this different from the Launchpad?",
-      a: "The <strong>Launchpad</strong> is how you participate in a drop (primary distribution). The <strong>Marketplace</strong> is how you buy/trade existing tokens (secondary). The <strong>Collection Hub</strong> is the context page that summarizes a collection and links out, rather than duplicating either interface.", wip: true },
+    {
+      aud: "collector",
+      cat: "marketplace",
+      q: "What is the Marketplace?",
+      a: `
+        <p>
+          The Marketplace is where collectors buy, sell, and trade tokens after they have been minted.
+        </p>
+        <p>
+          It provides a transparent view of listings, pricing, ownership history, and trading activity across supported collections.
+        </p>
+        <p>
+          Whether you're looking to expand your collection or sell a token you already own, the Marketplace is the place to do it.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "collector",
+      cat: "marketplace",
+      q: "Is it custodial — do I hand over my token to list it?",
+      a: `
+        <p>
+          No. Toko's Marketplace is <strong>non-custodial</strong>.
+        </p>
+        <p>
+          Your token remains in your wallet while it is listed for sale. Toko never takes ownership of your asset.
+        </p>
+        <p>
+          While a listing is active, the token is temporarily locked to prevent transfers, burns, or other conflicting actions.
+        </p>
+        <p>
+          If you cancel the listing, the token becomes fully available again.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "collector",
+      cat: "marketplace",
+      q: "What selling formats are planned?",
+      a: `
+        <p>
+          Toko is designed to support multiple ways to buy and sell tokens.
+        </p>
+        <ul>
+          <li><strong>Buy Now</strong> — Purchase immediately at a fixed price.</li>
+          <li><strong>Auctions</strong> — Competitive bidding with configurable rules.</li>
+          <li><strong>Offers</strong> — Negotiate directly with collectors through offers and counter-offers.</li>
+        </ul>
+        <p>
+          Vendor buybacks are also planned and will use the same offer system.
+        </p>
+        <p>
+          These features are still under development and may change before release.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "collector",
+      cat: "marketplace",
+      q: "How is this different from the Launchpad?",
+      a: `
+        <p>
+          The <strong>Launchpad</strong> is where new tokens are first distributed through drops and claims.
+        </p>
+        <p>
+          The <strong>Marketplace</strong> is where collectors trade tokens that are already in circulation.
+        </p>
+        <p>
+          The <strong>Collection Hub</strong> provides information about a collection and links to its Launchpad activity and Marketplace listings.
+        </p>
+        <p>
+          In short: Launchpad for new drops, Marketplace for trading, Collection Hub for discovery and context.
+        </p>
+      `,
+      wip: true
+    },
 
     /* ===================== GENERATOR (creator) ===================== */
-    { aud: "creator", cat: "generator", q: "What is the Generator for?",
-      a: "It builds the artwork. You give it ordered <strong>layers</strong> (background, body, accessories…) each holding <strong>parts</strong>, set compatibility rules, weighting and caps, then run a batch to assemble unique tokens. When you're happy, you <strong>pin</strong> the keepers and <strong>export</strong> them into a collection. The Generator deliberately does not assign rarity or score — those are collection policy." },
-    { aud: "creator", cat: "generator", q: "What does “deterministic / replayable” mean, exactly?",
-      a: "Output is a pure function of <code>configHash</code>, <code>seed</code>, batch type, target count and any CSV input. The same inputs always reproduce the same tokens, and if any input changes the output changes. No duplicate part-combinations occur within a batch, and every export carries a <strong>locked snapshot</strong> (batch id, seed, config hash, layers/parts, weights, compatibility rules, caps, asset versions) so a result can always be audited or replayed." },
-    { aud: "creator", cat: "generator", q: "How does weighting work, and is weighting the same as rarity?",
-      a: "No — this is the key distinction. Generator <strong>weighting</strong> only controls how often a part is picked (composition/frequency). Collection <strong>rarity</strong> is a separate policy about how rare a finished token is. Part weights use presets — Very Infrequent (1), Infrequent (2), <strong>Balanced (3, the default)</strong>, Frequent (5), Very Frequent (8) — or custom numbers. Per-part caps are batch-scoped only, never collection-wide scarcity." },
-    { aud: "creator", cat: "generator", q: "What can the Generator produce in one run, and how do parts combine?",
-      a: "Three batch types: a limited number, a single token, or generate from a CSV (download a template, fill it in, upload and validate). Assembly evaluates each layer's inclusion (<code>always</code> or <code>optional_with_probability</code>), picks parts by weighted choice, then validates compatibility (requires/excludes part or layer) and caps, rejecting invalid candidates until the target count of valid, unique tokens is reached." },
-    { aud: "creator", cat: "generator", q: "How do tokens get from the Generator into a collection?",
-      a: "Only through the Generator's export path — there's no separate import wizard. You preview, pin the keepers, and export the pinned set. Imported tokens arrive in <strong>Draft</strong> with composition/provenance attached. A collection links to a single generator source; once linked, imports from other generators are rejected. The export hands over composition evidence the attribute system can later map into derived values." },
+    {
+      aud: "creator",
+      cat: "generator",
+      q: "What is the Generator for?",
+      a: `
+        <p>
+          The Generator helps you create large collections of unique artwork from layered assets.
+        </p>
+        <p>
+          Upload and organize layers such as backgrounds, bodies, clothing, and accessories, then define how those parts can appear together.
+        </p>
+        <p>
+          Once configured, the Generator assembles unique tokens automatically. You can review the results, pin your favourites, and export them directly into a collection.
+        </p>
+        <p>
+          The Generator is responsible for creating artwork. Collection settings such as rarity and distribution are managed separately.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "generator",
+      q: "What does deterministic generation mean?",
+      a: `
+        <p>
+          Deterministic generation means the same inputs always produce the same results.
+        </p>
+        <p>
+          If you generate a batch using the same configuration, seed, and source data, Toko will recreate the exact same tokens every time.
+        </p>
+        <p>
+          Every export includes a locked snapshot of the settings used to create it, making collections easy to audit, verify, and reproduce in the future.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "generator",
+      q: "How does weighting work? Is weighting the same as rarity?",
+      a: `
+        <p>
+          No. Weighting and rarity are intentionally separate concepts.
+        </p>
+        <p>
+          <strong>Weighting</strong> controls how often a part appears during generation. For example, a hat with a higher weight is more likely to be selected than a hat with a lower weight.
+        </p>
+        <p>
+          <strong>Rarity</strong> is defined at the collection level and determines how uncommon a finished token is considered to be.
+        </p>
+        <p>
+          Toko includes simple weighting presets ranging from Very Infrequent to Very Frequent, or you can provide custom values for finer control.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "generator",
+      q: "What can the Generator create?",
+      a: `
+        <p>
+          The Generator supports several creation workflows:
+        </p>
+        <ul>
+          <li>Create a full batch of unique tokens.</li>
+          <li>Generate a single token for testing.</li>
+          <li>Create tokens from a CSV file using predefined values.</li>
+        </ul>
+        <p>
+          During generation, Toko selects parts from each layer, applies weighting rules, checks compatibility requirements, and ensures every generated token is unique.
+        </p>
+        <p>
+          Invalid combinations are automatically rejected until the desired number of valid tokens has been produced.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "generator",
+      q: "How do tokens move from the Generator into a collection?",
+      a: `
+        <p>
+          Tokens are added to collections through the Generator's export process.
+        </p>
+        <p>
+          After generating artwork, review the results, pin the tokens you want to keep, and export them directly into a collection.
+        </p>
+        <p>
+          Exported tokens arrive as <strong>Draft</strong> items with their generation history and composition data attached.
+        </p>
+        <p>
+          Each collection is linked to a single Generator source, ensuring provenance remains clear and consistent throughout the collection's lifecycle.
+        </p>
+      `
+    },
 
     /* ===================== COLLECTIONS (creator) ===================== */
-    { aud: "creator", cat: "collections", q: "What are the collection stages, and what changes between them?",
-      a: "<strong>Draft → Review → Live.</strong> Draft is creator configuration (freely editable). Review is publicly reviewable but still editable. Live is production: core policy locks. A token can only go Live after its collection is Live." },
-    { aud: "creator", cat: "collections", q: "What freezes when a collection goes Live?",
-      a: "At go-live the budget basis and policy lock: <strong>Max Supply</strong>, rarity type, ratio/accelerator, the unlocked tier set, any definition-count cap, guardian permissions, supply caps, and attributes. Only aesthetic fields stay editable (description, thumbnail, banner) plus issue/copy-number display defaults for future vendors. There's no post-live “expand supply” — set it right before go-live. The roster stays open, though: new definitions can still be authored and set Live against the already-frozen budgets." },
-    { aud: "creator", cat: "collections", q: "What is the Guardian?",
-      a: "A set of collection-scoped, buyer-facing promises: whether the collection allows duplicate tokens, token destruction, transfer restrictions, and sale restrictions. They're guarantees collectors can rely on, locked at Live. (Today these are largely UI configuration + warnings; full backend enforcement of the invariants is still being completed.)" },
-    { aud: "creator", cat: "collections", q: "How do supply and issue numbering work?",
-      a: "Supply policy sets a total cap, a max number of unique tokens, and max copies per token. <strong>Issue numbers</strong> belong to the token definition (not each copy), are assigned in live-order at <strong>Review → Live</strong>, then locked and never reused. Each copy also gets an immutable <code>copy_sequence</code>. Display options: Hidden (default), Show issue only, or Show issue and supply when capped — non-stackable multi-copy tokens can additionally show a copy number." },
-    { aud: "creator", cat: "collections", q: "Can I delete a collection?",
-      a: "Only if no token has been minted yet (with an explicit confirmation). Once any token is minted, deletion is blocked." },
+    {
+      aud: "creator",
+      cat: "collections",
+      q: "What are the collection stages?",
+      a: `
+        <p>
+          Collections move through three stages:
+        </p>
+        <ul>
+          <li><strong>Draft</strong> — Build and configure your collection. Everything remains editable.</li>
+          <li><strong>Review</strong> — Make the collection publicly viewable while continuing to refine it.</li>
+          <li><strong>Live</strong> — Publish the collection and lock its core rules.</li>
+        </ul>
+        <p>
+          A token can only be made <strong>Live</strong> after its collection has reached the <strong>Live</strong> stage.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "collections",
+      q: "What changes when a collection goes Live?",
+      a: `
+        <p>
+          Going <strong>Live</strong> permanently locks the collection's core policies and supply rules.
+        </p>
+        <p>
+          This includes settings such as:
+        </p>
+        <ul>
+          <li>Maximum supply</li>
+          <li>Rarity configuration</li>
+          <li>Attribute definitions</li>
+          <li>Supply limits and distribution rules</li>
+          <li>Guardian settings</li>
+        </ul>
+        <p>
+          Visual content such as descriptions, thumbnails, and banners can still be updated after launch.
+        </p>
+        <p>
+          New token definitions can also be added later, but they must operate within the collection rules that were locked when the collection went live.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "collections",
+      q: "What is the Guardian?",
+      a: `
+        <p>
+          The <strong>Guardian</strong> defines the promises your collection makes to collectors.
+        </p>
+        <p>
+          These settings determine whether tokens can be duplicated, destroyed, transferred, or sold under specific conditions.
+        </p>
+        <p>
+          Once a collection goes <strong>Live</strong>, Guardian settings are locked so collectors can rely on those guarantees.
+        </p>
+        <p>
+          Some Guardian rules are currently informational while full backend enforcement continues to be developed.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "collections",
+      q: "How do supply and issue numbers work?",
+      a: `
+        <p>
+          Collections can define limits on total supply, the number of unique token definitions, and the number of copies that can exist for each token.
+        </p>
+        <p>
+          Each token definition receives a permanent <strong>issue number</strong> when it moves from <strong>Review</strong> to <strong>Live</strong>.
+        </p>
+        <p>
+          Issue numbers are assigned once, never change, and are never reused.
+        </p>
+        <p>
+          Individual copies also receive their own immutable copy identifier, allowing collectors to distinguish between multiple copies of the same token.
+        </p>
+        <p>
+          Creators can choose whether issue and copy numbers are displayed to collectors.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "collections",
+      q: "Can I delete a collection?",
+      a: `
+        <p>
+          Yes, but only if no tokens have been minted from the collection.
+        </p>
+        <p>
+          Once a token has been minted, the collection becomes part of the permanent record and can no longer be deleted.
+        </p>
+        <p>
+          Deleting a collection always requires confirmation before the action is completed.
+        </p>
+      `
+    },
 
     /* ===================== ATTRIBUTES (creator) ===================== */
-    { aud: "creator", cat: "attributes", q: "What are attributes, token types, and traits?",
-      a: "Attributes are the schema of properties tokens can have, authored at the <strong>collection</strong> level (not in the Generator). A <strong>token type</strong> groups tokens that share an attribute set; traits are the specific values. Generator composition is <em>evidence</em> the attribute system maps into derived attribute values via the Generator Mapping surface — the Generator itself never stores attributes on parts." },
-    { aud: "creator", cat: "attributes", q: "How do attributes become a token's score?",
-      a: "On the Attributes page you map attribute values to numbers (Apply Values) and choose a calculation method — <strong>Add Values</strong>, <strong>Multiply</strong>, or <strong>Highest</strong>. Missing/unmapped values are excluded (not treated as 0 unless you map them to 0). That produces the attribute score, which feeds the final token score. Whether the score is shown to collectors is a separate per-collection visibility setting." },
+    {
+      aud: "creator",
+      cat: "attributes",
+      q: "What are attributes, token types, and traits?",
+      a: `
+        <p>
+          Attributes are the properties a token can have. They're defined at the <strong>collection</strong> level, not in the Generator.
+        </p>
+        <p>
+          A <strong>token type</strong> groups tokens that share the same set of attributes, and traits are the specific values those attributes take.
+        </p>
+        <p>
+          Artwork composition from the Generator is treated as evidence that the attribute system can map into attribute values — the Generator never stores attributes directly.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "attributes",
+      q: "How do attributes become a token's score?",
+      a: `
+        <p>
+          On the Attributes page you assign numeric values to attribute options, then choose how they combine.
+        </p>
+        <p>
+          Three calculation methods are available: <strong>Add Values</strong>, <strong>Multiply</strong>, and <strong>Highest</strong>.
+        </p>
+        <p>
+          Unmapped values are simply skipped — they aren't counted as zero unless you explicitly map them to zero. The result becomes the token's attribute score, which feeds its overall score.
+        </p>
+      `
+    },
 
     /* ===================== RARITY (creator) ===================== */
-    { aud: "creator", cat: "rarity", q: "What rarity models are there?",
-      a: "Three, set at the collection level; every collection starts in <strong>Uniform</strong>. <strong>Uniform</strong> treats all tokens equally. <strong>Tiered</strong> lets you define your own tiers (names + colours fully custom) and assign manually — the system shows Final Score and Score Rank as non-binding guidance but offers no “suggested tier”. <strong>Weighted</strong> uses Toko's fixed official tiers (Common, Uncommon, Rare by default; Epic and Legendary unlockable) and assigns deterministically by score. Switching models requires explicit confirmation and resets rarity outputs." },
-    { aud: "creator", cat: "rarity", q: "How is the Weighted distribution decided?",
-      a: "By a <strong>ratio</strong> (how much scarcer each rarer tier is than the one below) and an <strong>accelerator</strong> (curve steepness). Per-tier quotas are computed read-only from those over Max Supply — you tune the curve, not raw quotas. Defaults the moment you choose Weighted: <strong>Max Supply 1,000, ratio 3, accelerator 1.0</strong>, giving roughly Common 69% / Uncommon 23% / Rare 8% on the 3-tier set." },
-    { aud: "creator", cat: "rarity", q: "What does a Weighted tier quota actually limit, and when is it enforced?",
-      a: "A quota is a <strong>mint budget</strong> — a cap on how many <em>copies</em> across the whole tier may ever be minted, not a cap on how many definitions carry that tier. Each definition gets exactly one tier and its own supply. Oversubscription is allowed: you can author more “Rare” definitions than the Rare budget can mint. The budget is drawn down and enforced <strong>only at mint</strong>, first-come, in one atomic transaction; it's frozen at collection go-live. The Live view shows budget · minted · remaining and a per-definition “mintable now”." },
-    { aud: "creator", cat: "rarity", q: "Will my tiers change on their own?",
-      a: "No. There's no silent background re-tiering. On <code>Draft → Review</code> only the transitioning token is auto-assigned; collection-wide redistribution happens only when you run an explicit <strong>Rebalance</strong>. A manual per-row override pins a token to a tier (and excludes it from rebalance) until you undo it, and is frozen as the token's <code>locked_tier</code> at go-live." },
+    {
+      aud: "creator",
+      cat: "rarity",
+      q: "What rarity models are there?",
+      a: `
+        <p>
+          Rarity is set at the collection level, and every collection starts in <strong>Uniform</strong>.
+        </p>
+        <ul>
+          <li><strong>Uniform</strong> — every token is treated as equal.</li>
+          <li><strong>Tiered</strong> — you define your own tiers and assign them by hand; the system shows score guidance but never picks for you.</li>
+          <li><strong>Weighted</strong> — Toko's fixed official tiers (Common, Uncommon, Rare, with Epic and Legendary unlockable), assigned automatically by score.</li>
+        </ul>
+        <p>
+          Switching models requires confirmation and resets any rarity assignments you'd made. For a full walkthrough, see the <a href="learn-rarity.html">Rarity article</a>.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "rarity",
+      q: "How is the Weighted distribution decided?",
+      a: `
+        <p>
+          You shape the curve with two dials, and Toko computes the per-tier quotas over your Max Supply:
+        </p>
+        <ul>
+          <li><strong>Ratio</strong> — how much scarcer each rarer tier is than the one below it.</li>
+          <li><strong>Accelerator</strong> — how steeply the curve bends toward the rarest tiers.</li>
+        </ul>
+        <p>
+          The defaults (Max Supply 1,000, ratio 3, accelerator 1.0) produce roughly 69% Common, 23% Uncommon, and 8% Rare.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "rarity",
+      q: "What does a Weighted tier quota actually limit?",
+      a: `
+        <p>
+          A tier's quota is a <strong>mint budget</strong> — a cap on how many copies across that whole tier can ever be minted.
+        </p>
+        <p>
+          It is not a cap on how many token definitions can carry the tier. You can author more "Rare" definitions than the Rare budget allows.
+        </p>
+        <p>
+          The budget is enforced only at mint, first-come, and it's frozen when the collection goes Live.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "rarity",
+      q: "Will my tiers change on their own?",
+      a: `
+        <p>
+          No. Toko never re-tiers tokens silently in the background.
+        </p>
+        <p>
+          A collection-wide redistribution only happens when you run an explicit <strong>Rebalance</strong>.
+        </p>
+        <p>
+          You can also override any token's tier by hand; an overridden token is excluded from rebalances until you undo it, and its tier locks permanently when the collection goes Live.
+        </p>
+      `
+    },
 
     /* ===================== TOKEN SCORE (creator) ===================== */
-    { aud: "creator", cat: "score", q: "How is a token's score calculated?",
-      a: "<code>final_score = attribute_score × layer_multiplier</code>. The attribute score comes from the numbers you mapped to attributes, combined by the collection's method (Add Values / Multiply / Highest). The layer multiplier scales by generator-layer weighting authored on the Layer Multipliers tab (it's 1.0 when no generator is linked). Adding more tokens never changes an existing token's score unless that token's own inputs changed." },
-    { aud: "creator", cat: "score", q: "Is score the same as rank?",
-      a: "No. <strong>Score Rank</strong> is always computed within a single token type, never across the whole collection — a type with five scoring attributes would otherwise systematically outscore one with a single attribute. Multi-type collections get a token-type filter on the assignment/scoring tables, and the copy spells out the scope (“Score Rank is within Character · 312 tokens”)." },
-    { aud: "creator", cat: "score", q: "What is a “stale score” and why does it block go-live?",
-      a: "Every token is <code>fresh</code> or <code>stale_score</code>. A score goes stale when an input changes — composition or attribute values (while Draft), the value→number mapping, the layer-weight config, or the calculation method. The UI flags it, and a token <strong>can't move Review → Live while stale</strong> (or while a recompute runs), so live tokens always reflect their current inputs. A bulk Refresh all stale exists; it can partially fail and reports per-token results." },
-    { aud: "creator", cat: "score", q: "Is the score always visible to collectors?",
-      a: "No — score visibility is a separate per-collection setting, orthogonal to the rarity model." },
+    {
+      aud: "creator",
+      cat: "score",
+      q: "How is a token's score calculated?",
+      a: `
+        <p>
+          A token's final score is its attribute score multiplied by a layer multiplier.
+        </p>
+        <p>
+          The attribute score comes from the numbers you map onto attributes, combined using Add Values, Multiply, or Highest.
+        </p>
+        <p>
+          The layer multiplier scales the result based on generator-layer weighting. When no generator is linked it's 1.0, so the final score simply equals the attribute score. For a full breakdown, see the <a href="learn-score.html">Token score article</a>.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "score",
+      q: "Is score the same as rank?",
+      a: `
+        <p>
+          No. Score is a number; rank is a token's position relative to others.
+        </p>
+        <p>
+          Rank is always calculated <strong>within a single token type</strong>, never across the whole collection — otherwise types with more scoring attributes would dominate the top tiers.
+        </p>
+        <p>
+          The interface always shows the scope, for example "Score Rank is within Character · 312 tokens".
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "score",
+      q: "What is a \"stale score\"?",
+      a: `
+        <p>
+          A score is "stale" when something that feeds it has changed and it hasn't been recalculated yet.
+        </p>
+        <p>
+          Triggers include editing composition or attribute values, changing the value mapping, adjusting layer weights, or switching the calculation method.
+        </p>
+        <p>
+          A token can't move from <strong>Review</strong> to <strong>Live</strong> while its score is stale, so live tokens always reflect their current inputs. A bulk refresh recomputes all stale scores at once.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "score",
+      q: "Is the score always visible to collectors?",
+      a: `
+        <p>
+          No. Whether a token's score is shown to collectors is a separate, per-collection setting, independent of the rarity model.
+        </p>
+      `
+    },
 
     /* ===================== VENDORS (creator) ===================== */
-    { aud: "creator", cat: "vendors", q: "What is a vendor?",
-      a: "A distribution mechanism — the configured “shop” that hands tokens to collectors, with its own storefront, lifecycle, inventory, costs, rules, and revenue. Its inventory is backed by <strong>minted</strong> tokens, not draft definitions." },
-    { aud: "creator", cat: "vendors", q: "Are vendors per-collection or per-project?",
-      a: "Vendors are <strong>project-scoped</strong>: a single vendor can distribute minted tokens from several of a project's collections. Revenue templates are project-level and claim defaults are collection-level. Each vendor settles and holds buyback proceeds from its own subaccount." },
-    { aud: "creator", cat: "vendors", q: "What vendor types are there?",
-      a: "<strong>Market</strong> vendors (sell specific tokens) launch first. <strong>Gacha</strong> and GachaRwa (randomized “mystery pull”) are designed but deferred and feature-gated off until a later release — so at launch, expect Market vendors only." },
-    { aud: "creator", cat: "vendors", q: "How do Gacha vendors work?",
-      a: "A claim returns a randomly selected reward from the vendor's prize pool. Two draw modes: <strong>uniform lucky dip</strong> (equal chance per available unit) or <strong>weighted</strong> (odds from <code>configured_weight × available_quantity</code>, so they shift as inventory changes). The full prize pool — including sold-out entries — is always visible, draws are deterministic and fully audited (replayable from the recorded seed inputs), with optional reveal moments. Not in the first launch.", wip: true },
-    { aud: "creator", cat: "vendors", q: "How do I control who can claim, and how much?",
-      a: "Vendors support claim costs (by tier), requirements (holdings, staking, allowlist — evaluated per tier), restrictions, and rewards, plus per-principal limits. Tier rules inherit from lower tiers where higher entries are missing, and allowlists come from your project whitelists." },
-    { aud: "creator", cat: "vendors", q: "What is the vendor lifecycle?",
-      a: "Two axes: a stage (Draft / Review / Live) and a runtime status (setup, running, paused, empty, ended, faulted). You can start, pause, resume, restart, or stop a vendor. There's no separate vendor approval gate — go-live validation happens per token at Review → Live. When a vendor stops, unclaimed inventory either <strong>returns</strong> to inventory or is <strong>burned</strong>, per its termination policy." },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "What is a vendor?",
+      a: `
+        <p>
+          A vendor is a distribution mechanism — the configured "shop" that hands tokens to collectors.
+        </p>
+        <p>
+          Each vendor has its own storefront, lifecycle, inventory, costs, rules, and revenue settings.
+        </p>
+        <p>
+          A vendor's inventory is backed by minted tokens, not draft definitions.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "Are vendors per-collection or per-project?",
+      a: `
+        <p>
+          Vendors are <strong>project-scoped</strong>. A single vendor can distribute minted tokens from several of a project's collections.
+        </p>
+        <p>
+          Revenue templates are managed at the project level, while claim defaults are managed at the collection level.
+        </p>
+        <p>
+          Each vendor settles payments — and holds any buyback proceeds — from its own account.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "What vendor types are there?",
+      a: `
+        <p>
+          <strong>Market</strong> vendors, which sell specific tokens, are available first.
+        </p>
+        <p>
+          <strong>Gacha</strong> and <strong>GachaRwa</strong> vendors, which distribute randomized rewards, are designed but deferred to a later release.
+        </p>
+        <p>
+          At launch, expect Market vendors only.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "How do Gacha vendors work?",
+      a: `
+        <p>
+          A claim returns a randomly selected reward from the vendor's prize pool.
+        </p>
+        <p>
+          There are two draw modes: <strong>uniform lucky dip</strong> (equal chance per available unit) and <strong>weighted</strong> (odds based on configured weight and remaining quantity).
+        </p>
+        <p>
+          The full prize pool — including sold-out entries — is always visible, and every draw is deterministic and fully auditable. Gacha is not part of the first launch.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "How do I control who can claim, and how much?",
+      a: `
+        <p>
+          Vendors support claim costs by tier, along with requirements, restrictions, and rewards.
+        </p>
+        <p>
+          Requirements can include holdings, staking, or allowlist membership, and are evaluated per tier. Higher tiers inherit rules from lower tiers where they aren't set explicitly.
+        </p>
+        <p>
+          Allowlists come from your project's whitelists, and you can also set per-person claim limits.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "What is the vendor lifecycle?",
+      a: `
+        <p>
+          A vendor has a stage (Draft, Review, Live) and a runtime status (setup, running, paused, empty, ended, faulted).
+        </p>
+        <p>
+          You can start, pause, resume, restart, or stop a vendor. There's no separate vendor approval step — validation happens per token at Review to Live.
+        </p>
+        <p>
+          When a vendor stops, any unclaimed inventory is either returned to inventory or burned, depending on its termination policy.
+        </p>
+      `
+    },
 
     /* ===================== REVENUE (creator) ===================== */
-    { aud: "creator", cat: "revenue", q: "How does revenue work?",
-      a: "Through <strong>Revenue Presets</strong> — named, project-level split templates authored in <em>Project → Revenue presets</em>. A vendor <strong>must select a Live preset</strong> at creation, which copies the values onto the vendor as a snapshot; editing the preset later doesn't change vendors already using it. Claim presets ship first; Sale presets are a future tab." },
-    { aud: "creator", cat: "revenue", q: "What's in a revenue split?",
-      a: "Fees off the top — <strong>Project / cycles funding</strong> (required, ~1–10%, funds your project canister) and an optional <strong>Toko contribution</strong> (0–10%) — plus optional <strong>royalties</strong> to your <strong>beneficiaries</strong>. Per-royalty cap ~10%, total royalties ≤ ~20%, and non-project allocations ≤ ~40%. Only <strong>Live beneficiaries</strong> can receive royalties; to pay yourself, add yourself as a beneficiary. (Percentages are current design values.)" },
-    { aud: "creator", cat: "revenue", q: "Can royalties change over time?",
-      a: "Yes. Each royalty runs <strong>Forever</strong> or for a <strong>fixed period</strong> (1/3/6/9/12/24 months) with a <strong>taper</strong> — No taper, Cliff, Linear, or Curve — that changes the effective percent across the period. The taper clock starts when the vendor first goes Running." },
-    { aud: "creator", cat: "revenue", q: "What is a buyback?",
-      a: "An offer from a vendor to buy a token back, configured at the <strong>vendor</strong> level (not in the revenue preset) — a vendor percentage in roughly the 1–20% range over a set duration. It runs through the same shared offer system as marketplace offers, and proceeds are held in the vendor subaccount until release." }
+    {
+      aud: "creator",
+      cat: "revenue",
+      q: "How does revenue work?",
+      a: `
+        <p>
+          Revenue is configured through <strong>Revenue Presets</strong> — named, project-level split templates created in Project &rarr; Revenue presets.
+        </p>
+        <p>
+          When creating a vendor, you select a Live preset, and its values are copied onto the vendor as a snapshot.
+        </p>
+        <p>
+          Editing a preset later doesn't change vendors that already use it. Claim presets are available first; Sale presets are a future addition.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "revenue",
+      q: "What's in a revenue split?",
+      a: `
+        <p>
+          A split takes fees off the top, then optional royalties:
+        </p>
+        <ul>
+          <li><strong>Project / cycles funding</strong> — required, roughly 1–10%, which funds your project canister.</li>
+          <li><strong>Toko contribution</strong> — optional, 0–10%.</li>
+          <li><strong>Royalties</strong> — optional, paid to your beneficiaries.</li>
+        </ul>
+        <p>
+          Individual royalties are capped around 10%, total royalties around 20%, and non-project allocations around 40%. Only Live beneficiaries can receive royalties — to pay yourself, add yourself as a beneficiary.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "revenue",
+      q: "Can royalties change over time?",
+      a: `
+        <p>
+          Yes. Each royalty can run <strong>Forever</strong> or for a <strong>fixed period</strong> (1, 3, 6, 9, 12, or 24 months).
+        </p>
+        <p>
+          A fixed-period royalty uses a taper — No taper, Cliff, Linear, or Curve — that changes the effective percentage across the period.
+        </p>
+        <p>
+          The taper clock starts when the vendor first goes Running.
+        </p>
+      `
+    },
+    {
+      aud: "creator",
+      cat: "revenue",
+      q: "What is a buyback?",
+      a: `
+        <p>
+          A buyback is an offer from a vendor to buy a token back from a collector.
+        </p>
+        <p>
+          It's configured at the vendor level — not in the revenue preset — as a vendor percentage (roughly 1–20%) over a set duration.
+        </p>
+        <p>
+          Buybacks run through the same shared offer system as the marketplace, and proceeds are held in the vendor's account until release.
+        </p>
+      `
+    }
+
   ]
 };

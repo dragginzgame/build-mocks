@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Weighting isn't rarity — Toko Learn</title>
+<meta name="description" content="A 25-second animated explainer of the one thing people mix up on Toko: generator weighting (how often a part appears) versus rarity (how scarce a finished token is)." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .player{position:relative; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; margin-top:var(--s-6);}
+  .stage{position:relative; aspect-ratio:16/9; min-height:300px;}
+  .scene{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:var(--s-8); opacity:0; pointer-events:none; transition:opacity .5s ease;}
+  .scene.show{opacity:1; pointer-events:auto;}
+
+  /* intro */
+  .s-intro .eyebrow{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.16em; text-transform:uppercase; color:var(--brand-cyan); margin-bottom:.6rem;}
+  .s-intro h2{font-size:var(--text-5xl); line-height:1.02;}
+  .s-intro h2 .neq{color:var(--text-muted);}
+  .s-intro p{color:var(--text-secondary); margin-top:var(--s-4); font-size:var(--text-base); max-width:38ch;}
+
+  /* explain scene */
+  .cap{min-height:3.4em; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xl); line-height:1.4; max-width:30ch; color:var(--text-primary);}
+  .cap em{font-style:normal; color:var(--brand-cyan);}
+  .cap .sub{display:block; font-weight:400; font-size:var(--text-sm); color:var(--text-muted); margin-top:.4rem;}
+  .cap.in{animation:capIn .5s ease;}
+  @keyframes capIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+  .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; width:min(360px,72%); margin-top:var(--s-5); transition:opacity .5s ease, filter .5s ease;}
+  .tile{aspect-ratio:1; border-radius:10px; border:3px solid var(--border-soft); background:var(--surface-canvas-alt); display:grid; place-items:center; font-size:1.35rem; opacity:0; transform:translateY(10px) scale(.92); transition:opacity .45s ease, transform .45s ease, border-color .6s ease;}
+  #explain.show .tile{opacity:1; transform:none;}
+  .tile .g{line-height:1;}
+  .tile[data-trait="plain"] .g{color:#94A3B8;}
+  .tile[data-trait="special"] .g{color:#F59E0B;}
+  #explain.tiers .tile[data-tier="common"]{border-color:var(--t-common);}
+  #explain.tiers .tile[data-tier="uncommon"]{border-color:var(--t-uncommon);}
+  #explain.tiers .tile[data-tier="rare"]{border-color:var(--t-rare);}
+  #explain.focus .grid{opacity:.16; filter:grayscale(.4);}
+
+  /* focus pair */
+  .focus{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:var(--s-10); opacity:0; pointer-events:none; transition:opacity .55s ease;}
+  #explain.focus .focus{opacity:1;}
+  .ex{display:flex; flex-direction:column; align-items:center; gap:.55rem;}
+  .ex .big{width:92px; height:92px; border-radius:16px; border:4px solid; display:grid; place-items:center; font-size:2.4rem; background:var(--surface-canvas); box-shadow:0 14px 36px -18px rgba(0,0,0,.4);}
+  .ex .lab{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); line-height:1.4;}
+  .ex .lab .part{color:var(--text-secondary);}
+  .ex .lab .tier{display:block;}
+
+  /* summary scene */
+  .s-sum .cap2{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xl); max-width:24ch; margin-bottom:var(--s-5);}
+  .panels{display:flex; gap:var(--s-4); width:min(520px,90%);}
+  .panel{flex:1; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5) var(--s-4);}
+  .panel .pe{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted);}
+  .panel h3{font-size:var(--text-xl); margin:.3rem 0;}
+  .panel p{font-size:var(--text-xs); color:var(--text-secondary); margin:0;}
+  .panel.w{border-top:3px solid #94A3B8;}
+  .panel.r{border-top:3px solid var(--t-rare);}
+
+  /* controls */
+  .controls{display:flex; align-items:center; gap:var(--s-4); padding:var(--s-4) var(--s-5); border-top:1px solid var(--border-soft);}
+  .progress{flex:1; height:4px; background:var(--surface-canvas-deep); border-radius:99px; overflow:hidden;}
+  .progress i{display:block; height:100%; width:0; background:var(--text-primary);}
+  .replay{display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); background:var(--text-primary); color:#fff; border:0;}
+  .replay svg{width:15px; height:15px;}
+
+  @media (max-width:560px){
+    .s-intro h2{font-size:var(--text-4xl);}
+    .focus{gap:var(--s-5);}
+    .ex .big{width:74px; height:74px; font-size:2rem;}
+    .panels{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn-rarity.html">← Rarity</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts · 25 sec</div>
+      <h1>Weighting isn't rarity.</h1>
+      <p class="dek">The single thing people mix up most — watch how a part's frequency in the art is completely separate from how rare the finished token is.</p>
+    </header>
+
+    <div class="player">
+      <div class="stage" id="stage">
+
+        <!-- 1 · intro -->
+        <div class="scene s-intro" id="intro">
+          <div class="eyebrow">Two things, often confused</div>
+          <h2>Weighting <span class="neq">≠</span> Rarity</h2>
+          <p>One shapes the art. The other is the collection's call. Here's the difference.</p>
+        </div>
+
+        <!-- 2-4 · explain -->
+        <div class="scene s-explain" id="explain">
+          <div class="cap" id="cap"></div>
+          <div class="grid" id="grid">
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.04s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.10s"><span class="g">●</span></div>
+            <div class="tile" data-trait="special" data-tier="common"   style="transition-delay:.16s"><span class="g">★</span></div>
+            <div class="tile" data-trait="plain"   data-tier="uncommon" style="transition-delay:.22s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.28s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.34s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="rare"     style="transition-delay:.40s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.46s"><span class="g">●</span></div>
+            <div class="tile" data-trait="special" data-tier="uncommon" style="transition-delay:.52s"><span class="g">★</span></div>
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.58s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="uncommon" style="transition-delay:.64s"><span class="g">●</span></div>
+            <div class="tile" data-trait="plain"   data-tier="common"   style="transition-delay:.70s"><span class="g">●</span></div>
+          </div>
+          <div class="focus" id="focus">
+            <div class="ex">
+              <div class="big" style="border-color:var(--t-rare)"><span style="color:#94A3B8">●</span></div>
+              <div class="lab"><span class="part">Plain hat</span><span class="tier" style="color:var(--t-rare)">Rare token</span></div>
+            </div>
+            <div class="ex">
+              <div class="big" style="border-color:var(--t-common)"><span style="color:#F59E0B">★</span></div>
+              <div class="lab"><span class="part">Gold hat</span><span class="tier" style="color:var(--t-common)">Common token</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 · summary -->
+        <div class="scene s-sum" id="summary">
+          <div class="cap2">Weighting shapes the art. Rarity is the collection's call.</div>
+          <div class="panels">
+            <div class="panel w"><div class="pe">Generator</div><h3>Weighting</h3><p>How often a part appears in the artwork.</p></div>
+            <div class="panel r"><div class="pe">Collection</div><h3>Rarity</h3><p>How scarce the finished token is.</p></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="controls">
+        <div class="progress"><i id="bar"></i></div>
+        <button class="replay" id="replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay</button>
+      </div>
+    </div>
+
+    <!-- static summary: meaningful without the animation, and for SEO -->
+    <div class="prose" style="margin-top:var(--s-10)">
+      <h2 style="font-size:var(--text-2xl); margin-bottom:var(--s-4)">The short version</h2>
+      <p><strong>Weighting</strong> lives in the Generator. It only controls how <em>often</em> a part is chosen when artwork is assembled — a higher weight means a part shows up more frequently. In the animation, only 2 of 12 tokens rolled the gold hat, because the gold hat had a low weight.</p>
+      <p><strong>Rarity</strong> lives in the collection. It's a separate policy about how <em>scarce</em> a finished token is — its tier (Common, Uncommon, Rare…). The collection assigns tiers; the artwork doesn't.</p>
+      <p>Because they're independent, a token with a <strong>common part</strong> can still be a <strong>rare token</strong>, and a token with a flashy, infrequent part can sit in the <strong>Common</strong> tier. Don't reach for weighting to make something rare — set the rarity. For the full picture, read the <a href="learn-rarity.html">Rarity article</a>.</p>
+    </div>
+
+    <div class="related">
+      <div class="rl">Keep reading</div>
+      <p><a href="learn-rarity.html">Rarity</a> · <a href="learn-score.html">Token score</a> · <a href="faq.html#for-creators">Creator FAQ</a></p>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+  <script>
+  (function () {
+    var stage   = document.getElementById("stage");
+    var intro   = document.getElementById("intro");
+    var explain = document.getElementById("explain");
+    var summary = document.getElementById("summary");
+    var cap     = document.getElementById("cap");
+    var bar     = document.getElementById("bar");
+    var replay  = document.getElementById("replay");
+
+    var TOTAL = 23500;
+    var timers = [];
+
+    function setCap(html){
+      cap.classList.remove("in");
+      void cap.offsetWidth;
+      cap.innerHTML = html;
+      cap.classList.add("in");
+    }
+    function show(el){ el.classList.add("show"); }
+    function hide(el){ el.classList.remove("show"); }
+
+    function reset(){
+      timers.forEach(clearTimeout); timers = [];
+      [intro, explain, summary].forEach(hide);
+      explain.classList.remove("tiers", "focus");
+      cap.classList.remove("in"); cap.innerHTML = "";
+      bar.style.transition = "none"; bar.style.width = "0%";
+    }
+    function at(ms, fn){ timers.push(setTimeout(fn, ms)); }
+
+    function play(){
+      reset();
+      // progress bar
+      requestAnimationFrame(function(){
+        bar.style.transition = "width " + TOTAL + "ms linear";
+        bar.style.width = "100%";
+      });
+
+      show(intro);
+      at(2600, function(){ hide(intro); show(explain);
+        setCap('<em>Weighting</em> controls how <strong>often</strong> a part appears in the art.<span class="sub">Only 2 of 12 rolled the gold hat — that\'s a low weight.</span>'); });
+      at(8200, function(){ explain.classList.add("tiers");
+        setCap('<em>Rarity</em> is how <strong>scarce</strong> the finished token is.<span class="sub">The collection assigns the tier — not the artwork.</span>'); });
+      at(13800, function(){ explain.classList.add("focus");
+        setCap('So they\'re <strong>independent</strong> —<span class="sub">same token, two separate things:</span>'); });
+      at(19000, function(){ hide(explain); show(summary); });
+    }
+
+    var reduce = false;
+    try { reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+
+    if (reduce) {
+      // no motion: just show the summary state
+      show(summary);
+      bar.style.width = "100%";
+    } else {
+      play();
+    }
+    replay.addEventListener("click", play);
+  })();
+  </script>
+</body>
+</html>

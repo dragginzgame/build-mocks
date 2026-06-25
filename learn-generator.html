@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How the Generator works — Toko Learn</title>
+<meta name="description" content="How Toko's Generator turns layered parts into a unique, reproducible collection: layers and parts, weighting and caps, compatibility, the assembly loop, and deterministic export — without ever touching rarity." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .stack{display:flex; align-items:center; gap:var(--s-6); flex-wrap:wrap; justify-content:center;}
+  .layers{display:flex; flex-direction:column; gap:.4rem;}
+  .layer{display:flex; align-items:center; gap:var(--s-3); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.5rem .8rem; min-width:230px;}
+  .layer .ln{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); flex:1;}
+  .layer .parts{display:flex; gap:.3rem;}
+  .layer .pt{width:16px; height:16px; border-radius:4px;}
+  .stack .arrow{font-family:var(--font-display); font-size:var(--text-3xl); color:var(--text-muted);}
+  .result{width:120px; height:120px; border-radius:var(--r-3); border:1px solid var(--border-soft); background:linear-gradient(135deg,#5d7a52,#2f3d29); display:grid; place-items:center; color:#fff; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); text-align:center;}
+  .wt{display:flex; flex-direction:column; gap:.45rem;}
+  .wtrow{display:flex; align-items:center; gap:var(--s-3);}
+  .wtrow .wl{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); width:120px; flex:none; color:var(--text-secondary);}
+  .wtrow .wb{flex:1; height:18px; background:var(--surface-canvas-deep); border-radius:5px; overflow:hidden;}
+  .wtrow .wb i{display:block; height:100%; background:var(--brand-cyan);}
+  .wtrow .wn{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); width:26px; text-align:right;}
+  .loop{display:flex; flex-wrap:wrap; align-items:stretch; gap:.4rem;}
+  .loop .step{flex:1 1 130px; min-width:120px; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:.7rem .8rem; font-size:var(--text-xs);}
+  .loop .step b{font-family:var(--font-emphasis); display:block; color:var(--text-primary);}
+  .loop .arrow{align-self:center; color:var(--text-muted); font-weight:700;}
+  .formula{background:var(--surface-canvas-deep); border-radius:var(--r-3); padding:var(--s-5); text-align:center; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-base); color:var(--text-primary); line-height:1.7;}
+  .formula b{color:var(--info);}
+  @media (max-width:560px){ .wtrow .wl{width:92px;} }
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>How the Generator works.</h1>
+      <p class="dek">How Toko turns layered parts into a collection of unique, reproducible tokens — and why it never touches rarity or score.</p>
+      <div class="meta"><span>Generator</span><span class="dot"></span><span>~7 min read</span><span class="dot"></span><span>Creator-leaning</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">The Generator is the machine in the corner of the workshop. You give it layered artwork and a set of rules, and it assembles hundreds of unique tokens. Its job is the <strong>art</strong> — what each token looks like. It deliberately leaves rarity, scoring and supply to the collection.</p>
+
+      <h2>The building blocks: layers and parts</h2>
+      <p>A generator is a stack of ordered <strong>layers</strong> (background, body, clothing, accessories…), and each layer holds <strong>parts</strong> — the individual images that can fill it. To build a token, the Generator picks one part from each layer and stacks them up.</p>
+
+      <div class="fig">
+        <div class="fig-ttl">One part per layer, stacked into a token</div>
+        <div class="stack">
+          <div class="layers">
+            <div class="layer"><span class="ln">Accessory</span><span class="parts"><i class="pt" style="background:#f59e0b"></i><i class="pt" style="background:#db2777"></i><i class="pt" style="background:#94a3b8"></i></span></div>
+            <div class="layer"><span class="ln">Clothing</span><span class="parts"><i class="pt" style="background:#2563eb"></i><i class="pt" style="background:#16a34a"></i><i class="pt" style="background:#7c3aed"></i></span></div>
+            <div class="layer"><span class="ln">Body</span><span class="parts"><i class="pt" style="background:#65a30d"></i><i class="pt" style="background:#0891b2"></i></span></div>
+            <div class="layer"><span class="ln">Background</span><span class="parts"><i class="pt" style="background:#fde68a"></i><i class="pt" style="background:#bfdbfe"></i></span></div>
+          </div>
+          <span class="arrow">→</span>
+          <div class="result">one unique token</div>
+        </div>
+        <div class="fig-cap">A layer can be set to appear <code>always</code> or only <code>optionally</code> with a probability — so not every token needs an accessory. Parts within a layer must have unique names.</div>
+      </div>
+
+      <h2>Steering the mix: weighting and caps</h2>
+      <p>Each part carries a <strong>weight</strong> that controls how often it's chosen. Higher weight, more frequent. You can use simple presets or custom numbers:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">Weighting presets</div>
+        <div class="wt">
+          <div class="wtrow"><span class="wl">Very Infrequent</span><span class="wb"><i style="width:12%"></i></span><span class="wn">1</span></div>
+          <div class="wtrow"><span class="wl">Infrequent</span><span class="wb"><i style="width:25%"></i></span><span class="wn">2</span></div>
+          <div class="wtrow"><span class="wl">Balanced</span><span class="wb"><i style="width:38%"></i></span><span class="wn">3</span></div>
+          <div class="wtrow"><span class="wl">Frequent</span><span class="wb"><i style="width:62%"></i></span><span class="wn">5</span></div>
+          <div class="wtrow"><span class="wl">Very Frequent</span><span class="wb"><i style="width:100%"></i></span><span class="wn">8</span></div>
+        </div>
+        <div class="fig-cap">New parts default to <strong>Balanced (3)</strong>. You can also set a per-part <strong>cap</strong> — an absolute number or a percent of the batch — to stop a part appearing too many times. Caps are <em>batch-scoped</em> only; they're not collection-wide scarcity.</div>
+      </div>
+
+      <div class="callout callout--key">
+        <div class="ct">Weighting is not rarity</div>
+        <p>Weighting only changes how often a part appears in the artwork. It is not how rare the finished token is — that's the collection's separate rarity policy. <a href="learn-weighting-vs-rarity.html">Watch the 25-second explainer →</a></p>
+      </div>
+
+      <h2>Keeping it sensible: compatibility rules</h2>
+      <p>Some combinations don't make sense — a snorkel with a spacesuit, maybe. <strong>Compatibility rules</strong> let a part require or exclude another part, or a whole layer. The Generator validates your rules up front, flagging contradictions, self-references, missing targets, unreachable selections, and duplicate part names, so a batch can't get stuck.</p>
+
+      <h2>The assembly loop</h2>
+      <p>For every token, the Generator runs the same loop, rejecting anything invalid until it has the number of valid, unique tokens you asked for:</p>
+
+      <div class="fig">
+        <div class="fig-ttl">How one token is built</div>
+        <div class="loop">
+          <div class="step"><b>Include?</b> evaluate each layer (always / by probability)</div>
+          <span class="arrow">›</span>
+          <div class="step"><b>Pick</b> a part per layer by weighted choice</div>
+          <span class="arrow">›</span>
+          <div class="step"><b>Check</b> compatibility + caps</div>
+          <span class="arrow">›</span>
+          <div class="step"><b>Valid &amp; unique?</b> keep it — otherwise reject and retry</div>
+        </div>
+        <div class="fig-cap">No two tokens in a batch share the same part-combination — duplicates are rejected automatically.</div>
+      </div>
+
+      <h2>Deterministic and replayable</h2>
+      <p>The Generator's output is a pure function of its inputs. The same configuration, seed and source data always reproduce the exact same tokens — and if any input changes, the output changes.</p>
+
+      <div class="fig">
+        <div class="fig-ttl">What determines the output</div>
+        <div class="formula">output = f( <b>config hash</b>, <b>seed</b>, <b>batch type</b>, <b>target count</b>, <b>CSV input?</b> )</div>
+        <div class="fig-cap">Every export also carries a <strong>locked snapshot</strong> — batch id, seed, config hash, the layers/parts, weights, compatibility rules, caps and asset versions — so any result can be audited, verified, or reproduced later.</div>
+      </div>
+
+      <h2>Three ways to run a batch</h2>
+      <ul>
+        <li><strong>Limited number</strong> — generate a set count of unique tokens.</li>
+        <li><strong>Single token</strong> — generate one, handy for testing a setup.</li>
+        <li><strong>From a CSV</strong> — download a template, fill in the exact parts you want, upload and validate.</li>
+      </ul>
+
+      <h2>Curate, pin, export</h2>
+      <p>After a run you preview the results, <strong>pin</strong> the keepers, and <strong>export</strong> the pinned set into a collection. That export is the <em>only</em> path from the Generator into a collection — there's no separate import wizard. Exported tokens arrive as <strong>Draft</strong> with their composition and provenance attached, and a collection links to a <strong>single</strong> generator source, so its history stays clean.</p>
+
+      <div class="callout">
+        <div class="ct">Where the Generator stops</div>
+        <p>The Generator makes the art and nothing else. It doesn't assign rarity, attribute desirability, scores, or collection-wide scarcity — those are the collection's job. Keeping the two apart is what lets you re-roll art without disturbing the rules buyers rely on.</p>
+      </div>
+
+      <div class="tldr">
+        <h2>In short</h2>
+        <ul>
+          <li><strong>Layers + parts:</strong> the Generator picks one part per layer and stacks them into a unique token.</li>
+          <li><strong>Weighting</strong> sets how often a part appears (presets 1–8, default Balanced 3); <strong>caps</strong> limit a part per batch.</li>
+          <li><strong>Compatibility rules</strong> keep nonsensical combinations out; duplicates are rejected.</li>
+          <li><strong>Deterministic:</strong> same config + seed + inputs → identical tokens, with a locked snapshot for audit.</li>
+          <li><strong>It makes art, not rules</strong> — export pins into a collection as Draft; rarity and score are set there.</li>
+        </ul>
+      </div>
+
+      <div class="related">
+        <div class="rl">Keep reading</div>
+        <p><a href="learn-weighting-vs-rarity.html">Weighting vs rarity</a> · <a href="learn-rarity.html">Rarity</a> · <a href="learn-score.html">Token score</a> · <a href="faq.html#for-creators">Creator FAQ</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>
