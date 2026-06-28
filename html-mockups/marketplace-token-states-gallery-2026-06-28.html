@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Marketplace token (Buy) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --notify-success:#10B981; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* buttons — style-guide canonical */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; transition:transform 80ms ease, opacity 120ms ease; }
+  .btn:hover { opacity:.9; } .btn:active { transform:translateY(1px); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--lg { padding:13px 20px; font-size:var(--text-base); width:100%; }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn--block { width:100%; }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+  .btn svg { width:15px; height:15px; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+
+  /* context bar / section */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .princ .id { font-family:ui-monospace,Menlo,Consolas,monospace; }
+  .section { padding:var(--s-8); }
+
+  /* buy grid (mirrors claim view) */
+  .buy-grid { display:grid; grid-template-columns:1fr 360px; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .buy-grid { grid-template-columns:1fr; } }
+  .asset-col > div + .dcard { margin-top:var(--s-5); }
+  .asset-main { aspect-ratio:1/1; border-radius:var(--r-3); border:1px solid var(--border-soft); overflow:hidden; background:linear-gradient(135deg,#60a5fa,#1e3a8a); max-width:520px; }
+  .asset-main img { width:100%; height:100%; object-fit:cover; }
+  .ring-rare { border:6px solid #2F80ED; } .ring-epic { border:6px solid #8F3DFF; } .ring-legendary { border:6px solid #FCD34D; }
+  .asset-thumbs { display:flex; gap:var(--s-2); margin-top:var(--s-3); flex-wrap:wrap; }
+  .asset-thumb { width:54px; height:54px; border-radius:var(--r-2); border:2px solid transparent; overflow:hidden; padding:0; } .asset-thumb img{ width:100%;height:100%;object-fit:cover; }
+  .asset-thumb[aria-pressed="true"] { border-color:var(--border-strong); }
+
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dhead h3 { font-size:var(--text-2xl); } .dhead .sub { font-size:var(--text-sm); color:var(--text-secondary); margin-top:.25rem; display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; }
+  .rname { font-weight:700; }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv .k { color:var(--text-secondary); } .kv .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
+  .dsec { margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .dsec > .eyebrow { display:block; margin-bottom:var(--s-3); }
+  .about { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); font-size:var(--text-md); line-height:1.65; margin:0; }
+  .attrs { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:var(--s-2); }
+  .attr { border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); padding:.55rem .7rem; }
+  .attr .t { font-size:var(--text-3xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .attr .v { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .hist { display:flex; flex-direction:column; }
+  .hrow { display:flex; align-items:center; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .hrow:first-child { border-top:0; }
+  .hrow .ev { display:inline-flex; align-items:center; gap:.4rem; font-weight:700; font-family:var(--font-emphasis); min-width:78px; }
+  .hrow .ev .d { width:8px; height:8px; border-radius:50%; }
+  .ev.sale .d{background:var(--stage-live);} .ev.list .d{background:var(--brand-cyan);} .ev.mint .d{background:#8F3DFF;}
+  .hrow .pr { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .hrow .who { color:var(--text-secondary); font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); margin-left:auto; }
+  .hrow .tm { color:var(--text-muted); font-size:var(--text-xs); min-width:48px; text-align:right; }
+
+  /* buy panel (mirrors claim panel) */
+  .buy-panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .vend { display:flex; align-items:center; gap:var(--s-3); padding-bottom:var(--s-4); margin-bottom:var(--s-4); border-bottom:1px solid var(--border-soft); }
+  .vend .vlogo { width:40px; height:40px; border-radius:var(--r-2); background:linear-gradient(135deg,#60a5fa,#1e3a8a); flex:none; }
+  .vend .vn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .vend .vs { font-size:var(--text-xs); color:var(--text-secondary); }
+  .lbadge { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; margin-bottom:var(--s-4); }
+  .lbadge .dot { width:6px;height:6px;border-radius:50%;background:currentColor; }
+  .lbadge--listed { background:rgba(6,176,230,.14); color:#0782a8; }
+  .lbadge--owner { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .lbadge--unlisted { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .price-row .lbl { font-size:var(--text-xs); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .price { font-family:var(--font-display); font-size:var(--text-3xl); letter-spacing:.02em; } .price .u { font-size:var(--text-lg); color:var(--text-secondary); }
+  .pfiat { font-size:var(--text-sm); color:var(--text-secondary); margin-top:.15rem; }
+  .lmeta { margin-top:var(--s-4); }
+  .lmeta .row { display:flex; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .lmeta .row .k { color:var(--text-secondary); } .lmeta .row .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cta-wrap { margin-top:var(--s-5); display:flex; flex-direction:column; gap:var(--s-2); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--err { background:rgba(239,68,68,.09); color:#8a2020; } .note--err .ic { color:var(--notify-error); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note strong { color:inherit; }
+
+  /* modal stage */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-6); width:100%; max-width:840px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.single { max-width:460px; margin:0 auto; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .mini-asset { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; overflow:hidden; } .mini-asset .mart img{ width:100%;height:100%;object-fit:cover; }
+  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-base); }
+  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+  .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.55rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; } .paykv.total .v { font-size:var(--text-lg); }
+
+  /* related rail — approved token card (mini, with rarity border) */
+  .rel-head { display:flex; align-items:baseline; justify-content:space-between; margin:var(--s-6) 0 var(--s-3); }
+  .rel-head h3 { font-size:var(--text-2xl); } .rel-head a { color:var(--info); font-weight:700; font-size:var(--text-sm); }
+  .rel-rail { display:grid; grid-auto-flow:column; grid-auto-columns:158px; gap:var(--s-3); overflow-x:auto; padding-bottom:var(--s-3); }
+  .rarity-frame { display:block; position:relative; padding:6px; border-radius:12px; background:var(--border-soft); }
+  .rarity-frame--common{background:#E6E6E6;} .rarity-frame--uncommon{background:#2ECC71;} .rarity-frame--rare{background:#2F80ED;} .rarity-frame--epic{background:#8F3DFF;} .rarity-frame--legendary{background:#FCD34D;}
+  .tcard { background:#fff; border-radius:7px; overflow:hidden; display:block; }
+  .tcard .art { aspect-ratio:1/1; background:var(--surface-canvas-deep); overflow:hidden; } .tcard .art img { width:100%; height:100%; object-fit:cover; display:block; }
+  .tcard .m { padding:.45rem .6rem; } .tcard .nm { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.04em; font-size:var(--text-base); } .tcard .pr { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); margin-top:.1rem; }
+
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Secondary market</span>
+    <h1>Marketplace token (buy) — states gallery</h1>
+    <p>The buyer-facing token view on the secondary marketplace. It deliberately mirrors the launchpad <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">claim view</a> — same large viewer, same side panel, same confirm-before-settle modal and result — so buying feels identical to claiming. The difference is the panel: a fixed-price secondary listing (price, floor, last sale) instead of a vendor drop. v1 is Buy&nbsp;Now only — no bidding, no offers. Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
+    <div class="navlinks">Reached from <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a>. Related: <a href="marketplace-list-states-gallery-2026-06-28.html">List for sale</a> · <a href="my-tokens-states-gallery-2026-06-22.html">My Tokens</a></div>
+  </header>
+
+  <!-- 01 · listed & buyable -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Listed &amp; buyable — Buy now</span><span class="d">A token listed for a fixed price by another holder. The viewer is on the left with full identity, attributes and market history; the buy panel on the right carries the seller, the price, collection floor and last sale, the listing expiry, and the primary <strong>Buy now</strong> CTA. Price/availability are a cached hint — re-validated at settlement.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><a>Crystal Birds</a><span class="sep">/</span><span class="here">Aurora Finch #12</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="buy-grid">
+          <div class="asset-col">
+            <div>
+              <div class="asset-main ring-rare"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div>
+              <div class="asset-thumbs"><button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></button><button class="asset-thumb"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></button><button class="asset-thumb"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></button></div>
+              <p class="tiny" style="margin-top:.6rem">Main asset shown large. Click a thumbnail to view it — assets are read-only.</p>
+            </div>
+            <div class="dcard">
+              <div class="dhead"><h3>Aurora Finch #12</h3><div class="sub">Crystal Birds <span class="rname" style="color:#2F80ED">Rare</span> · <span>Score 812</span></div></div>
+              <div class="dsec"><span class="eyebrow">Description</span><p class="about">A mineral songbird from Aviary Labs, deterministically generated from layered artwork. Creator-written flavour and lore travel with the token wherever it goes.</p></div>
+              <div class="dsec"><span class="eyebrow">Attributes</span><div class="attrs"><div class="attr"><div class="t">Background</div><div class="v">Aurora</div></div><div class="attr"><div class="t">Wings</div><div class="v">Crystalline</div></div><div class="attr"><div class="t">Beak</div><div class="v">Gold</div></div><div class="attr"><div class="t">Eyes</div><div class="v">Starlit</div></div></div></div>
+              <div class="dsec"><span class="eyebrow">Token</span><div class="kv"><span class="k">Collection</span><span class="v">Crystal Birds</span></div><div class="kv"><span class="k">Ledger canister</span><span class="v mono">rrkah…fqaaq</span></div><div class="kv"><span class="k">Issue number</span><span class="v">#12 / 500</span></div><div class="kv"><span class="k">Owner</span><span class="v mono">k9aa…2vtt</span></div></div>
+              <div class="dsec"><span class="eyebrow">Market history</span><div class="hist"><div class="hrow"><span class="ev list"><span class="d"></span>Listing</span><span class="pr">8.5 ICP</span><span class="who">k9aa…2vtt</span><span class="tm">2d</span></div><div class="hrow"><span class="ev sale"><span class="d"></span>Sale</span><span class="pr">7.2 ICP</span><span class="who">b3c2…9pqr</span><span class="tm">9d</span></div><div class="hrow"><span class="ev sale"><span class="d"></span>Sale</span><span class="pr">5.0 ICP</span><span class="who">e9f0…3def</span><span class="tm">1mo</span></div><div class="hrow"><span class="ev mint"><span class="d"></span>Mint</span><span class="pr">3.0 ICP</span><span class="who">Leaf Drop</span><span class="tm">2mo</span></div></div></div>
+            </div>
+          </div>
+          <aside class="buy-panel">
+            <div class="vend"><span class="vlogo"></span><span><div class="vn">Listed by k9aa…2vtt</div><div class="vs">Secondary listing · Crystal Birds</div></span></div>
+            <span class="lbadge lbadge--listed"><span class="dot"></span>Listed · fixed price</span>
+            <div class="price-row"><span class="lbl">Buy now price</span></div>
+            <div class="price">8.5 <span class="u">ICP</span></div>
+            <div class="pfiat">≈ $74.00</div>
+            <div class="lmeta"><div class="row"><span class="k">Collection floor</span><span class="v">7.5 ICP</span></div><div class="row"><span class="k">Last sale</span><span class="v">7.2 ICP</span></div><div class="row"><span class="k">Listing expires</span><span class="v">in 5 days</span></div><div class="row"><span class="k">If unsold</span><span class="v">Returns to seller</span></div></div>
+            <div class="cta-wrap"><button class="btn btn--lg">Buy now · 8.5 ICP</button><p class="tiny" style="text-align:center;margin:0">Pays from your connected wallet. You'll confirm before anything settles.</p></div>
+          </aside>
+        </div>
+        <div class="rel-head"><h3>More from Crystal Birds</h3><a href="marketplace-states-gallery-2026-06-28.html">View all →</a></div>
+        <div class="rel-rail">
+          <a class="rarity-frame rarity-frame--uncommon"><div class="tcard"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="m"><div class="nm">Quartz Wren</div><div class="pr">7.9 ICP</div></div></div></a>
+          <a class="rarity-frame rarity-frame--common"><div class="tcard"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="m"><div class="nm">Jade Tit</div><div class="pr">7.5 ICP</div></div></div></a>
+          <a class="rarity-frame rarity-frame--legendary"><div class="tcard"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="m"><div class="nm">Amber Lark</div><div class="pr">22 ICP</div></div></div></a>
+          <a class="rarity-frame rarity-frame--epic"><div class="tcard"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="m"><div class="nm">Opal Swift</div><div class="pr">9.1 ICP</div></div></div></a>
+          <a class="rarity-frame rarity-frame--rare"><div class="tcard"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="m"><div class="nm">Rose Finch</div><div class="pr">8.0 ICP</div></div></div></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · you own it -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">You own this token</span><span class="d">When the viewer is the current owner, the panel swaps the buy action for owner actions — the primary move is <strong>List for sale</strong> (opens the listing flow). Floor and last sale stay visible for pricing context. Same viewer on the left, condensed here.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Little Leaf #014</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="buy-grid">
+          <div class="asset-col">
+            <div>
+              <div class="asset-main ring-rare"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div>
+              <div class="asset-thumbs"><button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></button></div>
+            </div>
+            <div class="dcard"><div class="dhead"><h3>Little Leaf #014</h3><div class="sub">Little Leaf Guardians <span class="rname" style="color:#2F80ED">Rare</span> · <span>Score 812</span></div></div><div class="dsec" style="border-top:0;margin-top:var(--s-4);padding-top:var(--s-4)"><div class="kv" style="border-top:0"><span class="k">Issue number</span><span class="v">#014 / 500</span></div><div class="kv"><span class="k">Holding</span><span class="v">Single (1 of 1)</span></div></div></div>
+          </div>
+          <aside class="buy-panel">
+            <div class="vend"><span class="vlogo"></span><span><div class="vn">You own this</div><div class="vs">Held by k1m9…7uvw</div></span></div>
+            <span class="lbadge lbadge--owner"><span class="dot"></span>Yours · not listed</span>
+            <div class="lmeta" style="margin-top:0"><div class="row" style="border-top:0"><span class="k">Collection floor</span><span class="v">7.5 ICP</span></div><div class="row"><span class="k">Last sale</span><span class="v">7.2 ICP</span></div></div>
+            <div class="cta-wrap"><a class="btn btn--lg" href="marketplace-list-states-gallery-2026-06-28.html">List for sale</a><a class="btn btn--secondary btn--block" href="my-tokens-states-gallery-2026-06-22.html">Manage in My Tokens</a></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · unlisted -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Unlisted — no active listing</span><span class="d">A token held by someone else with no live listing. It's still fully browsable (identity, rarity, provenance), but there's nothing to buy. Since v1 has no offers, the panel simply states it isn't for sale and shows market context. Buyer offers are a later release.</span></div>
+    <div class="showcase">
+      <div class="buy-panel">
+        <div class="vend"><span class="vlogo" style="background:linear-gradient(135deg,#fbbf24,#b45309)"></span><span><div class="vn">Held by e9f0…3def</div><div class="vs">Solara · Sun Sprite #003</div></span></div>
+        <span class="lbadge lbadge--unlisted"><span class="dot"></span>Not listed</span>
+        <div class="price-row"><span class="lbl">Not for sale</span></div>
+        <div class="price" style="font-size:var(--text-xl);color:var(--text-secondary)">No active listing</div>
+        <div class="lmeta"><div class="row"><span class="k">Collection floor</span><span class="v">12 ICP</span></div><div class="row"><span class="k">Last sale</span><span class="v">19 ICP</span></div></div>
+        <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>The owner hasn't listed this. Making an offer isn't available in v1 — it's planned for a later release.</div></div>
+      </div>
+      <div class="buy-panel">
+        <span class="eyebrow">Reference · panel by state</span>
+        <div class="lmeta" style="margin-top:var(--s-3)"><div class="row" style="border-top:0"><span class="k">Listed (other holder)</span><span class="v">Buy now</span></div><div class="row"><span class="k">You own it</span><span class="v">List for sale</span></div><div class="row"><span class="k">Unlisted</span><span class="v">No action</span></div><div class="row"><span class="k">Sold mid-purchase</span><span class="v">Clean fail</span></div></div>
+        <p class="tiny" style="margin-top:var(--s-3)">The panel is the only part that changes between states — the viewer, attributes and history stay identical, exactly like the claim view.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · buy confirm -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Buy confirm — wallet &amp; payment context</span><span class="d">Buying is explicit and user-confirmed, identical in shape to the claim confirm. Before anything settles the modal restates what's bought and what's paid from the connected wallet, including the running balance. On confirm, settlement is atomic and ownership transfers to the buyer.</span></div>
+    <div class="stage">
+      <div class="modal-card single">
+        <header><h4>Confirm purchase</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Aurora Finch #12</div><div class="ms">Crystal Birds · Rare · listed by k9aa…2vtt</div></span></div>
+          <div><div class="paykv"><span>Price</span><span class="v">8.5000 ICP</span></div><div class="paykv"><span>Network fee</span><span class="v">0.0001 ICP</span></div><div class="paykv total"><span>Total</span><span class="v">8.5001 ICP</span></div></div>
+          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Paying from <span class="mono">k1m9…7uvw</span> · balance 48.20 ICP → 39.70 ICP after. Price and availability are re-checked before settlement.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Confirm &amp; buy</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · result -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Buy result — success &amp; sold-during-purchase</span><span class="d">On success the token transfers to the wallet with a direct link to view it. If it sold between page load and confirm (the race the spec calls out), the purchase fails safely with nothing charged and a route to similar listings — never a silent failure or a double-charge.</span></div>
+    <div class="stage">
+      <div class="modal-grid">
+        <div class="modal-card">
+          <header><h4>Purchased</h4><span class="x">✕</span></header>
+          <div class="mbody"><div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>It's yours.</strong> Aurora Finch #12 has transferred to your wallet for 8.5 ICP.</div></div><div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Aurora Finch #12</div><div class="ms">Crystal Birds · Rare</div></span></div></div>
+          <div class="footer-row"><button class="btn btn--ghost">Keep browsing</button><button class="btn">View in My Tokens</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Just missed it</h4><span class="x">✕</span></header>
+          <div class="mbody"><div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>This was bought before your purchase settled.</strong> Nothing was charged. Similar copies may be listed in the collection.</div></div></div>
+          <div class="footer-row"><button class="btn btn--ghost">Back to token</button><button class="btn">See similar listings</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · guards -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Guards — insufficient funds &amp; listing expired</span><span class="d">Buyer-funds and listing validity are checked at confirm. Not enough balance blocks the buy and points to the wallet; a listing that expired or was cancelled in the meantime resolves to a clean, no-charge dead-end with a route back to browse.</span></div>
+    <div class="showcase">
+      <div class="modal-card single" style="box-shadow:none">
+        <header><h4>Confirm purchase</h4><span class="x">✕</span></header>
+        <div class="mbody"><div><div class="paykv"><span>Price</span><span class="v">8.5000 ICP</span></div><div class="paykv"><span>Your balance</span><span class="v" style="color:var(--notify-error)">2.10 ICP</span></div></div><div class="note note--err"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not enough ICP</strong> to cover this purchase + fees.</div></div></div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Add funds</button></div>
+      </div>
+      <div class="modal-card single" style="box-shadow:none">
+        <header><h4>Listing unavailable</h4><span class="x">✕</span></header>
+        <div class="mbody"><div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>This listing is no longer available.</strong> It expired or was cancelled. Nothing was charged.</div></div></div>
+        <div class="footer-row"><button class="btn btn--ghost">Back to collection</button><button class="btn">See similar listings</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Marketplace · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; transition:transform 80ms ease, opacity 120ms ease; }
+  .btn:hover { opacity:.9; } .btn:active { transform:translateY(1px); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn svg { width:15px; height:15px; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .princ .id { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+
+  .controls { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .search { position:relative; flex:1; min-width:200px; }
+  .search svg { position:absolute; left:.7rem; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-muted); }
+  .search input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem .625rem 2.1rem; font:inherit; font-size:var(--text-base); }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .sortsel { height:38px; padding:0 1.6rem 0 .7rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas); font:inherit; font-size:var(--text-sm); font-weight:600; }
+
+  /* featured hero carousel */
+  .carousel{position:relative;width:100%;border-radius:var(--r-4);overflow:hidden;background:#161616;aspect-ratio:16/5;min-height:260px;box-shadow:0 10px 40px -12px rgba(0,0,0,0.45);user-select:none;}
+  @media(max-width:720px){.carousel{aspect-ratio:4/5;min-height:380px;}}
+  .carousel .track{position:absolute;inset:0;display:flex;transition:transform 600ms cubic-bezier(0.4,0,0.2,1);will-change:transform;}
+  .carousel .slide{position:relative;flex:0 0 100%;width:100%;height:100%;background-size:cover;background-position:center;display:flex;align-items:center;}
+  .carousel .slide::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.62) 0%,rgba(0,0,0,0.42) 38%,rgba(0,0,0,0.05) 70%,rgba(0,0,0,0) 100%);}
+  @media(max-width:720px){.carousel .slide{align-items:flex-end;} .carousel .slide::before{background:linear-gradient(0deg,rgba(0,0,0,0.78) 0%,rgba(0,0,0,0.45) 45%,rgba(0,0,0,0.05) 100%);}}
+  .carousel .slide-content{position:relative;z-index:1;color:#fff;padding:clamp(20px,4vw,48px);max-width:600px;}
+  .carousel .slide-eyebrow{font-family:var(--font-emphasis);font-weight:700;text-transform:uppercase;letter-spacing:2px;font-size:.75rem;color:#F59E0B;margin:0 0 8px;display:inline-flex;align-items:center;gap:.5rem;}
+  .carousel .slide-eyebrow .pill{background:var(--brand-cyan);color:#001318;padding:1px 8px;border-radius:var(--r-pill);letter-spacing:.1em;}
+  .carousel .slide-title{font-family:var(--font-display);font-weight:400;line-height:0.98;letter-spacing:0.5px;text-transform:uppercase;font-size:clamp(28px,4.5vw,52px);margin:0 0 10px;text-shadow:0 2px 18px rgba(0,0,0,0.35);}
+  .carousel .slide-body{font-size:clamp(13px,1.4vw,16px);line-height:1.45;max-width:46ch;margin:0 0 18px;color:rgba(255,255,255,0.92);text-shadow:0 1px 10px rgba(0,0,0,0.4);}
+  .carousel .slide-cta{display:inline-flex;align-items:center;background:#fff;color:#1D1D1D;font-family:var(--font-emphasis);font-weight:700;letter-spacing:.04em;font-size:.8125rem;padding:.55rem 1rem;border-radius:var(--r-pill);transition:opacity 120ms ease;}
+  .carousel .slide-cta:hover{opacity:.9;}
+  .carousel .nav-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:40px;height:40px;border:none;border-radius:var(--r-pill);background:rgba(255,255,255,0.9);color:#0A0A0A;cursor:pointer;display:grid;place-items:center;font-size:1.25rem;transition:background 150ms ease, transform 150ms ease;box-shadow:0 4px 14px -4px rgba(0,0,0,0.4);}
+  .carousel .nav-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.06);}
+  .carousel .nav-arrow.prev{left:14px;} .carousel .nav-arrow.next{right:14px;}
+  @media(max-width:720px){.carousel .nav-arrow{width:34px;height:34px;top:auto;bottom:54px;transform:none;} .carousel .nav-arrow:hover{transform:scale(1.06);} .carousel .nav-arrow.prev{left:10px;} .carousel .nav-arrow.next{right:10px;}}
+  .carousel .dots{position:absolute;z-index:3;right:18px;bottom:14px;display:flex;gap:7px;}
+  @media(max-width:720px){.carousel .dots{left:0;right:0;bottom:16px;justify-content:center;}}
+  .carousel .dot{width:8px;height:8px;padding:0;border:none;border-radius:var(--r-pill);background:rgba(255,255,255,0.45);cursor:pointer;transition:width 250ms ease, background 250ms ease;}
+  .carousel .dot.active{width:24px;background:#F59E0B;}
+  .carousel .progress{position:absolute;left:0;bottom:0;z-index:3;height:3px;width:100%;background:rgba(255,255,255,0.12);}
+  .carousel .progress>span{display:block;height:100%;width:0%;background:#F59E0B;}
+  .carousel .progress.hidden{display:none;}
+  @media(prefers-reduced-motion:reduce){.carousel .track{transition:none;}}
+
+  /* browse layout: filter rail + grid */
+  .browse { display:grid; grid-template-columns:230px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .browse { grid-template-columns:1fr; } .frail { display:none; } }
+  .frail { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-4) var(--s-5); }
+  .fgroup { border-top:1px solid var(--border-soft); padding:var(--s-4) 0; } .fgroup:first-child { border-top:0; padding-top:0; }
+  .fgroup h4 { font-size:var(--text-base); margin-bottom:.6rem; }
+  .chk { display:flex; align-items:center; gap:.5rem; font-size:var(--text-sm); padding:.25rem 0; color:var(--text-secondary); }
+  .chk input { accent-color:var(--text-primary); } .chk .n { margin-left:auto; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+  .selrare, .minmax input { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.45rem .55rem; background:var(--surface-canvas-alt); font:inherit; width:100%; }
+  .minmax { display:flex; gap:.5rem; } .ftip { font-size:var(--text-2xs); color:var(--text-muted); margin-top:.4rem; }
+
+  /* approved token card */
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:var(--s-3); }
+  .rarity-frame { display:block; position:relative; padding:8px; border-radius:14px; background:var(--border-soft); text-align:left; }
+  .rarity-frame--default { background:var(--border-soft); } .rarity-frame--common { background:#E6E6E6; } .rarity-frame--uncommon { background:#2ECC71; }
+  .rarity-frame--rare { background:#2F80ED; } .rarity-frame--epic { background:#8F3DFF; } .rarity-frame--legendary { background:#FCD34D; } .rarity-frame--mythical { background:#FF1493; } .rarity-frame--inconceivable { background:#06B6D4; }
+  .tok-card { background:#fff; border:0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column; }
+  .tok-card .art { display:block; aspect-ratio:1/1; position:relative; background:var(--surface-canvas-deep); overflow:hidden; }
+  .tok-card .art img { width:100%; height:100%; object-fit:cover; display:block; }
+  .tok-card .meta { padding:var(--s-3) var(--s-4) 0; display:grid; gap:3px; }
+  .tok-card .col { font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .tok-card .top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tok-card .name { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.04em; text-transform:uppercase; margin:0; }
+  .tok-card .issue { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .tok-card .foot { display:flex; align-items:center; justify-content:space-between; gap:var(--s-2); padding:var(--s-3) var(--s-4) var(--s-4); }
+  .tok-card .pr { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .tok-card .buy { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:#fff; background:var(--text-primary); border-radius:var(--r-pill); padding:5px 11px; }
+  .tok-card .ylbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+
+  /* collection header + stats */
+  .collhead { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .collhead .banner { height:130px; background:linear-gradient(135deg,#0f5d52,#0e8a6e 60%,#16a34a); }
+  .collhead .idrow { display:flex; gap:var(--s-4); align-items:flex-end; padding:0 var(--s-6) var(--s-5); margin-top:-28px; flex-wrap:wrap; }
+  .collhead .av { width:64px; height:64px; border-radius:var(--r-3); border:3px solid #fff; background:var(--surface-canvas-deep); display:grid; place-items:center; font-size:1.8rem; flex:none; }
+  .collhead h2 { font-size:var(--text-2xl); } .collhead .by { color:var(--text-secondary); font-size:var(--text-xs); }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--border-soft); }
+  .stats .s { padding:var(--s-4) var(--s-5); border-left:1px solid var(--border-soft); } .stats .s:first-child { border-left:0; }
+  .stats .k { font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; }
+  .stats .v { font-family:var(--font-display); font-size:var(--text-2xl); }
+  @media (max-width:620px){ .stats { grid-template-columns:repeat(2,1fr); } .stats .s:nth-child(3){ border-left:0; } }
+  .ctabs { display:flex; gap:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .ctabs button { border:0; background:0; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); color:var(--text-secondary); padding:.5rem 0; border-bottom:3px solid transparent; }
+  .ctabs button.active { color:var(--text-primary); border-color:var(--text-primary); }
+
+  /* activity table */
+  .activity { width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .activity th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; padding:.6rem .8rem; border-bottom:1px solid var(--border-soft); }
+  .activity td { padding:.7rem .8rem; border-bottom:1px solid var(--border-soft); } .activity tr:last-child td { border-bottom:0; }
+  .ev { display:inline-flex; align-items:center; gap:.4rem; font-weight:700; font-family:var(--font-emphasis); } .ev .d { width:8px;height:8px;border-radius:50%; }
+  .ev.sale .d{background:var(--stage-live);} .ev.list .d{background:var(--brand-cyan);} .ev.mint .d{background:#8F3DFF;} .ev.xfer .d{background:var(--stage-draft);} .ev.cancel .d{background:var(--text-muted);}
+  .it { display:flex; align-items:center; gap:.5rem; } .it .mini { width:30px; height:30px; border-radius:var(--r-2); overflow:hidden; background:var(--surface-canvas-deep); } .it .mini img{ width:100%;height:100%;object-fit:cover; }
+  .num { font-variant-numeric:tabular-nums; } @media(max-width:760px){ .activity .hide{ display:none; } }
+
+  /* list bar / pager */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; } .results-count strong { color:var(--text-primary); }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); font:inherit; font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; } .pg button:disabled { color:var(--text-muted); opacity:.45; } .pg .gap { min-width:24px; text-align:center; color:var(--text-muted); }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); font-size:var(--text-xs); color:var(--text-secondary); } .perpage select { height:36px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); font:inherit; padding:0 .5rem; }
+  @media (max-width:620px){ .results-count, .perpage { display:none; } }
+
+  .empty { display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s-3); padding:var(--s-12) var(--s-6); }
+  .empty img { width:140px; } .empty h3 { font-size:var(--text-2xl); } .empty p { color:var(--text-secondary); max-width:46ch; }
+  .note-grey { background:var(--surface-canvas-deep); border-radius:var(--r-3); padding:.7rem 1rem; font-size:var(--text-sm); color:var(--text-secondary); }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Secondary market</span>
+    <h1>Marketplace — states gallery</h1>
+    <p>The secondary marketplace: fixed-price browse across all collections, plus collection-scoped views with stats and activity. Every token uses the <strong>approved token card</strong> with its rarity border. v1 is Buy&nbsp;Now only — no auctions, no offers. Shared page chrome (context-bar toolbar; the site top bar and footer are their own components). Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
+    <div class="navlinks">Related: <a href="marketplace-token-states-gallery-2026-06-28.html">Token detail (buy)</a> · <a href="marketplace-list-states-gallery-2026-06-28.html">List for sale</a> · <a href="launchpad-states-gallery-2026-06-28.html">Launchpad</a></div>
+  </header>
+
+  <!-- 01 · global browse -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Global browse — all collections</span><span class="d">A featured carousel highlights trending collections and top sales up top (the same hero carousel used on the Launchpad and landing page). Default scope is every collection, newest listings first. A filter rail (collection, rarity tier from the collection's settings, issue range, attributes) sits beside the approved-token-card grid; the white list bar paginates at the bottom. Each card shows collection, name, price + Buy. v1 is fixed-price (Buy&nbsp;Now) only — auctions and offers are deferred.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="carousel" id="carousel" aria-roledescription="carousel" aria-label="Featured on the marketplace">
+          <div class="track"></div>
+          <button class="nav-arrow prev" aria-label="Previous slide">&#8249;</button>
+          <button class="nav-arrow next" aria-label="Next slide">&#8250;</button>
+          <div class="dots"></div>
+          <div class="progress"><span></span></div>
+        </div>
+        <div class="section-head"><div><div class="eyebrow">Secondary market</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
+          <div class="seg"><button class="active">All</button><button>Listed</button><button>Unlisted</button></div>
+          <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
+        </div>
+        <div class="browse">
+          <aside class="frail">
+            <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox" checked> All collections</label><label class="chk"><input type="checkbox"> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
+            <div class="fgroup"><h4>Rarity tier</h4><select class="selrare"><option>Any tier</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option><option>Mythical</option><option>Inconceivable</option></select><p class="ftip">Tiers come from the collection's rarity settings.</p></div>
+            <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
+            <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
+            <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
+          </aside>
+          <div>
+            <div class="tk-grid">
+              <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Aurora Finch</h3><span class="issue">#12</span></div></div><div class="foot"><span class="pr">8.5 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="col">Night Market</div><div class="top"><h3 class="name">Paper Lantern</h3><span class="issue">#01</span></div></div><div class="foot"><span class="pr">14 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--mythical"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="col">Deep Blue</div><div class="top"><h3 class="name">Leviathan</h3><span class="issue">#07</span></div></div><div class="foot"><span class="pr">0.0042 ckBTC</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--epic"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="col">Oracle Stones</div><div class="top"><h3 class="name">Moonstone</h3><span class="issue">#88</span></div></div><div class="foot"><span class="pr">120 GLDT</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="col">Verdant</div><div class="top"><h3 class="name">Leaf Guardian</h3><span class="issue">#140</span></div></div><div class="foot"><span class="pr">5.4 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Quartz Wren</h3><span class="issue">#58</span></div></div><div class="foot"><span class="pr">7.9 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="col">Night Market</div><div class="top"><h3 class="name">Silk Fan</h3><span class="issue">#22</span></div></div><div class="foot"><span class="pr">13 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="col">Autumn Hedge</div><div class="top"><h3 class="name">Hazel Quill</h3><span class="issue">#44</span></div></div><div class="foot"><span class="pr">—</span><span class="ylbl">Yours · list</span></div></div></a>
+            </div>
+            <div class="listbar" style="margin-top:var(--s-4)"><span class="results-count">Showing <strong>1–25</strong> of <strong>1,284</strong></span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button>2</button><button>3</button><span class="gap">…</span><button>52</button><button>›</button></div><label class="perpage">Per page <select><option>25</option><option>50</option><option>100</option></select></label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · collection-scoped -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Collection-scoped view — Items</span><span class="d">Entered with a collection filter applied: a hero header with avatar, name, creator and social links, the market stats (floor / volume / listings / avg price), and Items / Activity tabs. The Items grid is the same approved token cards, scoped to the collection.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><span class="here">Crystal Birds</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="collhead">
+          <div class="banner"></div>
+          <div class="idrow"><div class="av">🐦</div><div style="flex:1;min-width:200px"><h2>Crystal Birds</h2><div class="by">by Aviary Labs · 500 mineral songbirds</div></div><a class="btn btn--secondary btn--sm" href="#">Collection hub →</a></div>
+          <div class="stats"><div class="s"><div class="k">Floor</div><div class="v">7.5 ICP</div></div><div class="s"><div class="k">Volume</div><div class="v">18.2K</div></div><div class="s"><div class="k">Listings</div><div class="v">312</div></div><div class="s"><div class="k">Avg price</div><div class="v">9.1 ICP</div></div></div>
+        </div>
+        <div class="ctabs"><button class="active">Items · 312</button><button>Activity</button></div>
+        <div class="tk-grid">
+          <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Aurora Finch</h3><span class="issue">#12</span></div></div><div class="foot"><span class="pr">8.5 ICP</span><span class="buy">Buy</span></div></div></a>
+          <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Quartz Wren</h3><span class="issue">#58</span></div></div><div class="foot"><span class="pr">7.9 ICP</span><span class="buy">Buy</span></div></div></a>
+          <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Jade Tit</h3><span class="issue">#207</span></div></div><div class="foot"><span class="pr">7.5 ICP</span><span class="buy">Buy</span></div></div></a>
+          <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Amber Lark</h3><span class="issue">#03</span></div></div><div class="foot"><span class="pr">22 ICP</span><span class="buy">Buy</span></div></div></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · activity -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Collection-scoped view — Activity</span><span class="d">The market/provenance feed for a collection: mint, listing, sale, transfer and cancel events with item, price, rarity, parties and time. This is both transparency and provenance. Offer / bid events are deferred with their features.</span></div>
+    <div class="screen"><div class="section">
+      <div class="ctabs"><button>Items · 312</button><button class="active">Activity</button></div>
+      <table class="activity">
+        <thead><tr><th>Event</th><th>Item</th><th>Price</th><th class="hide">Rarity</th><th class="hide">From</th><th class="hide">To</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ev sale"><span class="d"></span>Sale</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span>Aurora Finch #12</div></td><td class="num">7.2 ICP</td><td class="hide">Rare</td><td class="hide mono">k1m9…7uvw</td><td class="hide mono">b3c2…9pqr</td><td>2m</td></tr>
+          <tr><td><span class="ev list"><span class="d"></span>Listing</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></span>Quartz Wren #58</div></td><td class="num">7.9 ICP</td><td class="hide">Uncommon</td><td class="hide mono">f8a1…2klm</td><td class="hide">—</td><td>14m</td></tr>
+          <tr><td><span class="ev xfer"><span class="d"></span>Transfer</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></span>Jade Tit #207</div></td><td class="num">—</td><td class="hide">Common</td><td class="hide mono">c4d5…1abc</td><td class="hide mono">e9f0…3def</td><td>1h</td></tr>
+          <tr><td><span class="ev cancel"><span class="d"></span>Cancel</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span>Amber Lark #03</div></td><td class="num">24 ICP</td><td class="hide">Legendary</td><td class="hide mono">a1b2…8xyz</td><td class="hide">—</td><td>3h</td></tr>
+          <tr><td><span class="ev mint"><span class="d"></span>Mint</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></span>Opal Swift #311</div></td><td class="num">—</td><td class="hide">Epic</td><td class="hide">—</td><td class="hide mono">k1m9…7uvw</td><td>2d</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <!-- 04 · no results -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">No results</span><span class="d">When filters or search return nothing, the grid yields to a character moment with a clear reset. Reset to page 1 whenever search, filters, or per-page change.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section"><div class="empty"><img src="../style-guide/bot-images/oops-sorry/IMG_4838.png" alt="" onerror="this.style.display='none'"><h3>Nothing listed for that</h3><p>No listings match your filters right now. Clear them to see everything for sale.</p><button class="btn btn--secondary">Clear filters</button></div></div>
+    </div>
+  </section>
+
+  <!-- 05 · empty marketplace -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Empty marketplace — nothing listed yet</span><span class="d">At launch, or for a brand-new collection, there are no secondary listings yet — the marketplace fills up as holders list tokens after a drop. Rather than a blank grid, a character moment points people to the Launchpad to claim, since listings come from claimed tokens.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="carousel" aria-roledescription="carousel" aria-label="Featured on the marketplace">
+          <div class="track"></div>
+          <button class="nav-arrow prev" aria-label="Previous slide">&#8249;</button>
+          <button class="nav-arrow next" aria-label="Next slide">&#8250;</button>
+          <div class="dots"></div>
+          <div class="progress"><span></span></div>
+        </div>
+        <div class="section-head"><div><div class="eyebrow">Secondary market</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
+          <div class="seg"><button class="active">All</button><button>Listed</button><button>Unlisted</button></div>
+          <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
+        </div>
+        <div class="empty"><img src="../style-guide/bot-images/recharge/IMG_4945.png" alt="" onerror="this.style.display='none'"><h3>Nothing listed yet</h3><p>No tokens are listed for sale right now. The marketplace fills up as collectors list tokens after a drop — claim one on the Launchpad to get started.</p><a class="btn" href="launchpad-states-gallery-2026-06-28.html">Explore the Launchpad</a></div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+(function () {
+  const SLIDES = [
+    { bg: "linear-gradient(120deg, #3b2c8f 0%, #6d28d9 50%, #06b0e6 110%)",
+      eyebrow: '<span class="pill">Trending</span> Featured collection', title: "Crystal Birds",
+      body: "Floor up 18% this week — 312 listings live from 7.5 ICP.",
+      cta: { label: "Browse collection", href: "marketplace-token-states-gallery-2026-06-28.html" } },
+    { bg: "linear-gradient(120deg, #7a1f0f 0%, #b8492f 45%, #f59e0b 120%)",
+      eyebrow: "New listings", title: "Night Market",
+      body: "204 lanterns, masks &amp; charms now trading after the drop closed — from 13 ICP.",
+      cta: { label: "Shop Night Market", href: "#" } },
+    { bg: "linear-gradient(120deg, #0b3a52 0%, #0e7490 50%, #06b0e6 100%)",
+      eyebrow: "Top sale · last 24h", title: "Leviathan",
+      body: "Sold for 0.0042 ckBTC — a Top 1% rarity from the sold-out Deep Blue drop.",
+      cta: { label: "View the token", href: "marketplace-token-states-gallery-2026-06-28.html" } }
+  ];
+  const CONFIG = { autoplay: true, interval: 6000, pauseOnHover: true, loop: true,
+                   showArrows: true, showDots: true, showProgressBar: true, enableSwipe: true, enableKeyboard: true };
+  document.querySelectorAll('.carousel').forEach(initCarousel);
+  function initCarousel(carousel){
+  const track = carousel.querySelector('.track');
+  const dotsWrap = carousel.querySelector('.dots');
+  const prevBtn = carousel.querySelector('.prev');
+  const nextBtn = carousel.querySelector('.next');
+  const progress = carousel.querySelector('.progress');
+  const progressBar = progress.querySelector('span');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let index = 0, rafId = null, startTime = 0, paused = false;
+  SLIDES.forEach((s, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'slide'; slide.setAttribute('role','group'); slide.setAttribute('aria-roledescription','slide');
+    slide.setAttribute('aria-label', (i + 1) + ' of ' + SLIDES.length);
+    if (s.bg) slide.style.background = s.bg;
+    const content = document.createElement('div'); content.className = 'slide-content';
+    content.innerHTML = (s.eyebrow ? '<p class="slide-eyebrow">' + s.eyebrow + '</p>' : '') +
+      '<h2 class="slide-title">' + (s.title || '') + '</h2>' +
+      (s.body ? '<p class="slide-body">' + s.body + '</p>' : '') +
+      (s.cta ? '<a class="slide-cta" href="' + (s.cta.href || '#') + '">' + s.cta.label + '</a>' : '');
+    slide.appendChild(content); track.appendChild(slide);
+  });
+  const dots = [];
+  if (CONFIG.showDots) { SLIDES.forEach((_, i) => { const d = document.createElement('button'); d.className='dot';
+    d.setAttribute('aria-label','Go to slide ' + (i + 1)); d.addEventListener('click', () => { goTo(i); restart(); });
+    dotsWrap.appendChild(d); dots.push(d); }); } else { dotsWrap.style.display = 'none'; }
+  if (!CONFIG.showProgressBar || !CONFIG.autoplay) { progress.classList.add('hidden'); }
+  function render(){ track.style.transform = 'translateX(' + (-index*100) + '%)'; dots.forEach((d,i)=>d.classList.toggle('active',i===index)); }
+  function goTo(i){ const n=SLIDES.length; index = CONFIG.loop ? (i+n)%n : Math.max(0,Math.min(n-1,i)); render(); }
+  function next(){ goTo(index+1); } function prev(){ goTo(index-1); }
+  prevBtn.addEventListener('click', () => { prev(); restart(); });
+  nextBtn.addEventListener('click', () => { next(); restart(); });
+  function tick(now){ if(paused){ startTime=now; rafId=requestAnimationFrame(tick); return; }
+    const pct=Math.min(1,(now-startTime)/CONFIG.interval); progressBar.style.width=(pct*100)+'%';
+    if(pct>=1){ next(); startTime=now; } rafId=requestAnimationFrame(tick); }
+  function start(){ if(!CONFIG.autoplay||reduceMotion||SLIDES.length<2) return; stop(); startTime=performance.now(); rafId=requestAnimationFrame(tick); }
+  function stop(){ if(rafId) cancelAnimationFrame(rafId); rafId=null; progressBar.style.width='0%'; }
+  function restart(){ stop(); start(); }
+  if (CONFIG.pauseOnHover){ carousel.addEventListener('mouseenter',()=>paused=true); carousel.addEventListener('mouseleave',()=>paused=false); }
+  document.addEventListener('visibilitychange',()=>{ paused=document.hidden; });
+  if (CONFIG.enableKeyboard){ carousel.tabIndex=0; carousel.addEventListener('keydown',(e)=>{ if(e.key==='ArrowLeft'){prev();restart();} if(e.key==='ArrowRight'){next();restart();} }); }
+  if (CONFIG.enableSwipe){ let x0=null; const down=(x)=>{x0=x;paused=true;}; const up=(x)=>{ if(x0===null) return; const dx=x-x0; if(Math.abs(dx)>40){ dx<0?next():prev(); restart(); } x0=null; paused=false; };
+    carousel.addEventListener('touchstart',(e)=>down(e.touches[0].clientX),{passive:true}); carousel.addEventListener('touchend',(e)=>up(e.changedTouches[0].clientX));
+    carousel.addEventListener('mousedown',(e)=>down(e.clientX)); window.addEventListener('mouseup',(e)=>{ if(x0!==null) up(e.clientX); }); }
+  render(); start();
+  }
+})();
+</script>
+</body>
+</html>

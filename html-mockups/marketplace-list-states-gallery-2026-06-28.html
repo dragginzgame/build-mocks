@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — List for sale · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --notify-success:#10B981; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* buttons — style-guide canonical */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; transition:transform 80ms ease, opacity 120ms ease; }
+  .btn:hover { opacity:.9; } .btn:active { transform:translateY(1px); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn--block { width:100%; }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+  .btn svg { width:15px; height:15px; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--amber { background:rgba(245,158,11,.14); color:#7a5310; }
+
+  /* context bar / section */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .princ .id { font-family:ui-monospace,Menlo,Consolas,monospace; }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:72ch; }
+
+  /* detail-grid (mirrors My Tokens detail) */
+  .detail-grid { display:grid; grid-template-columns:320px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:760px){ .detail-grid { grid-template-columns:1fr; } }
+  .asset-main { aspect-ratio:1/1; border-radius:var(--r-3); border:1px solid var(--border-soft); overflow:hidden; background:linear-gradient(135deg,#60a5fa,#1e3a8a); }
+  .asset-main img { width:100%; height:100%; object-fit:cover; }
+  .ring-rare { border:6px solid #2F80ED; }
+  .asset-thumbs { display:flex; gap:var(--s-2); margin-top:var(--s-3); flex-wrap:wrap; }
+  .asset-thumb { width:50px; height:50px; border-radius:var(--r-2); border:2px solid transparent; overflow:hidden; padding:0; } .asset-thumb img{ width:100%;height:100%;object-fit:cover; }
+  .asset-thumb[aria-pressed="true"] { border-color:var(--border-strong); }
+  .asset-id { margin-top:var(--s-4); }
+  .asset-id h3 { font-size:var(--text-xl); }
+  .asset-id .sub { font-size:var(--text-sm); color:var(--text-secondary); margin-top:.25rem; display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; }
+  .changelink { color:var(--info); font-weight:700; font-size:var(--text-sm); display:inline-flex; align-items:center; gap:.3rem; margin-top:var(--s-3); }
+
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .field { margin-bottom:var(--s-5); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .hint { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.4rem; }
+  .price-row { display:flex; gap:var(--s-2); }
+  .price-row .amt { flex:1; display:flex; align-items:center; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:0 .875rem; }
+  .price-row .amt input { border:0; outline:0; background:transparent; width:100%; padding:.7rem 0; font-size:var(--text-xl); font-family:var(--font-emphasis); font-weight:700; }
+  .price-row .amt.err { border-color:var(--notify-error); }
+  .price-row select { border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:0 .75rem; font-family:var(--font-emphasis); font-weight:700; min-width:104px; }
+  select.full, input.full { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.7rem .875rem; font:inherit; }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.4rem; display:flex; align-items:center; gap:.35rem; }
+  .radios { display:grid; gap:var(--s-2); }
+  .radio { display:flex; gap:.625rem; align-items:flex-start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:.75rem .875rem; }
+  .radio.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); }
+  .radio .dot { width:18px;height:18px;border-radius:50%;border:2px solid var(--border-soft);flex:none;margin-top:1px;display:grid;place-items:center; }
+  .radio.sel .dot { border-color:var(--text-primary); } .radio.sel .dot::after { content:""; width:8px;height:8px;border-radius:50%;background:var(--text-primary); }
+  .radio .t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .radio .d { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.1rem; }
+  .durlist { display:flex; flex-wrap:wrap; gap:var(--s-2); }
+  .durlist span { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); padding:.35rem .7rem; border-radius:var(--r-pill); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); color:var(--text-secondary); }
+  .durlist span.on { background:var(--text-primary); color:#fff; border-color:var(--text-primary); }
+
+  .summary { margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; font-size:var(--text-sm); }
+  .kv .k { color:var(--text-secondary); } .kv .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .kv.big { border-top:1px solid var(--border-soft); margin-top:.25rem; padding-top:.7rem; } .kv.big .v { font-size:var(--text-lg); }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note strong { color:inherit; }
+
+  /* modal stage */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-6); width:100%; max-width:920px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.single { max-width:460px; margin:0 auto; }
+  .modal-card.wide { max-width:680px; margin:0 auto; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .mini-asset { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; overflow:hidden; } .mini-asset .mart img{ width:100%;height:100%;object-fit:cover; }
+  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-base); }
+  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+  .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.55rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; } .paykv.total .v { font-size:var(--text-lg); }
+  .pickgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-3); }
+  @media(max-width:560px){ .pickgrid { grid-template-columns:repeat(2,1fr); } }
+  .pcard { border:1px solid var(--border-soft); border-radius:var(--r-2); overflow:hidden; text-align:left; background:var(--surface-canvas); }
+  .pcard.sel { outline:2px solid var(--text-primary); } .pcard.dis { opacity:.5; }
+  .pcard .pa { aspect-ratio:1/1; overflow:hidden; position:relative; } .pcard .pa img{ width:100%;height:100%;object-fit:cover; }
+  .pcard .plk { position:absolute; right:.35rem; top:.35rem; background:var(--stage-draft); color:#2a1900; font-size:var(--text-3xs); font-weight:700; padding:.1rem .4rem; border-radius:var(--r-pill); }
+  .pcard .pn { padding:.5rem .6rem; font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-sm); }
+  .pcard .pn small { display:block; font-family:var(--font-body); color:var(--text-muted); font-size:var(--text-xs); }
+  /* approved token card (picker) */
+  .rarity-frame { display:block; position:relative; padding:6px; border-radius:12px; background:var(--border-soft); text-align:left; width:100%; border:0; cursor:pointer; }
+  .rarity-frame--common{background:#E6E6E6;} .rarity-frame--uncommon{background:#2ECC71;} .rarity-frame--rare{background:#2F80ED;} .rarity-frame--epic{background:#8F3DFF;} .rarity-frame--legendary{background:#FCD34D;}
+  .rarity-frame.sel { outline:2px solid var(--text-primary); outline-offset:2px; } .rarity-frame.dis { opacity:.5; }
+  .tok-card { background:#fff; border-radius:7px; overflow:hidden; }
+  .tok-card .art { aspect-ratio:1/1; background:var(--surface-canvas-deep); position:relative; overflow:hidden; } .tok-card .art img { width:100%; height:100%; object-fit:cover; display:block; }
+  .tok-card .plk { position:absolute; right:.35rem; top:.35rem; background:var(--stage-draft); color:#2a1900; font-size:var(--text-3xs); font-weight:700; padding:.1rem .4rem; border-radius:var(--r-pill); z-index:1; }
+  .tok-card .m { padding:.45rem .6rem; } .tok-card .nm { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.04em; font-size:var(--text-base); display:flex; justify-content:space-between; gap:6px; } .tok-card .nm .iss { color:var(--text-secondary); font-family:var(--font-emphasis); font-size:var(--text-xs); } .tok-card .sm2 { font-size:var(--text-xs); color:var(--text-muted); }
+
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Wallet · Secondary market</span>
+    <h1>List for sale — states gallery</h1>
+    <p>The seller flow for the v1 secondary marketplace: a holder lists a token they own at a <strong>fixed price</strong>. They set how much and in which token (ICP or any supported ICRC-1), pick a <strong>preset duration</strong>, and choose what happens if it doesn't sell. The token being listed is shown the whole way through. No auctions, no offers in v1. Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
+    <div class="navlinks">Reached from <a href="my-tokens-states-gallery-2026-06-22.html">My Tokens → List for sale</a>. Related: <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a> · <a href="marketplace-token-states-gallery-2026-06-28.html">Token detail</a></div>
+  </header>
+
+  <!-- 01 · price & terms -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">List for sale — price &amp; terms</span><span class="d">Entered from a token in My Tokens, so the asset is pre-selected and shown large on the left the whole way through. The form takes a price (amount + currency), a preset duration, and the end-of-listing behaviour. A live fee/royalty breakdown shows exactly what the seller receives.</span></div>
+    <div class="screen">
+      <div class="context-bar">
+        <div class="crumb"><a>Wallet</a><span class="sep">/</span><a>My Tokens</a><span class="sep">/</span><span class="here">List Little Leaf #014 for sale</span></div>
+        <div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><span class="eyebrow">Wallet · Secondary market</span><h2>List for sale.</h2><p class="lede">A fixed-price listing — a buyer pays your price to buy it now.</p></div>
+        <div class="detail-grid">
+          <div>
+            <div class="asset-main ring-rare"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div>
+            <div class="asset-thumbs"><button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></button><button class="asset-thumb"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></button><button class="asset-thumb"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></button></div>
+            <div class="asset-id"><h3>Little Leaf #014</h3><div class="sub">Little Leaf Guardians <span class="tag" style="color:#2F80ED">Rare</span> <span class="tag tag--green">Owned</span></div><div class="sub" style="margin-top:.2rem">Single (1 of 1)</div><a class="changelink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13l-3-3M21 17H8l3 3"/></svg> Change token</a></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Listing details</span>
+            <div class="field"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="14" inputmode="decimal"></div><select><option>ICP</option><option>ckBTC</option><option>GLDT</option><option>ckUSDC</option></select></div><p class="hint">You receive this amount in the chosen token when it sells. ≈ $121.80</p></div>
+            <div class="field"><label class="flabel">Listing duration</label><select class="full"><option>1 day</option><option>3 days</option><option selected>7 days</option><option>14 days</option><option>30 days</option><option>Until I cancel</option></select><p class="hint">Preset durations only — no free-form dates. Expires in 7 days · 5 Jul, 18:00 (local).</p></div>
+            <div class="field"><label class="flabel">If it doesn't sell by then</label><div class="radios"><label class="radio sel"><span class="dot"></span><span><span class="t">Return to my wallet</span><span class="d">The listing ends and the token is simply unlisted again. (Default)</span></span></label><label class="radio"><span class="dot"></span><span><span class="t">Burn the token</span><span class="d">Permanently destroys it at expiry. Buyers see this on the listing.</span></span></label></div></div>
+            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Your token stays in your wallet and is sale-locked while listed. Ownership transfers only when a buyer completes the purchase.</div></div>
+            <div class="summary"><div class="kv"><span class="k">List price</span><span class="v">14 ICP</span></div><div class="kv"><span class="k">Marketplace fee (2%)</span><span class="v">0.28 ICP</span></div><div class="kv"><span class="k">Creator royalty (5%)</span><span class="v">0.70 ICP</span></div><div class="kv big"><span class="k">You receive</span><span class="v">13.02 ICP</span></div></div>
+            <div class="dactions"><button class="btn">Review listing</button><button class="btn btn--ghost">Cancel</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · currency & duration -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Currency &amp; duration presets</span><span class="d">Price is denominated in exactly one token — the seller picks ICP or any supported ICRC-1, shown everywhere the price appears. Duration comes from a fixed dropdown, never free-form: <strong>1 / 3 / 7 / 14 / 30 days</strong> or <strong>Until I cancel</strong>. Two example currencies shown; the receive amount recomputes per currency.</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">ICP listing · 7 days</span>
+        <div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="14"></div><select><option selected>ICP</option></select></div><p class="hint">≈ $121.80 · you receive 13.02 ICP after fees</p></div>
+        <label class="flabel">Duration</label>
+        <div class="durlist"><span>1d</span><span>3d</span><span class="on">7d</span><span>14d</span><span>30d</span><span>Until cancel</span></div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">ckBTC listing · until cancel</span>
+        <div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="0.0042"></div><select><option selected>ckBTC</option></select></div><p class="hint">≈ $286.00 · you receive 0.00390 ckBTC after fees</p></div>
+        <label class="flabel">Duration</label>
+        <div class="durlist"><span>1d</span><span>3d</span><span>7d</span><span>14d</span><span>30d</span><span class="on">Until cancel</span></div>
+        <p class="hint" style="margin-top:var(--s-3)">"Until I cancel" has no auto-expiry — the listing stays up until it sells or the seller cancels.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · end-of-listing behaviour -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">End-of-listing behaviour</span><span class="d">For a finite listing that doesn't sell, the seller's pre-chosen behaviour applies. <strong>Return to wallet</strong> is the default — the token simply becomes unlisted. <strong>Burn</strong> destroys it at expiry. Either way the choice is shown to buyers on the listing for transparency.</span></div>
+    <div class="showcase">
+      <div class="dcard"><span class="eyebrow">Default · return to wallet</span><div class="radios" style="margin-top:var(--s-3)"><label class="radio sel"><span class="dot"></span><span><span class="t">Return to my wallet</span><span class="d">Listing ends, token is unlisted and sale-lock releases.</span></span></label><label class="radio"><span class="dot"></span><span><span class="t">Burn the token</span><span class="d">Permanently destroyed at expiry.</span></span></label></div></div>
+      <div class="dcard"><span class="eyebrow">Burn selected</span><div class="radios" style="margin-top:var(--s-3)"><label class="radio"><span class="dot"></span><span><span class="t">Return to my wallet</span><span class="d">Listing ends, token is unlisted.</span></span></label><label class="radio sel"><span class="dot"></span><span><span class="t">Burn the token</span><span class="d">Permanently destroyed at expiry.</span></span></label></div><div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Buyers see <strong>"Burns if unsold"</strong> on the listing detail.</div></div></div>
+    </div>
+  </section>
+
+  <!-- 04 · review & confirm -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Review &amp; confirm</span><span class="d">A single review step before publish, mirroring the Transfer modal. The asset, price, duration, end-behaviour and net proceeds are restated; publishing requires a wallet signature. The token is sale-locked the moment it goes live.</span></div>
+    <div class="stage">
+      <div class="modal-card single">
+        <header><h4>Confirm listing</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · Rare</div></span></div>
+          <div><div class="paykv"><span>List for</span><span class="v">14 ICP</span></div><div class="paykv"><span>Duration</span><span class="v">7 days</span></div><div class="paykv"><span>If unsold</span><span class="v">Return to wallet</span></div><div class="paykv total"><span>You receive</span><span class="v">13.02 ICP</span></div></div>
+          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Sign in your wallet to publish. The token is sale-locked until it sells, expires, or you cancel.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Back</button><button class="btn">Sign &amp; publish</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · result -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Listing live &amp; price-changed conflict</span><span class="d">On success the listing is live and the token shows as sale-locked, with a direct link to view it. If listing/ownership state changed between page load and confirm, publish fails safely (pre-submit revalidation) rather than acting on stale state.</span></div>
+    <div class="stage">
+      <div class="modal-grid">
+        <div class="modal-card">
+          <header><h4>Listing live</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>Little Leaf #014 is now listed.</strong> It stays in your wallet, sale-locked, until it sells or you cancel.</div></div>
+            <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Listed · 14 ICP · sale-locked</div></span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Back to My Tokens</button><button class="btn">View listing</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Couldn't publish</h4><span class="x">✕</span></header>
+          <div class="mbody"><div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>This token's state changed.</strong> It may have moved or already been listed. Nothing was published — refresh and try again.</div></div></div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Refresh &amp; retry</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · choose a token -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Choose a token</span><span class="d">Reached via "Change token", or when the flow is opened without a pre-selected token. Only tokens the active principal owns are listable; a token that's already listed is shown locked and can't be picked again.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Choose a token to list</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="pickgrid">
+            <button class="rarity-frame rarity-frame--rare sel"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="m"><div class="nm">Little Leaf <span class="iss">#014</span></div><div class="sm2">Guardians · Rare</div></div></div></button>
+            <button class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="m"><div class="nm">Swampie <span class="iss">#221</span></div><div class="sm2">Swampies · ×12</div></div></div></button>
+            <button class="rarity-frame rarity-frame--epic"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="m"><div class="nm">Sun Sprite <span class="iss">#003</span></div><div class="sm2">Solara · Epic</div></div></div></button>
+            <button class="rarity-frame rarity-frame--uncommon dis"><div class="tok-card"><div class="art"><span class="plk">🔒 Listed</span><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="m"><div class="nm">Reef Pip <span class="iss">#058</span></div><div class="sm2">Already listed</div></div></div></button>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Use this token</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · guards -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Guards — already listed &amp; invalid price</span><span class="d">Only the current owner can list, and a token can hold at most one active fixed-price listing. If it's already listed, the form is replaced by a manage/cancel state. Inline validation blocks an empty or non-positive price before the destructive publish is reachable.</span></div>
+    <div class="showcase">
+      <div class="dcard"><span class="eyebrow">Already listed</span><div class="note note--info" style="margin-top:var(--s-3)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div><strong>Little Leaf #014 is already listed</strong> for 14 ICP, expiring in 5 days. A token can have only one active listing.</div></div><div class="dactions" style="margin-top:var(--s-4)"><button class="btn">Edit price</button><button class="btn btn--danger">Cancel listing</button></div></div>
+      <div class="dcard"><span class="eyebrow">Invalid price</span><div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt err"><input value="0"></div><select><option>ICP</option></select></div><div class="field-err"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Enter a price greater than zero.</div></div><div class="dactions" style="margin-top:0;border-top:0;padding-top:0"><button class="btn" disabled>Review listing</button></div></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

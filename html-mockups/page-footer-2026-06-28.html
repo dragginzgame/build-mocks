@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Page footer (shared component)</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --info:#2563EB;
+    --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-pill:9999px;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; } body { font-family:var(--font-body); color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; } img { display:block; max-width:100%; }
+  h1 { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; margin:0; }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:2.5rem 1.5rem 5rem; }
+  .gallery > header .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:.6875rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:.75rem; }
+  .frame-cap { display:flex; align-items:baseline; gap:.75rem; margin:2.5rem 0 .75rem; flex-wrap:wrap; }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:.875rem; }
+  .frame-cap .d { color:var(--text-secondary); font-size:.8125rem; max-width:92ch; }
+  .screen { border:1px solid #cfcfcf; border-radius:16px; overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+
+  /* ===== shared page footer ===== */
+  .foot { background:#000; color:#9a9a9a; padding:var(--s-12) 1.5rem var(--s-8); }
+  .foot .inner { max-width:1180px; margin:0 auto; }
+  .foot .top { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:var(--s-8); }
+  @media (max-width:760px){ .foot .top { grid-template-columns:1fr 1fr; gap:var(--s-6); } }
+  .foot .word { height:18px; margin-bottom:.875rem; }
+  .foot .blurb { max-width:34ch; font-size:.875rem; }
+  .foot h5 { color:#fff; font-family:var(--font-emphasis); text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; margin:0 0 .75rem; }
+  .foot a { display:block; color:#9a9a9a; font-size:.875rem; padding:.3125rem 0; } .foot a:hover { color:#fff; }
+  .foot .bottom { display:flex; justify-content:space-between; align-items:center; gap:var(--s-4); flex-wrap:wrap; border-top:1px solid #1f1f1f; margin-top:var(--s-10); padding-top:var(--s-6); font-size:.8125rem; }
+  .foot .socials { display:flex; gap:.625rem; }
+  .foot .socials a { width:36px; height:36px; border-radius:var(--r-pill); background:#161616; display:flex; align-items:center; justify-content:center; color:#fff; padding:0; }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Shared component</span>
+    <h1>Page footer</h1>
+    <p>The single site footer, shared by every public-facing page (landing, launchpad, marketplace, collection hub). It lives in this one file so it stays consistent and is maintained in one place — the state galleries do <strong>not</strong> embed it. Pair it with the top bar (its own component, see <a href="top-bar-revisit-2026-06-13.html" style="color:var(--info);font-weight:700">Top bar</a>).</p>
+  </header>
+
+  <div class="frame-cap"><span class="t">Footer — default</span><span class="d">Wordmark + one-line positioning, three link columns (Launchpad / Explore / Company), and a baseline row with copyright and socials. White wordmark sits as-is on the black surface.</span></div>
+  <div class="screen">
+    <footer class="foot">
+      <div class="inner">
+        <div class="top">
+          <div>
+            <img class="word" src="../style-guide/logos/app-name.png" alt="Toko" />
+            <p class="blurb">Programmable collectible launch infrastructure — discover, claim, and trade on-chain.</p>
+          </div>
+          <div><h5>Launchpad</h5><a href="launchpad-states-gallery-2026-06-28.html">Live drops</a><a href="#">Coming soon</a><a href="#">Recently ended</a></div>
+          <div><h5>Explore</h5><a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a><a href="#">Collections</a><a href="#">Creators</a></div>
+          <div><h5>Company</h5><a href="#">About</a><a href="#">Docs</a><a href="#">Support</a></div>
+        </div>
+        <div class="bottom">
+          <span>© 2026 Toko. All rights reserved.</span>
+          <span class="socials"><a href="#" aria-label="X">𝕏</a><a href="#" aria-label="Discord">◇</a><a href="#" aria-label="Web">🌐</a></span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+</body>
+</html>

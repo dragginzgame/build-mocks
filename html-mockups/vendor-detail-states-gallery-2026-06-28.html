@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Launchpad vendor detail · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --notify-success:#10B981; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* buttons — style-guide canonical */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; transition:transform 80ms ease, opacity 120ms ease; }
+  .btn:hover { opacity:.9; } .btn:active { transform:translateY(1px); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--lg { padding:13px 20px; font-size:var(--text-base); width:100%; }
+  .btn--block { width:100%; }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+  .btn svg { width:15px; height:15px; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+
+  /* lifecycle badge */
+  .lbadge { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; }
+  .lbadge .dot { width:7px;height:7px;border-radius:50%;background:currentColor; }
+  .lbadge--live { background:rgba(16,185,129,.16); color:var(--stage-live); }
+  .lbadge--ending { background:rgba(245,158,11,.16); color:#7a5310; }
+  .lbadge--soon { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .lbadge--sold { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+
+  /* context bar (shared toolbar) */
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .princ .id { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+
+  /* vendor storefront header */
+  .vhead { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .vhead .banner { height:170px; background:linear-gradient(135deg,#7a1f0f,#b8492f 50%,#f59e0b); position:relative; }
+  .vhead .banner .badges { position:absolute; left:var(--s-5); top:var(--s-5); display:flex; gap:var(--s-2); }
+  .vhead .idrow { display:flex; gap:var(--s-5); padding:0 var(--s-6) var(--s-6); margin-top:-34px; align-items:flex-end; flex-wrap:wrap; }
+  .vhead .av { width:84px; height:84px; border-radius:var(--r-4); border:3px solid #fff; background:var(--surface-canvas-deep); display:grid; place-items:center; font-size:2.25rem; flex:none; }
+  .vhead .who { flex:1; min-width:220px; padding-bottom:.25rem; }
+  .vhead .who h2 { font-size:var(--text-3xl); }
+  .vhead .who .by { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.2rem; }
+
+  .vbody { display:grid; grid-template-columns:1fr 340px; gap:var(--s-6); align-items:start; }
+  @media (max-width:880px){ .vbody { grid-template-columns:1fr; } }
+  .about { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); font-size:var(--text-md); line-height:1.65; }
+  .inv-head { display:flex; align-items:baseline; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; margin:var(--s-6) 0 var(--s-4); }
+  .inv-head h3 { font-size:var(--text-2xl); }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; }
+  .seg button { border:0; background:transparent; padding:.4rem .85rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+
+  /* claim summary panel */
+  .claim-panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .claim-panel .lbl { font-size:var(--text-xs); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .claim-panel .price { font-family:var(--font-display); font-size:var(--text-3xl); letter-spacing:.02em; } .claim-panel .price .u { font-size:var(--text-lg); color:var(--text-secondary); }
+  .avail { margin-top:var(--s-4); }
+  .avail .bar { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; margin-top:.4rem; }
+  .avail .fill { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .avail .row { display:flex; justify-content:space-between; font-size:var(--text-xs); color:var(--text-secondary); }
+  .countdown { display:flex; gap:var(--s-2); margin-top:var(--s-4); }
+  .cd { flex:1; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.5rem; text-align:center; }
+  .cd .v { font-family:var(--font-display); font-size:var(--text-2xl); line-height:1; } .cd .k { font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; margin-top:.25rem; }
+  .reqs { margin-top:var(--s-5); display:flex; flex-direction:column; gap:var(--s-2); }
+  .req { display:flex; align-items:flex-start; gap:var(--s-3); padding:.7rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
+  .req .ri { width:22px; height:22px; border-radius:50%; flex:none; display:grid; place-items:center; } .req .ri svg { width:13px; height:13px; }
+  .req.met .ri { background:rgba(16,185,129,.16); color:var(--stage-live); } .req.unmet .ri { background:rgba(239,68,68,.13); color:var(--notify-error); }
+  .req .rt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); } .req .rd { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.1rem; }
+  .cta-wrap { margin-top:var(--s-5); display:flex; flex-direction:column; gap:var(--s-2); }
+
+  /* approved token card (rarity frame + tok-card) */
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:var(--s-3); }
+  .rarity-frame { display:block; position:relative; padding:8px; border-radius:14px; background:var(--border-soft); text-align:left; }
+  .rarity-frame--default { background:var(--border-soft); }
+  .rarity-frame--common { background:#E6E6E6; } .rarity-frame--uncommon { background:#2ECC71; } .rarity-frame--rare { background:#2F80ED; }
+  .rarity-frame--epic { background:#8F3DFF; } .rarity-frame--legendary { background:#FCD34D; } .rarity-frame--mythical { background:#FF1493; } .rarity-frame--inconceivable { background:#06B6D4; }
+  .tok-card { background:#fff; border:0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column; }
+  .tok-card .art { display:block; aspect-ratio:1/1; position:relative; background:var(--surface-canvas-deep); overflow:hidden; }
+  .tok-card .art img { width:100%; height:100%; object-fit:cover; display:block; }
+  .tok-card .meta { padding:var(--s-3) var(--s-4) 0; display:grid; gap:6px; }
+  .tok-card .top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tok-card .name { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.04em; text-transform:uppercase; margin:0; }
+  .tok-card .issue { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .tok-card .foot { display:flex; align-items:center; justify-content:space-between; gap:var(--s-2); padding:var(--s-3) var(--s-4) var(--s-4); }
+  .tok-card .pr { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .tok-card .pr.struck { text-decoration:line-through; color:var(--text-muted); font-weight:400; }
+  .tok-card .st { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .tok-card .st .d { width:6px; height:6px; border-radius:50%; background:currentColor; } .tok-card .st--live { color:var(--stage-live); }
+  .tok-card .ribbon { position:absolute; top:10px; left:10px; z-index:1; background:rgba(10,10,10,.8); color:#fff; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:var(--r-pill); }
+  .tok-card.sold .art { filter:grayscale(1); opacity:.5; } .tok-card.sold .name { color:var(--text-muted); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note strong { color:inherit; }
+
+  /* empty */
+  .empty { display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s-3); padding:var(--s-12) var(--s-6); }
+  .empty img { width:140px; height:auto; } .empty h3 { font-size:var(--text-2xl); } .empty p { color:var(--text-secondary); max-width:44ch; }
+
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Launchpad</span>
+    <h1>Vendor detail — states gallery</h1>
+    <p>A vendor's launchpad storefront: identity, a claim summary panel, and the claimable inventory. Inventory is shown with the <strong>approved token card</strong> — artwork inside its rarity frame, with a price/status foot. Selecting a token opens the <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">claim view</a>. Uses the shared page chrome (context-bar toolbar at the top; no site top bar or footer here — those are their own components). Source: <span class="mono">Design Documentation/launchpad.md</span>.</p>
+    <div class="navlinks">Reached from <a href="launchpad-states-gallery-2026-06-28.html">Launchpad</a>. Related: <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">Claim view</a> · <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a></div>
+  </header>
+
+  <!-- 01 · storefront, live -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Vendor storefront — live</span><span class="d">The full page: identity header, a claim summary panel (price, availability, countdown, eligibility, claim CTA), and the claimable inventory grid. Inventory tokens use the approved token card with their rarity border; sold-out tokens stay visible but de-emphasised.</span></div>
+    <div class="screen">
+      <div class="context-bar">
+        <div class="crumb"><a>Launchpad</a><span class="sep">/</span><span class="here">Night Market</span></div>
+        <div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div>
+      </div>
+      <div class="section">
+        <div class="vhead">
+          <div class="banner"><div class="badges"><span class="lbadge lbadge--ending"><span class="dot"></span>Ending soon</span><span class="tag">Standard vendor</span></div></div>
+          <div class="idrow"><div class="av">🏮</div><div class="who"><h2>Night Market</h2><div class="by">by Lumen Studio · part of the <a style="color:var(--info);font-weight:700">Lanterns &amp; Charms</a> collection</div></div></div>
+        </div>
+        <div class="vbody">
+          <div>
+            <div class="about">A seasonal run of hand-illustrated lanterns, masks and charms — each generated deterministically from Lumen Studio's layered artwork. Issue numbers are assigned at claim time; sold-out items stay listed so you can see the full set.</div>
+            <div class="inv-head"><h3>Claimable inventory</h3><div class="seg"><button class="active">All · 12</button><button>Available · 8</button><button>Sold out · 4</button></div></div>
+            <div class="tk-grid">
+              <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Paper Lantern</h3><span class="issue">#001</span></div></div><div class="foot"><span class="pr">12 ICP</span><span class="st st--live"><span class="d"></span>Available</span></div></div></a>
+              <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Fox Mask</h3><span class="issue">#002</span></div></div><div class="foot"><span class="pr">12 ICP</span><span class="st st--live"><span class="d"></span>Available</span></div></div></a>
+              <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Silk Fan</h3><span class="issue">#003</span></div></div><div class="foot"><span class="pr">12 ICP</span><span class="st st--live"><span class="d"></span>Available</span></div></div></a>
+              <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Wind Bell</h3><span class="issue">#004</span></div></div><div class="foot"><span class="pr">12 ICP</span><span class="st st--live"><span class="d"></span>Available</span></div></div></a>
+              <a class="rarity-frame rarity-frame--epic"><div class="tok-card sold"><div class="art"><span class="ribbon">Sold out</span><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Dragon Charm</h3><span class="issue">#005</span></div></div><div class="foot"><span class="pr struck">12 ICP</span><span class="st">Sold out</span></div></div></a>
+              <a class="rarity-frame rarity-frame--common"><div class="tok-card sold"><div class="art"><span class="ribbon">Sold out</span><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Blossom Pin</h3><span class="issue">#006</span></div></div><div class="foot"><span class="pr struck">12 ICP</span><span class="st">Sold out</span></div></div></a>
+            </div>
+          </div>
+          <aside class="claim-panel">
+            <div class="lbl">Claim price</div>
+            <div class="price">12 <span class="u">ICP</span></div>
+            <div class="avail"><div class="row"><span>Claimed</span><span><strong>880</strong> of 1,000</span></div><div class="bar"><span class="fill" style="width:88%"></span></div><div class="row" style="margin-top:.35rem"><span>120 left</span><span>88%</span></div></div>
+            <div class="countdown"><div class="cd"><div class="v">01</div><div class="k">Hrs</div></div><div class="cd"><div class="v">42</div><div class="k">Min</div></div><div class="cd"><div class="v">10</div><div class="k">Sec</div></div></div>
+            <div class="reqs"><div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Open to everyone</div><div class="rd">No allowlist or hold requirement. Limit 5 per wallet.</div></span></div></div>
+            <div class="cta-wrap"><button class="btn btn--lg">Claim now · 12 ICP</button><a class="btn btn--secondary btn--block" href="#">View collection hub →</a></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · lifecycle states -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Lifecycle states — header &amp; panel</span><span class="d">The launchpad derives a user-facing label from vendor state. The header badge + claim panel change together: <strong>Live</strong>, <strong>Ending soon</strong> (≤2h, countdown), <strong>Sold out</strong> (disabled), and <strong>Coming soon</strong> (scheduled — countdown to open, claim replaced by a disabled "Opens in").</span></div>
+    <div class="showcase">
+      <div class="claim-panel"><span class="lbadge lbadge--live"><span class="dot"></span>Live</span><div class="lbl" style="margin-top:var(--s-4)">Claim price</div><div class="price">8 <span class="u">ICP</span></div><div class="avail"><div class="row"><span>Claimed</span><span><strong>234</strong> of 500</span></div><div class="bar"><span class="fill" style="width:47%"></span></div></div><div class="cta-wrap"><button class="btn btn--lg">Claim now · 8 ICP</button></div></div>
+      <div class="claim-panel"><span class="lbadge lbadge--sold"><span class="dot"></span>Sold out</span><div class="lbl" style="margin-top:var(--s-4)">Claim price</div><div class="price" style="color:var(--text-secondary)">10 <span class="u">ICP</span></div><div class="avail"><div class="row"><span>Claimed</span><span><strong>750</strong> of 750</span></div><div class="bar"><span class="fill" style="width:100%"></span></div></div><div class="cta-wrap"><button class="btn btn--lg" disabled>Sold out</button><a class="btn btn--secondary btn--block" href="marketplace-states-gallery-2026-06-28.html">Find it on the market</a></div></div>
+      <div class="claim-panel"><span class="lbadge lbadge--soon"><span class="dot"></span>Coming soon</span><div class="lbl" style="margin-top:var(--s-4)">Opens in</div><div class="countdown" style="margin-top:.4rem"><div class="cd"><div class="v">2</div><div class="k">Days</div></div><div class="cd"><div class="v">06</div><div class="k">Hrs</div></div><div class="cd"><div class="v">30</div><div class="k">Min</div></div></div><div class="cta-wrap"><button class="btn btn--lg" disabled>Opens 14 Jul, 18:00</button></div></div>
+    </div>
+  </section>
+
+  <!-- 03 · inventory card states -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Inventory cards — available &amp; sold out</span><span class="d">Inventory uses the approved token card. <strong>Available</strong> tokens keep their rarity frame, with price + an Available status. <strong>Sold-out</strong> tokens stay browsable but de-emphasised: greyed artwork, a Sold-out ribbon, and a struck price — so the record and lore remain visible while live items stand out.</span></div>
+    <div class="tk-grid">
+      <a class="rarity-frame rarity-frame--mythical"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Crown</h3><span class="issue">#012</span></div></div><div class="foot"><span class="pr">18 ICP</span><span class="st st--live"><span class="d"></span>Available</span></div></div></a>
+      <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Reed Whistle</h3><span class="issue">#031</span></div></div><div class="foot"><span class="pr">5 ICP</span><span class="st st--live"><span class="d"></span>Available</span></div></div></a>
+      <a class="rarity-frame rarity-frame--rare"><div class="tok-card sold"><div class="art"><span class="ribbon">Sold out</span><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Tide Lantern</h3><span class="issue">#008</span></div></div><div class="foot"><span class="pr struck">9 ICP</span><span class="st">Sold out</span></div></div></a>
+      <a class="rarity-frame rarity-frame--common"><div class="tok-card sold"><div class="art"><span class="ribbon">Sold out</span><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Clay Charm</h3><span class="issue">#020</span></div></div><div class="foot"><span class="pr struck">4 ICP</span><span class="st">Sold out</span></div></div></a>
+    </div>
+  </section>
+
+  <!-- 04 · eligibility -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Eligibility — open vs gated</span><span class="d">Programmable claim conditions are first-class. An open drop claims directly; a gated drop surfaces each requirement met/unmet and the CTA becomes <strong>View requirements</strong>, disabled until the wallet qualifies. Eligibility is a cached hint — always re-validated at claim time.</span></div>
+    <div class="showcase">
+      <div class="claim-panel"><div class="lbl">Claim price</div><div class="price">5 <span class="u">ICP</span></div><div class="reqs"><div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Open to everyone</div><div class="rd">No requirements on this drop.</div></span></div></div><div class="cta-wrap"><button class="btn btn--lg">Claim now · 5 ICP</button></div></div>
+      <div class="claim-panel"><div class="lbl">Claim price</div><div class="price">5 <span class="u">ICP</span></div><div class="reqs"><div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span><span><div class="rt">Allowlist required</div><div class="rd">This wallet isn't on the Spring Foxes allowlist.</div></span></div><div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Holds a Lumen token</div><div class="rd">Requirement met.</div></span></div></div><div class="cta-wrap"><button class="btn btn--lg" disabled>View requirements</button></div></div>
+    </div>
+  </section>
+
+  <!-- 05 · empty -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">No claimable inventory</span><span class="d">A live vendor whose inventory is fully claimed but still within its retention window. The grid is replaced with a character moment that routes to the secondary market, where holders may be listing.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Launchpad</a><span class="sep">/</span><span class="here">Deep Blue</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="empty">
+          <img src="../style-guide/bot-images/recharge/IMG_4945.png" alt="" onerror="this.style.display='none'">
+          <h3>Fully claimed</h3>
+          <p>Every token in Deep Blue has been claimed. The drop has wrapped — but copies may be trading on the secondary market.</p>
+          <a class="btn" href="marketplace-states-gallery-2026-06-28.html">Browse on the marketplace</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
