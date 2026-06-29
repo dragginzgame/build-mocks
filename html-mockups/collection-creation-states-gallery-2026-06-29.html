@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Collection creation · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  img { display:block; max-width:100%; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); max-width:64ch; }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); }
+  .spread { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-3xl); }
+  .section-head .row { flex-wrap:wrap; justify-content:flex-end; }
+  .search { width:240px; max-width:100%; }
+  .input { border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .segmented { display:inline-flex; background:var(--surface-canvas-alt); border-radius:var(--r-pill); padding:4px; border:1px solid var(--border-soft); }
+  .segmented button { border:0; background:transparent; padding:.375rem .75rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); }
+  .segmented button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+
+  .status { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-alt); color:var(--text-secondary); border:1px solid var(--border-soft); }
+  .status .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .status--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); border-color:transparent; }
+  .status--review{ background:rgba(99,102,241,.12); color:var(--stage-review); border-color:transparent; }
+  .status--live  { background:rgba(16,185,129,.12); color:var(--stage-live); border-color:transparent; }
+
+  /* collection cards */
+  .collections-grid { display:grid; gap:var(--s-5); grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); }
+  .coll-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .coll-card .pic { aspect-ratio:16/9; }
+  .coll-card .meta { padding:var(--s-4) var(--s-5); }
+  .coll-card .meta .ttl { font-family:var(--font-display); font-weight:400; font-size:var(--text-lg); }
+  .coll-card .meta .sub { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.25rem; }
+  .coll-card .meta .stats { display:flex; gap:var(--s-4); margin-top:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); }
+  .coll-card .meta .stats .n { color:var(--text-primary); font-weight:600; font-family:var(--font-emphasis); }
+  .coll-card--new { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-4); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); text-align:center; color:var(--text-secondary); min-height:220px; padding:var(--s-6); }
+  .coll-card--new .plus { font-size:1.875rem; line-height:1; }
+  .coll-card--new .lbl { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.04em; text-transform:uppercase; }
+
+  /* empty-state hero */
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } }
+
+  /* empty-state explainer + facts (info underneath the hero) */
+  .explainer { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-8); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8); margin-top:var(--s-8); }
+  .explainer h3 { margin-bottom:var(--s-3); font-size:var(--text-2xl); }
+  .explainer p { color:var(--text-secondary); font-size:var(--text-base); line-height:1.6; }
+  .explainer .visual { background:var(--surface-canvas-alt); border-radius:var(--r-3); padding:var(--s-5); display:flex; align-items:center; justify-content:center; }
+  @media (max-width:760px){ .explainer { grid-template-columns:1fr; } }
+  .flow3 { display:flex; align-items:center; justify-content:center; gap:var(--s-3); }
+  .flow3 .node { display:flex; flex-direction:column; align-items:center; gap:.5rem; }
+  .flow3 .box { width:60px; height:60px; border-radius:var(--r-3); }
+  .flow3 .lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); }
+  .flow3 .arr { color:var(--text-muted); }
+  .fact-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-4); margin-top:var(--s-6); }
+  .fact-strip .fact { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .fact-strip .fact .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .fact-strip .fact h4 { font-size:var(--text-lg); margin:.5rem 0; letter-spacing:0; text-transform:none; font-family:var(--font-body); font-weight:700; }
+  .fact-strip .fact p { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.5; margin:0; }
+  @media (max-width:680px){ .fact-strip { grid-template-columns:1fr; } }
+
+  /* modal */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:space-between; align-items:center; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .m-field { display:block; }
+  .m-field + .m-field { margin-top:var(--s-5); }
+  .m-field .input { width:100%; }
+  .thumb-pick { display:flex; gap:var(--s-4); flex-wrap:wrap; }
+  .thumb-opt { aspect-ratio:1/1; width:150px; border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.375rem; text-align:center; color:var(--text-secondary); cursor:pointer; padding:var(--s-3); }
+  .thumb-opt:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .thumb-opt svg { color:var(--text-muted); }
+  .thumb-opt:hover svg { color:var(--text-primary); }
+  .thumb-opt strong { color:var(--text-primary); font-weight:700; font-size:var(--text-sm); }
+
+  /* gallery framing */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .art1{background:linear-gradient(135deg,#3b2c8f,#7d5fd6);} .art3{background:linear-gradient(135deg,#7a1f4f,#f59e0b);}
+
+  /* ---- archetype creation flow ---- */
+  .create-head { margin-bottom:var(--s-6); }
+  .stepper { display:flex; align-items:center; gap:var(--s-3); margin:var(--s-5) 0 var(--s-8); flex-wrap:wrap; }
+  .stepper .step { display:inline-flex; align-items:center; gap:.5rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .stepper .step .n { width:22px; height:22px; border-radius:50%; background:var(--surface-canvas); border:1px solid var(--border-soft); display:inline-flex; align-items:center; justify-content:center; font-size:var(--text-2xs); }
+  .stepper .step.is-active { color:var(--text-primary); }
+  .stepper .step.is-active .n { background:var(--text-primary); color:#fff; border-color:var(--text-primary); }
+  .stepper .step.is-done .n { background:var(--stage-live); color:#fff; border-color:var(--stage-live); }
+  .stepper .bar { flex:1 1 22px; height:1px; background:var(--border-soft); min-width:18px; }
+  .arch-grid { display:grid; gap:var(--s-4); grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); }
+  .arch-card { text-align:left; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); display:flex; flex-direction:column; gap:.5rem; cursor:pointer; transition:border-color .12s, box-shadow .12s, transform .12s; }
+  .arch-card:hover { border-color:var(--text-muted); transform:translateY(-2px); box-shadow:0 10px 28px -18px rgba(0,0,0,.3); }
+  .arch-card.is-selected { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary) inset; }
+  .arch-card .chip { width:42px; height:42px; border-radius:var(--r-3); display:inline-flex; align-items:center; justify-content:center; }
+  .arch-card .ttl { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); letter-spacing:.02em; text-transform:uppercase; }
+  .arch-card .for { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.45; }
+  .arch-card .hint { margin-top:auto; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .arch-card .tick { margin-left:auto; width:20px; height:20px; border-radius:50%; background:var(--text-primary); color:#fff; display:none; align-items:center; justify-content:center; font-size:.7rem; }
+  .arch-card.is-selected .tick { display:inline-flex; }
+  .arch-card .top { display:flex; align-items:center; gap:.625rem; }
+  .form-actions { display:flex; justify-content:space-between; align-items:center; gap:var(--s-3); margin-top:var(--s-8); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .type-chip { display:inline-flex; align-items:center; gap:.5rem; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.375rem .75rem .375rem .5rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .type-chip .dot { width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+  .cap-cols { display:grid; grid-template-columns:1.3fr 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:760px){ .cap-cols { grid-template-columns:1fr; } }
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); }
+  .panel h4 { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-size:var(--text-2xs); color:var(--text-secondary); margin-bottom:var(--s-4); }
+  .cap-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:.625rem 0; border-bottom:1px solid var(--surface-canvas-deep); }
+  .cap-row:last-child { border-bottom:0; }
+  .cap-row .k { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cap-row .v { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); text-align:right; }
+  .cap-row .v small { display:block; font-weight:400; color:var(--text-muted); font-size:var(--text-2xs); letter-spacing:.02em; }
+  .lock-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:.625rem 0; border-bottom:1px solid var(--surface-canvas-deep); color:var(--text-muted); }
+  .lock-row:last-child { border-bottom:0; }
+  .lock-row .k { font-size:var(--text-sm); }
+  .lock-row .tag { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; color:var(--stage-review); background:rgba(99,102,241,.1); border-radius:var(--r-pill); padding:3px 8px; white-space:nowrap; }
+  .notice { display:flex; gap:.625rem; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-left:3px solid var(--stage-draft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); margin-top:var(--s-5); }
+  .notice .ico { flex:none; color:var(--stage-draft); }
+  .notice p { margin:0; font-size:var(--text-sm); line-height:1.5; color:var(--text-secondary); }
+  .notice strong { color:var(--text-primary); }
+  .foot-note { font-size:var(--text-xs); color:var(--text-muted); margin-top:var(--s-5); line-height:1.5; }
+  .arch-card.is-soon { opacity:.5; cursor:not-allowed; }
+  .arch-card.is-soon:hover { transform:none; box-shadow:none; border-color:var(--border-soft); }
+  .arch-card .soon { margin-left:auto; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:3px 8px; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Consistency reference</div>
+      <h1>Collection creation — archetypes.</h1>
+      <p>The collection creation flow with the new <strong>archetype</strong> step. A creator picks a collection type, sees its starting capabilities (the policy envelope), then names it. Cards-only (no wizard): pick a type on the page, then the rest continues in a <strong>modal</strong> — that type’s starting limits, then name / description / thumbnail. The first release ships the three <strong>Art</strong> types; the rest stay visible but disabled (“Soon”). Capability numbers come from <code>collection-archetype-implementation-plan.md</code>; limits are editable while Draft and freeze at go-live.</p>
+    </header>
+
+    <!-- 01 STEP 1 · choose a type -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Step 1 · choose a collection type</span><span class="d">Seven archetype cards — the three Art types are selectable at launch; the rest are greyed out (“Soon”). The archetype sets safe starting limits, default sale state, and rarity ceiling. Nothing selected yet → Continue disabled.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Collections</span><span class="sep">/</span><span>New</span></div>
+        <div class="section">
+          <div class="create-head"><div class="eyebrow">New collection</div><h2>Create a collection.</h2><p class="lede">Start by choosing a collection type. It sets safe starting limits to protect the marketplace — you can raise your collection level later as your project grows.</p></div>
+          <div class="stepper"><span class="step is-active"><span class="n">1</span>Type</span><span class="bar"></span><span class="step"><span class="n">2</span>Capabilities</span><span class="bar"></span><span class="step"><span class="n">3</span>Details</span></div>
+          <div class="arch-grid">
+            <button class="arch-card"><div class="top"><span class="chip" style="background:rgba(236,72,153,.14);color:#EC4899"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="9.5" r="1.1"/><circle cx="15.5" cy="9.5" r="1.1"/><circle cx="9.5" cy="15" r="1.1"/><path d="M12 21a3 3 0 0 0 3-3 2 2 0 0 1 2-2 2 2 0 0 0 2-2"/></svg></span><span class="tick">✓</span></div><div class="ttl">Curated Art</div><div class="for">Hand-made 1/1s and small editions — galleries, artists, limited creative sets.</div><div class="hint">Up to 100 items</div></button>
+            <button class="arch-card"><div class="top"><span class="chip" style="background:rgba(6,176,230,.14);color:#06B0E6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg></span><span class="tick">✓</span></div><div class="ttl">Generated Art</div><div class="for">Large PFP / generative sets — one unique item per token, trait metadata, rarity.</div><div class="hint">Up to 1,000 items</div></button>
+            <button class="arch-card"><div class="top"><span class="chip" style="background:rgba(124,58,237,.14);color:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17l9 5 9-5" opacity=".5"/></svg></span><span class="tick">✓</span></div><div class="ttl">Editioned Art</div><div class="for">Prints, posters, media editions — many copies per design, drops & claim windows.</div><div class="hint">Up to 10,000 units</div></button>
+            <button class="arch-card is-soon"><div class="top"><span class="chip" style="background:rgba(16,185,129,.14);color:#10B981"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.8v9.4L12 21.5l-8.5-4.8V7.3L12 2.5z"/><path d="M12 12l8.5-4.7M12 12v9.5M12 12L3.5 7.3"/></svg></span><span class="soon">Soon</span></div><div class="ttl">Game Items</div><div class="for">Weapons, skins, cards, materials — mixed supply, per-token market & account caps.</div><div class="hint">Up to 1,000,000 units</div></button>
+            <button class="arch-card is-soon"><div class="top"><span class="chip" style="background:rgba(245,158,11,.16);color:#B45309"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3.2"/><path d="M4 6v6c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2V6"/><path d="M4 12v6c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2v-6"/></svg></span><span class="soon">Soon</span></div><div class="ttl">Game Currency</div><div class="for">Gold, points, resources — few types, huge quantity, dynamic minting.</div><div class="hint">Soulbound by default</div></button>
+            <button class="arch-card is-soon"><div class="top"><span class="chip" style="background:rgba(14,165,233,.14);color:#0EA5E9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h15A1.5 1.5 0 0 1 21 8.5 2 2 0 0 0 21 12.5 2 2 0 0 0 21 16.5 1.5 1.5 0 0 1 19.5 18h-15A1.5 1.5 0 0 1 3 16.5 2 2 0 0 0 3 12.5 2 2 0 0 0 3 8.5z"/><path d="M12 7v11" stroke-dasharray="2 2"/></svg></span><span class="soon">Soon</span></div><div class="ttl">Access Pass</div><div class="for">Membership and utility passes — configurable supply and transfer rules.</div><div class="hint">Configurable</div></button>
+            <button class="arch-card is-soon"><div class="top"><span class="chip" style="background:rgba(107,107,107,.14);color:#6B6B6B"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="9" cy="8" r="2.2" fill="var(--surface-canvas)"/><circle cx="15" cy="16" r="2.2" fill="var(--surface-canvas)"/></svg></span><span class="soon">Soon</span></div><div class="ttl">Custom</div><div class="for">No preset fits — starts conservative, configure freely. May need review to expand.</div><div class="hint">Review to expand</div></button>
+          </div>
+          <div class="form-actions"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled style="opacity:.5">Continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 STEP 1 · selected -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Step 1 · type selected</span><span class="d">Generated Art chosen — selected state, Continue enabled. Not-yet-available types (e.g. Game Items) stay greyed.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Collections</span><span class="sep">/</span><span>New</span></div>
+        <div class="section">
+          <div class="create-head"><div class="eyebrow">New collection</div><h2>Create a collection.</h2></div>
+          <div class="stepper"><span class="step is-active"><span class="n">1</span>Type</span><span class="bar"></span><span class="step"><span class="n">2</span>Capabilities</span><span class="bar"></span><span class="step"><span class="n">3</span>Details</span></div>
+          <div class="arch-grid">
+            <button class="arch-card"><div class="top"><span class="chip" style="background:rgba(236,72,153,.14);color:#EC4899"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="9.5" r="1.1"/><circle cx="15.5" cy="9.5" r="1.1"/><circle cx="9.5" cy="15" r="1.1"/><path d="M12 21a3 3 0 0 0 3-3 2 2 0 0 1 2-2 2 2 0 0 0 2-2"/></svg></span><span class="tick">✓</span></div><div class="ttl">Curated Art</div><div class="for">Hand-made 1/1s and small editions.</div><div class="hint">Up to 100 items</div></button>
+            <button class="arch-card is-selected"><div class="top"><span class="chip" style="background:rgba(6,176,230,.14);color:#06B0E6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg></span><span class="tick">✓</span></div><div class="ttl">Generated Art</div><div class="for">Large PFP / generative sets — one unique item per token, trait metadata, rarity.</div><div class="hint">Up to 1,000 items</div></button>
+            <button class="arch-card"><div class="top"><span class="chip" style="background:rgba(124,58,237,.14);color:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17l9 5 9-5" opacity=".5"/></svg></span><span class="tick">✓</span></div><div class="ttl">Editioned Art</div><div class="for">Many copies per design — drops & claim windows.</div><div class="hint">Up to 10,000 units</div></button>
+            <button class="arch-card is-soon"><div class="top"><span class="chip" style="background:rgba(16,185,129,.14);color:#10B981"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.8v9.4L12 21.5l-8.5-4.8V7.3L12 2.5z"/><path d="M12 12l8.5-4.7M12 12v9.5M12 12L3.5 7.3"/></svg></span><span class="soon">Soon</span></div><div class="ttl">Game Items</div><div class="for">Mixed supply, per-token market & account caps.</div><div class="hint">Up to 1,000,000 units</div></button>
+          </div>
+          <div class="form-actions"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Continue with Generated Art</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 STEP 2 · modal (Curated Art) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Step 2 · modal — curated type</span><span class="d">Modal for Curated Art — hand-made work, mostly 1/1 with small editions allowed. Smaller starting limits.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:560px">
+          <header><h4>New collection</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="row" style="justify-content:space-between;margin-bottom:var(--s-5)"><span class="type-chip"><span class="dot" style="background:rgba(236,72,153,.16);color:#EC4899"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="9.5" r="1.1"/><circle cx="15.5" cy="9.5" r="1.1"/><circle cx="9.5" cy="15" r="1.1"/><path d="M12 21a3 3 0 0 0 3-3 2 2 0 0 1 2-2 2 2 0 0 0 2-2"/></svg></span>Curated Art</span><button class="btn btn--ghost btn--sm">Change type</button></div>
+            <div class="panel" style="margin-bottom:var(--s-5)">
+              <h4>Starting limits</h4>
+              <div class="cap-row"><span class="k">Collection size</span><span class="v">100 items</span></div>
+              <div class="cap-row"><span class="k">Editions per item</span><span class="v">1–25<small>mostly 1/1</small></span></div>
+              <div class="cap-row"><span class="k">Total mint allowance</span><span class="v">500</span></div>
+              <div class="cap-row"><span class="k">Marketplace</span><span class="v">On · Tradeable</span></div>
+            </div>
+            <div class="m-field"><label class="flabel">Collection name</label><input class="input" style="width:100%" placeholder="e.g. Studio Originals"></div>
+            <div class="m-field"><label class="flabel">Description</label><textarea class="input" style="width:100%;min-height:84px;resize:vertical" placeholder="What is this collection about? Buyers will see this."></textarea></div>
+            <div class="m-field"><label class="flabel">Thumbnail</label>
+              <div class="thumb-pick">
+                <button class="thumb-opt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><strong>Upload</strong><span class="tiny">Drop or browse</span></button>
+                <button class="thumb-opt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><strong>Media library</strong><span class="tiny">Pick a thumbnail</span></button>
+              </div>
+            </div>
+            <p class="foot-note" style="margin-top:var(--s-4)">Rarity tiers and batch import are available on every collection. Starting limits are editable while Draft and lock when the collection goes Live.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Back</button><button class="btn btn--primary">Create &amp; open</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 STEP 2 · modal (Generated Art) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Step 2 · continue in a modal</span><span class="d">Once a type is picked the rest happens in a modal — that type’s starting limits, then name / description / thumbnail. No “unlock later”; rarity tiers and batch import are available on every collection.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:560px">
+          <header><h4>New collection</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="row" style="justify-content:space-between;margin-bottom:var(--s-5)"><span class="type-chip"><span class="dot" style="background:rgba(6,176,230,.16);color:#06B0E6"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg></span>Generated Art</span><button class="btn btn--ghost btn--sm">Change type</button></div>
+            <div class="panel" style="margin-bottom:var(--s-5)">
+              <h4>Starting limits</h4>
+              <div class="cap-row"><span class="k">Collection size</span><span class="v">1,000 unique items</span></div><div class="cap-row"><span class="k">Editions per item</span><span class="v">1 / 1<small>one-of-one</small></span></div><div class="cap-row"><span class="k">Total mint allowance</span><span class="v">1,000</span></div><div class="cap-row"><span class="k">Marketplace</span><span class="v">On · Tradeable</span></div>
+            </div>
+            <div class="m-field"><label class="flabel">Collection name</label><input class="input" style="width:100%" placeholder="e.g. Crystal Birds"></div>
+            <div class="m-field"><label class="flabel">Description</label><textarea class="input" style="width:100%;min-height:84px;resize:vertical" placeholder="What is this collection about? Buyers will see this."></textarea></div>
+            <div class="m-field"><label class="flabel">Thumbnail</label>
+              <div class="thumb-pick">
+                <button class="thumb-opt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><strong>Upload</strong><span class="tiny">Drop or browse</span></button>
+                <button class="thumb-opt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><strong>Media library</strong><span class="tiny">Pick a thumbnail</span></button>
+              </div>
+            </div>
+            <p class="foot-note" style="margin-top:var(--s-4)">Rarity tiers and batch import are available on every collection. Starting limits are editable while Draft and lock when the collection goes Live.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Back</button><button class="btn btn--primary">Create &amp; open</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 STEP 2 · modal (Editioned Art) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Step 2 · modal — editions type</span><span class="d">Same modal for Editioned Art — the starting limits change (many copies per design, larger total).</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:560px">
+          <header><h4>New collection</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="row" style="justify-content:space-between;margin-bottom:var(--s-5)"><span class="type-chip"><span class="dot" style="background:rgba(124,58,237,.16);color:#7C3AED"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17l9 5 9-5" opacity=".5"/></svg></span>Editioned Art</span><button class="btn btn--ghost btn--sm">Change type</button></div>
+            <div class="panel" style="margin-bottom:var(--s-5)">
+              <h4>Starting limits</h4>
+              <div class="cap-row"><span class="k">Designs (token types)</span><span class="v">100</span></div><div class="cap-row"><span class="k">Editions per item</span><span class="v">up to 1,000</span></div><div class="cap-row"><span class="k">Total mint allowance</span><span class="v">10,000</span></div><div class="cap-row"><span class="k">Marketplace</span><span class="v">On · Tradeable</span></div>
+            </div>
+            <div class="m-field"><label class="flabel">Collection name</label><input class="input" style="width:100%" placeholder="e.g. Spring Print Series"></div>
+            <div class="m-field"><label class="flabel">Description</label><textarea class="input" style="width:100%;min-height:84px;resize:vertical" placeholder="What is this collection about?"></textarea></div>
+            
+            <p class="foot-note" style="margin-top:var(--s-4)">Rarity tiers and batch import are available on every collection. Starting limits are editable while Draft and lock when the collection goes Live.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Back</button><button class="btn btn--primary">Create &amp; open</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

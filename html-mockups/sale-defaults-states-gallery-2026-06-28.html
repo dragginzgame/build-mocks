@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Collection · Sale defaults (page · stages · rarity modes)</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { opacity:.45; cursor:not-allowed; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head .ttlwrap { display:flex; align-items:baseline; gap:var(--s-3); flex-wrap:wrap; }
+  .card__head h3 { font-size:var(--text-xl); }
+  .card__head .sub { font-size:var(--text-xs); color:var(--text-muted); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .input.is-error { border-color:var(--notify-error); } .input.is-ok { border-color:var(--stage-live); }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .colhead { display:flex; gap:var(--s-3); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); padding-bottom:.35rem; }
+  .colhead .c-tier { min-width:120px; } .colhead .c-split { width:210px; } .colhead .c-state { flex:1; }
+  .tier-row { display:flex; align-items:center; gap:var(--s-3); padding:.7rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .tier-row:first-child { border-top:0; }
+  .tier-row .tr-tier { font-family:var(--font-emphasis); font-weight:700; min-width:120px; }
+  .tier-row .tr-split { width:210px; font-size:var(--text-sm); }
+  .tier-row .tr-state { flex:1; display:flex; gap:.35rem; flex-wrap:wrap; min-width:200px; align-items:center; }
+  .tier-row .tr-actions { display:flex; gap:var(--s-2); margin-left:auto; }
+  .open-chip { font-size:var(--text-xs); color:var(--text-muted); font-style:italic; }
+  .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); flex:none; position:relative; }
+  .radio.on { border-color:var(--text-primary); } .radio.on::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .opt { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); border:1px solid var(--border-soft); border-radius:var(--r-3); }
+  .opt + .opt { margin-top:var(--s-3); }
+  .opt.on { border-color:var(--text-primary); box-shadow:inset 0 0 0 1px var(--text-primary); }
+  .opt.disabled { opacity:.5; }
+  .opt .opt-main { flex:1; }
+  .opt .opt-ttl { font-family:var(--font-emphasis); font-weight:700; }
+  .opt .opt-d { font-size:var(--text-xs); color:var(--text-secondary); }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .empty-state { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .empty-state strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state p { margin:0; font-size:var(--text-sm); }
+  .ben-row { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3) var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .ben-row + .ben-row { margin-top:var(--s-3); }
+  .ben-row .bn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .ben-row .bd { font-size:var(--text-xs); color:var(--text-secondary); }
+  .ben-row .pct { width:84px; }
+  .ben-row.addopt { cursor:pointer; color:var(--text-muted); } .ben-row.addopt:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .plusmark { width:18px; height:18px; border-radius:50%; border:2px dashed var(--text-muted); display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:13px; line-height:1; flex:none; }
+  .sumbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-3) var(--s-4); border-radius:var(--r-3); background:var(--surface-canvas-deep); font-size:var(--text-sm); }
+  .sumbar .k { color:var(--text-secondary); } .sumbar .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .sumbar.bad .v { color:var(--notify-error); }
+  .vcheck { display:flex; gap:var(--s-3); align-items:flex-start; padding:.65rem 0; border-top:1px solid var(--border-soft); }
+  .vcheck:first-child { border-top:0; }
+  .vcheck .vi { flex:none; margin-top:1px; } .vcheck .vi.err { color:var(--notify-error); } .vcheck .vi.ok { color:var(--stage-live); }
+  .vcheck .vt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .vcheck .vd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:1px; }
+  .vcheck .vfix { margin-left:auto; color:var(--info); font-weight:700; font-size:var(--text-xs); white-space:nowrap; align-self:center; }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .single-modal .modal-card.wide { max-width:640px; } .single-modal .modal-card.narrow { max-width:480px; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .modelbar { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-5); }
+  .modelbar .mb { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); flex:1; min-width:200px; }
+  .modelbar .mb .k { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); }
+  .modelbar .mb .v { font-size:var(--text-xs); color:var(--text-secondary); margin-top:2px; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:94ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sbg--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .sbg--review{ background:rgba(99,102,241,.12); color:var(--stage-review); }
+  .sbg--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .lockpill { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
+  .lockpill--lock { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .lockpill--locked { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .lockpill--req { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .card.locked-card { background:var(--surface-canvas-alt); }
+  .lock-note { background:var(--surface-canvas-deep); } .lock-note .ic { color:var(--text-muted); }
+  .lifebar { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); }
+  .lifebar .lb { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); flex:1; min-width:210px; }
+  .lifebar .lb .k { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); display:flex; align-items:center; gap:var(--s-2); }
+  .lifebar .lb .v { font-size:var(--text-xs); color:var(--text-secondary); margin-top:4px; }
+  .part-divider { margin-top:var(--s-10); padding-top:var(--s-6); border-top:2px solid var(--border-strong); }
+  .part-divider .pd-k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .part-divider .pd-h { font-size:var(--text-3xl); margin-top:.25rem; }
+  .part-divider .pd-d { color:var(--text-secondary); font-size:var(--text-sm); margin-top:var(--s-2); max-width:82ch; }
+  .grey-note { color:var(--text-secondary); font-size:var(--text-sm); max-width:94ch; }
+  .grey-note strong { color:var(--text-primary); }
+  .reftable { width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .reftable th { text-align:left; font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; padding:.6rem .85rem; border-bottom:1px solid var(--border-soft); }
+  .reftable td { padding:.7rem .85rem; border-bottom:1px solid var(--border-soft); } .reftable tr:last-child td { border-bottom:0; }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Creator studio · Collection</span>
+    <h1>Collection — Sale defaults.</h1>
+    <p>The collection sub-page where a creator sets the <strong>default secondary-sale policy</strong> every token in the collection inherits at go-live. Like claim defaults it is <strong>tier-indexed</strong> (a default per rarity tier), <strong>auto-saves</strong>, and is <strong>required-valid before Review and frozen at Live</strong> — a token cannot go Live without a locked sale policy. Each tier holds two halves: an <strong>economic split</strong> (small project fee + royalties to beneficiaries) and <strong>restrictions</strong> (a tradeable state + optional per-copy limits). Mirrors <span class="mono">claim-defaults-states-gallery</span>. Source: <span class="mono">Design Documentation/sale-rules-design-wip.md</span>.</p>
+    <div class="navlinks">Sibling of <a href="claim-defaults-states-gallery-2026-06-19.html">Claim defaults</a>. Related: <a href="rarity-states-gallery-2026-06-17.html">Rarity</a> · <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a> · <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a></div>
+  </header>
+
+  <!-- ============ PART A ============ -->
+  <div class="part-divider"><div class="pd-k">Part A</div><h2 class="pd-h">The sale-defaults page</h2><div class="pd-d">The sub-page itself: a per-tier table of Split + State, and the two editors it opens. Auto-saves; stage persistence lives on the collection bar, not here.</div></div>
+
+  <!-- A1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A1</span><span class="t">Sale defaults — set</span><span class="d">A collection with sale defaults in place. Each rarity tier has a <strong>split</strong> (project fee + royalty total) and a <strong>state</strong> (Tradeable / Gift-only / Sale-only / Soulbound) with optional per-copy limits. This is a collection sub-page, so it auto-saves — no Save/Discard here; stage persistence (Submit to Review / Publish to Live) lives on the collection bar.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Sale defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Sale defaults</div><h2>Sale defaults.</h2><div class="lede">The secondary-sale policy every token inherits at go-live. One default per rarity tier.</div></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="info-note"><span class="ic">ⓘ</span><div>The <strong>marketplace/referrer fee</strong> (Toko's, on the Toko marketplace) and the <strong>listing currency</strong> are <strong>not</strong> set here — the fee is charged at listing, separate from this split, and currency is the seller's choice when they list. Sale defaults are only the durable, frozen-onto-the-token part.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span><span class="tag">Sales 3 / copy</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">Project 2% · Royalty 3%</span><span class="tr-state"><span class="tag tag--amber">Gift-only</span><span class="tag">Transfers 1 / copy</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A2</span><span class="t">Split editor — collection default</span><span class="d">Opened from "Edit split" on a tier. A small <strong>project fee</strong> (up to 2%) plus <strong>royalties</strong> to Live beneficiaries — <strong>≤ 3% total</strong> across any number of beneficiaries —; each royalty is Forever or a frozen schedule. There is deliberately <strong>no Toko cut</strong> and no referrer field here — those aren't frozen into the token. Secondary caps are lower than primary, so the seller keeps the majority.</span></div>
+    <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
+      <header><h4>Sale split · Founder</h4><span class="x">✕</span></header>
+      <div class="mbody">
+        <div><div class="flabel">Project fee <span class="open-chip">up to 2%</span></div><input class="input is-ok" value="2%"><div class="hint">Cycles / project upkeep. Frozen onto the token at Live.</div></div>
+        <div>
+          <div class="flabel">Royalties <span class="open-chip">≤ 3% total · any number of beneficiaries · Live beneficiaries only</span></div>
+          <div class="ben-row"><span class="bn" style="flex:1">Riya Anand <span class="bd">creator · k1m9…7uvw</span></span><input class="input pct" value="2%"><select class="input" style="width:130px"><option>Forever</option><option>Cliff</option><option>Linear taper</option><option>Curve</option></select></div>
+          <div class="ben-row"><span class="bn" style="flex:1">Studio Fund <span class="bd">beneficiary · b3c2…9pqr</span></span><input class="input pct" value="1%"><select class="input" style="width:130px"><option>Forever</option><option>Cliff</option><option>Linear taper</option><option>Curve</option></select></div>
+          <div class="ben-row addopt" style="margin-top:.75rem"><span class="plusmark">+</span><span>Add royalty beneficiary <span class="bd">(only Live beneficiaries appear)</span></span></div>
+          <div class="sumbar" style="margin-top:.75rem"><span class="k">Total frozen deduction</span><span class="v">2% + 3% = 5%</span></div>
+          <div class="hint">Seller keeps ≥ 95% before the referrer fee. The creator must be one of the beneficiaries.</div>
+        </div>
+      </div>
+      <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save split</button></div>
+    </div></div></div>
+  </section>
+
+  <!-- A3 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A3</span><span class="t">State editor — restrictions &amp; limits</span><span class="d">Opened from "Edit state" on a tier. Exactly one <strong>state</strong> (the Guardian-gated sale/transfer flags), plus optional per-copy <strong>sale</strong> and <strong>transfer</strong> limits. A tier with any per-copy limit forces <span class="mono">stackable = No</span> (per-unit identity needed), and the remaining count is shown front-and-centre on the token (e.g. "Sales left: 1 of 3").</span></div>
+    <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
+      <header><h4>State &amp; limits · Keeper</h4><span class="x">✕</span></header>
+      <div class="mbody">
+        <div class="flabel">State <span class="open-chip">choose one</span></div>
+        <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Tradeable <span class="tag tag--green" style="margin-left:.4rem">default</span></div><div class="opt-d">Can sell ✓ · can transfer ✓</div></div></div>
+        <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Gift-only</div><div class="opt-d">Can sell ✕ · can transfer ✓ — moves freely but never sells</div></div></div>
+        <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Sale-only</div><div class="opt-d">Can sell ✓ · can transfer ✕</div></div></div>
+        <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Soulbound</div><div class="opt-d">Can sell ✕ · can transfer ✕ — bound to the holder</div></div></div>
+        <div class="grid2" style="margin-top:.5rem">
+          <div><div class="flabel">Sale limit <span class="open-chip">optional · per copy</span></div><input class="input" value="3"><div class="hint">Max secondary sales per copy. Blank = unlimited.</div></div>
+          <div><div class="flabel">Transfer limit <span class="open-chip">optional · per copy</span></div><input class="input" placeholder="Unlimited"><div class="hint">Max transfers per copy. Blank = unlimited.</div></div>
+        </div>
+        <div class="info-note warn-note"><span class="ic">⚠</span><div>Setting a per-copy limit makes this tier <strong>non-stackable</strong> (each copy is individualised). The remaining count shows on the token card and detail.</div></div>
+      </div>
+      <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save state</button></div>
+    </div></div></div>
+  </section>
+
+  <!-- A4 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A4</span><span class="t">Sale defaults — not set yet</span><span class="d">A Draft collection before sale defaults are configured. Tiers exist (from the rarity system) but have no split. The page is editable in any state, but the collection can't go Live until every tier has a valid split — until then, tiers fall back to the <strong>standing default</strong> (Tradeable, no limits, default split) so nothing is ever stranded.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>New Collection</a><span class="sep">/</span><span class="here">Sale defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Sale defaults</div><h2>Sale defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--req">Required before Review</span></div>
+          <div class="empty-state"><strong>No sale defaults yet</strong><p>Set a split for each tier — a project fee and at least one royalty (the creator). Until you do, tiers use the standing default.</p><button class="btn btn--primary">Set the first tier</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part A note (not UI) — what isn't here</span></div>
+    <p class="grey-note">Sale defaults are the <strong>token-frozen</strong> half of a sale. Two things deliberately live elsewhere: the <strong>marketplace / referrer fee</strong> is the facilitator's fee (on the Toko marketplace it goes to Toko — that's how Toko monetises secondary, instead of a token-frozen cut), set at the listing/marketplace layer and deducted at settlement <em>on top of</em> this split; and the <strong>listing currency</strong> is the seller's choice at list time. Neither is durable per-collection policy, so neither belongs in a collection-wide default. What <em>is</em> here — the economic split and restrictions — travels with every copy after Live.</p>
+  </div>
+
+  <!-- ============ PART B ============ -->
+  <div class="part-divider"><div class="pd-k">Part B</div><h2 class="pd-h">Lifecycle &amp; locking</h2><div class="pd-d">Sale defaults follow the same Draft → Review → Live lifecycle as the collection's other core policy. Editable early, required-valid before Review, frozen at Live.</div></div>
+
+  <!-- B1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B1</span><span class="t">Draft — not yet valid (change required)</span><span class="d">Being set up. Founder's royalties sum to 12% (over the 10% cap), so the collection can't be submitted to Review. Everything is editable; each section carries a "Locks on Live" pill so the creator knows it'll freeze later.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Sale defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Sale defaults</div><h2>Sale defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="info-note err-note"><span class="ic">⚠</span><div><strong>Founder royalties total 5%</strong> — over the 3% cap. Reduce a beneficiary's share before this collection can move to Review.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split" style="color:var(--notify-error)">Project 2% · Royalty 5% ⚠</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B2</span><span class="t">Review — valid &amp; still editable</span><span class="d">Every tier has a valid split (project ≤ 2%, royalties ≤ 3% total, creator a beneficiary), so the collection reached Review. Sale defaults stay editable here — you can still adjust split or state — but each section shows it will lock at Live.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Sale defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Sale defaults</div><h2>Sale defaults.</h2></div><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></div>
+        <div class="info-note ok-note"><span class="ic">✓</span><div>All tiers valid. Sale defaults stay editable in Review; they freeze when the collection goes Live.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span><span class="tag">Sales 3 / copy</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">Project 2% · Royalty 3%</span><span class="tr-state"><span class="tag tag--amber">Gift-only</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B3 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B3</span><span class="t">Live — locked read-only</span><span class="d">Once Live, sale defaults are frozen — each token already issued carries its snapshotted <span class="mono">locked_sale_policy</span>. No Edit actions; each section shows a "Locked" pill and opens read-only.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Sale defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Sale defaults</div><h2>Sale defaults.</h2></div><span class="stage-badge sbg--live"><span class="dot"></span>Live</span></div>
+        <div class="info-note lock-note"><span class="ic">🔒</span><div>Locked. Sale policy is snapshotted onto every issued token at go-live and can't change — settlement and limits depend on it.</div></div>
+        <div class="card locked-card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div><span class="lockpill lockpill--locked">🔒 Locked</span></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><span class="lockpill lockpill--locked">🔒 Locked</span></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span><span class="tag">Sales 3 / copy</span></span><span class="tr-actions"><span class="lockpill lockpill--locked">🔒 Locked</span></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">Project 2% · Royalty 3%</span><span class="tr-state"><span class="tag tag--amber">Gift-only</span></span><span class="tr-actions"><span class="lockpill lockpill--locked">🔒 Locked</span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B4 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B4</span><span class="t">Stage gates — reference</span><span class="d">Where sale defaults sit in the collection lifecycle. A plain reference table on grey (not UI).</span></div>
+    <table class="reftable">
+      <thead><tr><th>Stage</th><th>Editable?</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></td><td>Yes — fully editable</td><td>Tiers may be unset (fall back to standing default)</td></tr>
+        <tr><td><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></td><td>Yes — still editable</td><td><strong>Required valid</strong>: every tier has a valid split (project ≤ 2%, royalties ≤ 3% total, creator a beneficiary)</td></tr>
+        <tr><td><span class="stage-badge sbg--live"><span class="dot"></span>Live</span></td><td>No — read-only</td><td><strong>Frozen</strong>: <span class="mono">locked_sale_policy</span> snapshotted onto every token; a token can't go Live without it</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part B note (not UI)</span></div>
+    <p class="grey-note">Sale defaults follow the same lifecycle as the collection's other core policy (Attributes, Supply, Rarity, Guards, Claim defaults): editable in Draft and Review, <strong>required-valid before Review</strong>, <strong>locked at Live</strong>. Because collection/Guardian policy is immutable after Live, the policy is <strong>authored while Draft/Review and snapshotted at Review → Live</strong> as <span class="mono">locked_sale_policy</span>; a token cannot go Live without it. A <strong>standing default</strong> (Tradeable, no limits, default split) is applied so even pre-marketplace Live tokens already carry rules and aren't stranded. Go-Live/Review validation is surfaced on the collection's status checklist (see <span class="mono">collection-states-gallery</span>); this sub-page shows field-level state inline only.</p>
+  </div>
+
+  <!-- ============ PART C ============ -->
+  <div class="part-divider"><div class="pd-k">Part C</div><h2 class="pd-h">Rarity modes</h2><div class="pd-d">Sale defaults are tier-indexed, so the table shape follows the collection's rarity mode — exactly like claim defaults.</div></div>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Modes</span></div>
+    <div class="modelbar">
+      <div class="mb"><div class="k">Uniform</div><div class="v">No tiers — one default for the whole collection.</div></div>
+      <div class="mb"><div class="k">Tiered</div><div class="v">The collection's own named tiers (Patron / Keeper / Founder).</div></div>
+      <div class="mb"><div class="k">Weighted</div><div class="v">Fixed tier set (Common → Legendary).</div></div>
+    </div>
+  </div>
+
+  <!-- C1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">C1</span><span class="t">Uniform — populated</span><span class="d">Uniform rarity has no tiers — one set of sale defaults for the whole collection. A single split + state.</span></div>
+    <div class="screen"><div class="section">
+      <div class="card">
+        <div class="card__head"><div class="ttlwrap"><h3>Collection default</h3><span class="sub">uniform rarity</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+        <div class="colhead"><span class="c-tier">Scope</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+        <div class="tier-row"><span class="tr-tier">All tokens</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- C2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">C2</span><span class="t">Tiered — populated</span><span class="d">Tiered rarity uses the collection's own named tiers. Each tier needs a valid split; state defaults to Tradeable. Royalties and limits can escalate per tier.</span></div>
+    <div class="screen"><div class="section">
+      <div class="card">
+        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered · 3 tiers</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+        <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+        <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span><span class="tag">Sales 3 / copy</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">Project 2% · Royalty 3%</span><span class="tr-state"><span class="tag tag--red">Soulbound</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- C3 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">C3</span><span class="t">Weighted — populated</span><span class="d">Weighted rarity uses the fixed tier set (Common → Legendary). Same model — a valid split per tier, state + limits optional.</span></div>
+    <div class="screen"><div class="section">
+      <div class="card">
+        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">weighted · 5 fixed tiers</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+        <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Sale split</span><span class="c-state">State &amp; limits</span><span></span></div>
+        <div class="tier-row"><span class="tr-tier">Common</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Uncommon</span><span class="tr-split">Project 2% · Royalty 1%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Rare</span><span class="tr-split">Project 2% · Royalty 2%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Epic</span><span class="tr-split">Project 2% · Royalty 3%</span><span class="tr-state"><span class="tag tag--green">Tradeable</span><span class="tag">Sales 5 / copy</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Legendary</span><span class="tr-split">Project 2% · Royalty 3%</span><span class="tr-state"><span class="tag tag--amber">Gift-only</span><span class="tag">Transfers 1 / copy</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit split</button><button class="btn btn--ghost btn--sm">Edit state</button></span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part C note (not UI)</span></div>
+    <p class="grey-note">Two halves per tier. <strong>Split</strong> (economic, frozen): a <strong>project fee up to 2%</strong> plus <strong>royalties — ≤ 3% total</strong> — across any number of Live beneficiaries (the creator must be one), each <em>Forever</em> or on a frozen schedule evaluated at resale. Secondary caps are deliberately lower than primary — total frozen deduction ≤ 5%, so the seller keeps ≥ 95% before the referrer fee, and <strong>Toko takes no token-frozen cut</strong> on secondary. <strong>State</strong> (restrictions): one of <strong>Tradeable / Gift-only / Sale-only / Soulbound</strong> plus optional per-copy <strong>sale</strong> / <strong>transfer</strong> limits with a visible remaining-count tracker; any per-copy limit forces <span class="mono">stackable = No</span>. Invalid inputs (royalties over cap, a non-Live beneficiary, project out of range) are prevented at entry, not deferred to go-Live. The only go-Live gate is a <strong>valid split on every tier</strong>; state defaults to Tradeable and limits are optional. The marketplace/referrer fee and listing currency are not part of this (Part A note).</p>
+  </div>
+
+</div>
+</body>
+</html>
