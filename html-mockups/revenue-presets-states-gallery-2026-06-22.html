@@ -201,7 +201,7 @@
     <header>
       <div class="eyebrow">Toko · Consistency reference</div>
       <h1>Project — Revenue presets.</h1>
-      <p>A project-level library of reusable <strong>revenue presets</strong> — how claim (and later, sale) proceeds are split. Laid out like Vendors: a list of named presets, each with a <strong>Draft / Review / Live</strong> status and Edit / Delete. A preset sets the <strong>fees</strong> (project/cycles funding and an optional Toko contribution) and optional <strong>royalties</strong> (a live beneficiary, a percent, and how it runs over time). Vendors pick a Live preset at creation. <strong>Claim</strong> presets ship first; <strong>Sale</strong> presets are a future tab.</p>
+      <p>A project-level library of reusable <strong>revenue presets</strong> — how claim (and later, sale) proceeds are split. Laid out like Vendors: a list of named presets, each with a <strong>Draft / Review / Live</strong> status and Edit / Delete. A preset sets the <strong>fees</strong> (project/cycles funding and a mandatory <strong>Toko burn</strong>, min 1%, that builds project reputation) and optional <strong>royalties</strong> (a live beneficiary, a percent, and how it runs over time). Vendors pick a Live preset at creation. <strong>Claim</strong> presets ship first; <strong>Sale</strong> presets are a future tab.</p>
     </header>
 
     <!-- 01 · List — Claim presets (populated) -->
@@ -226,7 +226,7 @@
             </div>
             <div class="preset-card">
               <div class="ph"><div><div class="pname">Founders Split</div><div class="pdesc">Higher artist share, tapering</div></div><span class="sb sb--indigo"><span class="dot"></span>Review</span></div>
-              <div class="pstats"><span class="tag">Cycles 3%</span><span class="tag">Toko 0%</span><span class="tag tag--indigo">3 royalties · 18%</span></div>
+              <div class="pstats"><span class="tag">Cycles 3%</span><span class="tag">Toko 1%</span><span class="tag tag--indigo">3 royalties · 18%</span></div>
               <div class="pfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="ico-btn ico-btn--danger" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
             </div>
             <div class="preset-card">
@@ -256,7 +256,7 @@
             <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_revenue_presets.jpg" alt="Revenue presets — none yet" onerror="this.parentElement.style.display='none'"></div>
             <div class="empty-hero__body">
               <h3 class="empty-hero__ttl">No revenue presets yet.</h3>
-              <p class="empty-hero__sub">Create a claim revenue preset — set the project/cycles funding, an optional Toko contribution, and any royalties to live beneficiaries. Vendors pick a Live preset at creation.</p>
+              <p class="empty-hero__sub">Create a claim revenue preset — set the project/cycles funding, the <strong>Toko burn</strong> (min 1%, builds project reputation), and any royalties to live beneficiaries. Vendors pick a Live preset at creation.</p>
               <button class="btn btn--primary" style="margin-top:var(--s-2)">Create your first preset</button>
             </div>
           </div>
@@ -284,7 +284,7 @@
 
     <!-- 04 · Preset editor — Claim (Draft, editable) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Preset editor — Claim (Draft, editable)</span><span class="d">The preset's own page. Name (defaults to "Preset N") and an optional description, then two sections: <strong>Fees</strong> (project/cycles funding 1–10%, optional Toko contribution 0–10%) and <strong>Royalties</strong> (each a live beneficiary, a percent, and how it runs over time). A running total meter enforces the 20% royalty cap. Project sub-page → auto-saves; stage persistence lives on the management bar.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Preset editor — Claim (Draft, editable)</span><span class="d">The preset's own page. Name (defaults to "Preset N") and an optional description, then two sections: <strong>Fees</strong> (project/cycles funding 1–10%, and a mandatory <strong>Toko burn</strong> 1–10% that builds project reputation) and <strong>Royalties</strong> (each a live beneficiary, a percent, and how it runs over time). A running total meter enforces the 20% royalty cap. Project sub-page → auto-saves; stage persistence lives on the management bar.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Revenue presets</a><span class="sep">/</span><span class="here">Founders Split</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -311,10 +311,10 @@
                 <div class="hint">Funds the project canister (cycles/blob storage). Allowed range 1–10%.</div>
               </div>
               <div class="pct-field">
-                <label class="flabel">Toko contribution <span class="tag">optional</span></label>
-                <div class="pct-input"><input value="0" inputmode="decimal"><span class="sign">%</span></div>
-                <div class="range"><span class="tiny">0%</span><input type="range" min="0" max="10" value="0"><span class="tiny">10%</span></div>
-                <div class="hint">An optional contribution to Toko. Allowed range 0–10%.</div>
+                <label class="flabel">Toko burn → project reputation <span class="tag tag--red">required</span></label>
+                <div class="pct-input"><input value="1" inputmode="decimal"><span class="sign">%</span></div>
+                <div class="range"><span class="tiny">1%</span><input type="range" min="1" max="10" value="1"><span class="tiny">10%</span></div>
+                <div class="hint">A <strong>minimum 1%</strong> of each claim is routed to a Toko account, converted to $TOKO and <strong>burned</strong> — building your <strong>project's Toko Reputation</strong> (which unlocks Creator Mastery). Set it higher to advance faster. Range 1–10%.</div>
               </div>
             </div>
           </div>
@@ -344,7 +344,7 @@
               <div class="cap-line"><span>Total royalties</span><span class="v">18% <span class="tiny" style="font-weight:400">of 20% max</span></span></div>
               <div class="bar"><div class="fill" style="width:90%"></div></div>
             </div>
-            <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Each royalty is <strong>0.1–10%</strong>; total royalties can't exceed <strong>20%</strong>. The backend also checks that <strong>DAO + referral + royalties stays under 40%</strong> across the whole revenue config.</div></div>
+            <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Each royalty is <strong>0.1–10%</strong>; total royalties can't exceed <strong>20%</strong>. The backend also checks that <strong>Toko burn + referral + royalties stays under 40%</strong> across the whole revenue config.</div></div>
           </div>
 
           <div class="mngbar">
@@ -421,7 +421,7 @@
           <div class="card">
             <div class="card__head"><h3>Fees</h3><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
             <div class="kv"><span>Project / cycles funding</span><span class="v">2%</span></div>
-            <div class="kv"><span>Toko contribution</span><span class="v">1%</span></div>
+            <div class="kv"><span>Toko burn</span><span class="v">1%</span></div>
           </div>
           <div class="card">
             <div class="card__head"><h3>Royalties</h3><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
@@ -433,7 +433,7 @@
       </div>
     </section>
 
-    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="t" style="color:var(--text-primary)">Design note (not UI)</span><span class="d">Revenue presets are <strong>project-scoped</strong> and reusable; a vendor selects a <strong>Live</strong> preset at creation, which copies its values onto the vendor (so later edits to the preset don't change existing vendors). Lifecycle mirrors other project policy: editable in Draft/Review, <strong>locked / view-only at Live</strong> while in use. Constraints: cycles funding 1–10%, Toko 0–10%, each royalty 0.1–10%, total royalties ≤ 20%, and the backend cap of DAO + referral + royalties &lt; 40%. Taper (No taper / Cliff / Linear / Curve) and time period (1/3/6/9/12/24 months) only apply to fixed-period royalties; "Forever" royalties are constant. <strong>Open:</strong> confirm whether Toko contribution and Sale presets are in scope for v1.</span></div>
+    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="t" style="color:var(--text-primary)">Design note (not UI)</span><span class="d">Revenue presets are <strong>project-scoped</strong> and reusable; a vendor selects a <strong>Live</strong> preset at creation, which copies its values onto the vendor (so later edits to the preset don't change existing vendors). Lifecycle mirrors other project policy: editable in Draft/Review, <strong>locked / view-only at Live</strong> while in use. Constraints: cycles funding 1–10%, mandatory Toko burn 1–10% (min 1%), each royalty 0.1–10%, total royalties ≤ 20%, and the backend cap of Toko burn + referral + royalties &lt; 40%. Taper (No taper / Cliff / Linear / Curve) and time period (1/3/6/9/12/24 months) only apply to fixed-period royalties; "Forever" royalties are constant. <strong>Open:</strong> confirm whether Sale presets are in scope for v1.</span></div>
   </div>
 </body>
 </html>
