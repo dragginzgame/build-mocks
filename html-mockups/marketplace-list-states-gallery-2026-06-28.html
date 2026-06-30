@@ -90,6 +90,17 @@
   .durlist { display:flex; flex-wrap:wrap; gap:var(--s-2); }
   .durlist span { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); padding:.35rem .7rem; border-radius:var(--r-pill); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); color:var(--text-secondary); }
   .durlist span.on { background:var(--text-primary); color:#fff; border-color:var(--text-primary); }
+  .field-row { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-bottom:var(--s-5); }
+  .field-row > .field { flex:1; min-width:210px; margin-bottom:0; }
+  .static-note { margin:0; font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; }
+  .vis-grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-3); }
+  @media (max-width:520px){ .vis-grid { grid-template-columns:1fr; } }
+  .vis-card { position:relative; display:flex; flex-direction:column; gap:.3rem; text-align:left; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); cursor:pointer; }
+  .vis-card.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:inset 0 0 0 1px var(--border-strong); }
+  .vis-card .vt { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.04em; font-size:var(--text-lg); }
+  .vis-card .vf { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .vis-card .vd { font-size:var(--text-xs); color:var(--text-secondary); line-height:1.45; }
+  .vis-card .vstar { position:absolute; top:10px; right:12px; color:#F59E0B; font-size:var(--text-base); }
 
   .summary { margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
   .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; font-size:var(--text-sm); }
@@ -157,34 +168,41 @@
 <body>
 <div class="gallery">
   <header>
-    <span class="eyebrow">Wallet · Secondary market</span>
+    <span class="eyebrow">Wallet · Marketplace</span>
     <h1>List for sale — states gallery</h1>
-    <p>The seller flow for the v1 secondary marketplace: a holder lists a token they own at a <strong>fixed price</strong>. They set how much and in which token (ICP or any supported ICRC-1), pick a <strong>preset duration</strong>, choose listing visibility (<strong>Standard 2%</strong> or <strong>Featured 5%</strong>), and choose what happens if it doesn't sell. The token being listed is shown the whole way through. The <strong>referrer fee</strong> (the secondary-sale fee — today always paid to the Toko Marketplace) is charged only on a completed sale. No auctions, no offers in v1. Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
+    <p>The seller flow for the v1 marketplace: a holder lists a token they own at a <strong>fixed price</strong>. They set how much and in which currency (from Toko's <strong>curated whitelist</strong>), pick a <strong>preset duration</strong> (max 14 days), and choose listing visibility (<strong>Standard 2%</strong> or <strong>Featured 5%</strong>). An unsold listing simply returns to the wallet. The token being listed is shown the whole way through. The <strong>referrer fee</strong> (the secondary-sale fee — today always paid to the Toko Marketplace) is charged only on a completed sale. No auctions, no offers in v1. Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
     <div class="navlinks">Reached from <a href="my-tokens-states-gallery-2026-06-22.html">My Tokens → List for sale</a>. Related: <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a> · <a href="marketplace-token-states-gallery-2026-06-28.html">Token detail</a></div>
   </header>
 
   <!-- 01 · price & terms -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">01</span><span class="t">List for sale — price &amp; terms</span><span class="d">Entered from a token in My Tokens, so the asset is pre-selected and shown large on the left the whole way through. The form takes a price (amount + currency), a preset duration, and the end-of-listing behaviour. A live fee/royalty breakdown shows exactly what the seller receives.</span></div>
+    <div class="frame-cap"><span class="num">01</span><span class="t">List for sale — price &amp; terms</span><span class="d">Entered from a token in My Tokens, so the asset is pre-selected and shown large on the left. Price (amount + a currency from Toko's curated whitelist) and a preset duration share one row; below them the seller picks <strong>listing visibility</strong> (Standard or Featured). An unsold listing always returns to the wallet — there is no burn option in v1. A live breakdown shows exactly what the seller receives.</span></div>
     <div class="screen">
       <div class="context-bar">
         <div class="crumb"><a>Wallet</a><span class="sep">/</span><a>My Tokens</a><span class="sep">/</span><span class="here">List Little Leaf #014 for sale</span></div>
         <div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div>
       </div>
       <div class="section">
-        <div class="section-head"><span class="eyebrow">Wallet · Secondary market</span><h2>List for sale.</h2><p class="lede">A fixed-price listing — a buyer pays your price to buy it now.</p></div>
+        <div class="section-head"><span class="eyebrow">Wallet · Marketplace</span><h2>List for sale.</h2><p class="lede">A fixed-price listing — a buyer pays your price to buy it now.</p></div>
         <div class="detail-grid">
           <div>
             <div class="asset-main ring-rare"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div>
             <div class="asset-thumbs"><button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></button><button class="asset-thumb"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></button><button class="asset-thumb"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></button></div>
-            <div class="asset-id"><h3>Little Leaf #014</h3><div class="sub">Little Leaf Guardians <span class="tag" style="color:#2F80ED">Rare</span> <span class="tag tag--green">Owned</span></div><div class="sub" style="margin-top:.2rem">Single (1 of 1)</div><a class="changelink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13l-3-3M21 17H8l3 3"/></svg> Change token</a></div>
+            <div class="asset-id"><h3>Little Leaf #014</h3><div class="sub">Little Leaf Guardians <span class="tag" style="color:#2F80ED">Rare</span> <span class="tag tag--green">Owned</span></div><div class="sub" style="margin-top:.2rem">Single (1 of 1)</div></div>
           </div>
           <div class="dcard">
             <span class="eyebrow">Listing details</span>
-            <div class="field"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="14" inputmode="decimal"></div><select><option>ICP</option><option>ckBTC</option><option>GLDT</option><option>ckUSDC</option></select></div><p class="hint">You receive this amount in the chosen token when it sells. ≈ $121.80</p></div>
-            <div class="field"><label class="flabel">Listing duration</label><select class="full"><option>1 day</option><option>3 days</option><option selected>7 days</option><option>14 days</option><option>30 days</option><option>Until I cancel</option></select><p class="hint">Preset durations only — no free-form dates. Expires in 7 days · 5 Jul, 18:00 (local).</p></div>
-            <div class="field"><label class="flabel">If it doesn't sell by then</label><div class="radios"><label class="radio sel"><span class="dot"></span><span><span class="t">Return to my wallet</span><span class="d">The listing ends and the token is simply unlisted again. (Default)</span></span></label><label class="radio"><span class="dot"></span><span><span class="t">Burn the token</span><span class="d">Permanently destroys it at expiry. Buyers see this on the listing.</span></span></label></div></div>
-            <div class="field"><label class="flabel">Listing visibility</label><div class="radios"><label class="radio sel"><span class="dot"></span><span><span class="t">Standard · 2% referrer fee</span><span class="d">Appears in the feed in normal order. (Default)</span></span></label><label class="radio"><span class="dot"></span><span><span class="t">Featured · 5% referrer fee</span><span class="d">Pinned above standard listings and shown in the Featured view + carousel. Fee only applies if it sells.</span></span></label></div></div>
+            <div class="field-row">
+              <div class="field"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="14" inputmode="decimal"></div><select><option>ckETH</option><option>ckBTC</option><option>ckUSDC</option><option selected>ICP</option><option>ckUSDT</option><option>DKP</option><option>ckSOL</option></select></div><p class="hint">Up to 8 decimals (ICP precision) · ≈ $121.80</p></div>
+              <div class="field"><label class="flabel">Duration</label><div class="durlist"><span>1d</span><span>3d</span><span class="on">7d</span><span>14d</span></div><p class="hint">Max 14 days · expires 14 Jul, 18:00 (local).</p></div>
+            </div>
+            <div class="field"><label class="flabel">If it doesn't sell</label><p class="static-note">Returns to your wallet — the listing ends and the token is simply unlisted again. <span style="color:var(--text-muted)">(Burning isn't available in v1.)</span></p></div>
+            <div class="field"><label class="flabel">Listing visibility</label><p class="hint" style="margin-top:0;margin-bottom:.55rem">Choose how much you want to pay to list your token.</p>
+              <div class="vis-grid">
+                <button class="vis-card sel"><span class="vt">Standard</span><span class="vf">2% fee upon sale</span><span class="vd">Appears in the feed in the normal order.</span></button>
+                <button class="vis-card"><span class="vstar">★</span><span class="vt">Featured</span><span class="vf">5% fee upon sale</span><span class="vd">Shown before standard listings, and entered into the front-page spotlight rotation (shown at random).</span></button>
+              </div>
+            </div>
             <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Your token stays in your wallet and is sale-locked while listed. Ownership transfers only when a buyer completes the purchase.</div></div>
             <div class="summary"><div class="kv"><span class="k">List price</span><span class="v">14 ICP</span></div><div class="kv"><span class="k">Project fee (2%)</span><span class="v">−0.28 ICP</span></div><div class="kv"><span class="k">Creator royalty (3%)</span><span class="v">−0.42 ICP</span></div><div class="kv"><span class="k">Referrer fee (2% · standard)</span><span class="v">−0.28 ICP</span></div><div class="kv big"><span class="k">You receive</span><span class="v">13.02 ICP</span></div><p class="hint" style="margin-top:.5rem">The split and referrer fee are taken at settlement — if it doesn't sell, you're charged nothing. The referrer fee goes to the Toko Marketplace.</p></div>
             <div class="dactions"><button class="btn">Review listing</button><button class="btn btn--ghost">Cancel</button></div>
@@ -196,42 +214,33 @@
 
   <!-- 02 · currency & duration -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Currency &amp; duration presets</span><span class="d">Price is denominated in exactly one token — the seller picks ICP or any supported ICRC-1, shown everywhere the price appears. Duration comes from a fixed dropdown, never free-form: <strong>1 / 3 / 7 / 14 / 30 days</strong> or <strong>Until I cancel</strong>. Two example currencies shown; the receive amount recomputes per currency.</span></div>
+    <div class="frame-cap"><span class="num">02</span><span class="t">Currency &amp; duration presets</span><span class="d">Price is denominated in exactly one token from Toko's <strong>curated currency whitelist</strong> (ckETH · ckBTC · ckUSDC · ICP · ckUSDT · DKP · ckSOL). Duration is a fixed set of presets — <strong>1 / 3 / 7 / 14 days</strong> (max 14, no until-cancel). Amount entry is capped to the selected token's decimal precision.</span></div>
     <div class="showcase">
       <div class="dcard">
         <span class="eyebrow">ICP listing · 7 days</span>
-        <div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="14"></div><select><option selected>ICP</option></select></div><p class="hint">≈ $121.80 · you receive 13.02 ICP after fees</p></div>
+        <div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="14"></div><select><option selected>ICP</option></select></div><p class="hint">≈ $121.80 · up to 8 decimals · you receive 13.02 ICP after fees</p></div>
         <label class="flabel">Duration</label>
-        <div class="durlist"><span>1d</span><span>3d</span><span class="on">7d</span><span>14d</span><span>30d</span><span>Until cancel</span></div>
+        <div class="durlist"><span>1d</span><span>3d</span><span class="on">7d</span><span>14d</span></div>
       </div>
       <div class="dcard">
-        <span class="eyebrow">ckBTC listing · until cancel</span>
-        <div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="0.0042"></div><select><option selected>ckBTC</option></select></div><p class="hint">≈ $286.00 · you receive 0.00390 ckBTC after fees</p></div>
+        <span class="eyebrow">ckBTC listing · 14 days</span>
+        <div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt"><input value="0.0042"></div><select><option selected>ckBTC</option></select></div><p class="hint">≈ $286.00 · up to 8 decimals · you receive 0.00391 ckBTC after fees</p></div>
         <label class="flabel">Duration</label>
-        <div class="durlist"><span>1d</span><span>3d</span><span>7d</span><span>14d</span><span>30d</span><span class="on">Until cancel</span></div>
-        <p class="hint" style="margin-top:var(--s-3)">"Until I cancel" has no auto-expiry — the listing stays up until it sells or the seller cancels.</p>
+        <div class="durlist"><span>1d</span><span>3d</span><span>7d</span><span class="on">14d</span></div>
+        <p class="hint" style="margin-top:var(--s-3)">Toko curates the currency whitelist; tokens can be added or removed over time.</p>
       </div>
     </div>
   </section>
 
-  <!-- 03 · end-of-listing behaviour -->
+  <!-- 03 · review & confirm -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">End-of-listing behaviour</span><span class="d">For a finite listing that doesn't sell, the seller's pre-chosen behaviour applies. <strong>Return to wallet</strong> is the default — the token simply becomes unlisted. <strong>Burn</strong> destroys it at expiry. Either way the choice is shown to buyers on the listing for transparency.</span></div>
-    <div class="showcase">
-      <div class="dcard"><span class="eyebrow">Default · return to wallet</span><div class="radios" style="margin-top:var(--s-3)"><label class="radio sel"><span class="dot"></span><span><span class="t">Return to my wallet</span><span class="d">Listing ends, token is unlisted and sale-lock releases.</span></span></label><label class="radio"><span class="dot"></span><span><span class="t">Burn the token</span><span class="d">Permanently destroyed at expiry.</span></span></label></div></div>
-      <div class="dcard"><span class="eyebrow">Burn selected</span><div class="radios" style="margin-top:var(--s-3)"><label class="radio"><span class="dot"></span><span><span class="t">Return to my wallet</span><span class="d">Listing ends, token is unlisted.</span></span></label><label class="radio sel"><span class="dot"></span><span><span class="t">Burn the token</span><span class="d">Permanently destroyed at expiry.</span></span></label></div><div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Buyers see <strong>"Burns if unsold"</strong> on the listing detail.</div></div></div>
-    </div>
-  </section>
-
-  <!-- 04 · review & confirm -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">Review &amp; confirm</span><span class="d">A single review step before publish, mirroring the Transfer modal. The asset, price, duration, end-behaviour and net proceeds are restated; publishing requires a wallet signature. The token is sale-locked the moment it goes live.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Review &amp; confirm</span><span class="d">A single review step before publish, mirroring the Transfer modal. The asset, price, duration, visibility and net proceeds are restated; publishing requires a wallet signature. The token is sale-locked the moment it goes live.</span></div>
     <div class="stage">
       <div class="modal-card single">
         <header><h4>Confirm listing</h4><span class="x">✕</span></header>
         <div class="mbody">
           <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · Rare</div></span></div>
-          <div><div class="paykv"><span>List for</span><span class="v">14 ICP</span></div><div class="paykv"><span>Duration</span><span class="v">7 days</span></div><div class="paykv"><span>If unsold</span><span class="v">Return to wallet</span></div><div class="paykv total"><span>You receive</span><span class="v">13.02 ICP</span></div></div>
+          <div><div class="paykv"><span>List for</span><span class="v">14 ICP</span></div><div class="paykv"><span>Duration</span><span class="v">7 days</span></div><div class="paykv"><span>Visibility</span><span class="v">Standard · 2%</span></div><div class="paykv"><span>If unsold</span><span class="v">Returns to wallet</span></div><div class="paykv total"><span>You receive</span><span class="v">13.02 ICP</span></div></div>
           <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Sign in your wallet to publish. The token is sale-locked until it sells, expires, or you cancel.</div></div>
         </div>
         <div class="footer-row"><button class="btn btn--ghost">Back</button><button class="btn">Sign &amp; publish</button></div>
@@ -239,9 +248,9 @@
     </div>
   </section>
 
-  <!-- 05 · result -->
+  <!-- 04 · result -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">05</span><span class="t">Listing live &amp; price-changed conflict</span><span class="d">On success the listing is live and the token shows as sale-locked, with a direct link to view it. If listing/ownership state changed between page load and confirm, publish fails safely (pre-submit revalidation) rather than acting on stale state.</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">Listing live &amp; price-changed conflict</span><span class="d">On success the listing is live and the token shows as sale-locked, with a direct link to view it. If listing/ownership state changed between page load and confirm, publish fails safely (pre-submit revalidation) rather than acting on stale state.</span></div>
     <div class="stage">
       <div class="modal-grid">
         <div class="modal-card">
@@ -261,40 +270,21 @@
     </div>
   </section>
 
-  <!-- 06 · choose a token -->
+  <!-- 05 · guards -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">06</span><span class="t">Choose a token</span><span class="d">Reached via "Change token", or when the flow is opened without a pre-selected token. Only tokens the active principal owns are listable; a token that's already listed is shown locked and can't be picked again.</span></div>
-    <div class="stage">
-      <div class="modal-card wide">
-        <header><h4>Choose a token to list</h4><span class="x">✕</span></header>
-        <div class="mbody">
-          <div class="pickgrid">
-            <button class="rarity-frame rarity-frame--rare sel"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="m"><div class="nm">Little Leaf <span class="iss">#014</span></div><div class="sm2">Guardians · Rare</div></div></div></button>
-            <button class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="m"><div class="nm">Swampie <span class="iss">#221</span></div><div class="sm2">Swampies · ×12</div></div></div></button>
-            <button class="rarity-frame rarity-frame--epic"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="m"><div class="nm">Sun Sprite <span class="iss">#003</span></div><div class="sm2">Solara · Epic</div></div></div></button>
-            <button class="rarity-frame rarity-frame--uncommon dis"><div class="tok-card"><div class="art"><span class="plk">🔒 Listed</span><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="m"><div class="nm">Reef Pip <span class="iss">#058</span></div><div class="sm2">Already listed</div></div></div></button>
-          </div>
-        </div>
-        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Use this token</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 07 · guards -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">07</span><span class="t">Guards — already listed &amp; invalid price</span><span class="d">Only the current owner can list, and a token can hold at most one active fixed-price listing. If it's already listed, the form is replaced by a manage/cancel state. Inline validation blocks an empty or non-positive price before the destructive publish is reachable.</span></div>
+    <div class="frame-cap"><span class="num">05</span><span class="t">Guards — already listed &amp; invalid price</span><span class="d">Only the current owner can list, and a token can hold at most one active fixed-price listing. If it's already listed, the form is replaced by a manage/cancel state. Inline validation blocks an empty, non-positive, or over-precise price (beyond the token's decimals) before the publish is reachable.</span></div>
     <div class="showcase">
       <div class="dcard"><span class="eyebrow">Already listed</span><div class="note note--info" style="margin-top:var(--s-3)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div><strong>Little Leaf #014 is already listed</strong> for 14 ICP, expiring in 5 days. A token can have only one active listing.</div></div><div class="dactions" style="margin-top:var(--s-4)"><button class="btn">Edit price</button><button class="btn btn--danger">Cancel listing</button></div></div>
-      <div class="dcard"><span class="eyebrow">Invalid price</span><div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt err"><input value="0"></div><select><option>ICP</option></select></div><div class="field-err"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Enter a price greater than zero.</div></div><div class="dactions" style="margin-top:0;border-top:0;padding-top:0"><button class="btn" disabled>Review listing</button></div></div>
+      <div class="dcard"><span class="eyebrow">Invalid price</span><div class="field" style="margin-top:var(--s-3)"><label class="flabel">Price</label><div class="price-row"><div class="amt err"><input value="0"></div><select><option selected>ICP</option></select></div><div class="field-err"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Enter a price greater than zero, within ICP's 8 decimals.</div></div><div class="dactions" style="margin-top:0;border-top:0;padding-top:0"><button class="btn" disabled>Review listing</button></div></div>
     </div>
   </section>
 
-  <!-- 08 · standard vs featured -->
+  <!-- 06 · standard vs featured -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">08</span><span class="t">Standard vs Featured listing</span><span class="d">Listing visibility is the only thing that changes the referrer fee. <strong>Standard</strong> takes 2%; <strong>Featured</strong> takes 5% and pins the listing above standard ones in every feed plus the dedicated Featured view. Either way the fee is charged only on a completed sale — an unsold listing costs nothing — and is paid to the listing's referrer (today always the Toko Marketplace).</span></div>
+    <div class="frame-cap"><span class="num">06</span><span class="t">Standard vs Featured listing</span><span class="d">Listing visibility is the only thing that changes the referrer fee. <strong>Standard</strong> takes 2%; <strong>Featured</strong> takes 5%, is shown before standard listings in every feed plus the dedicated Featured view, and is entered into the front-page spotlight rotation (shown at random). Either way the fee is charged only on a completed sale — an unsold listing costs nothing — and is paid to the listing's referrer (today always the Toko Marketplace).</span></div>
     <div class="showcase">
       <div class="dcard"><span class="eyebrow">Standard · 2%</span><div class="summary" style="margin-top:var(--s-3);border-top:0;padding-top:0"><div class="kv"><span class="k">List price</span><span class="v">14 ICP</span></div><div class="kv"><span class="k">Project fee (2%)</span><span class="v">−0.28 ICP</span></div><div class="kv"><span class="k">Creator royalty (3%)</span><span class="v">−0.42 ICP</span></div><div class="kv"><span class="k">Referrer fee (2%)</span><span class="v">−0.28 ICP</span></div><div class="kv big"><span class="k">You receive</span><span class="v">13.02 ICP</span></div></div></div>
-      <div class="dcard"><span class="eyebrow">Featured · 5%</span><div class="summary" style="margin-top:var(--s-3);border-top:0;padding-top:0"><div class="kv"><span class="k">List price</span><span class="v">14 ICP</span></div><div class="kv"><span class="k">Project fee (2%)</span><span class="v">−0.28 ICP</span></div><div class="kv"><span class="k">Creator royalty (3%)</span><span class="v">−0.42 ICP</span></div><div class="kv"><span class="k">Referrer fee (5%)</span><span class="v">−0.70 ICP</span></div><div class="kv big"><span class="k">You receive</span><span class="v">12.60 ICP</span></div></div><div class="note note--info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 5 2-7L2 9h7z"/></svg></span><div>Pinned above standard listings + shown in the Featured view and carousel.</div></div></div>
+      <div class="dcard"><span class="eyebrow">Featured · 5%</span><div class="summary" style="margin-top:var(--s-3);border-top:0;padding-top:0"><div class="kv"><span class="k">List price</span><span class="v">14 ICP</span></div><div class="kv"><span class="k">Project fee (2%)</span><span class="v">−0.28 ICP</span></div><div class="kv"><span class="k">Creator royalty (3%)</span><span class="v">−0.42 ICP</span></div><div class="kv"><span class="k">Referrer fee (5%)</span><span class="v">−0.70 ICP</span></div><div class="kv big"><span class="k">You receive</span><span class="v">12.60 ICP</span></div></div><div class="note note--info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 5 2-7L2 9h7z"/></svg></span><div>Shown before standard listings, in the Featured view, and in the front-page spotlight rotation (random).</div></div></div>
     </div>
   </section>
 </div>

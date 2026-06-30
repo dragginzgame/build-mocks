@@ -168,15 +168,15 @@
 <body>
 <div class="gallery">
   <header>
-    <span class="eyebrow">Secondary market</span>
+    <span class="eyebrow">Marketplace</span>
     <h1>Marketplace — states gallery</h1>
-    <p>The secondary marketplace: fixed-price browse across all collections, plus collection-scoped views with stats and activity. Every token uses the <strong>approved token card</strong> with its rarity border. v1 is Buy&nbsp;Now only — no auctions, no offers. Shared page chrome (context-bar toolbar; the site top bar and footer are their own components). Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
+    <p>The Marketplace: fixed-price browse across all collections. Selecting a collection doesn't change the UI — it just filters the grid to that collection's tokens. Every token uses the <strong>approved token card</strong> with its rarity border. v1 is Buy&nbsp;Now only — no auctions, no offers. Shared page chrome (context-bar toolbar; the site top bar and footer are their own components). Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
     <div class="navlinks">Related: <a href="marketplace-token-states-gallery-2026-06-28.html">Token detail (buy)</a> · <a href="marketplace-list-states-gallery-2026-06-28.html">List for sale</a> · <a href="launchpad-states-gallery-2026-06-28.html">Launchpad</a></div>
   </header>
 
   <!-- 01 · global browse -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">01</span><span class="t">Global browse — all collections</span><span class="d">A featured carousel highlights promoted listings up top (the same hero carousel used on the Launchpad and landing page). <strong>Featured listings</strong> (the 5% referrer-fee tier) are then pinned <strong>first</strong> in the grid with a ★ badge, and a <strong>View all featured</strong> link opens a featured-only view (frame 06). Below the featured block, the default scope is every collection, newest listings first. A filter rail (collection, rarity tier from the collection's settings, issue range, attributes) sits beside the approved-token-card grid; the white list bar paginates at the bottom. Each card shows collection, name, price + Buy. v1 is fixed-price (Buy&nbsp;Now) only — auctions and offers are deferred.</span></div>
+    <div class="frame-cap"><span class="num">01</span><span class="t">Global browse — all collections</span><span class="d">A featured carousel highlights promoted listings up top (the same hero carousel used on the Launchpad and landing page). <strong>Featured listings</strong> (the 5% referrer-fee tier) are then pinned <strong>first</strong> in the grid with a ★ badge, and a <strong>View all featured</strong> link opens a featured-only view (frame 05). Below the featured block, the default scope is every collection, newest listings first. A filter rail (collection, price, issue range, attributes — the rarity-tier filter appears only when a single weighted-rarity collection is selected) sits beside the approved-token-card grid; the white list bar paginates at the bottom. Each card shows collection, name, price + Buy. v1 is fixed-price (Buy&nbsp;Now) only — auctions and offers are deferred.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
@@ -187,17 +187,15 @@
           <div class="dots"></div>
           <div class="progress"><span></span></div>
         </div>
-        <div class="section-head"><div><div class="eyebrow">Secondary market</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
+        <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
         <div class="controls">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
-          <div class="seg"><button class="active">All</button><button>Listed</button><button>Unlisted</button></div>
           <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
           <a class="feat-link" href="#feat">★ View all featured</a>
         </div>
         <div class="browse">
           <aside class="frail">
             <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox" checked> All collections</label><label class="chk"><input type="checkbox"> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
-            <div class="fgroup"><h4>Rarity tier</h4><select class="selrare"><option>Any tier</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option><option>Mythical</option><option>Inconceivable</option></select><p class="ftip">Tiers come from the collection's rarity settings.</p></div>
             <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
             <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
             <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
@@ -220,58 +218,72 @@
     </div>
   </section>
 
-  <!-- 02 · collection-scoped -->
+  <!-- 02 · collection selected -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Collection-scoped view — Items</span><span class="d">Entered with a collection filter applied: a hero header with avatar, name, creator and social links, the market stats (floor / volume / listings / avg price), and Items / Activity tabs. The Items grid is the same approved token cards, scoped to the collection.</span></div>
+    <div class="frame-cap"><span class="num">02</span><span class="t">Collection selected — same UI, grid filtered</span><span class="d">Selecting a collection doesn't change the marketplace UI — the same search, controls and filter rail stay put; only the grid narrows to that collection's tokens. The active scope shows in the breadcrumb and as the checked collection in the rail. Because Crystal Birds uses <strong>weighted rarity</strong>, the <strong>Rarity tier</strong> filter now appears in the rail (it's hidden in the all-collections view and for non-weighted collections). Per-collection stats and history live on the <strong>Collection hub</strong>, not here.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><span class="here">Crystal Birds</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
-        <div class="collhead">
-          <div class="banner"></div>
-          <div class="idrow"><div class="av">🐦</div><div style="flex:1;min-width:200px"><h2>Crystal Birds</h2><div class="by">by Aviary Labs · 500 mineral songbirds</div></div><a class="btn btn--secondary btn--sm" href="#">Collection hub →</a></div>
-          <div class="stats"><div class="s"><div class="k">Floor</div><div class="v">7.5 ICP</div></div><div class="s"><div class="k">Volume</div><div class="v">18.2K</div></div><div class="s"><div class="k">Listings</div><div class="v">312</div></div><div class="s"><div class="k">Avg price</div><div class="v">9.1 ICP</div></div></div>
+        <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
+          <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
+          <a class="feat-link" href="#feat">★ View all featured</a>
         </div>
-        <div class="ctabs"><button class="active">Items · 312</button><button>Activity</button></div>
-        <div class="tk-grid">
-          <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Aurora Finch</h3><span class="issue">#12</span></div></div><div class="foot"><span class="pr">8.5 ICP</span><span class="buy">Buy</span></div></div></a>
-          <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Quartz Wren</h3><span class="issue">#58</span></div></div><div class="foot"><span class="pr">7.9 ICP</span><span class="buy">Buy</span></div></div></a>
-          <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Jade Tit</h3><span class="issue">#207</span></div></div><div class="foot"><span class="pr">7.5 ICP</span><span class="buy">Buy</span></div></div></a>
-          <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Amber Lark</h3><span class="issue">#03</span></div></div><div class="foot"><span class="pr">22 ICP</span><span class="buy">Buy</span></div></div></a>
+        <div class="browse">
+          <aside class="frail">
+            <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox"> All collections</label><label class="chk"><input type="checkbox" checked> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
+            <div class="fgroup"><h4>Rarity tier</h4><select class="selrare"><option>Any tier</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select><p class="ftip">Crystal Birds uses weighted rarity, so its fixed tiers can be filtered. Hidden for non-weighted collections.</p></div>
+            <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
+            <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
+            <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
+          </aside>
+          <div>
+            <div class="tk-grid">
+              <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><span class="feat">★ Featured</span><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Aurora Finch</h3><span class="issue">#12</span></div></div><div class="foot"><span class="pr">8.5 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--uncommon"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Quartz Wren</h3><span class="issue">#58</span></div></div><div class="foot"><span class="pr">7.9 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Jade Tit</h3><span class="issue">#207</span></div></div><div class="foot"><span class="pr">7.5 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--legendary"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Amber Lark</h3><span class="issue">#03</span></div></div><div class="foot"><span class="pr">22 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Opal Swift</h3><span class="issue">#311</span></div></div><div class="foot"><span class="pr">9.1 ICP</span><span class="buy">Buy</span></div></div></a>
+              <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Rose Finch</h3><span class="issue">#142</span></div></div><div class="foot"><span class="pr">8.0 ICP</span><span class="buy">Buy</span></div></div></a>
+            </div>
+            <div class="listbar" style="margin-top:var(--s-4)"><span class="results-count">Showing <strong>1–24</strong> of <strong>312</strong> in Crystal Birds</span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button>2</button><button>3</button><span class="gap">…</span><button>13</button><button>›</button></div><label class="perpage">Per page <select><option>24</option><option>48</option><option>96</option></select></label></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 03 · activity -->
+  <!-- 03 · no results -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Collection-scoped view — Activity</span><span class="d">The market/provenance feed for a collection: mint, listing, sale, transfer and cancel events with item, price, rarity, parties and time. This is both transparency and provenance. Offer / bid events are deferred with their features.</span></div>
-    <div class="screen"><div class="section">
-      <div class="ctabs"><button>Items · 312</button><button class="active">Activity</button></div>
-      <table class="activity">
-        <thead><tr><th>Event</th><th>Item</th><th>Price</th><th class="hide">Rarity</th><th class="hide">From</th><th class="hide">To</th><th>Time</th></tr></thead>
-        <tbody>
-          <tr><td><span class="ev sale"><span class="d"></span>Sale</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span>Aurora Finch #12</div></td><td class="num">7.2 ICP</td><td class="hide">Rare</td><td class="hide mono">k1m9…7uvw</td><td class="hide mono">b3c2…9pqr</td><td>2m</td></tr>
-          <tr><td><span class="ev list"><span class="d"></span>Listing</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></span>Quartz Wren #58</div></td><td class="num">7.9 ICP</td><td class="hide">Uncommon</td><td class="hide mono">f8a1…2klm</td><td class="hide">—</td><td>14m</td></tr>
-          <tr><td><span class="ev xfer"><span class="d"></span>Transfer</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></span>Jade Tit #207</div></td><td class="num">—</td><td class="hide">Common</td><td class="hide mono">c4d5…1abc</td><td class="hide mono">e9f0…3def</td><td>1h</td></tr>
-          <tr><td><span class="ev cancel"><span class="d"></span>Cancel</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span>Amber Lark #03</div></td><td class="num">24 ICP</td><td class="hide">Legendary</td><td class="hide mono">a1b2…8xyz</td><td class="hide">—</td><td>3h</td></tr>
-          <tr><td><span class="ev mint"><span class="d"></span>Mint</span></td><td><div class="it"><span class="mini"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"></span>Opal Swift #311</div></td><td class="num">—</td><td class="hide">Epic</td><td class="hide">—</td><td class="hide mono">k1m9…7uvw</td><td>2d</td></tr>
-        </tbody>
-      </table>
-    </div></div>
-  </section>
-
-  <!-- 04 · no results -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">No results</span><span class="d">When filters or search return nothing, the grid yields to a character moment with a clear reset. Reset to page 1 whenever search, filters, or per-page change.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">No results</span><span class="d">When filters or search return nothing, only the <strong>grid</strong> yields to a character moment — the marketplace chrome (search, controls, filter rail) stays in place so the person can adjust or clear filters. Reset to page 1 whenever search, filters, or per-page change.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
-      <div class="section"><div class="empty"><img src="../style-guide/bot-images/oops-sorry/IMG_4838.png" alt="" onerror="this.style.display='none'"><h3>Nothing listed for that</h3><p>No listings match your filters right now. Clear them to see everything for sale.</p><button class="btn btn--secondary">Clear filters</button></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…" value="zzqx"></div>
+          <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
+          <a class="feat-link" href="#feat">★ View all featured</a>
+        </div>
+        <div class="browse">
+          <aside class="frail">
+            <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox" checked> All collections</label><label class="chk"><input type="checkbox"> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
+            <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
+            <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
+            <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
+          </aside>
+          <div>
+            <div class="empty"><img src="../style-guide/bot-images/oops-sorry/IMG_4838.png" alt="" onerror="this.style.display='none'"><h3>Nothing listed for that</h3><p>No listings match your filters right now. Clear them to see everything for sale.</p><button class="btn btn--secondary">Clear filters</button></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 05 · empty marketplace -->
+  <!-- 04 · empty marketplace -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">05</span><span class="t">Empty marketplace — nothing listed yet</span><span class="d">At launch, or for a brand-new collection, there are no secondary listings yet — the marketplace fills up as holders list tokens after a drop. Rather than a blank grid, a character moment points people to the Launchpad to claim, since listings come from claimed tokens.</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">Empty marketplace — nothing listed yet</span><span class="d">At launch, or for a brand-new collection, there are no listings yet — the marketplace fills up as holders list tokens after a drop. Rather than a blank grid, a character moment points people to the Launchpad to claim, since listings come from claimed tokens.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
@@ -282,10 +294,9 @@
           <div class="dots"></div>
           <div class="progress"><span></span></div>
         </div>
-        <div class="section-head"><div><div class="eyebrow">Secondary market</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
+        <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
         <div class="controls">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
-          <div class="seg"><button class="active">All</button><button>Listed</button><button>Unlisted</button></div>
           <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
         </div>
         <div class="empty"><img src="../style-guide/bot-images/recharge/IMG_4945.png" alt="" onerror="this.style.display='none'"><h3>Nothing listed yet</h3><p>No tokens are listed for sale right now. The marketplace fills up as collectors list tokens after a drop — claim one on the Launchpad to get started.</p><a class="btn" href="launchpad-states-gallery-2026-06-28.html">Explore the Launchpad</a></div>
@@ -293,13 +304,13 @@
     </div>
   </section>
 
-  <!-- 06 · featured view -->
+  <!-- 05 · featured view -->
   <section class="frame" id="feat">
-    <div class="frame-cap"><span class="num">06</span><span class="t">Featured listings — "View all featured"</span><span class="d">The dedicated Featured view, reached from the <strong>View all featured</strong> link. Every active Featured listing (the 5% referrer-fee tier) across collections, each carrying the ★ badge, with the standard search / sort / filter controls. In the normal feed these same listings are pinned above standard ones; here they stand on their own. Sellers opt in to Featured when they list (frame on the List-for-sale gallery).</span></div>
+    <div class="frame-cap"><span class="num">05</span><span class="t">Featured listings — "View all featured"</span><span class="d">The dedicated Featured view, reached from the <strong>View all featured</strong> link. Every active Featured listing (the 5% referrer-fee tier) across collections, each carrying the ★ badge, with the standard search / sort / filter controls. In the normal feed these same listings are pinned above standard ones; here they stand on their own. Sellers opt in to Featured when they list (frame on the List-for-sale gallery).</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><span class="here">Featured</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
-        <div class="section-head"><div><div class="eyebrow">Secondary market · Featured</div><h2>Featured.</h2><div class="lede">Promoted listings, pinned to the top of the marketplace. Sellers pay the 5% referrer fee only if it sells.</div></div></div>
+        <div class="section-head"><div><div class="eyebrow">Marketplace · Featured</div><h2>Featured.</h2><div class="lede">Promoted listings, pinned to the top of the marketplace. Sellers pay the 5% referrer fee only if it sells.</div></div></div>
         <div class="controls">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search featured listings…"></div>
           <select class="sortsel"><option>Most recently listed</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Ending soon</option></select>
