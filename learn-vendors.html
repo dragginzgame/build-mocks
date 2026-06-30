@@ -94,13 +94,13 @@
         <table class="tierclaim">
           <thead><tr><th>Lever</th><th>What it does</th></tr></thead>
           <tbody>
-            <tr><th>Cost</th><td>The price to claim — can differ by tier, or be free.</td></tr>
-            <tr><th>Requirements</th><td>Gates a claimer must pass: holdings, staking, or an allowlist entry — set per tier.</td></tr>
-            <tr><th>Restrictions</th><td>Limits like per-principal claim caps, so one wallet can't take everything.</td></tr>
-            <tr><th>Rewards</th><td>Extras granted on claim, where the design calls for them.</td></tr>
+            <tr><th>Cost</th><td><strong>v1 · required.</strong> Free, an ICP amount, or an ICRC-1 token — can differ by tier. An unset cost blocks go-live.</td></tr>
+            <tr><th>Requirements</th><td><strong>v1 · optional.</strong> Eligibility gates — an allowlist entry, or holding a token / neuron — combined with AND, set per tier.</td></tr>
+            <tr><th>Restrictions</th><td><strong>v2.</strong> Limits like a claim cap per verified human — a creator-level unlock (burn $TOKO).</td></tr>
+            <tr><th>Rewards</th><td><strong>v2.</strong> A payout to the claimer on claim — also a creator-level $TOKO unlock.</td></tr>
           </tbody>
         </table>
-        <div class="fig-cap">Allowlists come from the project's <a href="learn-project.html">shared whitelists</a>, so the same gated audience can be reused across drops. A tier with no explicit rule falls back to the vendor's default.</div>
+        <div class="fig-cap"><strong>v1 ships Cost + Requirements.</strong> Restrictions and Rewards are v2, unlocked at the creator level. Allowlists come from the project's <a href="learn-project.html">shared whitelists</a>, so the same gated audience can be reused across drops. A tier with no explicit rule falls back to the vendor's default.</div>
       </div>
 
       <h2>Revenue presets: where the money goes</h2>

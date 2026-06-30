@@ -31,6 +31,7 @@ window.TOKO_FAQ = {
     { id: "collections", label: "Collections" },
     { id: "attributes",  label: "Attributes" },
     { id: "rarity",      label: "Rarity" },
+    { id: "growth",      label: "Archetypes & growth", wip: true },
     { id: "score",       label: "Token score" },
     { id: "vendors",     label: "Vendors" },
     { id: "revenue",     label: "Revenue" }
@@ -128,7 +129,7 @@ window.TOKO_FAQ = {
           Both actions require confirmation before they are processed.
         </p>
         <p>
-          Additional features such as marketplace listings, auctions, token splitting, merging, and other advanced operations are planned for future releases.
+          You can also <strong>list a token for sale</strong> on the Marketplace. Further options — auctions, offers, and merging/crafting tokens — are planned for later releases.
         </p>
       `,
       wip: true
@@ -318,10 +319,10 @@ window.TOKO_FAQ = {
           The Marketplace is where collectors buy, sell, and trade tokens after they have been minted.
         </p>
         <p>
-          It provides a transparent view of listings, pricing, ownership history, and trading activity across supported collections.
+          In v1 it is a simple <strong>fixed-price</strong> marketplace: a holder lists a token at a set price, and a buyer either buys it now or doesn't. There are no auctions or offers yet.
         </p>
         <p>
-          Whether you're looking to expand your collection or sell a token you already own, the Marketplace is the place to do it.
+          Selecting a collection just filters the same grid to that collection's tokens. Listings sort by <strong>referral fee, highest first</strong> — sellers set a 1–10% fee, and higher-paying listings sit at the top and feed the front-page spotlight.
         </p>
       `,
       wip: true
@@ -349,21 +350,47 @@ window.TOKO_FAQ = {
     {
       aud: "collector",
       cat: "marketplace",
-      q: "What selling formats are planned?",
+      q: "How do I buy and sell — what formats are there?",
       a: `
         <p>
-          Toko is designed to support multiple ways to buy and sell tokens.
-        </p>
-        <ul>
-          <li><strong>Buy Now</strong> — Purchase immediately at a fixed price.</li>
-          <li><strong>Auctions</strong> — Competitive bidding with configurable rules.</li>
-          <li><strong>Offers</strong> — Negotiate directly with collectors through offers and counter-offers.</li>
-        </ul>
-        <p>
-          Vendor buybacks are also planned and will use the same offer system.
+          v1 is <strong>Buy Now</strong> only: every listing is a fixed price you can buy immediately. Buying is non-custodial, and the price and availability are re-checked at settlement, so a stale listing fails cleanly with nothing charged.
         </p>
         <p>
-          These features are still under development and may change before release.
+          You pay the <strong>list price only</strong> — there is no separate buyer fee.
+        </p>
+        <p>
+          <strong>Auctions</strong>, <strong>offers / counter-offers</strong>, and vendor <strong>buybacks</strong> are designed but not in v1; they'll arrive in a later release.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "collector",
+      cat: "marketplace",
+      q: "How do I list a token, and what does it cost to sell?",
+      a: `
+        <p>
+          From <strong>My Tokens</strong>, pick a token and choose a price and currency (from Toko's curated whitelist — e.g. ICP, ckBTC, ckUSDC, ckETH, ckUSDT, ckSOL, DKP), plus a duration (up to 14 days). If it doesn't sell, it simply returns to your wallet.
+        </p>
+        <p>
+          Selling carries a <strong>referral fee</strong> you set on a <strong>1–10% slider</strong> (1% minimum), charged on a completed sale. <strong>Higher fee = higher placement.</strong> <strong>No sale, no fee.</strong>
+        </p>
+        <p>
+          The creator's frozen sale split (a project fee up to 2% plus royalties up to 3% total) comes off first, then your referral fee — so the seller nets roughly <strong>94%</strong> at a 1% fee, down to about <strong>85%</strong> at 10%.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "collector",
+      cat: "marketplace",
+      q: "How does referral fee affect placement?",
+      a: `
+        <p>
+          There's no fixed "Featured" tier. You set a <strong>referral fee</strong> (1–10%) when you list, and the marketplace's default order is by referral fee, <strong>highest first</strong> — so a higher fee sits nearer the top and is more likely to appear in the <strong>front-page spotlight</strong>. It's the single visibility lever.
+        </p>
+        <p>
+          Like all selling fees, the Featured fee only applies if the token actually sells.
         </p>
       `,
       wip: true
@@ -523,7 +550,7 @@ window.TOKO_FAQ = {
           <li>Guardian settings</li>
         </ul>
         <p>
-          Visual content such as descriptions, thumbnails, and banners can still be updated after launch.
+          The collection <strong>name</strong> is also locked at go-live (it anchors links, listings, and provenance). Other branding — description, thumbnail, banner, and social links — can still be updated after launch.
         </p>
         <p>
           New token definitions can also be added later, but they must operate within the collection rules that were locked when the collection went live.
@@ -916,6 +943,92 @@ window.TOKO_FAQ = {
           Buybacks run through the same shared offer system as the marketplace, and proceeds are held in the vendor's account until release.
         </p>
       `
+    },
+
+    {
+      aud: "creator",
+      cat: "collections",
+      q: "What are sale defaults?",
+      a: `
+        <p>
+          Sale defaults are the collection's <strong>secondary sale split</strong> — what's deducted when one of its tokens resells on the Marketplace. In v1 a tier carries one thing: the economic split.
+        </p>
+        <ul>
+          <li><strong>Project / cycles fee</strong> — up to <strong>2%</strong>.</li>
+          <li><strong>Royalties</strong> — up to <strong>3% total</strong>, across any number of Live beneficiaries (you must be one of them).</li>
+        </ul>
+        <p>
+          Together that's at most 5%, so the seller keeps at least <strong>95%</strong> before the Marketplace's referrer fee. The split is frozen onto each token at go-live. Restriction states like gift-only or soulbound are a <strong>v2</strong>, per-token feature — not a v1 sale default.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "creator",
+      cat: "vendors",
+      q: "What are claim defaults (cost, requirements, restrictions, rewards)?",
+      a: `
+        <p>
+          Claim defaults are the per-collection starting rules a vendor inherits. <strong>v1 ships two parts:</strong>
+        </p>
+        <ul>
+          <li><strong>Cost</strong> — required: Free, an ICP amount, or an ICRC-1 token. An unset cost blocks go-live.</li>
+          <li><strong>Requirements</strong> — optional eligibility gates (an allowlist, or holding a token / neuron), combined with AND.</li>
+        </ul>
+        <p>
+          The other two parts — <strong>Restrictions</strong> (e.g. a cap per verified human) and <strong>Rewards</strong> (a payout on claim) — are <strong>v2</strong>, unlocked once the <strong>project</strong> has enough <strong>Toko Reputation</strong> (see Creator Mastery).
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "creator",
+      cat: "rarity",
+      q: "How do I unlock Epic and Legendary tiers?",
+      a: `
+        <p>
+          Weighted collections ship with the first three tiers — <strong>Common, Uncommon, Rare</strong>. <strong>Epic</strong> and <strong>Legendary</strong> unlock at the <strong>project level</strong> once the project has enough <strong>Toko Reputation</strong>, then apply across its collections (see Creator Mastery).
+        </p>
+        <p>
+          Archetypes don't make a collection's tiers rarer on their own — they help you reach the higher tiers. The names and colours of the Weighted tiers are fixed; you tune the curve, not the labels.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "creator",
+      cat: "growth",
+      q: "What is a collection archetype?",
+      a: `
+        <p>
+          An archetype is the <strong>starting envelope</strong> you pick when you create a collection — a safe set of defaults for a kind of project: Curated Art, Generated Art, Editioned Art, Game Items, Game Currency, Access Pass, or Custom.
+        </p>
+        <p>
+          It's chosen at creation and <strong>can't be switched</strong> afterwards. It sets sensible limits (supply shape, editions, and so on); you grow beyond those limits through Creator Mastery, not by changing archetype.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "creator",
+      cat: "growth",
+      q: "What is Creator Mastery — how do I unlock more capabilities?",
+      a: `
+        <p>
+          Creator Mastery is a capability tree owned by the <strong>project</strong> (not a personal account or a single collection) — unlocks apply across all the project's collections, and a team shares one standing. A branch unlocks once the project has enough <strong>Toko Reputation</strong>.
+        </p>
+        <ul>
+          <li><strong>Supply</strong> — more blueprints, more editions, larger collections → infinite supply.</li>
+          <li><strong>Rarity</strong> — Epic and Legendary tiers.</li>
+          <li><strong>Claim rules</strong> — claim restrictions and rewards.</li>
+          <li><strong>Sale rules</strong> — limit transfers / sales → gift-only and soulbound.</li>
+          <li><strong>Mechanics</strong> — burn-on-interaction, and merge / craft (burn the originals, mint something new).</li>
+        </ul>
+        <p>
+          A project's Toko Reputation is the <strong>$TOKO it has burned</strong>. It's mostly <strong>earned automatically</strong>: every vendor routes a minimum 1% of each claim to a Toko account that converts it to $TOKO and burns it — so the more you sell, the more you unlock. You can also <strong>top it up</strong> by burning $TOKO from a wallet (tracked separately as bought vs earned). You never need to buy $TOKO to grow.
+        </p>
+      `,
+      wip: true
     }
 
   ]

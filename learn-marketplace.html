@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Marketplace, explained — Toko Learn</title>
+<meta name="description" content="How buying and selling works on the Toko Marketplace: fixed-price Buy Now, the seller-set referral fee, and what a seller actually receives." />
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .splitbar{display:flex; height:48px; border-radius:8px; overflow:hidden; border:1px solid var(--border-soft);}
+  .splitbar i{display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); white-space:nowrap; overflow:hidden;}
+  .splitkey{display:flex; flex-wrap:wrap; gap:var(--s-4); margin-top:var(--s-4); font-size:var(--text-xs); color:var(--text-secondary);}
+  .splitkey span{display:inline-flex; align-items:center; gap:.45rem;}
+  .splitkey i{width:13px; height:13px; border-radius:3px; flex:none;}
+  .vis2{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-3); margin-top:.2rem;}
+  @media (max-width:560px){ .vis2{grid-template-columns:1fr;} }
+  .visc{border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas-alt); position:relative;}
+  .visc .vt{font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-lg);}
+  .visc .vf{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); display:block; margin:.15rem 0 .35rem;}
+  .visc .vd{font-size:var(--text-xs); color:var(--text-secondary); line-height:1.45;}
+  .visc .star{position:absolute; top:10px; right:12px; color:#F59E0B;}
+</style>
+</head>
+<body>
+  <main class="learn-wrap">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Core concepts</div>
+      <h1>The Marketplace.</h1>
+      <p class="dek">Where collectors trade tokens after a drop. In v1 it's a simple, honest fixed-price market — buy now or don't — with one fee that only ever lands on a completed sale.</p>
+      <div class="meta"><span>Marketplace</span><span class="dot"></span><span>~6 min read</span><span class="dot"></span><span>Collector &amp; creator</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">The <strong>Launchpad</strong> is where a token is first claimed from a creator. The <strong>Marketplace</strong> is everything after: one holder lists a token they own at a fixed price, and another buys it. It's a projection over ownership — not a separate place your token goes — so listing never hands custody to Toko.</p>
+
+      <h2>Buying — Buy Now only</h2>
+      <p>v1 is <strong>Buy Now</strong> only. Clicking a listed token opens a <strong>quick-view modal</strong> over the browse grid (the grid stays behind it, so closing returns you to your place). You see the art, attributes, market history, price, collection floor and last sale, then buy.</p>
+      <ul>
+        <li><strong>Non-custodial</strong> — the token stays in the seller's wallet, sale-locked, until settlement.</li>
+        <li><strong>Re-checked at settlement</strong> — price and availability are validated at the moment you confirm, so a stale or already-sold listing fails cleanly with nothing charged.</li>
+        <li><strong>You pay the list price only</strong> — there's no separate buyer or network fee added on top.</li>
+      </ul>
+      <p>Auctions, offers and counter-offers are designed but not in v1 — they come later.</p>
+
+      <h2>Selling — list from My Tokens</h2>
+      <p>From <strong>My Tokens</strong> you pick a token and set the terms:</p>
+      <ul>
+        <li><strong>Price + currency</strong> — one token from Toko's <strong>curated whitelist</strong> (e.g. ICP, ckBTC, ckUSDC, ckETH, ckUSDT, ckSOL, DKP). The amount is capped to that token's decimals.</li>
+        <li><strong>Duration</strong> — a preset of 1 / 3 / 7 / 14 days. <strong>Max 14</strong>; there's no "until I cancel".</li>
+        <li><strong>If it doesn't sell</strong> — it simply <strong>returns to your wallet</strong>. (There's no burn-on-expiry in v1.)</li>
+        <li><strong>Referral fee</strong> — a 1–10% slider that sets your placement (below).</li>
+      </ul>
+
+      <h2>What it costs to sell</h2>
+      <p>Two things come out of a sale, and only ever on a <strong>completed</strong> sale — <strong>no sale, no fee</strong>:</p>
+      <div class="fig">
+        <div class="fig-ttl">A 14 ICP sale at a 5% referral fee, in order</div>
+        <div class="splitbar">
+          <i style="width:2%; background:#2563eb" title="Project fee"></i>
+          <i style="width:3%; background:#7c3aed" title="Royalties"></i>
+          <i style="width:5%; background:#F59E0B" title="Referral fee"></i>
+          <i style="width:90%; background:#16a34a">Seller · ~90%</i>
+        </div>
+        <div class="splitkey">
+          <span><i style="background:#2563eb"></i> Project fee — up to 2% (the creator's split)</span>
+          <span><i style="background:#7c3aed"></i> Royalties — up to 3% total (the creator's split)</span>
+          <span><i style="background:#F59E0B"></i> Referral fee — the seller's chosen 1–10% (Toko / referrer)</span>
+          <span><i style="background:#16a34a"></i> Seller — the remainder</span>
+        </div>
+        <div class="fig-cap">First the token's <strong>frozen sale split</strong> (a project fee up to 2% plus royalties up to 3% total — set by the creator and frozen at go-live, so it leaves the seller ≥95%). Then the seller's chosen <strong>referral fee</strong> (1–10%): the seller nets about <strong>94%</strong> at 1%, down to about <strong>85%</strong> at 10% — and a higher fee buys higher placement.</div>
+      </div>
+
+      <div class="callout callout--key">
+        <div class="ct">The fee is a referral fee</div>
+        <p>Toko takes no cut frozen into the token. Its secondary revenue is the <strong>referral fee</strong> — the % a sale pays to whoever referred it. Today the referrer is always the Toko Marketplace, so it routes to a dedicated marketplace account (kept separate from claim revenue). Letting a sale be referred by someone else — who'd earn it instead — needs a referrer API, a <strong>V2</strong> capability.</p>
+      </div>
+
+      <h2>The referral fee sets your placement</h2>
+      <p>There's no fixed "Featured" tier — instead you set a <strong>referral fee</strong> on a 1–10% slider (1% minimum). The marketplace's default order is by referral fee, <strong>highest first</strong>, so the fee <em>is</em> the visibility lever:</p>
+      <div class="vis2">
+        <div class="visc"><span class="vt">Low — 1%</span><span class="vf">You keep the most</span><span class="vd">Nets ~94% of the price, but sits lower in the default order.</span></div>
+        <div class="visc"><span class="star">★</span><span class="vt">High — 10%</span><span class="vf">Top placement</span><span class="vd">Sorts to the top of the marketplace and feeds the front-page spotlight; nets ~85%. No banner art needed.</span></div>
+      </div>
+      <p>It's self-serve and paid, so nothing is hand-picked — and because it's still just a fee on a sale, an unsold listing costs nothing whatever fee you set.</p>
+
+      <h2>Browsing</h2>
+      <p>The default view spans every collection, newest first, ordered by referral fee, highest first. <strong>Selecting a collection doesn't change the UI</strong> — it just filters the same grid to that collection's tokens. Per-collection stats and history live on the Collection Hub, not the marketplace; there's no separate activity feed in v1.</p>
+
+      <div class="callout">
+        <div class="ct">In one line</div>
+        <p>List from your wallet, pick a price and a duration up to 14 days, set a 1–10% referral fee (higher = higher placement). A buyer pays your price; the creator's ≤5% split and your referral fee come off only if it sells — and unsold listings just come home.</p>
+      </div>
+
+      <p class="tiny" style="margin-top:var(--s-6)">Related: <a href="learn-vendors.html">Vendors &amp; revenue</a> (primary distribution) · <a href="learn-creator-mastery.html">Archetypes &amp; Creator Mastery</a>.</p>
+    </div>
+  </main>
+
+  <script src="site-nav.js"></script>
+</body>
+</html>
