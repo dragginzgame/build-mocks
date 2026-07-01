@@ -920,7 +920,7 @@ window.TOKO_FAQ = {
           Yes. Each royalty can run <strong>Forever</strong> or for a <strong>fixed period</strong> (1, 3, 6, 9, 12, or 24 months).
         </p>
         <p>
-          A fixed-period royalty uses a taper — No taper, Cliff, Linear, or Curve — that changes the effective percentage across the period.
+          A fixed-period royalty uses a taper — No taper, Linear, or Curve — that changes the effective percentage across the period.
         </p>
         <p>
           The taper clock starts when the vendor first goes Running.
