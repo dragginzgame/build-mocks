@@ -973,9 +973,9 @@
       </div>
     </section>
 
-    <!-- 08 · Create — revenue & buyback -->
+    <!-- 08 · Create — revenue -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">08</span><span class="t">Create — revenue (select a preset)</span><span class="d">Step 6: revenue is set by a project-level <strong>revenue preset</strong> — a vendor <strong>must use one</strong> (there's no free-style split editing here). Select an existing <strong>Live</strong> preset; its fees and royalties are <strong>copied onto the vendor and shown read-only</strong>, locking on Live. (The split includes the preset's <strong>Toko burn</strong> — a min-1% share of each claim, converted to $TOKO and burned to build the project's reputation; it's authored in the preset, shown read-only here.) Presets aren't created from this step — they're created and edited in <strong>Project · Revenue presets</strong>. Selecting a preset is required to continue. Buyback below is a separate vendor policy: its fee always covers beneficiary costs and fees, so it can never cost the project money — only the margin is the creator's to set; a bought-back token returns to this vendor's inventory to resell while running; and proceeds are held until the vendor has ended and every buyback window has expired.</span></div>
+      <div class="frame-cap"><span class="num">08</span><span class="t">Create — revenue (select a preset)</span><span class="d">Step 6: revenue is set by a project-level <strong>revenue preset</strong> — a vendor <strong>must use one</strong> (there's no free-style split editing here). Select an existing <strong>Live</strong> preset; its fees and royalties are <strong>copied onto the vendor and shown read-only</strong>, locking on Live. (The split includes the preset's <strong>Toko burn</strong> — a min-1% share of each claim, converted to $TOKO and burned to build the project's reputation; it's authored in the preset, shown read-only here.) Presets aren't created from this step — they're created and edited in <strong>Project · Revenue presets</strong>. Selecting a preset is required to continue.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
         <div class="section">
@@ -1010,31 +1010,12 @@
             <div class="kv"><span>Royalties total</span><span class="v">14% / 20% max</span></div>
             <p class="hint" style="margin-top:.5rem">Copied from <strong>Standard Claim</strong> when the vendor is created; locks on Live. To change fees or royalties, edit the preset in <strong>Project · Revenue presets</strong> — not here.</p>
           </div>
-          <div class="card">
-            <div class="card__head"><h3>Buyback <span class="tag">optional</span></h3><div class="seg"><button>Off</button><button class="active">On</button></div></div>
-            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">Your vendor can offer to buy a newly claimed token back from the purchaser, for a fee. The On / Off toggle reveals these options. A buyback always recovers the beneficiary and fee shares first — so the project never loses money — then adds your margin.</p>
-            <div><label class="flabel">Buy back window</label><input class="input" value="24 hours" style="max-width:220px"><div class="hint">How long the buy back offer stays open after each claim · 3 minutes – 1 week</div></div>
-            <label class="flabel" style="margin-top:var(--s-5)">Buy back fee</label>
-            <div class="row" style="justify-content:space-between;gap:var(--s-3);align-items:flex-start;padding:.7rem 0;border-top:1px solid var(--border-soft)">
-              <div style="flex:1;min-width:200px"><div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm)">Beneficiary costs <span class="tag" style="margin-left:.25rem">Always recovered</span></div><div class="hint">The beneficiary share of the original claim — refunded to the project so it isn't out of pocket.</div></div>
-              <span class="tag">14%</span>
-            </div>
-            <div class="row" style="justify-content:space-between;gap:var(--s-3);align-items:flex-start;padding:.7rem 0;border-top:1px solid var(--border-soft)">
-              <div style="flex:1;min-width:200px"><div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm)">Fees <span class="tag" style="margin-left:.25rem">Always recovered</span></div><div class="hint">The Toko share of the original claim.</div></div>
-              <span class="tag">2.5%</span>
-            </div>
-            <div class="row" style="justify-content:space-between;gap:var(--s-3);align-items:flex-start;padding:.7rem 0;border-top:1px solid var(--border-soft)">
-              <div style="flex:1;min-width:200px"><div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm)">Additional profit margin <span class="tiny" style="font-weight:400">(0–20%)</span></div><div class="hint">Extra the vendor keeps on top of what it recovers. Set <strong>0%</strong> to buy back at cost.</div></div>
-              <div class="row" style="gap:var(--s-2);flex-wrap:nowrap"><input class="input" value="1.5" style="width:72px"><span class="tiny" style="font-family:var(--font-emphasis);font-weight:700">%</span></div>
-            </div>
-            <div class="row" style="justify-content:space-between;gap:var(--s-3);padding:.8rem 0 0;border-top:2px solid var(--border-strong);margin-top:var(--s-2)"><span style="font-family:var(--font-emphasis);font-weight:700">Total buy back fee</span><span style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-lg)">18%</span></div>
-          </div>
           <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Summary</button></span></div>
         </div>
       </div>
 
       <!-- 08 · Revenue — no beneficiaries (default) -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">08 ·</span><span class="t">Revenue — no preset selected (required)</span><span class="d">A vendor must use a revenue preset. Until one is selected the split is empty and <strong>Continue is disabled</strong>. You select an existing <strong>Live</strong> preset — presets are created in <strong>Project · Revenue presets</strong> (and must be Live before they appear here), not from this step. Buyback can still be toggled, but its always-recovered amounts come from the chosen preset.</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">08 ·</span><span class="t">Revenue — no preset selected (required)</span><span class="d">A vendor must use a revenue preset. Until one is selected the split is empty and <strong>Continue is disabled</strong>. You select an existing <strong>Live</strong> preset — presets are created in <strong>Project · Revenue presets</strong> (and must be Live before they appear here), not from this step.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
         <div class="section">
@@ -1057,17 +1038,11 @@
             </div>
             <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A revenue preset is required.</strong> The vendor can't continue until one is selected. No Live presets yet? Create one in <strong>Project · Revenue presets</strong> — it must reach Live before it appears here.</div></div>
           </div>
-          <div class="card">
-            <div class="card__head"><h3>Buyback <span class="tag">optional</span></h3><div class="seg"><button class="active">Off</button><button>On</button></div></div>
-            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0">Off by default — your vendor makes no offer to buy tokens back. Turn it on to offer to buy a newly claimed token back from the purchaser for a fee, then set the buy back window and the percentage fee the vendor keeps.</p>
-          </div>
           <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3);align-items:center"><span class="tiny">Select a revenue preset to continue</span><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary" disabled>Continue · Summary</button></span></div>
         </div>
       </div>
 
-      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — show buy back terms on the public vendor page</span><span class="d">Because beneficiary costs and fees are always recovered, a buyback never costs the project money — the only variable is the <strong>additional profit margin</strong> (0% = buy back at cost, up to 20% margin). When we build the <strong>public vendor page on Launchpad</strong>, surface the buyback terms to collectors: whether a buyback is offered, the window length, and whether it's at cost or at a margin (and the effective buyback price). Logged here for the public-page work. <strong>Also to document:</strong> a bought-back token returns to the vendor's inventory (ownership transfers to the vendor via the offer settlement) and can be re-sold while the vendor runs — the current spec leaves the post-buyback destination unstated, so confirm and write it into vendor-system-design / secondary-marketplace-design.</span></div>
 
-      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — buyback + no-end vendor = locked funds</span><span class="d">Edge case to guard. With buyback enabled, proceeds release only after the vendor ends and all windows expire. A vendor that never ends therefore locks its funds: today Autonomous ("runs until sold out or you stop it") and Admin-controlled (stoppable after the earliest-stop date) both keep a manual-stop lever, so funds are recoverable — but if any config ever lacked a stop path (e.g. an unbounded mode, or admin-stop set far in the future / never reached), buyback would lock the funds <strong>permanently</strong>. Required guarantee: <strong>every vendor must always retain a way to be stopped</strong>; never allow a no-end, no-stop vendor — especially with buyback on. Consider also warning at go-Live when buyback is on and the vendor has no scheduled end, so the creator knows funds stay locked until they actively stop it.</span></div>
     </section>
 
     <!-- 09 · Summary -->
@@ -1126,45 +1101,11 @@
               <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Lifecycle — earliest-stop date is in the past</div><div class="vd">Admin-controlled vendors need an earliest-stop date in the future.</div></div><a class="vfix">Fix in Lifecycle</a></div>
               <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Inventory — no tokens staged</div><div class="vd">A vendor can't go Live with nothing to sell. Stage minted tokens first.</div></div><a class="vfix">Fix in Inventory</a></div>
               <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Costs &amp; rules — valid</div><div class="vd">Costs &amp; rules can't fail here — a cost is required to save each tier (pre-filled from collection defaults), and custom ledgers/SNS canisters are validated on entry, so an unresolved one can't be added.</div></div></div>
-              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Revenue &amp; buyback — valid</div><div class="vd">A <strong>Live revenue preset</strong> is selected and copied onto the vendor (no free-style edits). Buyback margin (0–20%) is range-checked as you edit. A vendor can't be submitted to Review without a preset.</div></div></div>
+              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Revenue — valid</div><div class="vd">A <strong>Live revenue preset</strong> is selected and copied onto the vendor (no free-style edits). A vendor can't be submitted to Review without a preset.</div></div></div>
               <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Type &amp; storefront media — valid</div><div class="vd">Market type set; thumbnail and banner present.</div></div></div>
             </div>
           </div>
           <div class="step-actions"><button class="btn btn--ghost">Save as Draft</button><button class="btn btn--primary" disabled>Submit to Review</button></div>
-        </div>
-      </div>
-
-      <!-- 09 · Stage: Review — go Live caution (buyback on, no scheduled end) -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">09 ·</span><span class="t">Stage: Review — go Live caution (buyback, no end)</span><span class="d">Setting Live from the Review stage when buyback is on and the vendor has no scheduled end. A non-blocking caution flags that proceeds stay locked until it's manually stopped and the last window expires. The creator acknowledges and proceeds; this warns, it doesn't block.</span></div>
-      <div class="screen">
-        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">Spring Launch</span></div></div>
-        <div class="section">
-          <div class="section-head">
-            <div><div class="eyebrow">Project · Vendor</div><h2>Spring Launch.</h2><p class="lede">Market vendor · in Review. Configuration is locked for a final check — edit the storefront if needed, then set it Live.</p></div>
-            <div class="head-actions"><button class="btn btn--ghost">Edit storefront</button></div>
-          </div>
-          <div class="card">
-            <div class="card__head"><h3>State</h3><div class="row" style="gap:var(--s-2)"><span class="sb sb--indigo"><span class="dot"></span>Review</span><span class="sb sb--grey">Setup</span></div></div>
-            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong style="color:var(--text-primary)">Locked for review.</strong> Costs &amp; rules, lifecycle, inventory policy and revenue are read-only at this stage. Only the storefront (aesthetic) fields can still be edited. Return to Draft to change anything else.</div></div>
-          </div>
-          <div class="card">
-            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Configuration</h3><span class="lockpill lockpill--lock">Locked at Review</span></div><span class="tag tag--indigo">Read-only</span></div>
-            <div class="kv"><span>Storefront</span><span class="v" style="display:flex;align-items:center;gap:var(--s-3)">Spring Launch · "Claim a Fox" <span class="lockpill lockpill--edit">Editable</span></span></div>
-            <div class="kv"><span>Activation</span><span class="v">Open immediately</span></div>
-            <div class="kv"><span>Control mode</span><span class="v">Autonomous · no scheduled end</span></div>
-            <div class="kv"><span>When it stops</span><span class="v">Return unclaimed to collection</span></div>
-            <div class="kv"><span>Inventory policy</span><span class="v">Additive</span></div>
-            <div class="kv"><span>Inventory</span><span class="v">420 copies · 3 collections</span></div>
-            <div class="kv"><span>Costs &amp; rules</span><span class="v">Set per collection (3)</span></div>
-            <div class="kv"><span>Revenue</span><span class="v">Preset · Standard Claim · 14% royalties</span></div>
-            <div class="kv"><span>Buyback</span><span class="v">On · 24h window · 18% fee</span></div>
-          </div>
-          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Buyback is on and this vendor has no scheduled end.</strong> Proceeds stay locked until you stop the vendor and the last buy back window expires — a vendor left running keeps its funds locked indefinitely. You can stop it any time (Autonomous), or set a schedule / earliest-stop on the Lifecycle step. Going Live is still fine.</div></div>
-          <div class="card">
-            <div class="card__head"><h3>Stage</h3></div>
-            <label class="selectall" style="margin-bottom:var(--s-4)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>I understand proceeds are locked until I stop this vendor</label>
-            <div class="controls"><button class="btn btn--ghost">Return to Draft</button><button class="btn btn--primary">Set Live</button></div>
-          </div>
         </div>
       </div>
 
