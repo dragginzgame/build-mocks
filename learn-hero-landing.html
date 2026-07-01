@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hero carousel assets — Landing page · Toko</title>
+<meta name="description" content="Specifications and instructions for the imagery that appears in the landing-page hero carousel, which is auto-sourced from featured secondary-market listings: 4:3 sizing, safe zones, formats, and an export checklist." />
+<script src="site-nav.js"></script>
+<link rel="stylesheet" href="learn.css" />
+<style>
+  .specgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s-4); margin:var(--s-6) 0; }
+  @media (max-width:560px){ .specgrid{ grid-template-columns:1fr; } }
+  .spec{ background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); }
+  .spec .k{ font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.09em; text-transform:uppercase; color:var(--text-secondary); }
+  .spec .v{ font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-xl); margin-top:.15rem; }
+  .spec .s{ font-size:var(--text-xs); color:var(--text-secondary); margin-top:.15rem; }
+  .dodont{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); margin:var(--s-6) 0; }
+  @media (max-width:560px){ .dodont{ grid-template-columns:1fr; } }
+  .dd{ border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); }
+  .dd h4{ font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; margin:0 0 .5rem; }
+  .dd.do h4{ color:#0a6b4f; } .dd.dont h4{ color:#b3261e; }
+  .dd ul{ margin:0; padding-left:1.15rem; font-size:var(--text-sm); } .dd li{ margin:.3rem 0; }
+</style>
+</head>
+<body>
+  <main class="learn-wrap learn-wide">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Asset spec · Sellers &amp; creators</div>
+      <h1>Hero carousel assets — Landing page.</h1>
+      <p class="dek">The featured carousel near the top of the toko.app landing page. Unlike the Launchpad/Marketplace banner, this one is <strong>filled automatically</strong> from featured secondary-market listings — so the “asset” is your listing’s image. This page tells you how to make it look great there.</p>
+      <div class="meta"><span>Featured card · 4:3</span><span class="dot"></span><span>~4 min</span><span class="dot"></span><span>Seller / creator</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">The landing-page hero is a <strong>portrait-ish 4:3 card</strong>, not a full-width banner. It rotates a small set of <strong>featured highlights pulled from the secondary market</strong>, weighted so listings with a <strong>higher referral fee are more likely to appear</strong>. You don't upload a banner for this surface — Toko uses your <strong>listing / collection image</strong> — so the job here is to make that image read well inside the 4:3 frame.</p>
+
+      <div class="callout callout--key">
+        <div class="ct">Where this content comes from</div>
+        <p>The landing hero is <strong>not hand-picked</strong>. It samples from live featured listings and biases toward higher <strong>seller-set referral fees</strong> (the 1–10% placement fee). Paying to feature is what earns eligibility and lifts your odds of appearing — there's no manual “what do we highlight” step. Full rules live in the <a href="../Design%20Documentation/landing-page-design.md">Landing page design</a> and <a href="../Design%20Documentation/secondary-marketplace-design.md">Secondary marketplace</a> specs.</p>
+      </div>
+
+      <div class="fig">
+        <div class="fig-ttl">The frame &amp; safe zone</div>
+        <svg viewBox="0 0 400 300" role="img" aria-label="4:3 featured card with bottom overlay safe zone">
+          <defs>
+            <linearGradient id="scrimb" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#0A0A0A" stop-opacity="0.72"/>
+              <stop offset="1" stop-color="#0A0A0A" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="398" height="298" rx="16" fill="#161616" stroke="#1D1D1D"/>
+          <rect x="1" y="188" width="398" height="111" rx="0" fill="url(#scrimb)"/>
+          <rect x="20" y="18" width="360" height="264" rx="10" fill="none" stroke="#6B6B6B" stroke-dasharray="5 5"/>
+          <!-- badge -->
+          <rect x="22" y="206" width="78" height="20" rx="10" fill="#F59E0B"/>
+          <text x="34" y="220" font-family="Mona Sans, sans-serif" font-weight="700" font-size="11" fill="#2a1900">Ending soon</text>
+          <text x="22" y="248" font-family="Mona Sans, sans-serif" font-weight="700" font-size="11" fill="#ffffff" opacity="0.85">FEATURED DROP</text>
+          <text x="22" y="274" font-family="Anton, sans-serif" font-size="26" fill="#ffffff">Night Market</text>
+          <text x="150" y="110" font-family="Mona Sans, sans-serif" font-weight="700" font-size="13" fill="#9a9a9a">focal subject (upper / centre)</text>
+        </svg>
+        <div class="fig-cap">The whole 4:3 image shows in a dark rounded card. Toko overlays a <strong>badge</strong> (Live / Ending soon), the <strong>“Featured drop”</strong> eyebrow, and the <strong>collection title</strong> across the <strong>bottom ~35%</strong> on a scrim. Keep that band clear and put your subject in the upper/centre.</div>
+      </div>
+
+      <h2>Core specifications</h2>
+      <div class="specgrid">
+        <div class="spec"><div class="k">Aspect</div><div class="v">4 : 3</div><div class="s">portrait-ish card, min-height 300px</div></div>
+        <div class="spec"><div class="k">Master size</div><div class="v">1600 × 1200</div><div class="s">4:3 · retina 2048 × 1536</div></div>
+        <div class="spec"><div class="k">Format</div><div class="v">WebP / JPG</div><div class="s">quality ~80–85, sRGB</div></div>
+        <div class="spec"><div class="k">File size</div><div class="v">≤ 400 KB</div><div class="s">fast landing-page load</div></div>
+        <div class="spec"><div class="k">Overlay zone</div><div class="v">Bottom ~35%</div><div class="s">badge + eyebrow + title live here</div></div>
+        <div class="spec"><div class="k">Text in image</div><div class="v">None</div><div class="s">title &amp; badge are added live</div></div>
+      </div>
+
+      <div class="callout callout--warn">
+        <div class="ct">If your token art is square</div>
+        <p>Token art is usually <strong>1:1</strong>, but this frame is <strong>4:3</strong>. A square image is <strong>centre-cropped</strong> to fit, trimming the top and bottom. Either supply a dedicated 4:3 featured image, or keep your square composition centred with breathing room so the crop doesn't clip the subject.</p>
+      </div>
+
+      <h2>Composition</h2>
+      <ul>
+        <li><strong>Subject upper / centre.</strong> The bottom third is covered by the badge, eyebrow, and title — keep faces and key detail above it.</li>
+        <li><strong>Strong, simple, high-contrast.</strong> The card is small and placement is automatic and random within the featured pool; a bold, legible image at a glance wins.</li>
+        <li><strong>Readable behind white text.</strong> The title is white on a bottom scrim — a darker or calmer lower area helps it pop.</li>
+        <li><strong>No baked-in words.</strong> The collection name and status badge are drawn live; don't duplicate them in the art.</li>
+      </ul>
+
+      <h2>How to appear here (and rank higher)</h2>
+      <ul>
+        <li><strong>List on the secondary market</strong> and opt the listing into <strong>featured</strong> placement.</li>
+        <li><strong>Set your referral fee (1–10%).</strong> A higher fee increases your likelihood of appearing in the landing hero and your placement priority. See <a href="learn-marketplace.html">The Marketplace, explained</a>.</li>
+        <li><strong>Give it a great 4:3-friendly image</strong> per the spec above — that's the part you control here.</li>
+      </ul>
+
+      <div class="dodont">
+        <div class="dd do">
+          <h4>Do</h4>
+          <ul>
+            <li>Supply a 4:3 image at 1600 × 1200+.</li>
+            <li>Keep the subject upper / centre.</li>
+            <li>Leave the bottom third calm for the overlay.</li>
+            <li>Use sRGB WebP/JPG under 400 KB.</li>
+          </ul>
+        </div>
+        <div class="dd dont">
+          <h4>Don't</h4>
+          <ul>
+            <li>Bake the title or a status badge into the image.</li>
+            <li>Put key detail in the bottom third.</li>
+            <li>Assume a square crop is safe — it isn't.</li>
+            <li>Rely on fine detail; the card is small.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tldr">
+        <h2>Export checklist</h2>
+        <ul>
+          <li>4:3 image — <strong>1600 × 1200</strong> (retina 2048 × 1536), sRGB.</li>
+          <li>Subject upper / centre; bottom ~35% kept clear.</li>
+          <li>No baked-in title or badge.</li>
+          <li>WebP / JPG q80–85, <strong>≤ 400 KB</strong>.</li>
+          <li>Listing opted into featured, with a referral fee set to lift placement.</li>
+        </ul>
+      </div>
+
+      <p style="color:var(--text-muted);font-size:var(--text-xs)">Reference: landing hero in <code>html-mockups/landing-page-2026-06-29.html</code>. The wide banner on the Launchpad/Marketplace is a different asset — see <a href="learn-hero-launchpad-marketplace.html">Hero carousel assets — Launchpad &amp; Marketplace</a>.</p>
+    </div>
+  </main>
+</body>
+</html>

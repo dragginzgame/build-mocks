@@ -804,7 +804,7 @@ window.TOKO_FAQ = {
           Vendors are <strong>project-scoped</strong>. A single vendor can distribute minted tokens from several of a project's collections.
         </p>
         <p>
-          Revenue templates are managed at the project level, while claim defaults are managed at the collection level.
+          Revenue templates are managed at the project level, while collection defaults are managed at the collection level.
         </p>
         <p>
           Each vendor settles payments — and holds any buyback proceeds — from its own account.
@@ -903,12 +903,11 @@ window.TOKO_FAQ = {
           A split takes fees off the top, then optional royalties:
         </p>
         <ul>
-          <li><strong>Project / cycles funding</strong> — required, roughly 1–10%, which funds your project canister.</li>
-          <li><strong>Toko contribution</strong> — optional, 0–10%.</li>
-          <li><strong>Royalties</strong> — optional, paid to your beneficiaries.</li>
+          <li><strong>Toko burn</strong> — required, 1–10% of each claim, converted to $TOKO and burned to build your project's Toko Reputation.</li>
+          <li><strong>Royalties</strong> — optional, paid to your beneficiaries (you must add yourself to earn one).</li>
         </ul>
         <p>
-          Individual royalties are capped around 10%, total royalties around 20%, and non-project allocations around 40%. Only Live beneficiaries can receive royalties — to pay yourself, add yourself as a beneficiary.
+          Individual royalties are capped around 10%, total royalties around 20%. Only Live beneficiaries can receive royalties — to pay yourself, add yourself as a beneficiary. Cycles are <strong>not</strong> taken from the split — they're funded from the project's Cycles tab, in ICP.
         </p>
       `
     },
@@ -948,17 +947,16 @@ window.TOKO_FAQ = {
     {
       aud: "creator",
       cat: "collections",
-      q: "What are sale defaults?",
+      q: "What is a Sale preset (the secondary sale split)?",
       a: `
         <p>
-          Sale defaults are the collection's <strong>secondary sale split</strong> — what's deducted when one of its tokens resells on the Marketplace. In v1 a tier carries one thing: the economic split.
+A <strong>Sale preset</strong> is the <strong>secondary sale split</strong> — what's deducted when one of its tokens resells on the Marketplace. It lives in <strong>Revenue presets</strong> (the project-level Claim/Sale presets), as the secondary counterpart to a Claim preset — it replaces the old standalone "sale defaults" surface. A vendor selects a Live Sale preset alongside its Claim preset, applied to the tokens it distributes. It carries one thing: royalties.
         </p>
         <ul>
-          <li><strong>Project / cycles fee</strong> — up to <strong>2%</strong>.</li>
           <li><strong>Royalties</strong> — up to <strong>3% total</strong>, across any number of Live beneficiaries (you must be one of them).</li>
         </ul>
         <p>
-          Together that's at most 5%, so the seller keeps at least <strong>95%</strong> before the Marketplace's referrer fee. The split is frozen onto each token at go-live. Restriction states like gift-only or soulbound are a <strong>v2</strong>, per-token feature — not a v1 sale default.
+That's at most 3%, so the seller keeps at least <strong>97%</strong> before the seller-set <strong>referral fee</strong> (the marketplace listing fee — not part of the preset). There is no project/cycles fee on secondary. Restriction states like gift-only or soulbound are a <strong>v2</strong>, per-token feature. Note: <strong>collection defaults</strong> stay a separate collection surface — they gate <strong>eligibility</strong> (who can claim), which has no secondary analog.
         </p>
       `,
       wip: true
@@ -966,17 +964,17 @@ window.TOKO_FAQ = {
     {
       aud: "creator",
       cat: "vendors",
-      q: "What are claim defaults (cost, requirements, restrictions, rewards)?",
+      q: "What are collection defaults (cost, requirements, restrictions, rewards)?",
       a: `
         <p>
-          Claim defaults are the per-collection starting rules a vendor inherits. <strong>v1 ships two parts:</strong>
+          Collection defaults are the per-collection starting rules a vendor inherits. <strong>v1 ships two parts:</strong>
         </p>
         <ul>
           <li><strong>Cost</strong> — required: Free, an ICP amount, or an ICRC-1 token. An unset cost blocks go-live.</li>
           <li><strong>Requirements</strong> — optional eligibility gates (an allowlist, or holding a token / neuron), combined with AND.</li>
         </ul>
         <p>
-          The other two parts — <strong>Restrictions</strong> (e.g. a cap per verified human) and <strong>Rewards</strong> (a payout on claim) — are <strong>v2</strong>, unlocked once the <strong>project</strong> has enough <strong>Toko Reputation</strong> (see Creator Mastery).
+          The other two parts — <strong>Restrictions</strong> (e.g. a cap per verified human) and <strong>Rewards</strong> (a payout on claim) — are <strong>v2</strong>, unlocked once the <strong>project</strong> has enough <strong>Toko Reputation</strong> (see Project Mastery).
         </p>
       `,
       wip: true
@@ -987,7 +985,7 @@ window.TOKO_FAQ = {
       q: "How do I unlock Epic and Legendary tiers?",
       a: `
         <p>
-          Weighted collections ship with the first three tiers — <strong>Common, Uncommon, Rare</strong>. <strong>Epic</strong> and <strong>Legendary</strong> unlock at the <strong>project level</strong> once the project has enough <strong>Toko Reputation</strong>, then apply across its collections (see Creator Mastery).
+          Weighted collections ship with the first three tiers — <strong>Common, Uncommon, Rare</strong>. <strong>Epic</strong> and <strong>Legendary</strong> unlock at the <strong>project level</strong> once the project has enough <strong>Toko Reputation</strong>, then apply across its collections (see Project Mastery).
         </p>
         <p>
           Archetypes don't make a collection's tiers rarer on their own — they help you reach the higher tiers. The names and colours of the Weighted tiers are fixed; you tune the curve, not the labels.
@@ -1004,7 +1002,7 @@ window.TOKO_FAQ = {
           An archetype is the <strong>starting envelope</strong> you pick when you create a collection — a safe set of defaults for a kind of project: Curated Art, Generated Art, Editioned Art, Game Items, Game Currency, Access Pass, or Custom.
         </p>
         <p>
-          It's chosen at creation and <strong>can't be switched</strong> afterwards. It sets sensible limits (supply shape, editions, and so on); you grow beyond those limits through Creator Mastery, not by changing archetype.
+          It's chosen at creation and <strong>can't be switched</strong> afterwards. It sets sensible limits (supply shape, editions, and so on); you grow beyond those limits through Project Mastery, not by changing archetype.
         </p>
       `,
       wip: true
@@ -1012,10 +1010,10 @@ window.TOKO_FAQ = {
     {
       aud: "creator",
       cat: "growth",
-      q: "What is Creator Mastery — how do I unlock more capabilities?",
+      q: "What is Project Mastery — how do I unlock more capabilities?",
       a: `
         <p>
-          Creator Mastery is a capability tree owned by the <strong>project</strong> (not a personal account or a single collection) — unlocks apply across all the project's collections, and a team shares one standing. A branch unlocks once the project has enough <strong>Toko Reputation</strong>.
+          Project Mastery is a capability tree owned by the <strong>project</strong> (not a personal account or a single collection) — unlocks apply across all the project's collections, and a team shares one standing. A branch unlocks once the project has enough <strong>Toko Reputation</strong>.
         </p>
         <ul>
           <li><strong>Supply</strong> — more blueprints, more editions, larger collections → infinite supply.</li>
@@ -1026,6 +1024,9 @@ window.TOKO_FAQ = {
         </ul>
         <p>
           A project's Toko Reputation is the <strong>$TOKO it has burned</strong>. It's mostly <strong>earned automatically</strong>: every vendor routes a minimum 1% of each claim to a Toko account that converts it to $TOKO and burns it — so the more you sell, the more you unlock. You can also <strong>top it up</strong> by burning $TOKO from a wallet (tracked separately as bought vs earned). You never need to buy $TOKO to grow.
+        </p>
+        <p>
+          Reputation is a <strong>spendable</strong> balance. You spend it on <strong>permanent skill unlocks</strong> and on <strong>repeatable purchases</strong> — consumable, time-boxed boosts like a Launchpad hero slot for a week. (Project Mastery and repeatable purchases are a <strong>v2</strong> concept.)
         </p>
       `,
       wip: true

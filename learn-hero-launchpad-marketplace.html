@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hero carousel assets — Launchpad &amp; Marketplace · Toko</title>
+<meta name="description" content="Specifications and instructions for creating banner assets for the hero carousel on the Toko Launchpad and Marketplace: dimensions, aspect ratios, safe zones, formats, and an export checklist." />
+<script src="site-nav.js"></script>
+<link rel="stylesheet" href="learn.css" />
+<style>
+  /* spec-diagram + spec helpers (page-specific) */
+  .specgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s-4); margin:var(--s-6) 0; }
+  @media (max-width:560px){ .specgrid{ grid-template-columns:1fr; } }
+  .spec{ background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); }
+  .spec .k{ font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.09em; text-transform:uppercase; color:var(--text-secondary); }
+  .spec .v{ font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-xl); margin-top:.15rem; }
+  .spec .s{ font-size:var(--text-xs); color:var(--text-secondary); margin-top:.15rem; }
+  .dodont{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); margin:var(--s-6) 0; }
+  @media (max-width:560px){ .dodont{ grid-template-columns:1fr; } }
+  .dd{ border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); }
+  .dd h4{ font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; margin:0 0 .5rem; }
+  .dd.do h4{ color:#0a6b4f; } .dd.dont h4{ color:#b3261e; }
+  .dd ul{ margin:0; padding-left:1.15rem; font-size:var(--text-sm); } .dd li{ margin:.3rem 0; }
+</style>
+</head>
+<body>
+  <main class="learn-wrap learn-wide">
+    <div class="crumb"><a href="learn.html">← Toko Learn</a></div>
+
+    <header class="art-head">
+      <div class="eyebrow">Asset spec · Creators &amp; marketing</div>
+      <h1>Hero carousel assets — Launchpad &amp; Marketplace.</h1>
+      <p class="dek">The big rotating banner at the top of the Launchpad and Marketplace. This page is the spec and step-by-step for the artwork that goes behind each slide — sizes, safe zones, formats, and an export checklist.</p>
+      <div class="meta"><span>Banner · 16:6</span><span class="dot"></span><span>~5 min</span><span class="dot"></span><span>Design / marketing</span></div>
+    </header>
+
+    <div class="prose">
+      <p class="lead">The hero carousel is a full-width, auto-rotating banner. Each slide is <strong>clean artwork</strong> with the eyebrow, title, body copy, and button added <strong>as live text on top</strong> — so your image should never contain baked-in words. The same image has to survive two very different crops: a wide cinematic banner on desktop and a tall portrait on mobile.</p>
+
+      <div class="fig">
+        <div class="fig-ttl">The frame &amp; safe zones</div>
+        <svg viewBox="0 0 800 300" role="img" aria-label="16:6 banner with left text zone and centre mobile crop">
+          <defs>
+            <linearGradient id="scrim" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#1D1D1D" stop-opacity="0.55"/>
+              <stop offset="1" stop-color="#1D1D1D" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <rect x="1" y="1" width="798" height="298" rx="10" fill="#EAEAEA" stroke="#1D1D1D"/>
+          <rect x="1" y="1" width="360" height="298" rx="10" fill="url(#scrim)"/>
+          <!-- edge safety inset -->
+          <rect x="40" y="24" width="720" height="252" rx="6" fill="none" stroke="#A0A0A0" stroke-dasharray="5 5"/>
+          <!-- mobile 3:4 centre crop: h=300 -> w=225, centred -->
+          <rect x="287" y="1" width="226" height="298" fill="none" stroke="#2563EB" stroke-width="2" stroke-dasharray="7 5"/>
+          <text x="300" y="150" font-family="Anton, sans-serif" font-size="34" fill="#1D1D1D" opacity="0.35">TITLE</text>
+          <text x="24" y="290" font-family="Mona Sans, sans-serif" font-weight="700" font-size="13" fill="#6B6B6B">Text + scrim zone (left ~40%)</text>
+          <text x="520" y="40" font-family="Mona Sans, sans-serif" font-weight="700" font-size="13" fill="#2563EB">focal subject →</text>
+          <text x="300" y="20" font-family="Mona Sans, sans-serif" font-weight="700" font-size="12" fill="#2563EB">mobile 3:4 crop</text>
+          <text x="46" y="18" font-family="Mona Sans, sans-serif" font-size="11" fill="#A0A0A0">5% edge-safe margin</text>
+        </svg>
+        <div class="fig-cap">Desktop shows the full 16:6 frame; the left ~40% carries the live text over a dark-to-transparent scrim. On mobile the component crops to the centre <strong>3:4</strong> band (blue). Keep your key subject inside that centre band and out of the left text zone.</div>
+      </div>
+
+      <h2>Core specifications</h2>
+      <div class="specgrid">
+        <div class="spec"><div class="k">Desktop aspect</div><div class="v">16 : 6</div><div class="s">≈ 2.67:1 cinematic, min-height 300px</div></div>
+        <div class="spec"><div class="k">Mobile aspect</div><div class="v">3 : 4</div><div class="s">centre crop of the same image, min-height 460px</div></div>
+        <div class="spec"><div class="k">Master size</div><div class="v">2560 × 960</div><div class="s">16:6 landscape · min 1920 × 720</div></div>
+        <div class="spec"><div class="k">Mobile crop (optional)</div><div class="v">1080 × 1440</div><div class="s">3:4 portrait, if the centre crop needs its own art</div></div>
+        <div class="spec"><div class="k">Format</div><div class="v">WebP / JPG</div><div class="s">quality ~80–85 · no transparency needed</div></div>
+        <div class="spec"><div class="k">File size</div><div class="v">≤ 500 KB</div><div class="s">per slide — the carousel loads several</div></div>
+        <div class="spec"><div class="k">Colour</div><div class="v">sRGB</div><div class="s">8-bit; the web won't honour other profiles</div></div>
+        <div class="spec"><div class="k">Text in image</div><div class="v">None</div><div class="s">title / eyebrow / body / button are live text</div></div>
+      </div>
+
+      <div class="callout callout--key">
+        <div class="ct">The one rule that trips people up</div>
+        <p>The image is placed with <code>object-fit: cover</code>, so it is <strong>cropped, never letterboxed</strong>. Anything near an edge can be cut off, and the crop is different on desktop (wide) vs mobile (tall). Design for the <strong>shared centre</strong>, not the full rectangle.</p>
+      </div>
+
+      <h2>Safe zones &amp; composition</h2>
+      <ul>
+        <li><strong>Text zone — keep it quiet.</strong> On desktop the eyebrow, Anton title (up to ~64px), body (~46 characters wide) and button sit on the <strong>left ~40%</strong> over a dark scrim. On mobile they move to the <strong>bottom ~45%</strong>. Don't put faces, logos, or fine detail there — the text and scrim will cover it.</li>
+        <li><strong>Focal subject — centre / right, upper.</strong> Place the hero subject inside the centre 3:4 band so it survives the mobile crop, biased slightly right of centre so it clears the desktop text on the left.</li>
+        <li><strong>Edge margin.</strong> Keep essential elements at least <strong>5%</strong> in from every edge (the dashed inset). Full-bleed background is fine; important detail is not.</li>
+        <li><strong>Contrast for white text.</strong> Titles render in white with a soft shadow. Make sure the text side reads against the art — darker or lower-detail there, or lean on the built-in scrim.</li>
+      </ul>
+
+      <h2>What each slide needs</h2>
+      <p>The artwork is one layer; everything else is supplied as slide data (and edited in the carousel config, not the image):</p>
+      <table class="cmp">
+        <thead><tr><th>Element</th><th>Who provides it</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><th>Background art</th><td>You (this spec)</td><td>Clean image, no text, 16:6 master</td></tr>
+          <tr><th>Eyebrow</th><td>Slide data</td><td>Short label, e.g. “Featured Collection”, “Now on the Launchpad”</td></tr>
+          <tr><th>Title</th><td>Slide data</td><td>Anton, short — a few words</td></tr>
+          <tr><th>Body</th><td>Slide data</td><td>One or two lines, ~46 characters wide</td></tr>
+          <tr><th>Button</th><td>Slide data</td><td>Label + link (e.g. “View Collection”)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="dodont">
+        <div class="dd do">
+          <h4>Do</h4>
+          <ul>
+            <li>Export a clean 16:6 master at 2560 × 960.</li>
+            <li>Keep the subject in the centre 3:4 band.</li>
+            <li>Leave the left/bottom quiet for text.</li>
+            <li>Use sRGB WebP/JPG under 500 KB.</li>
+            <li>Test both the wide and portrait crops before shipping.</li>
+          </ul>
+        </div>
+        <div class="dd dont">
+          <h4>Don't</h4>
+          <ul>
+            <li>Bake titles, taglines, or logos-as-text into the image.</li>
+            <li>Put faces or key detail in the left text zone.</li>
+            <li>Push important elements to the edges.</li>
+            <li>Ship a busy, high-contrast area behind the title.</li>
+            <li>Upload PNGs or huge multi-MB files.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Step by step</h2>
+      <ul>
+        <li><strong>1. Set the canvas.</strong> New document at 2560 × 960, sRGB.</li>
+        <li><strong>2. Mark the guides.</strong> Add a 5% edge inset, a left-40% text zone, and a centred 960-tall × 720-wide box (the 3:4 mobile crop).</li>
+        <li><strong>3. Compose.</strong> Subject inside the centre box, quiet area on the left.</li>
+        <li><strong>4. Check the crops.</strong> Preview the full 16:6 and the centre 3:4 — the subject must read in both.</li>
+        <li><strong>5. Export.</strong> WebP or JPG q80–85, confirm ≤ 500 KB. Optionally export a dedicated 1080 × 1440 portrait if the centre crop needs different art.</li>
+        <li><strong>6. Hand off.</strong> Supply the image plus the eyebrow, title, body, and button label + link for the slide.</li>
+      </ul>
+
+      <div class="tldr">
+        <h2>Export checklist</h2>
+        <ul>
+          <li>16:6 master — <strong>2560 × 960</strong>, sRGB, no baked-in text.</li>
+          <li>Subject inside the centre <strong>3:4</strong> band; left/bottom kept quiet.</li>
+          <li>5% edge-safe margin respected.</li>
+          <li>WebP / JPG q80–85, <strong>≤ 500 KB</strong>.</li>
+          <li>(Optional) 1080 × 1440 portrait crop for mobile.</li>
+          <li>Slide copy supplied separately: eyebrow, title, body, button.</li>
+        </ul>
+      </div>
+
+      <p style="color:var(--text-muted);font-size:var(--text-xs)">Reference component: <code>html-mockups/hero-carousel.html</code>. The landing page uses a different hero — see <a href="learn-hero-landing.html">Hero carousel assets — Landing page</a>.</p>
+    </div>
+  </main>
+</body>
+</html>

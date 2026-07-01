@@ -62,7 +62,7 @@ loading, populated, error, locked, etc.) on a single page. Grouped by area, as o
 - **Creator studio — project** — studio, projects list, project, team & access,
   beneficiaries, whitelists, media library, revenue presets.
 - **Creator studio — collection** — collections list, collection, attributes,
-  rarity, supply, guardian, claim defaults.
+  rarity, supply, guardian, collection defaults.
 - **Creator studio — generator** — the generator (layers, parts, rules, batches).
 - **Creator studio — tokens** — token draft / review / live / add, minted tokens.
 - **Creator studio — vendors** — vendor creation, vendor management.
