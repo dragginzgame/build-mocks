@@ -370,7 +370,7 @@ window.TOKO_FAQ = {
       q: "How do I list a token, and what does it cost to sell?",
       a: `
         <p>
-          From <strong>My Tokens</strong>, pick a token and choose a price and currency (from Toko's curated whitelist — e.g. ICP, ckBTC, ckUSDC, ckETH, ckUSDT, ckSOL, DKP), plus a duration (up to 14 days). If it doesn't sell, it simply returns to your wallet.
+          From <strong>My Tokens</strong>, pick a token and choose a price and currency (from Toko's accepted currencies — ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP), plus a duration (up to 14 days). If it doesn't sell, it simply returns to your wallet.
         </p>
         <p>
           Selling carries a <strong>referral fee</strong> you set on a <strong>1–10% slider</strong> (1% minimum), charged on a completed sale. <strong>Higher fee = higher placement.</strong> <strong>No sale, no fee.</strong>
@@ -807,7 +807,7 @@ window.TOKO_FAQ = {
           Revenue templates are managed at the project level, while collection defaults are managed at the collection level.
         </p>
         <p>
-          Each vendor settles payments — and holds any buyback proceeds — from its own account.
+          Each vendor settles payments from its own account.
         </p>
       `
     },
@@ -907,7 +907,7 @@ window.TOKO_FAQ = {
           <li><strong>Royalties</strong> — optional, paid to your beneficiaries (you must add yourself to earn one).</li>
         </ul>
         <p>
-          Individual royalties are capped around 10%, total royalties around 20%. Only Live beneficiaries can receive royalties — to pay yourself, add yourself as a beneficiary. Cycles are <strong>not</strong> taken from the split — they're funded from the project's Cycles tab, in ICP.
+          Individual royalties are capped around 10%, total royalties around 20%. Only Live beneficiaries can receive royalties — to pay yourself, add yourself as a beneficiary. Cycles are <strong>not</strong> taken from the split — the project funds them from its own treasury, where a locked share of claim revenue is auto-converted to cycles.
         </p>
       `
     },
@@ -933,13 +933,13 @@ window.TOKO_FAQ = {
       q: "What is a buyback?",
       a: `
         <p>
-          A buyback is an offer from a vendor to buy a token back from a collector.
+          <strong>Buyback is a V2 feature — it isn't in v1</strong>, and it's a candidate to be unlocked via Project Mastery.
         </p>
         <p>
-          It's configured at the vendor level — not in the revenue preset — as a vendor percentage (roughly 1–20%) over a set duration.
+          When it ships, a vendor will be able to offer to buy a token back from a collector, configured at the vendor level (not the revenue preset) as a vendor percentage over a set window.
         </p>
         <p>
-          Buybacks run through the same shared offer system as the marketplace, and proceeds are held in the vendor's account until release.
+          Buybacks will run through the same shared offer system as the marketplace, with proceeds held in the vendor's account until release.
         </p>
       `
     },
@@ -970,7 +970,7 @@ That's at most 3%, so the seller keeps at least <strong>97%</strong> before the 
           Collection defaults are the per-collection starting rules a vendor inherits. <strong>v1 ships two parts:</strong>
         </p>
         <ul>
-          <li><strong>Cost</strong> — required: Free, an ICP amount, or an ICRC-1 token. An unset cost blocks go-live.</li>
+          <li><strong>Cost</strong> — required: Free, or an amount in an accepted currency (ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP). An unset cost blocks go-live.</li>
           <li><strong>Requirements</strong> — optional eligibility gates (an allowlist, or holding a token / neuron), combined with AND.</li>
         </ul>
         <p>

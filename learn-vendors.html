@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Vendors &amp; revenue, explained — Toko Learn</title>
-<meta name="description" content="How tokens get distributed on Toko: what a vendor is, the claim rules and tiers, the vendor lifecycle, and how revenue presets, royalties and buyback decide where the money goes." />
+<meta name="description" content="How tokens get distributed on Toko: what a vendor is, the claim rules and tiers, the vendor lifecycle, and how revenue presets and royalties decide where the money goes." />
 <link rel="stylesheet" href="learn.css" />
 <style>
   .life{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem;}
@@ -94,7 +94,7 @@
         <table class="tierclaim">
           <thead><tr><th>Lever</th><th>What it does</th></tr></thead>
           <tbody>
-            <tr><th>Cost</th><td><strong>v1 · required.</strong> Free, an ICP amount, or an ICRC-1 token — can differ by tier. An unset cost blocks go-live.</td></tr>
+            <tr><th>Cost</th><td><strong>v1 · required.</strong> Free, or an amount in an accepted currency (ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP) — can differ by tier. An unset cost blocks go-live.</td></tr>
             <tr><th>Requirements</th><td><strong>v1 · optional.</strong> Eligibility gates — an allowlist entry, or holding a token / neuron — combined with AND, set per tier.</td></tr>
             <tr><th>Restrictions</th><td><strong>v2.</strong> Limits like a claim cap per verified human — a creator-level unlock (burn $TOKO).</td></tr>
             <tr><th>Rewards</th><td><strong>v2.</strong> A payout to the claimer on claim — also a creator-level $TOKO unlock.</td></tr>
@@ -112,21 +112,19 @@
       </div>
 
       <h2>What's in a split</h2>
-      <p>Proceeds come off the top as <strong>fees</strong>, and the rest goes to your <strong>beneficiaries</strong> — only beneficiaries who are <strong>Live</strong> qualify to be paid:</p>
+      <p>The required <strong>Toko burn</strong> comes off the top; the rest goes to your <strong>beneficiaries</strong> — only beneficiaries who are <strong>Live</strong> qualify to be paid:</p>
 
       <div class="fig">
         <div class="fig-ttl">Where a claim's proceeds go</div>
         <div class="splitbar">
-          <i style="width:6%; background:#2563eb" title="Project / cycles"></i>
-          <i style="width:2%; background:#7c3aed" title="Toko"></i>
-          <i style="width:92%; background:#16a34a">Your beneficiaries · 92%</i>
+          <i style="width:2%; background:#7c3aed" title="Toko burn"></i>
+          <i style="width:98%; background:#16a34a">Your beneficiaries · 98%</i>
         </div>
         <div class="splitkey">
-          <span><i style="background:#2563eb"></i> Project / cycles — required, ~1–10%</span>
-          <span><i style="background:#7c3aed"></i> Toko contribution — optional, 0–10%</span>
+          <span><i style="background:#7c3aed"></i> Toko burn — required, 1–10% of each claim (converted to $TOKO and burned for your project's reputation)</span>
           <span><i style="background:#16a34a"></i> Beneficiaries — the remainder</span>
         </div>
-        <div class="fig-cap">Figures are illustrative. The project/cycles fee is required; the Toko contribution is optional. Where royalties are configured, each is capped at ~10%, with total royalties ≤20% (and non-project royalties bounded separately) — caps that keep any single split honest.</div>
+        <div class="fig-cap">Figures are illustrative. The <strong>Toko burn</strong> (min 1%) is the only required cut; the rest is your beneficiaries' royalties, each capped at ~10% and ≤20% total. <strong>Cycles are not taken from the split</strong> — the project funds them from its own treasury. To pay yourself, add yourself as a Live beneficiary.</div>
       </div>
 
       <h2>Royalties over time</h2>
@@ -159,8 +157,8 @@
         <div class="fig-cap">A taper lets you reward early activity more heavily without cutting creators off abruptly. Pick the shape that matches how you want the drop to age.</div>
       </div>
 
-      <h2>Buyback</h2>
-      <p>A vendor can also run a <strong>buyback</strong> — an offer to buy tokens back from holders, set as a percentage (around 1–20%) over a duration. Buyback proceeds are held in the vendor's own subaccount, so the funds backing an offer are kept distinct from the rest of the project's balances.</p>
+      <h2>Buyback <span style="font-size:.55em;vertical-align:middle;color:var(--stage-draft)">V2</span></h2>
+      <p><strong>Buyback is a later-release (V2) feature — not in v1</strong>, and a candidate to be unlocked via Project Mastery. When it ships, a vendor will be able to offer to buy tokens back from holders for a fee over a set window, with proceeds held in the vendor's own subaccount.</p>
 
       <div class="callout">
         <div class="ct">One technical note</div>
@@ -175,7 +173,7 @@
           <li>Vendors go <strong>Draft → Review → Live</strong>, then run through <strong>Setup → Running ⇄ Paused → Empty → Ended</strong>.</li>
           <li><strong>Claim rules</strong> set cost, requirements, restrictions and rewards — per vendor or per tier, with allowlists from the project.</li>
           <li><strong>Revenue presets</strong> are project-level split templates, snapshotted onto a vendor; fees come off the top, beneficiaries get the rest.</li>
-          <li><strong>Royalties</strong> can run forever or for a fixed period with a taper; <strong>buyback</strong> repurchases tokens from a vendor subaccount.</li>
+          <li><strong>Royalties</strong> can run forever or for a fixed period with a taper. <strong>Buyback</strong> (repurchasing tokens) is a later-release <strong>V2</strong> feature.</li>
         </ul>
       </div>
 
