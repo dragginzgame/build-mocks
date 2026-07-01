@@ -77,6 +77,8 @@
   .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
   .warn-note { background:rgba(245,158,11,.1); }
   .warn-note .ic { color:var(--stage-draft); }
+  .err-note { background:rgba(239,68,68,.08); }
+  .err-note .ic { color:var(--notify-error); }
 
   .locked { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
   .locked__head { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); padding:var(--s-4) var(--s-5); }
@@ -546,7 +548,7 @@
             <header><h4>Delete attribute "Eyes"?</h4><button class="x" aria-label="Close">✕</button></header>
             <div class="mbody">
               <p style="margin:0">This removes the <span class="mono">eyes</span> trait from the schema, along with its numeric value mapping and any generator mappings that target it. Affected token scores will be recomputed.</p>
-              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Only possible while every token that uses this attribute is in <strong>Draft</strong>. This can't be undone.</div></div>
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Only possible while every token that uses this attribute is in <strong>Draft</strong>. This can't be undone.</div></div>
             </div>
             <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete attribute</button></div>
           </div>
@@ -944,7 +946,7 @@
             <header><h4>Remove mapping?</h4><button class="x" aria-label="Close">✕</button></header>
             <div class="mbody">
               <p style="margin:0">This removes the mapping <strong>Part · Gold Crown → Headwear</strong>. Tokens that relied on it fall back to the <span class="mono">Headwear</span> layer rule — or carry no value for that attribute if there's no layer rule. Affected attribute metadata and scores are recomputed.</p>
-              <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Only possible while every token that uses this mapping is in <strong>Draft</strong>. This can't be undone.</div></div>
+              <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Only possible while every token that uses this mapping is in <strong>Draft</strong>. This can't be undone.</div></div>
             </div>
             <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove mapping</button></div>
           </div>
