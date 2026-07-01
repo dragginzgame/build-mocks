@@ -128,7 +128,7 @@
         <div class="statgrid">
           <div class="statcard"><div class="k">Monthly cycle cost</div><div class="v">~2.6 T</div><div class="s">≈ 3.4 ICP / month</div></div>
           <div class="statcard"><div class="k">Cycle balance</div><div class="v">8.4 T</div><div class="s"><span class="status status--ok"><span class="dot"></span>~3.2 mo runway</span></div></div>
-          <div class="statcard"><div class="k">Treasury</div><div class="v">≈ 412</div><div class="s">ICP-eq · approved currencies</div></div>
+          <div class="statcard"><div class="k">Treasury</div><div class="v">≈ 412</div><div class="s">ICP-eq · accepted currencies</div></div>
           <div class="statcard"><div class="k">Locked reserve</div><div class="v">15%</div><div class="s">≈ 62 ICP reserved for cycles</div></div>
         </div>
         <div class="twocol">
@@ -159,7 +159,7 @@
 
   <!-- 02 · public top-up (anyone logged in) -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Public top-up · anyone logged in</span><span class="d">The public-facing cycle top-up, reachable by link. Any logged-in user (not just admins) can contribute in an approved currency; the amount is converted via an AMM to ICP and used to buy cycles. Login is required only so the payment can be drawn from the contributor's wallet.</span></div>
+    <div class="frame-cap"><span class="num">02</span><span class="t">Public top-up · anyone logged in</span><span class="d">The public-facing cycle top-up, reachable by link. Any logged-in user (not just admins) can contribute in an accepted currency; the amount is converted via an AMM to ICP and used to buy cycles. Login is required only so the payment can be drawn from the contributor's wallet.</span></div>
     <div class="stage">
       <div class="modal-card">
         <header><h4>Top up cycles — Vault One</h4><span class="x">✕</span></header>
@@ -185,13 +185,4 @@
           <div class="statcard warn"><div class="k">Cycle balance</div><div class="v">1.9 T</div><div class="s"><span class="status status--warn"><span class="dot"></span>below reserve</span></div></div>
           <div class="statcard"><div class="k">Monthly cycle cost</div><div class="v">~2.6 T</div><div class="s">≈ 3.4 ICP / month</div></div>
           <div class="statcard"><div class="k">Treasury</div><div class="v">≈ 48</div><div class="s">ICP-eq · covers the top-up</div></div>
-          <div class="statcard warn"><div class="k">Withdrawable excess</div><div class="v">0</div><div class="s">locked until reserve restored</div></div>
-        </div>
-        <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div><strong>Auto-restoring from the treasury.</strong> The next claim inflow or the hourly check (in ~18 min) will convert treasury funds via the AMM and buy cycles to refill the reserve. Withdrawals are paused until the reserve is whole. Anyone can also top up now via the public link.</div></div>
-        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap"><button class="btn btn--icp">Top up now</button><button class="btn btn--ghost">Copy public link</button></div>
-      </div>
-    </div>
-  </section>
-</div>
-</body>
-</html>
+          <di

@@ -153,7 +153,7 @@
   <header>
     <span class="eyebrow">Creator studio · Collection</span>
     <h1>Collection defaults.</h1>
-    <p>The collection sub-page where a creator sets the <strong>default claim rule</strong> every new vendor drawing from this collection starts with (then edits per vendor). It is <strong>tier-indexed</strong> (a default per rarity tier), <strong>auto-saves</strong>, and is <strong>required-valid before Review and frozen at Live</strong>. In V1 a rule is two things: a required <strong>cost</strong> (Free / ICP / ICRC-1) and optional <strong>requirements</strong> (allowlist / hold / stake). <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong>. Mirrors <span class="mono">sale-defaults-states-gallery</span>. Source: <span class="mono">Design Documentation/vendor-presets.md</span>.</p>
+    <p>The collection sub-page where a creator sets the <strong>default claim rule</strong> every new vendor drawing from this collection starts with (then edits per vendor). It is <strong>tier-indexed</strong> (a default per rarity tier), <strong>auto-saves</strong>, and is <strong>required-valid before Review and frozen at Live</strong>. In V1 a rule is two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (allowlist / hold / stake). <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong>. Mirrors <span class="mono">sale-defaults-states-gallery</span>. Source: <span class="mono">Design Documentation/vendor-presets.md</span>.</p>
     <div class="navlinks">Sibling of <a href="sale-defaults-states-gallery-2026-06-29.html">Sale defaults</a>. Related: <a href="rarity-states-gallery-2026-06-17.html">Rarity</a> · <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a> · <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a></div>
   </header>
   <div class="grey-note" style="border-left:3px solid var(--stage-live); padding-left:var(--s-4)"><strong>V1 scope:</strong> collection defaults carry <strong>only cost + requirements</strong>. Claim <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">Design Documentation/vendor-presets.md</span>.</div>
@@ -182,15 +182,14 @@
 
   <!-- A2 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">A2</span><span class="t">Rule editor — collection default</span><span class="d">Opened from "Edit rule" on a tier. A required <strong>cost</strong> (Free / ICP / ICRC-1) plus optional <strong>requirements</strong> (whitelist / holds a token / has a stake), combined with AND. <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong> and not shown here.</span></div>
+    <div class="frame-cap"><span class="num">A2</span><span class="t">Rule editor — collection default</span><span class="d">Opened from "Edit rule" on a tier. A required <strong>cost</strong> (Free, or an accepted currency) plus optional <strong>requirements</strong> (whitelist / holds a token / has a stake), combined with AND. <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong> and not shown here.</span></div>
     <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
       <header><h4>Claim rule · Founder</h4><span class="x">✕</span></header>
       <div class="mbody">
         <div>
-          <div class="flabel">Claim cost <span class="open-chip">required — Free, ICP, or ICRC-1</span></div>
+          <div class="flabel">Claim cost <span class="open-chip">required — Free, or an accepted currency</span></div>
           <div class="opt"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Free</div><div class="opt-d">Anyone eligible can claim at no cost.</div></div></div>
-          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">ICP</div><div class="row" style="margin-top:.5rem"><input class="input" style="width:160px" value="4 ICP"></div></div></div>
-          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">ICRC-1 token</div><div class="opt-d">A supported ledger token + amount.</div></div></div>
+          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in one of Toko's accepted currencies.</div><div class="row" style="margin-top:.5rem;gap:.5rem"><input class="input" style="width:110px" value="4"><select class="input" style="width:130px"><option selected>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select></div></div></div>
         </div>
         <div>
           <div class="flabel">Requirements <span class="open-chip">optional · combined with AND · none = anyone can claim</span></div>
@@ -358,7 +357,7 @@
 
   <div class="frame">
     <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part C note (not UI)</span></div>
-    <p class="grey-note">In V1, a tier carries two things: a required <strong>cost</strong> (Free / ICP / ICRC-1) and optional <strong>requirements</strong> (on a whitelist / holds a token / has a stake — combined with AND; none = anyone can claim). The only go-Live gate is a <strong>cost set on every tier</strong>; requirements are optional. <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">vendor-presets.md</span>.</p>
+    <p class="grey-note">In V1, a tier carries two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (on a whitelist / holds a token / has a stake — combined with AND; none = anyone can claim). The only go-Live gate is a <strong>cost set on every tier</strong>; requirements are optional. <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">vendor-presets.md</span>.</p>
   </div>
 
 </div>

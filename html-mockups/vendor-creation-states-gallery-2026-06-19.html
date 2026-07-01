@@ -283,7 +283,7 @@
 
     <!-- 03 · Create — vendor type (card chooser) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Create — vendor type</span><span class="d">Step 1 of the create stepper — the <strong>sale mechanism</strong>. <strong>Market</strong> is the only type available at launch and is <strong>collection-agnostic</strong>: it can sell tokens from one or several of your collections (no single/multi toggle — its inventory just spans whatever collections you stage). The price-override types — <strong>Gacha</strong>, <strong>Tombola</strong>, <strong>Gacha-RWA</strong> — are <strong>single-collection</strong> (one draw price + one weighted pool only make sense within one rarity system) and stay disabled for now. Whatever collections a vendor is created with become its fixed set — it can only ever hold tokens from those. Cards use the gallery's own selection convention (strong border + hairline ring). The stepper rail replaces a redundant page header on working steps (style-guide rule).</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">Create — vendor type</span><span class="d">Step 1 of the create stepper — the <strong>sale mechanism</strong>. <strong>Market</strong> is the only type available at launch and is <strong>collection-agnostic</strong>: it can sell tokens from one or several of your collections (no single/multi toggle — its inventory just spans whatever collections you stage). The price-override types — <strong>Gacha</strong> and <strong>Tombola</strong> — are <strong>single-collection</strong> (one draw price + one weighted pool only make sense within one rarity system) and stay disabled for now. Whatever collections a vendor is created with become its fixed set — it can only ever hold tokens from those. Cards use the gallery's own selection convention (strong border + hairline ring). The stepper rail replaces a redundant page header on working steps (style-guide rule).</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
         <div class="section">
@@ -316,11 +316,6 @@
                 <span class="tc-ic">🎟️</span>
                 <div class="tc-ttl">Tombola <span class="tag">Coming later</span></div>
                 <div class="tc-desc">Raffle-style draw where every ticket wins from a graded pool. <strong>Single collection.</strong></div>
-              </div>
-              <div class="type-card disabled">
-                <span class="tc-ic">💎</span>
-                <div class="tc-ttl">Gacha-RWA <span class="tag">Coming later</span></div>
-                <div class="tc-desc">Gacha draw backed by real-world-asset prizes with extra custody &amp; redemption rules. <strong>Single collection.</strong></div>
               </div>
             </div>
           </div>
@@ -669,7 +664,7 @@
             <span class="step"><span class="n">6</span><span class="lbl">Revenue</span></span><span class="sepl"></span>
             <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
           </div>
-          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Market requires a cost on every tier.</strong> Every tier must select a cost — <strong>free, ICP, or any ICRC-1 token</strong> — or the vendor can't go Live ("free" is an explicit choice, copied from the collection defaults). Costs &amp; rules are set per collection — each collection brings its own tiers (even two Tiered collections can differ), and a Uniform collection has a single cost for the whole collection.</div></div>
+          <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">Market requires a cost on every tier.</strong> Every tier must select a cost — <strong>free, or one of Toko's accepted currencies (ICP · ckBTC · ckETH · ckUSDC · ckUSDT · ckSOL · $TOKO · $DKP)</strong> — or the vendor can't go Live ("free" is an explicit choice, copied from the collection defaults). Costs &amp; rules are set per collection — each collection brings its own tiers (even two Tiered collections can differ), and a Uniform collection has a single cost for the whole collection.</div></div>
           <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Every requirement narrows your audience.</strong> Requirements on a tier are additive (AND) — the more you add, the fewer collectors qualify to claim it. A tier with no requirements is open to everyone.</div></div>
           <div class="row" style="justify-content:flex-end"><span class="lockpill lockpill--lock">Costs &amp; rules lock on Live</span></div>
 
@@ -688,7 +683,7 @@
               <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-cost">2 ICP</span><span class="tr-reqs"><span class="tag">None</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
               <div class="tier-row"><span class="tr-tier">Merchant</span><span class="tr-cost">5 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
               <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-cost">25 ckUSDC</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
-              <p class="hint" style="margin-top:.5rem">Custom tier names come from this collection's Tiered rarity — they won't match another collection's tiers. Each tier sets its own cost token — here Founder is priced in an ICRC-1 token (ckUSDC) rather than ICP.</p>
+              <p class="hint" style="margin-top:.5rem">Custom tier names come from this collection's Tiered rarity — they won't match another collection's tiers. Each tier sets its own cost token — here Founder is priced in ckUSDC rather than ICP.</p>
             </div>
           </div>
 
@@ -780,22 +775,17 @@
       </div>
 
       <!-- 07 modal · Requirement editor — accordions (configured) -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same four-concept editor as the collection defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free / ICP / ICRC-1); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors. TokoToken (hold from a collection), Restrictions and Rewards are disabled teasers (coming soon). Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same four-concept editor as the collection defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free, or an accepted currency); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors. TokoToken (hold from a collection), Restrictions and Rewards are disabled teasers (coming soon). Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
       <div class="stage single-modal">
         <div class="modal-card wide">
           <header><h4>Edit · Spring Foxes · Rare</h4><button class="x" aria-label="Close">✕</button></header>
           <div class="mbody">
             <div><label class="flabel">Claim cost <span class="tag tag--red">required</span></label>
               <div class="row" style="gap:var(--s-2);align-items:flex-start">
-                <select class="input" style="width:135px;flex:none"><option>Free claim</option><option>ICP</option><option selected>ICRC-1 token</option></select>
+                <select class="input" style="width:150px;flex:none"><option>Free claim</option><option>ICP</option><option>ckBTC</option><option>ckETH</option><option selected>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select>
                 <input class="input" value="25" style="width:84px;flex:none">
-                <div style="flex:1;min-width:180px">
-                  <select class="input"><option>ckBTC</option><option>ckUSDC</option><option>ckETH</option><option>GLDT</option><option selected>Custom — add ledger…</option></select>
-                  <input class="input is-ok" style="margin-top:var(--s-2)" value="xevnm-gaaaa-aaaar-qafnq-cai" aria-label="ICRC-1 ledger canister ID">
-                  <div class="field-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Resolved · ckUSDC — added to this vendor's token list</div>
-                </div>
               </div>
-              <p class="hint" style="margin-top:.4rem">Pick ICP, or ICRC-1 then a common token. The ledger box appears only for <strong>Custom</strong> — a canister ID validated on entry; the resolved token is then added to this vendor's dropdown.</p>
+              <p class="hint" style="margin-top:.4rem">Pick <strong>Free</strong> or one of Toko's accepted currencies — ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP. No custom canisters.</p>
             </div>
             <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Requirements combine with AND.</strong> A collector must satisfy every active requirement below — the more you add, the fewer people can claim this tier.</div></div>
             <label class="flabel">Requirements</label>
@@ -844,8 +834,7 @@
             <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">Maximum claims per human</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
 
             <label class="flabel" style="margin-top:var(--s-3)">Rewards — extra payout for claiming</label>
-            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">ICP payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
-            <div class="acc disabled-acc" style="margin-top:var(--s-3)"><div class="acc__head"><span class="acc-ttl">ICRC-1 token payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">Accepted-currency payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
           </div>
           <div class="footer-row" style="justify-content:space-between"><button class="btn btn--ghost">Reset tier to collection defaults</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save</button></span></div>
         </div>
@@ -859,11 +848,10 @@
           <div class="mbody">
             <div><label class="flabel">Claim cost <span class="tag tag--red">required</span></label>
               <div class="row" style="gap:var(--s-2);align-items:flex-start">
-                <select class="input" style="width:135px;flex:none"><option>Free claim</option><option>ICP</option><option selected>ICRC-1 token</option></select>
+                <select class="input" style="width:150px;flex:none"><option>Free claim</option><option>ICP</option><option>ckBTC</option><option>ckETH</option><option selected>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select>
                 <input class="input" value="3" style="width:84px;flex:none">
-                <select class="input" style="flex:1;min-width:180px"><option selected>ckUSDC</option><option>ckBTC</option><option>ckETH</option><option>GLDT</option><option>Custom — add ledger…</option></select>
               </div>
-              <p class="hint" style="margin-top:.4rem">A common token is picked straight from the list — no canister ID needed (the ledger box only appears for Custom).</p>
+              <p class="hint" style="margin-top:.4rem">Pick from Toko's accepted currencies — no canister IDs.</p>
             </div>
             <label class="flabel">Requirements</label>
 
@@ -899,46 +887,31 @@
             <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">Maximum claims per human</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
 
             <label class="flabel" style="margin-top:var(--s-3)">Rewards — extra payout for claiming</label>
-            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">ICP payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
-            <div class="acc disabled-acc" style="margin-top:var(--s-3)"><div class="acc__head"><span class="acc-ttl">ICRC-1 token payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
+            <div class="acc disabled-acc"><div class="acc__head"><span class="acc-ttl">Accepted-currency payout</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div></div>
           </div>
           <div class="footer-row" style="justify-content:space-between"><button class="btn btn--ghost">Reset tier to collection defaults</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save</button></span></div>
         </div>
       </div>
 
-      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — explore: project-level custom ICRC-1 tokens &amp; SNS DAOs</span><span class="d">Two places now take a custom canister by ID: the <strong>cost picker</strong> (an ICRC-1 ledger) and the <strong>ICRC-1 Neuron gate</strong> (an SNS governance canister). As drawn, each is entered at the point of use and cached in this vendor's dropdown. Worth exploring before build: <strong>persist both at the project level</strong> — validated once, then reusable across every vendor and tier — instead of re-entering canister IDs per vendor. Benefits: fewer lookups, less risk of a wrong/unsafe canister, a friendlier picker. Feasibility looks good — ICRC-1 ledgers expose symbol/decimals via standard metadata (the wallet already supports ICRC1) and SNS governance canisters are resolvable to a DAO name, so resolved entries + labels can be stored on the project and refreshed. Open questions: where they're managed (Project Studio › Tokens / DAOs?), who can add/remove them, and how to flag a canister that later changes or goes unreachable. Flagged here on the grey, outside the modal, per the style guide (design guidance never sits inside the UI).</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-6)"><span class="t" style="color:var(--text-primary)">Design note (not UI) — explore: project-level SNS DAOs</span><span class="d">The <strong>ICRC-1 Neuron gate</strong> takes a custom SNS governance canister by ID, entered at the point of use and cached in this vendor's dropdown. Worth exploring before build: <strong>persist SNS DAOs at the project level</strong> — validated once, then reusable across every vendor and tier. (Claim <strong>cost</strong> is no longer a place for custom canisters — costs use Toko's fixed accepted currencies only: ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP.) SNS governance canisters resolve to a DAO name, so resolved entries + labels can be stored on the project and refreshed. Flagged on the grey per the style guide.</span></div>
 
       <!-- 07 · Cost picker — three states -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Cost picker — three states</span><span class="d">The claim-cost token control in each state. A cost type must be chosen — <strong>Free claim</strong> is the fourth option and shows no amount or token control. <strong>ICP</strong>: just the amount and the token select. <strong>Known token</strong>: ICRC-1 chosen, then a common token picked from the second dropdown — no canister box. <strong>Custom</strong>: the second dropdown set to "Custom — add ledger…" reveals the ledger canister-ID box, validated on entry. (The ICRC-1 Neuron DAO picker follows the same list-or-custom pattern.)</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Cost picker — three states</span><span class="d">The claim-cost control. A cost type must be chosen from Toko's <strong>accepted currencies</strong> — <strong>Free claim</strong> (no amount), or an amount priced in <strong>ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO or $DKP</strong>. There are no custom / arbitrary tokens in V1.</span></div>
       <div style="display:flex;flex-direction:column;gap:var(--s-4)">
         <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
-          <label class="flabel">Claim cost · ICP</label>
+          <label class="flabel">Claim cost · priced</label>
           <div class="row" style="gap:var(--s-2);align-items:flex-start">
             <input class="input" value="8" style="width:84px;flex:none">
-            <select class="input" style="width:140px;flex:none"><option selected>ICP</option><option>ICRC-1 token</option></select>
+            <select class="input" style="width:150px;flex:none"><option selected>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select>
           </div>
+          <p class="hint" style="margin-top:.4rem">One of Toko's accepted currencies — ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP. No custom tokens.</p>
         </div>
         <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
-          <label class="flabel">Claim cost · ICRC-1 · known token</label>
+          <label class="flabel">Claim cost · free</label>
           <div class="row" style="gap:var(--s-2);align-items:flex-start">
-            <input class="input" value="3" style="width:84px;flex:none">
-            <select class="input" style="width:140px;flex:none"><option>ICP</option><option selected>ICRC-1 token</option></select>
-            <select class="input" style="flex:1;min-width:180px"><option selected>ckUSDC</option><option>ckBTC</option><option>ckETH</option><option>GLDT</option><option>Custom — add ledger…</option></select>
+            <select class="input" style="width:150px;flex:none"><option selected>Free claim</option><option>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select>
           </div>
-          <p class="hint" style="margin-top:.4rem">A common token is picked from the list — no canister ID needed.</p>
-        </div>
-        <div class="card" style="padding-top:var(--s-5);padding-bottom:var(--s-5)">
-          <label class="flabel">Claim cost · ICRC-1 · custom ledger</label>
-          <div class="row" style="gap:var(--s-2);align-items:flex-start">
-            <input class="input" value="25" style="width:84px;flex:none">
-            <select class="input" style="width:140px;flex:none"><option>ICP</option><option selected>ICRC-1 token</option></select>
-            <div style="flex:1;min-width:180px">
-              <select class="input"><option>ckBTC</option><option>ckUSDC</option><option>ckETH</option><option>GLDT</option><option selected>Custom — add ledger…</option></select>
-              <input class="input is-ok" style="margin-top:var(--s-2)" value="xevnm-gaaaa-aaaar-qafnq-cai" aria-label="ICRC-1 ledger canister ID">
-              <div class="field-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Resolved · ckUSDC — added to this vendor's token list</div>
-            </div>
-          </div>
-          <p class="hint" style="margin-top:.4rem">The ledger box appears only for Custom; the canister ID is validated on entry.</p>
+          <p class="hint" style="margin-top:.4rem">Free is an explicit choice — no amount or currency shown.</p>
         </div>
       </div>
 
