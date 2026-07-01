@@ -376,7 +376,7 @@
 
     <!-- 03 · Activity tab -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">My Tokens · Activity tab (transaction history)</span><span class="d">Recent transfers across NFTs and fungibles, newest first, paginated like every other list. The filter switches between All / NFTs / Fungible. Each row reads as event type (received / sent / mint / burn), the asset, the counterparty (truncated principal), a timestamp, and the amount/quantity. A transaction reference is shown when the ledger provides one.</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">My Tokens · Activity tab (transaction history)</span><span class="d">Recent transfers for <strong>token holdings</strong> (token-item and stack-related transfers) and <strong>currencies</strong> (ICRC-1 and NNS), newest first, paginated like every other list. The filter switches between All / Holdings / Currencies. Each row reads as event type (received / sent / mint / burn), the asset, the counterparty (truncated principal), a timestamp, and the amount/quantity. A transaction reference is shown when the ledger provides one.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><span class="here">My Tokens</span></div>
@@ -399,7 +399,7 @@
             <button class="active">Activity</button>
           </div>
           <div class="controls">
-            <div class="seg"><button class="active">All</button><button>NFTs</button><button>Fungible</button></div>
+            <div class="seg"><button class="active">All</button><button>Holdings</button><button>Currencies</button></div>
           </div>
           <div class="panel">
             <div class="actrow">
@@ -443,7 +443,7 @@
 
     <!-- 04 · Empty wallet -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Empty wallet</span><span class="d">No holdings and no balances for this principal. Rather than a dead end, the empty state turns into the two ways to acquire a first token — a character moment over two acquisition-path CTA cards: Launchpad (claim fresh from a live drop) and the secondary marketplace (buy from another collector), each echoing that surface's own voice. The empty state owns the character illustration; it never appears in the list bar or dense data views.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Empty wallet</span><span class="d">No holdings and no balances for this principal. Rather than a dead end, the empty state turns into the two ways to acquire a first token — a character moment over two acquisition-path CTA cards: Launchpad (claim fresh from a live drop) and the Marketplace (buy from another collector), each echoing that surface's own voice. The empty state owns the character illustration; it never appears in the list bar or dense data views.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><span class="here">My Tokens</span></div>
@@ -479,7 +479,7 @@
               </div>
               <div class="cta-card">
                 <span class="ci" style="background:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span>
-                <div class="ce" style="color:#2563EB">Secondary marketplace</div>
+                <div class="ce" style="color:#2563EB">Marketplace</div>
                 <h4>Trade after the drop.</h4>
                 <p>Buy collection items listed by other collectors once a launch is over — discover, compare and buy with full activity in context.</p>
                 <a class="btn btn--ghost">Browse the marketplace <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>

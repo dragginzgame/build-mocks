@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Project · Cycles management · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6; --icp:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--icp { background:var(--icp); color:#fff; }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn svg { width:15px; height:15px; }
+
+  .status { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
+  .status .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .status--ok { background:rgba(16,185,129,.14); color:#0a6b4f; }
+  .status--warn { background:rgba(245,158,11,.16); color:#92580b; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .crumb .sep { color:var(--text-muted); } .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+  .ptabs { display:flex; gap:var(--s-5); border-bottom:1px solid var(--border-soft); flex-wrap:wrap; }
+  .ptabs button { border:0; background:0; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); color:var(--text-secondary); padding:.5rem 0; border-bottom:3px solid transparent; }
+  .ptabs button.active { color:var(--text-primary); border-color:var(--text-primary); }
+
+  .statgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-4); }
+  @media (max-width:760px){ .statgrid { grid-template-columns:repeat(2,1fr); } }
+  .statcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); }
+  .statcard.warn { border-color:#F0C36B; background:rgba(245,158,11,.06); }
+  .statcard .k { font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .statcard .v { font-family:var(--font-display); font-size:var(--text-3xl); margin-top:.2rem; letter-spacing:.02em; }
+  .statcard .s { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.2rem; }
+
+  .twocol { display:grid; grid-template-columns:1.4fr 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .twocol { grid-template-columns:1fr; } }
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .panel > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .chart { display:flex; align-items:flex-end; gap:var(--s-3); height:170px; padding-top:var(--s-4); }
+  .bar { flex:1; display:flex; flex-direction:column; justify-content:flex-end; }
+  .bar i { background:var(--brand-cyan); border-radius:3px 3px 0 0; display:block; }
+  .bar .bl { text-align:center; font-size:var(--text-2xs); color:var(--text-muted); margin-top:.4rem; }
+
+  .rule { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.7rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .rule:first-of-type { border-top:0; } .rule .v { font-family:var(--font-emphasis); font-weight:700; }
+  .toggle { width:40px; height:22px; border-radius:var(--r-pill); background:var(--stage-live); position:relative; flex:none; }
+  .toggle::after { content:""; position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:#fff; }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note--icp { background:rgba(37,99,235,.08); color:#1e40af; } .note--icp .ic { color:var(--icp); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note strong { color:inherit; }
+
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:460px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .num-input { display:flex; align-items:center; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:0 .875rem; }
+  .num-input input { border:0; outline:0; background:transparent; width:100%; padding:.65rem 0; font-size:var(--text-xl); font-family:var(--font-emphasis); font-weight:700; }
+  .num-input .u { color:var(--text-secondary); font-weight:700; }
+  .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks .mono { font-size:.85em; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Project · Studio</span>
+    <h1>Project Cycles management — states gallery</h1>
+    <p>The project overview's <strong>Cycles</strong> tab. In V1 cycles are <strong>self-funded from the project's own treasury</strong>: all claim payments flow into the treasury, a <strong>locked percentage</strong> is reserved for cycles, and on every inflow — plus an <strong>hourly check</strong> — the reserve is topped up by converting funds to ICP via an <strong>AMM</strong> and buying cycles. Only the <strong>excess</strong> above the reserve can be withdrawn. <strong>Anyone logged in</strong> can top a project up via its public link. Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
+    <div class="navlinks">Source: <span class="mono">Design Documentation/project-treasury-and-cycles-design.md</span>. Related: <a href="project-burn-reputation-states-gallery-2026-06-30.html">Burn &amp; Reputation</a> · <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a>.</div>
+  </header>
+
+  <!-- 01 · cycles tab (healthy, treasury-funded) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Cycles — healthy (treasury-funded)</span><span class="d">The Cycles tab on the project overview. Stat cards show the monthly cycle cost, the current cycle balance/runway, the treasury balance, and the locked cycle reserve. Left: how funding works + recent auto top-ups. Right: the reserve, the withdrawable excess, and the public top-up link anyone logged in can use.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Project · Vault One</div><h2>Overview.</h2><p class="lede">Cycles are self-funded from the project treasury — automatically topped up so drops never stall.</p></div><button class="btn btn--icp btn--sm">Top up cycles</button></div>
+        <div class="ptabs"><button>Details</button><button>Media</button><button>Burn &amp; Reputation</button><button>Project Mastery</button><button class="active">Cycles</button></div>
+        <div class="statgrid">
+          <div class="statcard"><div class="k">Monthly cycle cost</div><div class="v">~2.6 T</div><div class="s">≈ 3.4 ICP / month</div></div>
+          <div class="statcard"><div class="k">Cycle balance</div><div class="v">8.4 T</div><div class="s"><span class="status status--ok"><span class="dot"></span>~3.2 mo runway</span></div></div>
+          <div class="statcard"><div class="k">Treasury</div><div class="v">≈ 412</div><div class="s">ICP-eq · approved currencies</div></div>
+          <div class="statcard"><div class="k">Locked reserve</div><div class="v">15%</div><div class="s">≈ 62 ICP reserved for cycles</div></div>
+        </div>
+        <div class="twocol">
+          <div class="panel">
+            <span class="eyebrow">How cycles are funded</span>
+            <div class="rule"><span>1 · All claim payments</span><span class="v">→ project treasury</span></div>
+            <div class="rule"><span>2 · On every inflow, check reserve</span><span class="v">low? AMM → ICP → cycles</span></div>
+            <div class="rule"><span>3 · Hourly automated check</span><span class="v">tops up if needed</span></div>
+            <div class="rule"><span>4 · Withdrawals</span><span class="v">excess only</span></div>
+            <div class="eyebrow" style="display:block;margin-top:var(--s-5)">Recent auto top-ups</div>
+            <div class="rule"><span class="tiny">Hourly check · 41 min ago</span><span class="v tiny">no action (reserve OK)</span></div>
+            <div class="rule"><span class="tiny">Claim inflow · 6 h ago</span><span class="v tiny">+1.2 T (≈ 1.6 ICP)</span></div>
+            <div class="rule"><span class="tiny">Public top-up · 2 d ago</span><span class="v tiny">+0.9 T (≈ 1.2 ICP)</span></div>
+          </div>
+          <div class="panel">
+            <span class="eyebrow">Reserve &amp; top-up</span>
+            <div class="rule"><span>Locked cycle reserve</span><span class="v">15%</span></div>
+            <div class="rule"><span>Reserve target</span><span class="v">~3 months cost</span></div>
+            <div class="rule"><span>Next hourly check</span><span class="v">in 42 min</span></div>
+            <div class="rule"><span>Withdrawable excess</span><span class="v">≈ 340 ICP</span></div>
+            <div style="display:flex;gap:var(--s-2);margin-top:var(--s-4)"><button class="btn btn--icp btn--sm">Top up cycles</button><button class="btn btn--ghost btn--sm">Copy public link</button><button class="btn btn--ghost btn--sm">Withdraw excess</button></div>
+            <div class="note note--icp" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div><strong>Anyone logged in can top up</strong> via the public link — not just admins. Funds convert to ICP through an AMM and buy cycles. Only the excess above the locked reserve can be withdrawn.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · public top-up (anyone logged in) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Public top-up · anyone logged in</span><span class="d">The public-facing cycle top-up, reachable by link. Any logged-in user (not just admins) can contribute in an approved currency; the amount is converted via an AMM to ICP and used to buy cycles. Login is required only so the payment can be drawn from the contributor's wallet.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Top up cycles — Vault One</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--icp" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span><div>You're topping up a project's cycles — <strong>anyone can help</strong>, you don't need to be an admin. You're logged in as <span class="mono">k1m9…7uvw</span>, so the payment comes from your wallet.</div></div>
+          <div><label class="flabel">Amount</label><div class="num-input"><input value="10"><span class="u">ICP ▾</span></div></div>
+          <div><div class="paykv"><span>Converted via AMM</span><span class="v">10 ICP → cycles</span></div><div class="paykv"><span>Est. cycles bought</span><span class="v">≈ 7.6 T</span></div><div class="paykv"><span>Adds to runway</span><span class="v">≈ +2.9 months</span></div></div>
+          <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div>Contributions go straight to cycles for this project. They are not withdrawable and do not grant any admin rights.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Top up</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · reserve low — auto-restoring from treasury -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Reserve low — auto-restoring</span><span class="d">The cycle balance has dipped below the reserve target. No admin action is needed: the next inflow or the hourly check converts treasury funds to cycles. While the reserve is short, withdrawable excess is 0 — the project can't withdraw funds it needs to stay fuelled.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="ptabs"><button>Details</button><button>Media</button><button>Burn &amp; Reputation</button><button>Project Mastery</button><button class="active">Cycles</button></div>
+        <div class="statgrid">
+          <div class="statcard warn"><div class="k">Cycle balance</div><div class="v">1.9 T</div><div class="s"><span class="status status--warn"><span class="dot"></span>below reserve</span></div></div>
+          <div class="statcard"><div class="k">Monthly cycle cost</div><div class="v">~2.6 T</div><div class="s">≈ 3.4 ICP / month</div></div>
+          <div class="statcard"><div class="k">Treasury</div><div class="v">≈ 48</div><div class="s">ICP-eq · covers the top-up</div></div>
+          <div class="statcard warn"><div class="k">Withdrawable excess</div><div class="v">0</div><div class="s">locked until reserve restored</div></div>
+        </div>
+        <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div><strong>Auto-restoring from the treasury.</strong> The next claim inflow or the hourly check (in ~18 min) will convert treasury funds via the AMM and buy cycles to refill the reserve. Withdrawals are paused until the reserve is whole. Anyone can also top up now via the public link.</div></div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap"><button class="btn btn--icp">Top up now</button><button class="btn btn--ghost">Copy public link</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

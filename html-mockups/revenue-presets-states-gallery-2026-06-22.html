@@ -201,12 +201,12 @@
     <header>
       <div class="eyebrow">Toko · Consistency reference</div>
       <h1>Project — Revenue presets.</h1>
-      <p>A project-level library of reusable <strong>revenue presets</strong> — how claim (and later, sale) proceeds are split. Laid out like Vendors: a list of named presets, each with a <strong>Draft / Review / Live</strong> status and Edit / Delete. A preset sets the <strong>fees</strong> (project/cycles funding and a mandatory <strong>Toko burn</strong>, min 1%, that builds project reputation) and optional <strong>royalties</strong> (a live beneficiary, a percent, and how it runs over time). Vendors pick a Live preset at creation. <strong>Claim</strong> presets ship first; <strong>Sale</strong> presets are a future tab.</p>
+      <p>A project-level library of reusable <strong>revenue presets</strong> — how claim and sale proceeds are split. Laid out like Vendors: a list of named presets, each with a <strong>Draft / Review / Live</strong> status and Edit / Delete. A preset sets the <strong>fees</strong> (a mandatory <strong>Toko burn</strong>, min 1%, that builds project reputation) and <strong>royalties</strong> to beneficiaries. A vendor selects both a <strong>Claim preset</strong> (claim proceeds: Toko burn + beneficiaries) and a <strong>Sale preset</strong> (the <strong>secondary split</strong> — royalties ≤ 3% only; no project/cycles fee, no Toko burn, no referral). Cycles are <strong>not</strong> a per-claim % — they're funded from the project <strong>Cycles</strong> tab (in ICP). <strong>Sale presets replace the old collection "Sale defaults" surface.</strong></p>
     </header>
 
     <!-- 01 · List — Claim presets (populated) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">01</span><span class="t">Revenue presets — list (populated)</span><span class="d">Vendor-style list, project-scoped. The Claim / Sale tab switches preset type — Sale is coming soon. Each preset card shows its status, a one-line summary of the split, and Edit / Delete. Live presets are the ones a vendor can select; Draft/Review presets are still being configured.</span></div>
+      <div class="frame-cap"><span class="num">01</span><span class="t">Revenue presets — list (populated)</span><span class="d">Vendor-style list, project-scoped. The Claim / Sale tab switches preset type. Each preset card shows its status, a one-line summary of the split, and Edit / Delete. Live presets are the ones a vendor can select; Draft/Review presets are still being configured.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Revenue presets</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -214,24 +214,24 @@
             <div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Reusable splits a vendor can apply at creation — fees and royalties for claim proceeds. Set one Live to make it selectable.</p></div>
           </div>
           <div class="row" style="justify-content:space-between">
-            <div class="seg"><button class="active">Claim presets · 3</button><button disabled>Sale presets · Coming soon</button></div>
+            <div class="seg"><button class="active">Claim presets · 3</button><button>Sale presets · 2</button></div>
             <div class="row"><div class="search"><input class="input" placeholder="Search presets…"></div><div class="seg"><button class="active">All · 3</button><button>Live · 1</button><button>Review · 1</button><button>Draft · 1</button></div></div>
           </div>
           <div class="pgrid">
             <button class="card--new"><span class="plus">+</span><span class="lbl">New preset</span><span class="tiny">Configure a claim revenue split</span></button>
             <div class="preset-card">
               <div class="ph"><div><div class="pname">Standard Claim</div><div class="pdesc">Default split for most drops</div></div><span class="sb sb--green"><span class="dot"></span>Live</span></div>
-              <div class="pstats"><span class="tag">Cycles 2%</span><span class="tag">Toko 1%</span><span class="tag tag--indigo">2 royalties · 12%</span></div>
+              <div class="pstats"><span class="tag">Toko 1%</span><span class="tag tag--indigo">2 royalties · 12%</span></div>
               <div class="pfoot"><button class="btn btn--ghost btn--sm">View</button><button class="ico-btn ico-btn--danger" disabled title="A Live preset in use can't be deleted" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
             </div>
             <div class="preset-card">
               <div class="ph"><div><div class="pname">Founders Split</div><div class="pdesc">Higher artist share, tapering</div></div><span class="sb sb--indigo"><span class="dot"></span>Review</span></div>
-              <div class="pstats"><span class="tag">Cycles 3%</span><span class="tag">Toko 1%</span><span class="tag tag--indigo">3 royalties · 18%</span></div>
+              <div class="pstats"><span class="tag">Toko 1%</span><span class="tag tag--indigo">3 royalties · 18%</span></div>
               <div class="pfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="ico-btn ico-btn--danger" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
             </div>
             <div class="preset-card">
               <div class="ph"><div><div class="pname">Preset 3</div><div class="pdesc tiny" style="font-style:italic;color:var(--text-muted)">No description</div></div><span class="sb sb--amber"><span class="dot"></span>Draft</span></div>
-              <div class="pstats"><span class="tag tag--amber">Incomplete</span><span class="tag">Cycles 1%</span><span class="tag">No royalties</span></div>
+              <div class="pstats"><span class="tag tag--amber">Incomplete</span><span class="tag">No royalties</span></div>
               <div class="pfoot"><button class="btn btn--ghost btn--sm">Continue setup</button><button class="ico-btn ico-btn--danger" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
             </div>
           </div>
@@ -251,12 +251,12 @@
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Revenue presets</span></div></div>
         <div class="section">
           <div class="section-head"><div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Reusable splits a vendor can apply at creation — fees and royalties for claim proceeds.</p></div></div>
-          <div class="row" style="justify-content:space-between"><div class="seg"><button class="active">Claim presets · 0</button><button disabled>Sale presets · Coming soon</button></div></div>
+          <div class="row" style="justify-content:space-between"><div class="seg"><button class="active">Claim presets · 0</button><button>Sale presets · 0</button></div></div>
           <div class="empty-hero">
             <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_revenue_presets.jpg" alt="Revenue presets — none yet" onerror="this.parentElement.style.display='none'"></div>
             <div class="empty-hero__body">
               <h3 class="empty-hero__ttl">No revenue presets yet.</h3>
-              <p class="empty-hero__sub">Create a claim revenue preset — set the project/cycles funding, the <strong>Toko burn</strong> (min 1%, builds project reputation), and any royalties to live beneficiaries. Vendors pick a Live preset at creation.</p>
+              <p class="empty-hero__sub">Create a claim revenue preset — set the <strong>Toko burn</strong> (min 1%, builds project reputation) and any royalties to live beneficiaries. Vendors pick a Live preset at creation.</p>
               <button class="btn btn--primary" style="margin-top:var(--s-2)">Create your first preset</button>
             </div>
           </div>
@@ -264,19 +264,51 @@
       </div>
     </section>
 
-    <!-- 03 · Sale tab — coming soon -->
+    <!-- 03 · Sale presets (active) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Sale presets tab — coming soon</span><span class="d">The Sale tab is present but parked — sale revenue presets ship later. Same list shell; a single coming-soon state in place of the grid.</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">Sale presets — the secondary split</span><span class="d">The Sale tab authors the <strong>secondary sale split</strong> — what's deducted when a token resells: <strong>royalties ≤ 3% total</strong> only (beneficiaries). <strong>No project/cycles fee</strong> (cycles are funded from the project Cycles tab, in ICP), <strong>no Toko burn</strong> (reputation comes from claims), and <strong>no referral</strong> (the seller sets that on the listing). A <strong>vendor</strong> selects a Live Sale preset alongside its Claim preset; it sets the secondary split on the tokens it distributes. Replaces the old collection "Sale defaults" sub-page. List + editor shown together.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Revenue presets</span></div></div>
         <div class="section">
-          <div class="section-head"><div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Reusable splits a vendor can apply at creation.</p></div></div>
-          <div class="row" style="justify-content:space-between"><div class="seg"><button>Claim presets · 3</button><button class="active">Sale presets</button></div></div>
-          <div class="empty-state">
-            <span class="tag tag--indigo">Coming soon</span>
-            <strong>Sale presets aren't available yet</strong>
-            <p>Sale revenue presets — for secondary-market and fixed-price sale proceeds — will live here. For now, configure Claim presets in the other tab.</p>
-            <button class="btn btn--ghost" disabled>Create sale preset</button>
+          <div class="section-head"><div style="width:100%"><div class="eyebrow">Project · Revenue presets</div><h2>Revenue presets.</h2><p class="lede">Sale presets — the secondary split a vendor applies to the tokens it distributes.</p></div></div>
+          <div class="row" style="justify-content:space-between"><div class="seg"><button>Claim presets · 3</button><button class="active">Sale presets · 2</button></div></div>
+          <div class="preset-grid">
+            <button class="card--new"><span class="plus">+</span><span class="lbl">New sale preset</span><span class="tiny">Configure a secondary split</span></button>
+            <div class="preset-card">
+              <div class="ph"><div><div class="pname">Standard Sale</div><div class="pdesc">2% project + 3% royalty</div></div><span class="sb sb--green"><span class="dot"></span>Live</span></div>
+              <div class="pstats"><span class="tag tag--indigo">1 royalty · 3%</span></div>
+              <div class="pfoot"><button class="btn btn--ghost btn--sm">View</button><button class="ico-btn ico-btn--danger" disabled title="A Live preset in use can't be deleted" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
+            </div>
+            <div class="preset-card">
+              <div class="ph"><div><div class="pname">Artist Forever</div><div class="pdesc">Max creator royalty, forever</div></div><span class="sb sb--indigo"><span class="dot"></span>Review</span></div>
+              <div class="pstats"><span class="tag tag--indigo">1 royalty · 3% forever</span></div>
+              <div class="pfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="ico-btn ico-btn--danger" aria-label="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
+            </div>
+          </div>
+
+          <div class="section-head" style="margin-top:var(--s-8)"><div><div class="eyebrow">Project · Revenue preset · Sale</div><h2>Standard Sale.</h2><p class="lede">A Sale preset (Draft) — the secondary split. Lower caps than Claim; no Toko burn, no referral.</p></div><div class="head-actions"><span class="sb sb--amber"><span class="dot"></span>Draft</span></div></div>
+          <div class="card">
+            <div class="card__head"><div><h3>Fees</h3><div class="sub">None on secondary</div></div></div>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>A Sale preset has <strong>no fees</strong> — only royalties below. There is <strong>no project/cycles fee</strong> (cycles are funded from the project Cycles tab, in ICP), <strong>no Toko burn</strong> (reputation comes from claims), and <strong>no referral</strong> (the seller sets that 1–10% on the listing).</div></div>
+          </div>
+          <div class="card">
+            <div class="card__head"><div><h3>Royalties</h3><div class="sub">Paid to live beneficiaries on each resale</div></div><span class="lockpill lockpill--lock">Locks on Live</span></div>
+            <div class="roy-row">
+              <span class="r-ben">Aviary Labs (creator)<small>k1m9…7uvw</small></span>
+              <span class="r-pct">3%</span>
+              <span class="r-meta"><span class="tag">Forever</span><span class="tiny">no taper</span></span>
+              <span class="r-act"><button class="ico-btn" aria-label="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="ico-btn ico-btn--danger" aria-label="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
+            </div>
+            <button class="add-chip"><span style="font-size:1rem;line-height:1">+</span> Add royalty</button>
+            <div class="cap-meter">
+              <div class="cap-line"><span>Total royalties</span><span class="v">3% <span class="tiny" style="font-weight:400">of 3% max</span></span></div>
+              <div class="bar"><div class="fill" style="width:100%"></div></div>
+            </div>
+            <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Secondary royalties total <strong>≤ 3%</strong> (vs 20% on claim). With royalties capped at 3% and no project fee, the seller keeps <strong>≥ 97%</strong> before the seller-set referral fee.</div></div>
+          </div>
+          <div class="mngbar">
+            <span class="tiny">Sub-page auto-saves · stage changes happen here</span>
+            <div class="mb-actions"><button class="btn btn--ghost">Preview split</button><button class="btn btn--primary">Submit to Review</button></div>
           </div>
         </div>
       </div>
@@ -284,7 +316,7 @@
 
     <!-- 04 · Preset editor — Claim (Draft, editable) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Preset editor — Claim (Draft, editable)</span><span class="d">The preset's own page. Name (defaults to "Preset N") and an optional description, then two sections: <strong>Fees</strong> (project/cycles funding 1–10%, and a mandatory <strong>Toko burn</strong> 1–10% that builds project reputation) and <strong>Royalties</strong> (each a live beneficiary, a percent, and how it runs over time). A running total meter enforces the 20% royalty cap. Project sub-page → auto-saves; stage persistence lives on the management bar.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Preset editor — Claim (Draft, editable)</span><span class="d">The preset's own page. Name (defaults to "Preset N") and an optional description, then two sections: <strong>Fees</strong> (a mandatory <strong>Toko burn</strong> 1–10% that builds project reputation) and <strong>Royalties</strong> (each a live beneficiary, a percent, and how it runs over time). A running total meter enforces the 20% royalty cap. Project sub-page → auto-saves; stage persistence lives on the management bar.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Revenue presets</a><span class="sep">/</span><span class="here">Founders Split</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -305,16 +337,10 @@
             <div class="card__head"><div><h3>Fees</h3><div class="sub">Taken off the top before royalties &amp; payout</div></div><span class="lockpill lockpill--lock">Locks on Live</span></div>
             <div class="pct-grid">
               <div class="pct-field">
-                <label class="flabel">Project / cycles funding <span class="tag tag--red">required</span></label>
-                <div class="pct-input"><input value="3" inputmode="decimal"><span class="sign">%</span></div>
-                <div class="range"><span class="tiny">1%</span><input type="range" min="1" max="10" value="3"><span class="tiny">10%</span></div>
-                <div class="hint">Funds the project canister (cycles/blob storage). Allowed range 1–10%.</div>
-              </div>
-              <div class="pct-field">
                 <label class="flabel">Toko burn → project reputation <span class="tag tag--red">required</span></label>
                 <div class="pct-input"><input value="1" inputmode="decimal"><span class="sign">%</span></div>
                 <div class="range"><span class="tiny">1%</span><input type="range" min="1" max="10" value="1"><span class="tiny">10%</span></div>
-                <div class="hint">A <strong>minimum 1%</strong> of each claim is routed to a Toko account, converted to $TOKO and <strong>burned</strong> — building your <strong>project's Toko Reputation</strong> (which unlocks Creator Mastery). Set it higher to advance faster. Range 1–10%.</div>
+                <div class="hint">A <strong>minimum 1%</strong> of each claim is routed to a Toko account, converted to $TOKO and <strong>burned</strong> — building your <strong>project's Toko Reputation</strong> (which unlocks Project Mastery). Set it higher to advance faster. Range 1–10%.</div>
               </div>
             </div>
           </div>
@@ -420,7 +446,6 @@
           <div class="info-note lock-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong>This preset is locked.</strong> 4 vendors apply it, so fees and royalties can't change — it's view-only.</div></div>
           <div class="card">
             <div class="card__head"><h3>Fees</h3><span class="lockpill lockpill--locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Locked</span></div>
-            <div class="kv"><span>Project / cycles funding</span><span class="v">2%</span></div>
             <div class="kv"><span>Toko burn</span><span class="v">1%</span></div>
           </div>
           <div class="card">
@@ -433,7 +458,7 @@
       </div>
     </section>
 
-    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="t" style="color:var(--text-primary)">Design note (not UI)</span><span class="d">Revenue presets are <strong>project-scoped</strong> and reusable; a vendor selects a <strong>Live</strong> preset at creation, which copies its values onto the vendor (so later edits to the preset don't change existing vendors). Lifecycle mirrors other project policy: editable in Draft/Review, <strong>locked / view-only at Live</strong> while in use. Constraints: cycles funding 1–10%, mandatory Toko burn 1–10% (min 1%), each royalty 0.1–10%, total royalties ≤ 20%, and the backend cap of Toko burn + referral + royalties &lt; 40%. Taper (No taper / Cliff / Linear / Curve) and time period (1/3/6/9/12/24 months) only apply to fixed-period royalties; "Forever" royalties are constant. <strong>Open:</strong> confirm whether Sale presets are in scope for v1.</span></div>
+    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="t" style="color:var(--text-primary)">Design note (not UI)</span><span class="d">Revenue presets are <strong>project-scoped</strong> and reusable; a vendor selects a <strong>Live</strong> preset at creation, which copies its values onto the vendor (so later edits to the preset don't change existing vendors). Lifecycle mirrors other project policy: editable in Draft/Review, <strong>locked / view-only at Live</strong> while in use. Constraints: mandatory Toko burn 1–10% (min 1%), each royalty 0.1–10%, total royalties ≤ 20% on claim. Cycles are funded at the project level (the Cycles tab, in ICP), not a per-claim %. Taper (No taper / Cliff / Linear / Curve) and time period (1/3/6/9/12/24 months) only apply to fixed-period royalties; "Forever" royalties are constant. Sale presets carry <strong>royalties ≤ 3% total only</strong> (beneficiaries; no project/cycles fee, no Toko burn, no referral); a <strong>vendor selects both a Claim and a Sale preset</strong>. They replace the old collection "Sale defaults" surface.</span></div>
   </div>
 </body>
 </html>

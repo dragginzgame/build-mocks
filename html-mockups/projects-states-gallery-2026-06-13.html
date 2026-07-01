@@ -174,9 +174,9 @@
       </div></div>
     </section>
 
-    <!-- 03 NEW PROJECT · modal -->
+    <!-- 03 NEW PROJECT · modal (terms not yet agreed → Create disabled) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">New project · modal</span><span class="d">Name, description, and a square thumbnail (drop an image or pick from the media library).</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">New project · modal (terms required)</span><span class="d">Name, description, and a square thumbnail. Before a project can be created the user must tick a required checkbox certifying they have read and agree to the Terms &amp; Conditions (linked). Until it's ticked, <strong>Create is disabled</strong>.</span></div>
       <div class="stage">
         <div class="modal-card">
           <header><h4>New project</h4><button class="x" aria-label="Close">✕</button></header>
@@ -190,6 +190,29 @@
               </div>
               <div class="tiny" style="margin-top:.375rem">Square image — shown as the project avatar. The library picker shows square thumbnails.</div>
             </div>
+            <label class="tc-row" style="display:flex;gap:.6rem;align-items:flex-start;padding:.75rem;border:1px solid var(--border-soft,#e5e5e5);border-radius:10px;cursor:pointer;margin-top:.25rem">
+              <input type="checkbox" style="margin-top:.15rem;width:18px;height:18px;flex:none;accent-color:var(--text-primary,#1d1d1d)">
+              <span style="font-size:.85rem;line-height:1.45">I certify that I have read and agree to the <a href="../terms.html" target="_blank" rel="noopener" style="color:var(--info,#2563eb);text-decoration:underline">Terms &amp; Conditions</a>. <span class="req" style="color:var(--notify-error,#ef4444);font-weight:700">*</span></span>
+            </label>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled style="opacity:.45;cursor:not-allowed">Create &amp; open</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03b NEW PROJECT · modal (terms agreed → Create enabled) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03b</span><span class="t">New project · terms agreed</span><span class="d">Once the required Terms &amp; Conditions box is ticked, <strong>Create &amp; open</strong> becomes enabled. The certification is recorded with the project.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>New project</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="m-field"><label class="flabel">Project name</label><input class="input" value="Ipsum Studio"></div>
+            <div class="m-field"><label class="flabel">Description</label><textarea class="input" style="min-height:84px;resize:vertical">A small studio making warm, generative work.</textarea></div>
+            <label class="tc-row" style="display:flex;gap:.6rem;align-items:flex-start;padding:.75rem;border:1px solid var(--text-primary,#1d1d1d);border-radius:10px;cursor:pointer;margin-top:.25rem;background:var(--surface-canvas-alt,#fafafa)">
+              <input type="checkbox" checked style="margin-top:.15rem;width:18px;height:18px;flex:none;accent-color:var(--text-primary,#1d1d1d)">
+              <span style="font-size:.85rem;line-height:1.45">I certify that I have read and agree to the <a href="../terms.html" target="_blank" rel="noopener" style="color:var(--info,#2563eb);text-decoration:underline">Terms &amp; Conditions</a>. <span class="req" style="color:var(--notify-error,#ef4444);font-weight:700">*</span></span>
+            </label>
           </div>
           <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Create &amp; open</button></div>
         </div>
