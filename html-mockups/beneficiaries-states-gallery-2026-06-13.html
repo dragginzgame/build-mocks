@@ -293,13 +293,19 @@
 
     <!-- 6. Add modal -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">06</span><span class="t">Add beneficiary modal</span><span class="d">Display name and principal are required — no raw-principal title fallback.</span></div>
+      <div class="frame-cap"><span class="num">06</span><span class="t">Add beneficiary modal</span><span class="d">Display name plus one payout identity — a raw <strong>Principal</strong> (no Toko account) or a <strong>Toko User ID</strong> (resolved via the user hub). If the identity later can't be resolved at payout, the share routes to the project treasury (failsafe).</span></div>
       <div class="stage center">
         <div class="modal-card">
           <header><h3>Add beneficiary</h3><button aria-label="Close">✕</button></header>
           <div class="body">
             <div class="field"><label>Display name <span class="req">*</span></label><input class="input" placeholder="e.g. Open Tools Foundation"><div class="hint">Required. Shown wherever this beneficiary appears in splits — so it never falls back to the raw principal.</div></div>
-            <div class="field"><label>Principal / address <span class="req">*</span></label><input class="input" placeholder="p2x9-hcvz-7uvw-…" style="font-family:ui-monospace,monospace;font-size:var(--text-sm)"><div class="hint">Required. Settlement goes directly to this principal.</div></div>
+            <div class="field"><label>Payout identity <span class="req">*</span></label>
+              <div class="row" style="gap:.5rem;align-items:flex-start">
+                <select class="input" style="width:150px;flex:none"><option selected>Toko User ID</option><option>Principal</option></select>
+                <input class="input" style="flex:1;min-width:180px;font-family:ui-monospace,monospace;font-size:var(--text-sm)" placeholder="user id — or a principal p2x9-hcvz-…">
+              </div>
+              <div class="hint">Enter a <strong>Toko User ID</strong> (resolved via the user hub to the user's payout principal) <em>or</em> a raw <strong>Principal</strong> for a payee with no Toko account. <strong>Failsafe:</strong> if it no longer resolves at payout, the share goes to the project treasury.</div>
+            </div>
             <div class="field"><label>Type</label><select class="input"><option>Person</option><option>Charity</option><option>External partner</option></select></div>
             <div class="field"><label>Royalty (% of sale)</label><input class="input" placeholder="e.g. 5"><div class="hint">0.1–10% per beneficiary; royalties total at most 20% across the project.</div></div>
           </div>
