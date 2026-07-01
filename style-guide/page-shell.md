@@ -154,6 +154,20 @@ Two different things, never conflated:
 
 **Spec & explainer frames** (component variants, row states, conditional controls) are shown as **showcases on grey**: the example component sits directly on the grey page (or on a plain white showcase card), with the explanation in the grey caption. Do **not** dress a spec as real product UI — no fake modal chrome (title bar + close ×), no breadcrumb, no page header or big page title around a component that exists only to be documented.
 
+## Destructive confirmation modal (the one canonical delete/confirm)
+
+Every delete / destructive confirmation uses **one** shape — the Simple Modal Base, left-aligned:
+
+- **Title** (in the header, Anton) names the action and its target: `Delete part · Body · Cobalt?`, `Delete 11 parts?`, `Delete layer · Body?`. A close **×** sits at the right.
+- **Body** (`.mbody`) is a single flex row: a **red** warning-triangle icon (`color: var(--notify-error)`) beside **left-aligned** consequence text (Mona Sans, `--text-sm`). Bold the target and the phrase **"This can't be undone."** Add any carve-outs after it (e.g. "Pinned outputs are not erased").
+- **Footer** (`.footer-row`, actions right): `btn--ghost` **Cancel** + `btn--danger` **Delete …**.
+- **No character illustration and not centered.** The old centered "anxious Toko-bot / Are you sure?" treatment is retired for delete confirms — the character is for empty/success/personality moments, not destructive dialogs.
+
+**Colour rule (important):**
+
+- **Destructive confirmations are always red** (`--notify-error`) — the icon and the Delete button. Never amber, never a third colour, never the character frame.
+- **Orange / amber** (`--notify-warn`, the `warn-note` variant) is reserved for **cautionary "proceed carefully / I understand the risk" notices that carry substantial explanatory text** (e.g. a go-Live caution, a "this vendor has no scheduled end" warning). That's a different component (an inline note / banner), not the delete dialog. Don't use amber as the accent of a delete confirm, and don't use a plain red delete dialog where a text-heavy caution-and-proceed note belongs.
+
 ## Known divergence to fix in the app
 
 The implemented Collections and Generators pages wrap the header (title + search + filters) in a white panel sitting above a grey body. The shell — and the Beneficiaries page — keep that header on grey. **Remove the white header panel on Collections and Generators** so all index pages match. This is the single change needed to bring the app back in line with the mock.

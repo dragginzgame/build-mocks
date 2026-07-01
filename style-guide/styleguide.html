@@ -1570,6 +1570,25 @@
       </div>
     </div>
   </div>
+
+  <h3 class="section-h">Destructive confirmation — the one canonical delete/confirm</h3>
+  <p class="note">Left-aligned, <b>red</b> warning-triangle icon, consequence text (bold the target + "This can't be undone"), and a <code>btn--danger</code> Delete. <b>No character illustration, not centered.</b> Red is for destructive confirms only; reserve <b>orange/amber</b> (<code>warn-note</code>) for cautionary "proceed carefully" notices that carry a lot of explanatory text — that's a different component, not the delete dialog.</p>
+  <div class="canvas">
+    <div class="modal" style="max-width:520px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-3)">
+        <h3 style="margin:0">Delete part · Body · Cobalt?</h3>
+        <button aria-label="Close" style="border:0;background:transparent;font-size:18px;cursor:pointer;color:var(--text-muted)">✕</button>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="color:var(--notify-error);flex:none;margin-top:2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        <p style="margin:0;font-size:13px;line-height:1.55;color:var(--text-secondary)">This will permanently delete <strong>Cobalt</strong> from the Body layer. Compatibility rules referencing it are also removed. <strong>This can't be undone.</strong></p>
+      </div>
+      <div class="actions" style="margin-top:var(--s-4)">
+        <button class="btn btn--secondary">Cancel</button>
+        <button class="btn btn--danger">Delete part</button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ===== TABS ===== -->
