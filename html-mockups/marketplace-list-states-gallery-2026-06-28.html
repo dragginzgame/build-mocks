@@ -216,6 +216,40 @@
     </div>
   </section>
 
+  <!-- 01b · listing a stack (whole-holding price) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01b</span><span class="t">List a stack — priced per unit, partial buys allowed</span><span class="d">A stack listing is priced <strong>per unit</strong>. Buyers take <strong>any quantity up to the remainder</strong> (all 12, or just 1) at qty × unit price; the rest stays listed at the same terms until sold out, cancelled, or expired. Remaining quantity is race-protected (atomic check-and-decrement; first call wins). The token picker shows stack vs single per holding.</span></div>
+    <div class="screen">
+      <div class="context-bar">
+        <div class="crumb"><a>Wallet</a><span class="sep">/</span><a>My Tokens</a><span class="sep">/</span><span class="here">List Swampie #221 (stack) for sale</span></div>
+        <div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><span class="eyebrow">Wallet · Marketplace</span><h2>List for sale.</h2><p class="lede">A fixed-price listing of a whole stack — a buyer pays your price for all 12 copies.</p></div>
+        <div class="detail-grid">
+          <div>
+            <div class="asset-main" style="position:relative"><span style="position:absolute;top:10px;left:10px;z-index:1;display:inline-flex;align-items:center;gap:2px;padding:4px 10px;border-radius:9999px;background:rgba(20,20,20,.82);color:#fff;font-family:var(--font-emphasis);font-weight:700;font-size:.8rem"><span style="opacity:.7">×</span>12</span><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div>
+            <div class="asset-id"><h3>Swampie #221</h3><div class="sub">Swamp Things <span class="tag" style="color:#6B7280">Common</span> <span class="tag tag--green">Owned</span></div><div class="sub" style="margin-top:.2rem">Stack · ×12 — sells as one lot</div></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Listing details</span>
+            <div class="field-row">
+              <div class="field"><label class="flabel">Price per unit · ×12 listed</label><div class="price-row"><div class="amt"><input value="2.5" inputmode="decimal"></div><select><option selected>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select></div><p class="hint">Per unit — buyers choose how many to take. Full stack total: 30 ICP ≈ $261.00.</p></div>
+              <div class="field"><label class="flabel">Duration</label><div class="durlist"><span>1d</span><span>3d</span><span class="on">7d</span><span>14d</span></div><p class="hint">Max 14 days · expires 14 Jul, 18:00 (local).</p></div>
+            </div>
+            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div><strong>Buyers can take any amount.</strong> Someone might buy all 12, or just 1 — each pays quantity × your unit price, and whatever's left stays listed at the same terms until it sells out or the listing ends.</div></div>
+            <div class="field"><label class="flabel">Referral fee</label>
+              <div class="refrow"><input type="range" min="1" max="10" value="5" step="1" aria-label="Referral fee percent"><span class="refval">5%</span></div>
+              <div class="refpresets"><span>1%</span><span>2%</span><span class="on">5%</span><span>8%</span><span>10%</span></div>
+            </div>
+            <div class="summary"><div class="kv"><span class="k">Price per unit</span><span class="v">2.5 ICP</span></div><div class="kv"><span class="k">If all 12 sell</span><span class="v">30 ICP</span></div><div class="kv"><span class="k">Creator royalty (3%)</span><span class="v">−0.075 ICP / unit</span></div><div class="kv"><span class="k">Referral fee (5%)</span><span class="v">−0.125 ICP / unit</span></div><div class="kv big"><span class="k">You receive</span><span class="v">2.30 ICP / unit sold</span></div><p class="hint" style="margin-top:.5rem">Fees settle per sale, on the quantity actually bought — partial sales pay out as they happen.</p></div>
+            <div class="dactions"><button class="btn">Review listing</button><button class="btn btn--ghost">Cancel</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 02 · currency & duration -->
   <section class="frame">
     <div class="frame-cap"><span class="num">02</span><span class="t">Currency &amp; duration presets</span><span class="d">Price is denominated in exactly one token from Toko's <strong>curated currency whitelist</strong> (ICP · ckBTC · ckETH · ckUSDC · ckUSDT · ckSOL · $TOKO · $DKP). Duration is a fixed set of presets — <strong>1 / 3 / 7 / 14 days</strong> (max 14, no until-cancel). Amount entry is capped to the selected token's decimal precision.</span></div>

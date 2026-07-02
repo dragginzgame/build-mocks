@@ -503,6 +503,36 @@
       </div>
     </section>
 
+    <!-- + · Stack claim — quantity picker & race error (added 2026-07-02) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">+</span><span class="t">Stack claim — pick a quantity · race error</span><span class="d">A staged stack is claimed at the <strong>per-unit</strong> cost: the claimant picks any quantity up to the remainder (all 4, or just 1) and pays qty × unit cost; the rest stays claimable. If someone else claims first and the requested amount is gone, the claim fails cleanly with a <strong>one-tap offer to claim the remaining units</strong> instead (remaining 0 → sold out). Quantity is race-protected by an atomic check-and-decrement — first call wins.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Claim Swampie #221</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="kv"><span>Available in this stack</span><span class="v">×4</span></div>
+              <div>
+                <label style="display:block;font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);margin-bottom:.4rem">How many?</label>
+                <div style="display:flex;align-items:center;gap:var(--s-3)"><button class="btn btn--ghost">−</button><input value="3" style="max-width:70px;text-align:center;padding:.5rem;border:1px solid var(--border-soft);border-radius:var(--r-2);font-family:var(--font-emphasis);font-weight:700"><button class="btn btn--ghost">+</button><span style="font-size:var(--text-sm);color:var(--text-muted)">of 4 remaining</span></div>
+              </div>
+              <div class="kv"><span>Cost per unit</span><span class="v">2 ICP</span></div>
+              <div class="kv"><span>Total (3 × 2 ICP)</span><span class="v"><strong>6 ICP</strong></span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Claim 3 · 6 ICP</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Only 2 left</h4><button class="x" aria-label="Close">✕</button></header>
+            <div class="mbody">
+              <div class="note note--info"><span class="ic">⚠</span><div><strong>Someone beat you to it.</strong> You asked for 3, but only <strong>2</strong> remain in this stack. Nothing was charged.</div></div>
+              <div class="kv"><span>New total (2 × 2 ICP)</span><span class="v"><strong>4 ICP</strong></span></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Claim the remaining 2 · 4 ICP</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 </body>
 </html>
