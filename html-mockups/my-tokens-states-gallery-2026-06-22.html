@@ -303,7 +303,7 @@
             <div class="seg"><button class="active">All</button><button>Singles</button><button>Stacks</button></div>
             <select class="sortsel" aria-label="Filter by collection"><option>All collections</option><option>Little Leaf Guardians</option><option>Swamp Things</option></select>
             <select class="sortsel" aria-label="Filter by project"><option>All projects</option><option>Aviary Labs</option><option>Bog Studio</option></select>
-            <select class="sortsel" aria-label="Sort"><option>Recently claimed</option><option>Claim date (oldest)</option><option>Name A–Z</option><option>Collection</option><option>Project</option><option>Rarity</option></select>
+            <select class="sortsel" aria-label="Sort"><option>Recently acquired</option><option>Acquired date (oldest)</option><option>Name A–Z</option><option>Collection</option><option>Project</option><option>Rarity</option></select>
             <div class="view-toggle"><button aria-pressed="true" aria-label="Grid"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></button><button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div>
           </div>
           <div class="tk-grid">
@@ -852,7 +852,7 @@
             <div>
               <div class="eyebrow">Wallet · select</div>
               <h2>My Tokens.</h2>
-              <div class="lede">Combine identical copies into a stack, or compact all eligible stacks of a token.</div>
+              <div class="lede">Combine identical copies (same variant, same resale terms) into a stack, or compact all eligible stacks of a token.</div>
             </div>
           </div>
           <div class="bulkbar">
@@ -872,7 +872,23 @@
             <a class="rarity-frame rarity-frame--rare"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#014</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">14/500</span></div></div></div></a>
             <a class="rarity-frame rarity-frame--epic"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Sprite</h3><span class="issue">#003</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">3/250</span></div></div></div></a>
           </div>
-          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Only identical, unlocked copies of the same token can be combined. Tokens listed for sale must have the listing cancelled first. Greyed checkboxes here are eligible but unticked.</div></div>
+          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Only identical, unlocked copies of the same token <strong>and variant</strong> — carrying the <strong>same resale royalty terms</strong> — can be combined. Tokens listed for sale must have the listing cancelled first. Greyed checkboxes here are eligible but unticked.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 · Listing expired — passive unlock -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">15</span><span class="t">Listing expired — token already unlocked</span><span class="d">Listing expiry is <strong>passive</strong>: the expiry timestamp is authoritative and nothing runs at the expiry moment. The instant a listing lapses, the wallet computes the token as unlocked — every action is available again and there is <strong>no stuck state</strong>. A quiet note records that the listing ended unsold; nothing was charged. (One shared eligibility check evaluates sale-lock + expiry everywhere — never duplicated per surface.)</span></div>
+      <div class="stage">
+        <div class="modal-card single">
+          <header><h4>Little Leaf #014</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · Rare</div></span></div>
+            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>Your listing expired unsold</strong> on 14 Jul, 18:00 — the token is back in your wallet and fully unlocked. You were charged nothing (no sale, no fee).</div></div>
+            <div class="seg" style="justify-content:flex-start"><button>Transfer</button><button>Burn</button><button>List for sale</button><button>Stack actions</button></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">Relist</button></div>
         </div>
       </div>
     </section>

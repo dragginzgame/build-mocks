@@ -96,6 +96,8 @@
   .chip svg { color:var(--stage-live); }
 
   .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note.warn-note { background:rgba(242,169,59,.12); }
+  .info-note.warn-note .ic { color:#B45309; }
   .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
 
   .locked { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
@@ -133,7 +135,7 @@
     <header>
       <div class="eyebrow">Toko · Consistency reference</div>
       <h1>Guards — states &amp; stages.</h1>
-      <p>Collection guards are buyer-facing promises: whether tokens can be duplicated, destroyed, transfer-restricted, or sale-restricted. Each flag is a permission — leaving one off is a stronger guarantee to buyers. Guards are editable through Draft and Review and lock permanently at Live. Built on the same system as the rest of the studio.</p>
+      <p>Collection guards are buyer-facing promises: whether tokens can be duplicated, destroyed (by game logic — owner burning is always allowed), transfer-count-limited, or sale-count-limited. Each guard is either a <strong>guarantee</strong> that something can never occur, or a <strong>warning</strong> that it may occur within this collection — leaving one off is the stronger promise to buyers. Guards are editable through Draft and Review and lock permanently at Live. Built on the same system as the rest of the studio.</p>
     </header>
 
     <!-- 01 GUARDS · Draft -->
@@ -153,8 +155,6 @@
             </div>
             <div class="head-actions">
               <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
-              <button class="btn btn--ghost">Discard</button>
-              <button class="btn btn--primary">Save changes</button>
             </div>
           </div>
           <div class="card">
@@ -166,31 +166,61 @@
             </div>
 
             <div class="guard">
-              <span class="g-ic"><img src="../style-guide/icons/destroy_off.png" alt="Destruction guard — off" title="Allow token destruction — Off (blocked). Tokens can never be burned."></span>
-              <div class="g-main"><div class="g-ttl">Allow token destruction</div><div class="g-sub">Whether tokens can be burned. Off blocks all destructive paths so supply can't shrink after mint.</div><div class="g-implies good">Off → tokens can never be burned.</div></div>
+              <span class="g-ic"><img src="../style-guide/icons/destroy_off.png" alt="Destruction guard — off" title="Allow token destruction — Off (blocked). No game logic can ever destroy a token; owners can always burn their own."></span>
+              <div class="g-main"><div class="g-ttl">Allow token destruction</div><div class="g-sub">Whether game logic may destroy tokens (involuntary). Owner burning is voluntary and always allowed — this guard never affects it.</div><div class="g-implies good">Off → tokens can never be destroyed by game logic.</div></div>
               <span class="sw" role="switch" aria-checked="false"></span>
             </div>
 
             <div class="guard">
               <span class="g-ic"><img src="../style-guide/icons/transfer_restr_off.png" alt="Transfer-restrictions guard — off" title="Allow transfer restrictions — Off. Tokens transfer freely between wallets."></span>
-              <div class="g-main"><div class="g-ttl">Allow transfer restrictions</div><div class="g-sub">Whether transfers can be limited (e.g. lockups). Off means tokens always transfer freely between wallets.</div><div class="g-implies good">Off → tokens transfer freely.</div></div>
+              <div class="g-main"><div class="g-ttl">Allow transfer restrictions</div><div class="g-sub">Whether tokens may limit the number of times they can be transferred. Off means all tokens in this collection transfer freely.</div><div class="g-implies good">Off → all tokens transfer freely.</div></div>
               <span class="sw" role="switch" aria-checked="false"></span>
             </div>
 
             <div class="guard">
-              <span class="g-ic"><img src="../style-guide/icons/sale_restr_on.png" alt="Sale-restrictions guard — on" title="Allow sale restrictions — On. Resale can be limited (e.g. royalty windows)."></span>
-              <div class="g-main"><div class="g-ttl">Allow sale restrictions <span class="tag tag--amber">On</span></div><div class="g-sub">Whether resale can be limited (e.g. royalty enforcement windows). On means some resale limits may apply.</div><div class="g-implies warn">On → resale can be limited. Buyers will see this.</div></div>
+              <span class="g-ic"><img src="../style-guide/icons/sale_restr_on.png" alt="Sale-restrictions guard — on" title="Allow sale restrictions — On. Some tokens may limit the number of times they can be sold."></span>
+              <div class="g-main"><div class="g-ttl">Allow sale restrictions <span class="tag tag--amber">On</span></div><div class="g-sub">Whether tokens may limit the number of times they can be sold. On means some tokens may carry sale-count limits.</div><div class="g-implies warn">On → some tokens may limit how many times they can be sold. Buyers will see this.</div></div>
               <span class="sw on" role="switch" aria-checked="true"></span>
             </div>
 
             <div class="guarantee" style="margin-top:var(--s-5)">
               <span class="lbl">Buyers get</span>
               <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>One-of-one</span>
-              <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Never burned</span>
+              <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Never destroyed</span>
               <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Free transfer</span>
-              <span class="chip" style="color:var(--stage-draft)">Resale may be limited</span>
+              <span class="chip" style="color:var(--stage-draft)">Sale count may be limited</span>
             </div>
             <div class="info-note" style="margin-top:var(--s-5)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Guards are collection-wide promises. They stay editable through Draft and Review, then lock permanently when the collection goes Live so buyers can rely on them. <span class="tag tag--indigo">Spec rule</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01b GUARDS · archetype contradiction warning (R37) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01b</span><span class="t">Guards · archetype contradiction warning</span><span class="d">The archetype seeds the duplicates guard from its edition mode (Generated Art → off; Editioned Art / Game Items → on). The creator can still change it pre-Live, but a contradictory combo gets a warning: an <strong>Editioned Art</strong> collection with the duplicates guard <strong>off</strong> can never mint an edition. The archetype ceiling always wins regardless.</span></div>
+      <div class="screen">
+        <div class="context-bar">
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Print Run 04</a><span class="sep">/</span><span class="here">Guards</span></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Collection · Guards</div>
+              <h2>Guards.</h2>
+              <p class="lede">Buyer-facing promises for this collection. <span class="tag" style="background:var(--surface-canvas-alt);border:1px solid var(--border-soft)">Type · Editioned Art</span></p>
+            </div>
+            <div class="head-actions">
+              <span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="guard">
+              <span class="g-ic"><img src="../style-guide/icons/dupe_off.png" alt="Duplicates guard — off" title="Allow duplicate tokens — Off (blocked). Every token is one-of-one."></span>
+              <div class="g-main"><div class="g-ttl">Allow duplicate tokens</div><div class="g-sub">Whether a token can exist as more than one copy. Off makes every token one-of-one and forces max copies to 1.</div><div class="g-implies good">Off → every token is one-of-one.</div></div>
+              <span class="sw" role="switch" aria-checked="false"></span>
+            </div>
+            <div class="info-note warn-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>This contradicts your archetype.</strong> Print Run 04 is an <strong>Editioned Art</strong> collection — its whole shape is multiple copies per design — but with duplicates off it can <strong>never mint an edition</strong>. You can keep this (every print becomes a one-of-one), or turn duplicates back on to match the archetype.</div></div>
           </div>
         </div>
       </div>
@@ -230,7 +260,7 @@
               <div class="modal-card">
                 <header><h4>Allow token destruction?</h4><button class="x" aria-label="Close">✕</button></header>
                 <div class="mbody">
-                  <p style="margin:0">Tokens become <strong>burnable</strong>. Supply can shrink after mint, and buyers lose the <strong>“never burned”</strong> guarantee — they'll see this on the collection.</p>
+                  <p style="margin:0">Tokens may opt in to <strong>game-logic destruction</strong> (e.g. crafting sinks, in-game consequences). Buyers lose the <strong>“never destroyed”</strong> guarantee — they'll see this on the collection. (Owner burning is voluntary and always allowed either way.)</p>
                   <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Editable through Draft and Review. Once the collection goes Live, this guard is locked permanently.</div></div>
                 </div>
                 <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Allow destruction</button></div>
@@ -238,7 +268,7 @@
               <div class="modal-card">
                 <header><h4>Turn off token destruction?</h4><button class="x" aria-label="Close">✕</button></header>
                 <div class="mbody">
-                  <p style="margin:0">Tokens can <strong>never be burned</strong>. Supply can't shrink after mint, and buyers get a <strong>“never burned”</strong> guarantee.</p>
+                  <p style="margin:0">No game logic can <strong>ever destroy</strong> a token in this collection — only an owner can remove their own token, by burning it. Buyers get a <strong>“never destroyed”</strong> guarantee.</p>
                   <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Editable through Draft and Review. Once the collection goes Live, this guard is locked permanently.</div></div>
                 </div>
                 <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Block destruction</button></div>
@@ -252,7 +282,7 @@
               <div class="modal-card">
                 <header><h4>Allow transfer restrictions?</h4><button class="x" aria-label="Close">✕</button></header>
                 <div class="mbody">
-                  <p style="margin:0">Transfers can be <strong>limited</strong> (e.g. lockups or hold periods). Buyers lose the <strong>“free transfer”</strong> guarantee and will see that transfers may be restricted.</p>
+                  <p style="margin:0">Some tokens may <strong>limit the number of times they can be transferred</strong>. Buyers lose the <strong>“free transfer”</strong> guarantee and will see that transfer counts may be limited.</p>
                   <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Editable through Draft and Review. Once the collection goes Live, this guard is locked permanently.</div></div>
                 </div>
                 <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Allow restrictions</button></div>
@@ -260,7 +290,7 @@
               <div class="modal-card">
                 <header><h4>Turn off transfer restrictions?</h4><button class="x" aria-label="Close">✕</button></header>
                 <div class="mbody">
-                  <p style="margin:0">Tokens will <strong>always transfer freely</strong> between wallets. Any transfer limits are removed and buyers get a <strong>“free transfer”</strong> guarantee.</p>
+                  <p style="margin:0">All tokens will <strong>always transfer freely</strong> between wallets — no token can ever carry a transfer-count limit. Buyers get a <strong>“free transfer”</strong> guarantee.</p>
                   <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Editable through Draft and Review. Once the collection goes Live, this guard is locked permanently.</div></div>
                 </div>
                 <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Block restrictions</button></div>
@@ -274,7 +304,7 @@
               <div class="modal-card">
                 <header><h4>Allow sale restrictions?</h4><button class="x" aria-label="Close">✕</button></header>
                 <div class="mbody">
-                  <p style="margin:0">Resale can be <strong>limited</strong> (e.g. royalty enforcement windows). Buyers will see that <strong>resale may be restricted</strong> on this collection.</p>
+                  <p style="margin:0">Some tokens may <strong>limit the number of times they can be sold</strong>. Buyers will see that <strong>sale counts may be limited</strong> on this collection.</p>
                   <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Editable through Draft and Review. Once the collection goes Live, this guard is locked permanently.</div></div>
                 </div>
                 <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Allow restrictions</button></div>
@@ -282,7 +312,7 @@
               <div class="modal-card">
                 <header><h4>Turn off sale restrictions?</h4><button class="x" aria-label="Close">✕</button></header>
                 <div class="mbody">
-                  <p style="margin:0">Resale will be <strong>unrestricted</strong>. Royalty windows and other sale limits are removed, and buyers get a <strong>“free resale”</strong> guarantee.</p>
+                  <p style="margin:0">All tokens can be <strong>sold freely</strong> — no token can ever carry a sale-count limit. Buyers get a <strong>“free resale”</strong> guarantee.</p>
                   <div class="info-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Editable through Draft and Review. Once the collection goes Live, this guard is locked permanently.</div></div>
                 </div>
                 <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Block restrictions</button></div>
@@ -318,16 +348,16 @@
           <div class="locked">
             <div class="locked__head">Locked at Live (read-only)</div>
             <div class="r"><span class="lbl-ic"><img class="g-mini" src="../style-guide/icons/dupe_off.png" alt="Duplicates guard off" title="Allow duplicate tokens — Off (blocked). Every token is one-of-one.">Allow duplicate tokens</span><span class="v off">Off · one-of-one</span></div>
-            <div class="r"><span class="lbl-ic"><img class="g-mini" src="../style-guide/icons/destroy_off.png" alt="Destruction guard off" title="Allow token destruction — Off (blocked). Tokens can never be burned.">Allow token destruction</span><span class="v off">Off · never burned</span></div>
+            <div class="r"><span class="lbl-ic"><img class="g-mini" src="../style-guide/icons/destroy_off.png" alt="Destruction guard off" title="Allow token destruction — Off (blocked). No game logic can ever destroy a token.">Allow token destruction</span><span class="v off">Off · never destroyed</span></div>
             <div class="r"><span class="lbl-ic"><img class="g-mini" src="../style-guide/icons/transfer_restr_off.png" alt="Transfer-restrictions guard off" title="Allow transfer restrictions — Off. Tokens transfer freely.">Allow transfer restrictions</span><span class="v off">Off · free transfer</span></div>
-            <div class="r"><span class="lbl-ic"><img class="g-mini" src="../style-guide/icons/sale_restr_on.png" alt="Sale-restrictions guard on" title="Allow sale restrictions — On. Resale can be limited (e.g. royalty windows).">Allow sale restrictions</span><span class="v on">On · resale may be limited</span></div>
+            <div class="r"><span class="lbl-ic"><img class="g-mini" src="../style-guide/icons/sale_restr_on.png" alt="Sale-restrictions guard on" title="Allow sale restrictions — On. Some tokens may limit the number of times they can be sold.">Allow sale restrictions</span><span class="v on">On · sale count may be limited</span></div>
           </div>
           <div class="guarantee">
             <span class="lbl">Buyers got</span>
             <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>One-of-one</span>
-            <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Never burned</span>
+            <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Never destroyed</span>
             <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Free transfer</span>
-            <span class="chip" style="color:var(--stage-draft)">Resale may be limited</span>
+            <span class="chip" style="color:var(--stage-draft)">Sale count may be limited</span>
           </div>
         </div>
       </div>
