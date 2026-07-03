@@ -41,7 +41,7 @@
       '<a href="' + p + 'index.html"' + here(isMockups) + '>Mockups</a>' +
       '<a href="' + p + 'learn.html"' + here(isLearn) + '>Learn</a>' +
       '<a href="' + p + 'style-guide/styleguide.html"' + here(isGuide) + '>Style guide</a>' +
-      '<a href="' + p + 'faq.html"' + here(isFaq) + '>FAQ</a>' +
+      '<a href="' + p + 'html-mockups/faq.html"' + here(isFaq) + '>FAQ</a>' +  /* faq.html moved into html-mockups/ 2026-07-03 */
     '</nav>';
 
   var bar = document.createElement("div");
