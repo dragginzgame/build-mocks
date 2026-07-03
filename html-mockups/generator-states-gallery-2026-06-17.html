@@ -1328,22 +1328,38 @@
 
     <!-- 15 — Create generator · modal -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">15</span><span class="t">Create generator · modal</span><span class="d">The "New generator" dialog (name + private notes) rebuilt on the shared <code>modal-card</code> — Anton title, Mona Sans labels/body, standard ghost/primary footer buttons.</span></div>
+      <div class="frame-cap"><span class="num">15</span><span class="t">Create generator · modal</span><span class="d">The "New generator" dialog — <strong>name</strong> (required, 50-char counter), <strong>description</strong> (renamed 2026-07-02 from "Notes" for consistency; 1,500-char counter), and a <strong>thumbnail</strong> picker (upload, or pick from the project media library) — generators render in the standard card system, so they need a thumb like collections and vendors. Anton title, Mona Sans labels/body, standard ghost/primary footer.</span></div>
       <div class="stage" style="justify-content:center">
         <div class="modal-card" style="max-width:520px">
           <header><h4>New generator</h4><button aria-label="Close">✕</button></header>
           <div class="mbody">
+            <p style="margin:0 0 var(--s-5);color:var(--text-secondary);font-size:var(--text-sm)">Start by completing some basic details about your generator.</p>
             <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:var(--s-5)">
-              <label class="eyebrow" for="ng-name"><strong style="color:var(--text-primary)">Name</strong> · Required</label>
-              <input id="ng-name" class="input" style="width:100%" placeholder="e.g. Icy Peas OGs">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3)"><label class="eyebrow" for="ng-name" style="margin:0"><strong style="color:var(--text-primary)">Generator name</strong> <span style="color:#EF4444">*</span></label><span class="tiny" style="font-variant-numeric:tabular-nums;color:var(--text-muted)">0 / 50</span></div>
+              <input id="ng-name" class="input" style="width:100%" maxlength="50" placeholder="e.g. Icy Peas OGs">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:var(--s-5)">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3)"><label class="eyebrow" for="ng-desc" style="margin:0"><strong style="color:var(--text-primary)">Description</strong></label><span class="tiny" style="font-variant-numeric:tabular-nums;color:var(--text-muted)">0 / 1500</span></div>
+              <textarea id="ng-desc" class="input" style="width:100%;min-height:96px;resize:vertical;font-family:var(--font-body)" maxlength="1500" placeholder="Short description of this generator"></textarea>
             </div>
             <div style="display:flex;flex-direction:column;gap:0.5rem">
-              <label class="eyebrow" for="ng-notes"><strong style="color:var(--text-primary)">Notes</strong> · Optional</label>
-              <textarea id="ng-notes" class="input" style="width:100%;min-height:96px;resize:vertical;font-family:var(--font-body)" placeholder="e.g. Icy Peas version 1, using animated gifs for the hardest to get layers."></textarea>
-              <p class="tiny" style="margin:0.125rem 0 0">Just for your eyes — these notes are never shown to the public.</p>
+              <span class="eyebrow"><strong style="color:var(--text-primary)">Thumbnail</strong></span>
+              <div style="display:flex;gap:var(--s-4)">
+                <button style="flex:1;max-width:180px;aspect-ratio:1/1.1;border:1.5px dashed var(--border-soft);border-radius:var(--r-3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;color:var(--text-secondary);cursor:pointer">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase">Upload</span>
+                  <span class="tiny">Drop or browse</span>
+                </button>
+                <button style="flex:1;max-width:180px;aspect-ratio:1/1.1;border:1.5px dashed var(--border-soft);border-radius:var(--r-3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;color:var(--text-secondary);cursor:pointer">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+                  <span style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase">Media library</span>
+                  <span class="tiny">Pick or browse</span>
+                </button>
+              </div>
+              <span class="ulink">See supported file types →</span>
             </div>
           </div>
-          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Create &amp; open</button></div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Create generator</button></div>
         </div>
       </div>
     </section>
