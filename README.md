@@ -21,15 +21,23 @@ npx serve .          # or:  python -m http.server
 
 ```
 index.html        # gallery / front door — start here
+learn*.html       # public "learn" explainers (rarity, score, vendors, generator,
+                  #   token types, hero-asset guides, …)
 html-mockups/     # screen prototypes ("state galleries"), grouped by area
+                  #   + the public pages: faq.html (+ faq-data.js), privacy.html,
+                  #   terms.html (moved here 2026-07-03)
 style-guide/      # styleguide.html (source of truth) + css/, logos/, icons/,
                   #   bot-images/ (character art), page-footer/
 fonts/            # Anton-Regular.ttf, Mona-Sans-Regular.ttf (embedded via @font-face)
 ```
 
-The layout matters: mockups load fonts at `../fonts`, the style guide CSS loads
-them at `../../fonts`, and `index.html` links into `style-guide/` and
-`html-mockups/`. Keep this structure intact or those paths break.
+The layout matters: files in `html-mockups/` load fonts at `../fonts` and shared
+scripts at `../site-nav.js`, the style guide CSS loads fonts at `../../fonts`,
+and `index.html` links into `style-guide/` and `html-mockups/`. Keep this
+structure intact or those paths break.
+
+FAQ content lives **only** in `html-mockups/faq-data.js` (rendered by
+`faq.html`); the landing page carries a pointer band, never embedded Q&As.
 
 ## The style guide is the source of truth
 
@@ -57,14 +65,17 @@ loading, populated, error, locked, etc.) on a single page. Grouped by area, as o
 `index.html`:
 
 - **Wallet & buying** — My Tokens (wallet), claiming a token, user profile.
-- **Public site & navigation** — landing page, Launchpad, navigation, top bar,
-  side navigation, hero carousel.
+- **Marketplace** — browse, listing flow (list for sale), token quick-view / buy.
+- **Public site & navigation** — landing page, Launchpad, vendor detail, FAQ /
+  terms / privacy, navigation, top bar, side navigation, hero carousel,
+  page footer.
 - **Creator studio — project** — studio, projects list, project, team & access,
-  beneficiaries, whitelists, media library, revenue presets.
-- **Creator studio — collection** — collections list, collection, attributes,
-  rarity, supply, guardian, collection defaults.
+  admin / creator access, beneficiaries, whitelists, media library, revenue
+  presets, cycles / billing, burn & reputation, project mastery.
+- **Creator studio — collection** — collections list, collection, creation,
+  attributes, rarity, supply, guards, variants, collection defaults.
 - **Creator studio — generator** — the generator (layers, parts, rules, batches).
-- **Creator studio — tokens** — token draft / review / live / add, minted tokens.
+- **Creator studio — tokens** — token add / draft / review / live, minted tokens.
 - **Creator studio — vendors** — vendor creation, vendor management.
 
 ## Conventions
