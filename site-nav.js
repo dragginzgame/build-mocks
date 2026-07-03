@@ -4,7 +4,7 @@
    Include on any page with:   <script src="site-nav.js"></script>
    (from a sub-folder like html-mockups/ or style-guide/, use ../site-nav.js)
 
-   Injects the dark top bar (logo + Mockups / Style guide / FAQ) at the top of
+   Injects the dark top bar (logo + Mockups / Learn / Style guide / Glossary / FAQ) at the top of
    <body>, working out relative paths from the page's depth and highlighting the
    current section. Single source of truth — edit the bar here, once.
    ============================================================================ */
@@ -16,6 +16,7 @@
   var isMockups = /index\.html$/.test(path) || /\/html-mockups\//.test(path) || /\/$/.test(path);
   var isGuide   = /styleguide\.html$/.test(path);
   var isFaq     = /faq\.html$/.test(path);
+  var isGloss   = /glossary\.html$/.test(path);
   var isLearn   = /\/learn(\.html|-|$)/.test(path);
 
   var css =
@@ -41,7 +42,8 @@
       '<a href="' + p + 'index.html"' + here(isMockups) + '>Mockups</a>' +
       '<a href="' + p + 'learn.html"' + here(isLearn) + '>Learn</a>' +
       '<a href="' + p + 'style-guide/styleguide.html"' + here(isGuide) + '>Style guide</a>' +
-      '<a href="' + p + 'html-mockups/faq.html"' + here(isFaq) + '>FAQ</a>' +  /* faq.html moved into html-mockups/ 2026-07-03 */
+      '<a href="' + p + 'html-mockups/glossary.html"' + here(isGloss) + '>Glossary</a>' +
+      '<a href="' + p + 'html-mockups/faq.html"' + here(isFaq) + '>FAQ</a>' +  /* faq + glossary live in html-mockups/ (2026-07-03) */
     '</nav>';
 
   var bar = document.createElement("div");
