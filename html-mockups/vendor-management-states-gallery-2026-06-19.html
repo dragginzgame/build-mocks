@@ -347,7 +347,7 @@
 
     <!-- 01 · Manage vendors — list -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">01</span><span class="t">Manage vendors — list</span><span class="d">Every vendor for the collection. Each card shows the two independent state axes — Stage and Runtime — plus inventory and claimed progress. The blurred "status" of the old flow is replaced by these explicit signals, because every lifecycle control depends on a combination of them.</span></div>
+      <div class="frame-cap"><span class="num">01</span><span class="t">Manage vendors — list</span><span class="d">Every vendor for the project. Each card shows the two independent state axes — Stage and Runtime — plus inventory and claimed progress. The blurred "status" of the old flow is replaced by these explicit signals, because every lifecycle control depends on a combination of them.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Vendors</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -367,7 +367,7 @@
               <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="btn btn--ghost btn--sm">Pause</button></div>
             </div>
             <div class="vendor-card">
-              <div class="vhead"><span class="vthumb y"></span><div><div class="vname">Holders Drop</div><div class="vsub">Market · Whitelist + NNS</div></div></div>
+              <div class="vhead"><span class="vthumb y"></span><div><div class="vname">Holders Drop</div><div class="vsub">Market · Whitelist gated</div></div></div>
               <div class="vstate"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--amber"><span class="dot"></span>Paused</span></div>
               <div><div class="row" style="justify-content:space-between;font-size:var(--text-xs)"><span>Claimed</span><span style="font-family:var(--font-emphasis);font-weight:700">60 / 120</span></div><div class="progress" style="margin-top:.4rem"><div class="fill" style="width:50%"></div></div></div>
               <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="btn btn--ghost btn--sm">Resume</button></div>
@@ -559,7 +559,7 @@
             <div class="card__head"><h3>Costs &amp; rules</h3><span class="tag tag--green">3 / 3 tiers priced</span></div>
             <div class="tier-row"><span class="tr-tier" style="color:#475569">Common</span><span class="tr-cost">1.5 ICP</span><span class="tr-reqs"><span class="tag">Open · no gates</span></span></div>
             <div class="tier-row"><span class="tr-tier" style="color:#1e40af">Rare</span><span class="tr-cost">4 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span></span></div>
-            <div class="tier-row"><span class="tr-tier" style="color:#6D28D9">Epic</span><span class="tr-cost">8 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">ICP Neuron</span><span class="tag tag--indigo">Whitelist</span></span></div>
+            <div class="tier-row"><span class="tr-tier" style="color:#6D28D9">Epic</span><span class="tr-cost">8 ICP</span><span class="tr-reqs"><span class="tag tag--indigo">Whitelist</span><span class="tag tag--indigo">Whitelist</span></span></div>
             <p class="tiny" style="margin-top:.6rem">Copied from the collection defaults when the vendor was created, then editable per vendor in Draft. Requirements combine with AND.</p>
           </div>
         </div>
@@ -971,7 +971,7 @@
 
     <!-- 14 · Scheduled state on a tab (full page) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">14</span><span class="t">Scheduled state — on the page</span><span class="d">A Live vendor set to open at a future time, shown on its Overview tab; the banner pins to every tab until it opens. It starts automatically at the set time — collectors can't claim before then — and the creator can start early or reschedule. <strong>Draft</strong> vendors aren't managed in this section at all: the list card's "Continue setup" reopens the creation wizard (see 01 and <span class="mono">vendor-creation-states-gallery</span>) — there's no Draft page here, by design.</span></div>
+      <div class="frame-cap"><span class="num">14</span><span class="t">Scheduled state — on the page (Running · armed)</span><span class="d">A Live vendor set to open at a future time, shown on its Overview tab; the banner pins to every tab until it opens. It auto-opens at the set time <strong>only because it is already Running (armed)</strong> — a vendor still in Setup does not auto-start (see the scheduled-start error in 04). Until the start time it takes no claims and shows "Coming soon" on Launchpad. The creator can start early or reschedule. <strong>Draft</strong> vendors aren't managed in this section at all: the list card's "Continue setup" reopens the creation wizard (see 01 and <span class="mono">vendor-creation-states-gallery</span>) — there's no Draft page here, by design.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Summer Teaser</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -981,9 +981,9 @@
           </div>
           <div class="section-head" style="align-items:center">
             <div><p class="lede" style="margin:0">Market vendor · scheduled to open.</p></div>
-            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--indigo"><span class="dot"></span>Scheduled</span></div>
+            <div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--indigo"><span class="dot"></span>Running · opens 20 Jun</span></div>
           </div>
-          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><strong style="color:var(--text-primary)">Live, scheduled to open 20 Jun 2026 · 14:00 UTC.</strong> It starts automatically — collectors can't claim before then. This banner shows on every tab until it opens.</div><button class="btn btn--primary btn--sm" style="margin-left:auto;align-self:center;flex:none">Start now</button></div>
+          <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><strong style="color:var(--text-primary)">Armed — opens 20 Jun 2026 · 14:00 UTC.</strong> This vendor is Running, so it opens automatically at the set time; collectors can't claim before then and it shows "Coming soon" on Launchpad. This banner shows on every tab until it opens.</div><button class="btn btn--primary btn--sm" style="margin-left:auto;align-self:center;flex:none">Start now</button></div>
           <div class="card">
             <div class="card__head"><h3>Schedule</h3><button class="btn btn--ghost btn--sm">Edit schedule</button></div>
             <div class="kv"><span>Opens</span><span class="v">20 Jun 2026 · 14:00 UTC</span></div>
