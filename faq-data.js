@@ -285,9 +285,8 @@ window.TOKO_FAQ = {
         </p>
         <ul>
           <li>Holding a particular token</li>
-          <li>Staking</li>
+          <li>Holding a staked neuron (ICP / SNS)</li>
           <li>Being on an allowlist</li>
-          <li>A per-person claim limit</li>
         </ul>
         <p>
           If you don't meet them, you'll see View requirements rather than Claim. Eligibility is always re-checked at the moment you claim.
@@ -373,10 +372,13 @@ window.TOKO_FAQ = {
           From <strong>My Tokens</strong>, pick a token and choose a price and currency (from Toko's accepted currencies — ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP), plus a duration (up to 14 days). If it doesn't sell, it simply returns to your wallet.
         </p>
         <p>
+          Listing a <strong>stack</strong>? The price you set is <strong>per unit</strong> — buyers can take any amount (all of it, or just one) and the rest stays listed until it sells out or the listing ends.
+        </p>
+        <p>
           Selling carries a <strong>referral fee</strong> you set on a <strong>1–10% slider</strong> (1% minimum), charged on a completed sale. <strong>Higher fee = higher placement.</strong> <strong>No sale, no fee.</strong>
         </p>
         <p>
-          The creator's frozen sale split (a project fee up to 2% plus royalties up to 3% total) comes off first, then your referral fee — so the seller nets roughly <strong>94%</strong> at a 1% fee, down to about <strong>85%</strong> at 10%.
+          The creator's frozen sale split (royalties, up to <strong>3%</strong> total — there is no project fee on secondary) comes off first, then your referral fee — so the seller nets roughly <strong>96%</strong> at a 1% fee, down to about <strong>87%</strong> at 10%.
         </p>
       `,
       wip: true
@@ -547,7 +549,7 @@ window.TOKO_FAQ = {
           <li>Rarity configuration</li>
           <li>Attribute definitions</li>
           <li>Supply limits and distribution rules</li>
-          <li>Guardian settings</li>
+          <li>Guard settings</li>
         </ul>
         <p>
           The collection <strong>name</strong> is also locked at go-live (it anchors links, listings, and provenance). Other branding — description, thumbnail, banner, and social links — can still be updated after launch.
@@ -560,19 +562,19 @@ window.TOKO_FAQ = {
     {
       aud: "creator",
       cat: "collections",
-      q: "What is the Guardian?",
+      q: "What are Guards?",
       a: `
         <p>
-          The <strong>Guardian</strong> defines the promises your collection makes to collectors.
+          <strong>Guards</strong> are the promises your collection makes to collectors. Each guard is either a <strong>guarantee</strong> that something can never occur, or a <strong>warning</strong> that it may occur within the collection.
         </p>
         <p>
-          These settings determine whether tokens can be duplicated, destroyed, transferred, or sold under specific conditions.
+          The four guards cover whether tokens can have <strong>duplicate copies</strong>, whether game logic may ever <strong>destroy</strong> a token (owners can always burn their own — that's never gated), and whether tokens may limit the <strong>number of times</strong> they can be <strong>transferred</strong> or <strong>sold</strong>.
         </p>
         <p>
-          Once a collection goes <strong>Live</strong>, Guardian settings are locked so collectors can rely on those guarantees.
+          Once a collection goes <strong>Live</strong>, guard settings are locked so collectors can rely on those guarantees.
         </p>
         <p>
-          Some Guardian rules are currently informational while full backend enforcement continues to be developed.
+          Some guard rules are currently informational while full backend enforcement continues to be developed.
         </p>
       `
     },
@@ -820,7 +822,7 @@ window.TOKO_FAQ = {
           <strong>Market</strong> vendors, which sell specific tokens, are available first.
         </p>
         <p>
-          <strong>Gacha</strong> and <strong>GachaRwa</strong> vendors, which distribute randomized rewards, are designed but deferred to a later release.
+          The vendor type set is open-ended — types like <strong>Gacha</strong> and <strong>Tombola</strong> (randomized draws) and <strong>Market RWA</strong> (real-world assets) may be added in later releases.
         </p>
         <p>
           At launch, expect Market vendors only.
@@ -872,7 +874,7 @@ window.TOKO_FAQ = {
           You can start, pause, resume, restart, or stop a vendor. There's no separate vendor approval step — validation happens per token at Review to Live.
         </p>
         <p>
-          When a vendor stops, any unclaimed inventory is either returned to inventory or burned, depending on its termination policy.
+          When a vendor stops, any unclaimed inventory is either returned to its collections or burned, depending on its termination policy.
         </p>
       `
     },
