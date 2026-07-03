@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Glossary</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --info:#2563EB;
+    --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:.9375rem; line-height:1.55; color:var(--text-primary); background:var(--surface-page); -webkit-font-smoothing:antialiased; }
+  a { color:var(--info); text-decoration:none; font-weight:700; }
+  code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:4px; color:var(--text-secondary); }
+  .wrap { max-width:900px; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  header.page h1 { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:clamp(2rem,5vw,2.75rem); margin:0; }
+  header.page .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:.6875rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  header.page p.lede { color:var(--text-secondary); max-width:70ch; margin:.85rem 0 0; }
+  .searchbar { position:relative; margin-top:1.5rem; }
+  .searchbar svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
+  .searchbar input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-pill); padding:.8rem 1.1rem .8rem 42px; font:inherit; }
+  .searchbar input:focus { outline:2px solid var(--border-strong); outline-offset:-1px; }
+  .count { font-size:.8125rem; color:var(--text-muted); margin-top:.6rem; }
+  section.grp { margin-top:2.5rem; }
+  section.grp > h2 { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.375rem; margin:0 0 .35rem; padding-bottom:.5rem; border-bottom:2px solid var(--text-primary); }
+  .term { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:1.1rem 1.35rem; margin-top:.85rem; }
+  .term h3 { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.05rem; margin:0 0 .4rem; }
+  .term p { margin:.4rem 0 0; color:var(--text-secondary); }
+  .term p b, .term p strong { color:var(--text-primary); }
+  .foot-note { margin-top:3rem; font-size:.8125rem; color:var(--text-muted); }
+  .noresults { display:none; text-align:center; padding:3rem 1rem; color:var(--text-secondary); }
+  .noresults strong { font-family:var(--font-display); font-weight:400; text-transform:uppercase; font-size:1.25rem; display:block; margin-bottom:.4rem; color:var(--text-primary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <div class="eyebrow">Toko · Reference</div>
+    <h1>Glossary.</h1>
+    <p class="lede">Canonical definitions for the terms Toko uses — defined once, used consistently everywhere. When a doc and this glossary disagree, the glossary wins. Source of truth: <code>Design Documentation/glossary.md</code>.</p>
+    <div class="searchbar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Filter terms — try “burn”, “guard”, “referral”…" aria-label="Filter glossary terms">
+    </div>
+    <div class="count" id="count"></div>
+  </header>
+
+  <section class="grp">
+    <h2>Burn vs Destroy — the load-bearing pair</h2>
+    <div class="term"><h3>Burn</h3><p>A <b>voluntary owner action</b> that permanently removes a token the owner holds — a manual burn, or a transfer to a <b>zero address</b>. Burning is <b>always available</b> to an owner: no guard, flag, or policy ever prevents an owner from burning what they own. (Like any mutation it requires the holding to be unlocked — a listed token's sale-lock must be cancelled first, itself an owner action.) Irreversible; the burned copy is retained in ledger records with <code>Burned</code> status for audit and supply accounting.</p></div>
+    <div class="term"><h3>Destroy</h3><p>An <b>involuntary action</b>: game logic or a system action makes a token cease to be accessible or usable, without the owner choosing it. Gated by the collection's <b>destruction guard</b> (<code>allow_token_destruction</code>) and the token's frozen <code>can_destroy</code> field. With the guard off, <b>no game logic can ever destroy a token in the collection</b> — the buyer's guarantee. The guard says nothing about burning.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Lifecycle &amp; structure</h2>
+    <div class="term"><h3>Project</h3><p>The top-level creator workspace: collections, generators, vendors, media, access, whitelists, beneficiaries, revenue presets, treasury, and Toko Reputation all hang off it.</p></div>
+    <div class="term"><h3>Collection</h3><p>The project-scoped policy boundary for tokens: attributes, rarity, supply, guards, collection defaults. Stages <code>Draft → Review → Live</code>; core policy freezes at go-live (Live = locked), while the roster stays open (monotonic growth).</p></div>
+    <div class="term"><h3>Token definition</h3><p>The singular design-time record of a token (<code>Draft → Review → Live</code>). Not a holding. Its <code>issue_number</code> is definition-level and permanent from <code>Review → Live</code>. <b>Review is stage-only</b>: the backend rejects every non-stage update — any edit, rarity included, requires returning to Draft first.</p></div>
+    <div class="term"><h3>Copy</h3><p>One minted unit of a definition. Copies carry an immutable per-copy <code>copy_sequence</code> and inherit the definition's <code>issue_number</code>; they never get their own.</p></div>
+    <div class="term"><h3>Holding</h3><p>The owned runtime representation of minted copies: a <b>Stack</b> (fungible bucket with quantity) or a <b>Single</b> (individualized unit with optional rich state). One unified <code>TokenHolding</code> model.</p></div>
+    <div class="term"><h3>Variant</h3><p>An optional, token-defined, locked-at-Live sub-type discriminator (e.g. Red / Green apple). Part of stack identity everywhere; V1 mints the <code>default_variant</code> only.</p></div>
+    <div class="term"><h3>Archetype / capacity envelope</h3><p>The collection shape chosen at creation (Curated Art, Game Items, …) that sets the maximum ceilings (blueprints, total units, copies per token). <b>The archetype ceiling overrides any other rule or default</b>; ceilings are raisable only in Draft and freeze at go-live.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Guards &amp; policy</h2>
+    <div class="term"><h3>Guard / Guards</h3><p>(Never "Guardian".) A per-capability, collection-wide permission (<code>allow_*</code> flags): duplicates, destruction, transfer restrictions, sale restrictions. <b>A guard is either a guarantee that something can never occur, or a warning that it may occur within the collection</b> — off = the guarantee (absolute stop, forever); on = the warning (tokens may opt in). Freezes at collection go-live. Guards exist to future-proof: no <i>future</i> platform feature can ever do the guarded thing inside a collection whose guard is off. The sale- and transfer-restriction guards gate <b>only the per-copy count limits</b> (<code>sale_limit</code> / <code>transfer_limit</code>), not the named states.</p></div>
+    <div class="term"><h3>Collection defaults</h3><p>The per-collection <b>template</b> for claim <b>cost</b> (per tier, required) and optional claim <b>requirements</b>. They have <b>no lifecycle of their own</b> — the stage badge on the page is the collection's; the single stage-coupled behavior is the <b>go-Live gate</b>: every tier needs data (a cost — free counts). Editable in every collection state, non-retroactive; a vendor imports them per source collection and edits its own copy.</p></div>
+    <div class="term"><h3>Claim requirements</h3><p>Optional eligibility gates on a tier, always combined with <b>AND, never OR</b> (an empty set = anyone can claim). Variants: <b>On a whitelist</b> (V1); <b>Holds tokens from a collection</b> — never "holds a token" — <code>collection_id</code> + <code>quantity ≥ 1</code>; <b>Has a stake</b> — an NNS (ICP neuron) or SNS (ICRC-1 neuron) gate with optional <code>minimum_stake</code> and <code>minimum_dissolve_delay</code> (dissolve delay, not neuron age); a tier may carry one NNS <b>and</b> one SNS gate, both binding. The stake and token-hold gates are <b>front-end V2; their backend schema ships in V1</b> — whitelist is the only requirement authorable in V1.</p></div>
+    <div class="term"><h3>Sale / transfer restrictions</h3><p>Per-copy <b>count limits</b> (<code>sale_limit</code>, <code>transfer_limit</code>): how many times a copy may be sold or transferred. Gated by the sale- and transfer-restriction guards, frozen at token <code>Review → Live</code> (<code>locked_sale_restrictions</code>), authored per token in V2. In V1 every token is freely tradeable with no limits.</p></div>
+    <div class="term"><h3>Named states (Gift Only / Sale Only / Soul Bound)</h3><p>Possible <b>per-token</b> restrictions, <b>not yet enabled and not part of the guards</b>: <b>Gift Only</b> = can never be sold; <b>Sale Only</b> = can never be transferred; <b>Soul Bound</b> = can never be transferred or sold. Their gating will be defined if/when they are enabled.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Money</h2>
+    <div class="term"><h3>Claim</h3><p>Primary distribution: paying a vendor's cost (or Free) to receive a copy. Settlement chain: <b>vendor account → split (beneficiaries + Toko) → remainder to the project treasury</b>.</p></div>
+    <div class="term"><h3>Claim preset / Sale preset (Revenue presets)</h3><p>Named, project-level split templates. A vendor must select one of each (Live presets only, snapshot copy-on-create, no per-vendor editing). Claim preset: the Toko burn (<code>fees.toko</code>, mandatory 1–10%) + royalties (≤ 20% total). Sale preset: the secondary royalty split, ≤ 3% total.</p></div>
+    <div class="term"><h3>locked_sale_split</h3><p>A <b>copy's</b> frozen resale royalty split, stamped <b>at claim</b> from the distributing vendor's Sale preset. Copies claimed from different vendors may carry different splits (and then never stack together). Never-vendored copies (e.g. freely transferred by the creator) use the <b>standing default</b>: 1% of each resale → the token's project treasury.</p></div>
+    <div class="term"><h3>Referral fee</h3><p>The seller-set <b>1–10%</b> of a completed secondary sale (min 1%), paid to the sale's referrer (initially always the Toko Marketplace). Toko's only secondary take; it drives the default marketplace sort and the landing page's <b>Marketplace section</b> (whose cards deep-link to their listings) and <b>Featured</b> example set. The landing <b>hero carousel is the exception</b> — created and managed by Toko, never referral-driven. No sale, no fee. Not part of any preset.</p></div>
+    <div class="term"><h3>Buyer price rule</h3><p>The buyer pays the price only; every fee and split comes out of the price, never on top of it. Stack listings and staged vendor stacks are priced <b>per unit</b>: a buyer/claimant takes any quantity <code>1..remaining</code> (total = qty × unit price), the remainder stays available, and quantity is protected by an atomic check-and-decrement — a race fails cleanly with a one-tap "take the remaining {n} instead" offer.</p></div>
+    <div class="term"><h3>Toko Reputation</h3><p>A project's cumulative lifetime <code>$TOKO</code> burned (earned-to-burn from claims ≥ 1%, or paid-to-burn from a wallet). Never decreases; unlocks <b>commit</b> it (available = lifetime − committed). Project-scoped and admin-contingent.</p></div>
+    <div class="term"><h3>Project Mastery</h3><p>The unlock tree spending (committing) Reputation. <b>Front end is V2; the backend schema (accrual, committed/available, unlock records) ships in V1.</b></p></div>
+    <div class="term"><h3>Treasury</h3><p>The project's own funds: claim remainders + royalty failsafes. A locked percentage is reserved for cycles (auto-top-up via AMM → ICP → cycles); only the excess is withdrawable.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Supply &amp; rarity</h2>
+    <div class="term"><h3>Max Supply</h3><p>The collection's <b>total</b> supply ceiling — all token types sum together (no per-type supply cap in V1). Clamped to the archetype envelope; frozen into the mint ledger at go-live.</p></div>
+    <div class="term"><h3>Tier budget / mint budget</h3><p>The collection-wide, per-tier ledger of mintable copies (<code>quota_units</code> / <code>minted_units</code>), snapshotted at go-live and drawn down first-come at mint. Definitions may oversubscribe budgets; enforcement happens only at mint.</p></div>
+    <div class="term"><h3>Official rarity tier set (Weighted)</h3><p>Seven reserved tiers: <b>Common, Uncommon, Rare</b> (default for everyone) · <b>Epic, Legendary</b> (unlock at a Toko Reputation threshold) · <b>Mythical, Inconceivable</b> (future-gated, never creator-unlockable; possibly Toko-granted on super rare occasions). Tiered-mode collections define their own tier names and may not reuse these.</p></div>
+    <div class="term"><h3>issue_number vs copy_sequence</h3><p><code>issue_number</code>: definition-level, assigned at <code>Review → Live</code>, immutable, never reused, shared by all copies. <code>copy_sequence</code>: copy-level creation index used for copy-number display (<code>No. 3/50</code>).</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Vendors &amp; distribution</h2>
+    <div class="term"><h3>Vendor</h3><p>A <b>project-scoped</b> distribution mechanism selling minted copies from its fixed <code>source_collections</code> set (editable in Draft/Review, <b>frozen at vendor go-live</b> — no new collections after Live, even with an <code>additive</code> inventory policy; restocking from the frozen set is unlimited). Cannot go Live without inventory. A minted copy sits in at most <b>one vendor at a time</b>. <b>Market</b> is the only type that exists; the type set is open-ended (e.g. Gacha, Tombola, MarketRwa may come; GachaRwa is not planned). <b>Deletable only pre-Live</b>: a Live vendor is ended and remains a read-only record with its on-chain history.</p></div>
+    <div class="term"><h3>Standing default</h3><p>See <code>locked_sale_split</code>: the platform-wide fallback royalty (1% → project treasury) for copies never distributed through a vendor.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Identity</h2>
+    <div class="term"><h3>Principal</h3><p>The auth-level identifier of an account on the IC; what routes like <code>/profile/:principal</code> and transfers resolve against.</p></div>
+    <div class="term"><h3>User ID (usr_…)</h3><p>The stable Toko platform identity, shown as a copyable chip on the owner's profile. It is what <code>Recipient::User</code> resolves against in revenue presets, and the key the (WIP) friends list is built on.</p></div>
+  </section>
+
+  <div class="noresults" id="noresults"><strong>No matching terms.</strong>Try a different word — or clear the filter.</div>
+
+  <p class="foot-note">Source of truth: <code>Design Documentation/glossary.md</code> (updated 2026-07-03). This page mirrors it for easy browsing — when they disagree, the markdown wins and this page needs a refresh.</p>
+</div>
+
+<script>
+(function(){
+  var q = document.getElementById('q');
+  var count = document.getElementById('count');
+  var noresults = document.getElementById('noresults');
+  var groups = [].slice.call(document.querySelectorAll('section.grp'));
+  var terms = [].slice.call(document.querySelectorAll('.term'));
+  function apply(){
+    var needle = q.value.trim().toLowerCase();
+    var shown = 0;
+    terms.forEach(function(t){
+      var hit = !needle || t.textContent.toLowerCase().indexOf(needle) !== -1;
+      t.style.display = hit ? '' : 'none';
+      if (hit) shown++;
+    });
+    groups.forEach(function(g){
+      var any = [].slice.call(g.querySelectorAll('.term')).some(function(t){ return t.style.display !== 'none'; });
+      g.style.display = any ? '' : 'none';
+    });
+    count.textContent = needle ? (shown + ' of ' + terms.length + ' terms match') : (terms.length + ' terms');
+    noresults.style.display = shown ? 'none' : 'block';
+  }
+  q.addEventListener('input', apply);
+  apply();
+})();
+</script>
+</body>
+</html>
