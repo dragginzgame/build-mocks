@@ -283,12 +283,12 @@
 
     <!-- 04 · Token card — Multi-copy editions (spec showcase on grey) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Token card — Multi-copy editions</span><span class="d">Issue number secondary · edition fraction (Edition 4 / 100) or a supply tag on the sub-row · the wallet-only stack badge (×10) sits on the art · Weighted rarity border. A not-yet-calculated tier shows a dashed mid-grey border and a "Tier pending" chip until a rebalance assigns the real tier.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Token card — Multi-copy editions</span><span class="d">Issue number secondary · edition info on the sub-row · Weighted rarity border. A <strong>stackable</strong> token shows a plain edition ("Edition of 100") plus the wallet-only stack badge (×10) — copy numbers are never shown for stackable tokens. An <strong>Individual</strong> (non-stackable) token with copy numbers on shows "No. 37 of 500". A not-yet-calculated tier shows a dashed mid-grey border and a "Tier pending" chip until a rebalance assigns the real tier.</span></div>
       <div class="stage" style="display:block">
         <div class="tk-grid">
           <div class="tk-card" style="border:4px solid #FBBF24"><div class="art y"></div><div class="meta"><div class="row" style="justify-content:space-between"><span class="nm">Bird #001</span><span class="tiny" style="font-weight:700">#1</span></div><div class="sub">1 of 1 · <span style="color:#92400e;font-weight:700">Legendary</span></div></div></div>
-          <div class="tk-card" style="border:4px solid #60A5FA"><div class="art b"></div><div style="position:absolute;top:8px;right:8px;background:rgba(10,10,10,.72);color:#fff;border-radius:999px;padding:2px 8px;font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs)">×10</div><div class="meta"><div class="row" style="justify-content:space-between"><span class="nm">Bird #014</span><span class="tiny" style="font-weight:700">#14</span></div><div class="sub">Edition 4 / 100 · <span style="color:#1e40af;font-weight:700">Rare</span></div></div></div>
-          <div class="tk-card" style="border:4px solid #94A3B8"><div class="art g"></div><div class="meta"><div class="row" style="justify-content:space-between"><span class="nm">Bird #220</span><span class="tiny" style="font-weight:700">#220</span></div><div class="sub">Edition 37 / 500 · <span style="color:#475569;font-weight:700">Common</span></div></div></div>
+          <div class="tk-card" style="border:4px solid #60A5FA"><div class="art b"></div><div style="position:absolute;top:8px;right:8px;background:rgba(10,10,10,.72);color:#fff;border-radius:999px;padding:2px 8px;font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs)">×10</div><div class="meta"><div class="row" style="justify-content:space-between"><span class="nm">Bird #014</span><span class="tiny" style="font-weight:700">#14</span></div><div class="sub">Edition of 100 · <span style="color:#1e40af;font-weight:700">Rare</span></div></div></div>
+          <div class="tk-card" style="border:4px solid #94A3B8"><div class="art g"></div><div class="meta"><div class="row" style="justify-content:space-between"><span class="nm">Bird #220</span><span class="tiny" style="font-weight:700">#220</span></div><div class="sub">No. 37 of 500 · <span style="color:#475569;font-weight:700">Common</span></div></div></div>
           <div class="tk-card" style="border:4px dashed #9CA3AF"><div class="art" style="filter:grayscale(.4);opacity:.92"></div><div class="meta"><div class="row" style="justify-content:space-between"><span class="nm">Bird #481</span><span class="tiny" style="font-weight:700">#—</span></div><div class="sub"><span class="tag" style="background:rgba(107,107,107,.14);color:#6B6B6B">Tier pending</span> · awaiting calculation</div></div></div>
         </div>
       </div>
@@ -435,7 +435,7 @@
             <div class="eyebrow" style="margin-bottom:var(--s-3)">Weighted</div>
             <div class="row" style="justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-3)"><span>System tier <span class="tag" style="background:rgba(107,107,107,.14);color:#6B6B6B">Pending</span></span><span class="tiny">assigned by Final Score</span></div>
             <label class="flabel">Override tier <span class="tag tag--amber">optional</span></label>
-            <select class="input"><option selected>— use system tier —</option><option>Common</option><option>Uncommon</option><option>Rare</option></select>
+            <select class="input"><option selected>— use system tier —</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select>
             <div class="hint">A manual override can be set whether the system tier is still pending or already calculated. It fixes the tier and excludes it from rebalance until undone.</div>
           </div>
         </div>
@@ -444,7 +444,7 @@
 
     <!-- 10 · Single edit — Supply · unique collection (1/1) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">10</span><span class="t">Single edit — Supply · unique collection</span><span class="d">When the collection is unique, every token is one-of-one, so supply is fixed at Single 1/1 — there's no Capped / Unlimited choice and no stacking. Only an optional desired issue number can be set (checked now, held from Review).</span></div>
+      <div class="frame-cap"><span class="num">10</span><span class="t">Single edit — Supply · unique collection</span><span class="d">When the collection is unique, every token is one-of-one, so supply is fixed at Single 1/1 — there's no Capped / Unlimited choice and no stacking. Only an optional desired issue number can be set (checked now, held from Review). The issue-number input appears only when issue-number display is enabled for the collection (Supply) — with it disabled, this field is hidden.</span></div>
       <div class="stage single-modal">
         <div class="modal-card wide">
           <header><h4>Edit token · Supply <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
@@ -467,7 +467,7 @@
 
     <!-- 11 · Single edit — Supply · copies allowed -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">11</span><span class="t">Single edit — Supply · copies allowed</span><span class="d">When the collection allows copies: choose Single / Capped (Unlimited gated, not yet available), set whether copies stack, and set a desired issue number. The issue number is one value shared by every copy; it's validated immediately but only held once the token reaches Review. Capped shows the per-token hard maximum from Supply; numbered editions are always Individual.</span></div>
+      <div class="frame-cap"><span class="num">11</span><span class="t">Single edit — Supply · copies allowed</span><span class="d">When the collection allows copies: choose Single / Capped (Unlimited gated, not yet available), set whether copies stack, and set a desired issue number. The issue number is one value shared by every copy; it's validated immediately but only held once the token reaches Review. Capped shows the per-token hard maximum from Supply; numbered editions are always Individual (Stackable forces the copy number to Hidden). The issue-number input appears only when issue-number display is enabled for the collection (Supply).</span></div>
       <div class="stage single-modal">
         <div class="modal-card wide">
           <header><h4>Edit token · Supply <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
@@ -480,7 +480,7 @@
               <div class="choice" style="opacity:.55"><span class="radio"></span><div><div class="ttl">Unlimited <span class="tag">Not yet available</span></div><div class="desc">No maximum number of tokens.</div></div></div>
             </div>
             <div class="grid2">
-              <div><label class="flabel">Copies stack?</label><div class="seg"><button>Stackable</button><button class="active">Individual</button></div></div>
+              <div><label class="flabel">Copies stack?</label><div class="seg"><button>Stackable</button><button class="active">Individual</button></div><div style="margin-top:var(--s-3)"><label class="flabel">Copy number on copies</label><div class="seg"><button class="active">Show <span class="tiny" style="color:inherit">(No. 3 / 100)</span></button><button>Hidden</button></div><div class="hint">Individual copies only — stackable copies never show a copy number.</div></div></div>
               <div><label class="flabel">Desired issue number <span class="tag">optional</span></label><input class="input" value="#7" placeholder="auto on go-live"><div class="hint">One number for the whole token — <strong>every copy shares it</strong> (copies are told apart by their copy number, e.g. 3 / 100). Checked now, held only from Review.</div></div>
             </div>
             <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>This cap can exceed what's left in the collection's mint budget — that's allowed. Over-authoring never blocks Draft or go-live; the budget is enforced at mint, first-come. If the budget runs out first, the extra copies simply can't be minted. You'll see the live picture under Mint budgets.</div></div>
@@ -571,7 +571,7 @@
           <div class="modal-card">
             <header><h4>Assign tier · 8 tokens <span class="tag tag--indigo">Weighted</span></h4><button class="x" aria-label="Close">✕</button></header>
             <div class="mbody">
-              <div><label class="flabel">Override tier</label><select class="input"><option>Common</option><option>Uncommon</option><option selected>Rare</option></select></div>
+              <div><label class="flabel">Override tier</label><select class="input"><option>Common</option><option>Uncommon</option><option selected>Rare</option><option>Epic</option><option>Legendary</option></select></div>
               <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>These 8 become <strong>manual overrides</strong> to <strong>Rare</strong>. They can only go Live if the weighted calculation still permits that many Rare — overrides count against the Rare quota.</div></div>
             </div>
             <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Override 8</button></div>

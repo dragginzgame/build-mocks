@@ -295,7 +295,7 @@
 
     <!-- 03 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Authoring · Draft — default not set (blocked)</span><span class="d">Variants exist but no default is chosen. The token can't move to Review or mint until one is set — this is the same gate enforced on the Review screen (frame 08).</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">Authoring · Draft — default not set (blocked)</span><span class="d">Variants exist but no default is chosen. The token can't move to Review or mint until one is set — the same gate blocks Draft → Review submission (frame 08).</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Swampies</a><span class="sep">/</span><span class="here">Supply</span></div>
@@ -334,7 +334,7 @@
 
     <!-- 04 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Authoring · Live — locked (read-only)</span><span class="d">After the collection goes Live, the variant set and default are immutable. Shown as the read-only locked panel used elsewhere in Supply.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Authoring · Live — locked (read-only)</span><span class="d">After the <strong>token</strong> goes Live, the variant set and default are immutable. Shown as the read-only locked panel used elsewhere in Supply.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Swampies</a><span class="sep">/</span><span class="here">Supply</span></div>
@@ -453,20 +453,20 @@
 
     <!-- 08 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">08</span><span class="t">Minting · Review — default not set (gate)</span><span class="d">A token with variants can't be set live / minted until its default is chosen. Set-live and Mint are disabled until then. V1 mints the default only.</span></div>
+      <div class="frame-cap"><span class="num">08</span><span class="t">Submit gate · Draft — default not set (blocked from Review)</span><span class="d">A token with variants can never reach Review without a default — the Draft → Review transition is blocked (so this gate never appears in Review, which is stage-only). Choose the default in Draft to unblock submission. V1 mints the default only.</span></div>
       <div class="screen">
         <div class="context-bar">
-          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Swampies</a><span class="sep">/</span><a>Tokens</a><span class="sep">/</span><span class="here">Review · Swampie #221</span></div>
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Swampies</a><span class="sep">/</span><a>Tokens</a><span class="sep">/</span><span class="here">Draft · Swampie #221</span></div>
           <div class="actions">Auto-saves</div>
         </div>
         <div class="section">
           <div class="section-head">
-            <div><div class="eyebrow">Collection · Review token</div><h2>Review.</h2><p class="lede">Set the default variant to unblock minting.</p></div>
-            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span></div>
+            <div><div class="eyebrow">Collection · Draft token</div><h2>Draft.</h2><p class="lede">Set the default variant to unblock Review.</p></div>
+            <div class="head-actions"><span class="stage-badge stage-badge--draft"><span class="dot"></span>Draft</span></div>
           </div>
           <div class="card">
-            <div class="card__head"><h2>Mint</h2><span class="tag tag--indigo">Has variants</span></div>
-            <div class="note note--warn" style="margin-bottom:var(--s-5)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Default variant not set.</strong> Only the default variant is minted in V1 — choose which one.</div></div>
+            <div class="card__head"><h2>Submit to Review</h2><span class="tag tag--indigo">Has variants</span></div>
+            <div class="note note--warn" style="margin-bottom:var(--s-5)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Default variant not set.</strong> Only the default variant is minted in V1 — choose which one before this token can move to Review.</div></div>
             <div class="fgroup">
               <div class="fg-ttl">Default variant</div>
               <div class="opts">
@@ -474,7 +474,7 @@
                 <div class="opt"><span class="odot"></span><span class="vdot vdot--green" style="margin-right:.2rem"></span><span class="olbl">Green</span></div>
               </div>
             </div>
-            <div class="footer-row" style="display:flex;justify-content:flex-end;gap:var(--s-3);padding-top:var(--s-5);border-top:1px solid var(--border-soft)"><button class="btn btn--ghost">Back</button><button class="btn btn--primary" disabled>Set live &amp; mint</button></div>
+            <div class="footer-row" style="display:flex;justify-content:flex-end;gap:var(--s-3);padding-top:var(--s-5);border-top:1px solid var(--border-soft)"><button class="btn btn--ghost">Back</button><button class="btn btn--primary" disabled>Submit to Review</button></div>
           </div>
         </div>
       </div>
@@ -482,20 +482,20 @@
 
     <!-- 09 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">09</span><span class="t">Minting · Review — default set (mint enabled)</span><span class="d">Default is Red. Mint produces Red copies only; quantity validates against the one whole-token cap shared by all variants. Non-default variants stay authored but unminted in V1.</span></div>
+      <div class="frame-cap"><span class="num">09</span><span class="t">Minting · Live — default set (mint enabled)</span><span class="d">Minting is a post-Live operation. Default is Red. Mint produces Red copies only; quantity validates against the one whole-token cap shared by all variants (plus the collection budget checks). Non-default variants stay authored but unminted in V1.</span></div>
       <div class="screen">
         <div class="context-bar">
-          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Swampies</a><span class="sep">/</span><a>Tokens</a><span class="sep">/</span><span class="here">Review · Swampie #221</span></div>
+          <div class="crumb"><a>Studio</a><span class="sep">/</span><a>Swampies</a><span class="sep">/</span><a>Tokens</a><span class="sep">/</span><span class="here">Live · Swampie #221</span></div>
           <div class="actions">Auto-saves</div>
         </div>
         <div class="section">
           <div class="section-head">
-            <div><div class="eyebrow">Collection · Review token</div><h2>Review.</h2><p class="lede">Mint the default variant.</p></div>
-            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span></div>
+            <div><div class="eyebrow">Collection · Live token</div><h2>Live.</h2><p class="lede">Mint the default variant.</p></div>
+            <div class="head-actions"><span class="stage-badge stage-badge--live"><span class="dot"></span>Live</span></div>
           </div>
           <div class="card">
             <div class="card__head"><h2>Mint</h2><span class="tag tag--green">Default set</span></div>
-            <div class="kv"><span class="k">Default variant</span><span class="v"><span class="vdot vdot--red" style="margin-right:.3rem"></span>Red &nbsp;·&nbsp; locks at Live</span></div>
+            <div class="kv"><span class="k">Default variant</span><span class="v"><span class="vdot vdot--red" style="margin-right:.3rem"></span>Red &nbsp;·&nbsp; locked at Live</span></div>
             <div style="margin-top:var(--s-5);max-width:220px">
               <label class="flabel">Mint quantity</label>
               <input class="input" type="number" value="8">
