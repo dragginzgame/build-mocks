@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<!-- NOTE (for Donna): Draft for review — not legal advice. Have GDPR/CCPA-qualified counsel review before publishing. -->
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Privacy Policy</title>
+<style>
+  @font-face { font-family:"Anton"; src:url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Mona Sans"; src:url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  :root{
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
+    --border-soft:#E5E5E5; --info:#2563EB; --brand-cyan:#06B0E6;
+    --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{ font-family:var(--font-body); color:var(--text-primary); background:var(--surface-page); line-height:1.62; -webkit-font-smoothing:antialiased; }
+  a{ color:var(--info); text-decoration:none; } a:hover{ text-decoration:underline; }
+  img{ display:block; max-width:100%; }
+  h1,h2,h3{ font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.08; margin:0; }
+
+  .wrap{ max-width:900px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-12); }
+  .eyebrow{ font-family:var(--font-emphasis); font-weight:700; font-size:.6875rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .head h1{ font-size:2.75rem; margin-top:.5rem; }
+  .head .lede{ color:var(--text-secondary); margin-top:.75rem; font-size:1rem; max-width:70ch; }
+  .meta{ display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; margin-top:var(--s-4); font-size:.8125rem; color:var(--text-secondary); }
+  .pill{ display:inline-flex; align-items:center; gap:.4rem; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.3rem .75rem; font-weight:700; }
+  .switch a{ font-weight:700; }
+
+  .card{ background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:clamp(1.25rem,4vw,2.5rem); margin-top:var(--s-6); }
+
+  .summary{ background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-left:4px solid var(--brand-cyan); border-radius:var(--r-3); padding:var(--s-5) var(--s-6); margin-bottom:var(--s-8); }
+  .summary h2{ font-size:1.05rem; }
+  .summary p.note{ font-size:.78rem; color:var(--text-muted); margin:.35rem 0 .75rem; }
+  .summary ul{ margin:.25rem 0 0; padding-left:1.1rem; } .summary li{ margin:.3rem 0; font-size:.9rem; }
+
+  .toc{ border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); margin-bottom:var(--s-8); }
+  .toc h2{ font-size:.95rem; margin-bottom:.6rem; }
+  .toc ol{ columns:2; column-gap:var(--s-8); margin:0; padding-left:1.15rem; font-size:.875rem; }
+  @media (max-width:640px){ .toc ol{ columns:1; } }
+  .toc li{ margin:.28rem 0; break-inside:avoid; } .toc a{ color:var(--text-primary); } .toc a:hover{ color:var(--info); }
+
+  section.clause{ margin-top:var(--s-8); scroll-margin-top:80px; }
+  section.clause h2{ font-size:1.25rem; display:flex; gap:.6rem; align-items:baseline; }
+  section.clause h2 .n{ color:var(--text-muted); font-size:1rem; }
+  section.clause h3{ font-size:.9rem; margin-top:var(--s-4); color:var(--text-primary); }
+  .clause p{ margin:.7rem 0; } .clause ul{ margin:.6rem 0; padding-left:1.25rem; } .clause li{ margin:.35rem 0; }
+  .clause strong{ font-weight:700; }
+  .backtop{ font-size:.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <span class="eyebrow">Legal</span>
+    <h1>Privacy Policy</h1>
+    <p class="lede">This Policy describes how Toko collects, uses, and protects information in connection with your use of our website and our Token creation and transfer services on the Internet Computer. Privacy is a fundamental right, and we collect only the minimum data needed to run the Platform.</p>
+    <div class="meta">
+      <span class="pill">Last updated: 30 June 2026</span>
+      <span class="switch">See also: <a href="terms.html">Terms &amp; Conditions</a></span>
+    </div>
+  </header>
+
+  <div class="card">
+
+    <div class="summary">
+      <h2>In short</h2>
+      <p class="note">This summary is for convenience only. The numbered sections below are the full Policy.</p>
+      <ul>
+        <li>We store only what we need: your <strong>principal ID</strong> and your <strong>username</strong> — both already public on-chain.</li>
+        <li>We <strong>never</strong> collect your email, password, date of birth, phone, or seed phrase to use the core Platform.</li>
+        <li>We <strong>do not</strong> sell, rent, trade, profile, or advertise to you.</li>
+        <li>Shipping details for physical redemptions go to our sister company <strong>Catcha</strong>, only when you request them.</li>
+        <li>On-chain data is <strong>public and permanent</strong> — we can't edit or delete it.</li>
+        <li>We honour <strong>GDPR</strong> and <strong>CCPA</strong> rights. The Platform is for adults (18+).</li>
+      </ul>
+    </div>
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#s1">Introduction</a></li>
+        <li><a href="#s2">Our privacy philosophy</a></li>
+        <li><a href="#s3">Information we collect</a></li>
+        <li><a href="#s4">How we use data</a></li>
+        <li><a href="#s5">Legal bases (GDPR)</a></li>
+        <li><a href="#s6">Blockchain data</a></li>
+        <li><a href="#s7">Cookies &amp; local storage</a></li>
+        <li><a href="#s8">Data sharing</a></li>
+        <li><a href="#s9">Data retention</a></li>
+        <li><a href="#s10">Data security</a></li>
+        <li><a href="#s11">Your rights</a></li>
+        <li><a href="#s12">Children's privacy</a></li>
+        <li><a href="#s13">International transfers</a></li>
+        <li><a href="#s14">Changes to this Policy</a></li>
+        <li><a href="#s15">Contact</a></li>
+      </ol>
+    </nav>
+
+    <section class="clause" id="s1">
+      <h2><span class="n">1.</span> Introduction</h2>
+      <p>This Privacy Policy describes how Toko (<strong>“we”</strong>, <strong>“our”</strong>, or <strong>“us”</strong>), operated by Toko Studios Ltd, collects, uses, and protects information in connection with your use of our website and our Token creation and transfer services on the Internet Computer blockchain. We are committed to protecting your privacy and to complying with the EU General Data Protection Regulation (<strong>GDPR</strong>) and applicable United States privacy laws, including the California Consumer Privacy Act (<strong>CCPA</strong>).</p>
+    </section>
+
+    <section class="clause" id="s2">
+      <h2><span class="n">2.</span> Our privacy philosophy</h2>
+      <p>We believe privacy is a fundamental right. We collect and store only the minimum data necessary to operate the Platform. We do not sell, rent, or trade personal information, and we do not track, profile, or market to users.</p>
+    </section>
+
+    <section class="clause" id="s3">
+      <h2><span class="n">3.</span> Information we collect</h2>
+      <h3>a. Required data</h3>
+      <ul>
+        <li><strong>Principal ID</strong> — the public identifier assigned to your Internet Computer identity.</li>
+        <li><strong>Username</strong> — chosen by you for display and identification within the Platform.</li>
+      </ul>
+      <p>This data is public and connected to your on-chain activity. We do <strong>not</strong> collect your email, password, date of birth, phone number, or wallet seed phrase to use the core Platform.</p>
+      <h3>b. Optional shipping data</h3>
+      <p>If you purchase or redeem a physical item (a “real-world asset”) from our sister company, <strong>Catcha</strong>, you may be asked to provide your full name, shipping address, and an optional contact phone number. This is used solely for fulfilment and delivery. Catcha handles shipping data under its own privacy policy and does not use it for marketing or analytics.</p>
+      <h3>c. Support communications</h3>
+      <p>If you contact us for support, we process the information you choose to share (for example, a message and a contact handle) solely to respond to and resolve your request.</p>
+    </section>
+
+    <section class="clause" id="s4">
+      <h2><span class="n">4.</span> How we use data</h2>
+      <p>We use collected information only to:</p>
+      <ul>
+        <li>operate and maintain the Platform;</li>
+        <li>display usernames associated with Token creation and transfers;</li>
+        <li>facilitate shipping requests through Catcha, when you voluntarily provide them;</li>
+        <li>respond to support requests; and</li>
+        <li>comply with legal and regulatory obligations where required.</li>
+      </ul>
+      <p>We do not use your data for advertising, analytics profiling, or resale.</p>
+    </section>
+
+    <section class="clause" id="s5">
+      <h2><span class="n">5.</span> Legal bases (GDPR)</h2>
+      <p>Where GDPR applies, we process personal data on the following bases: <strong>performance of a contract</strong> (to provide the Platform and fulfil redemptions you request), <strong>legitimate interests</strong> (to keep the Platform secure and functioning), <strong>legal obligation</strong> (where the law requires it), and <strong>consent</strong> (where you provide optional information). You may withdraw consent at any time where processing is based on it.</p>
+    </section>
+
+    <section class="clause" id="s6">
+      <h2><span class="n">6.</span> Blockchain data</h2>
+      <p>Your activity on the Platform — including Tokens minted or transferred, and your principal ID — is recorded on the Internet Computer, which is public, permanent, and decentralised. All such on-chain data is publicly accessible by design. We cannot modify, delete, or obscure data stored on-chain.</p>
+    </section>
+
+    <section class="clause" id="s7">
+      <h2><span class="n">7.</span> Cookies &amp; local storage</h2>
+      <p>We use only what is necessary to make the Platform work — for example, essential session or local-storage entries that keep you signed in and remember basic interface preferences. We do <strong>not</strong> use advertising cookies, cross-site trackers, or third-party analytics profiling.</p>
+    </section>
+
+    <section class="clause" id="s8">
+      <h2><span class="n">8.</span> Data sharing</h2>
+      <p>We share limited data only when necessary:</p>
+      <ul>
+        <li>with <strong>Catcha</strong>, only to process shipments you explicitly request;</li>
+        <li>with service providers that host or maintain our website, under strict data-protection terms; and</li>
+        <li>with authorities, only where required by law.</li>
+      </ul>
+      <p>We do not share or sell user data for commercial purposes.</p>
+    </section>
+
+    <section class="clause" id="s9">
+      <h2><span class="n">9.</span> Data retention</h2>
+      <p>We keep off-chain personal data only for as long as needed for the purpose it was collected — for example, shipping data for the period required to fulfil and support your order and to meet legal obligations — after which it is deleted or anonymised. On-chain data is permanent and outside our control (see Section 6).</p>
+    </section>
+
+    <section class="clause" id="s10">
+      <h2><span class="n">10.</span> Data security</h2>
+      <p>We use industry-standard measures to protect stored information, including encryption, access controls, and secure hosting environments. No method of electronic transmission or storage is completely secure, but we take every reasonable step to protect your data.</p>
+    </section>
+
+    <section class="clause" id="s11">
+      <h2><span class="n">11.</span> Your rights</h2>
+      <p>Depending on your jurisdiction (EU, EEA, UK, or U.S.), you may have the right to access the information we hold about you, request correction or deletion (where applicable), object to or restrict certain processing, request data portability, and lodge a complaint with your local data-protection authority. California residents have the right to know, delete, and opt out of “sale” of personal information — and we do not sell personal information.</p>
+      <p>To exercise your rights, contact us at <a href="mailto:privacy@toko.app">privacy@toko.app</a>. Please note that on-chain data cannot be altered or deleted.</p>
+    </section>
+
+    <section class="clause" id="s12">
+      <h2><span class="n">12.</span> Children's privacy</h2>
+      <p>The Platform is not intended for individuals under <strong>18 years of age</strong>. We do not knowingly collect or process personal data from minors. If you believe a minor has provided us data, contact us and we will delete it.</p>
+    </section>
+
+    <section class="clause" id="s13">
+      <h2><span class="n">13.</span> International data transfers</h2>
+      <p>Data may be processed in or transferred to jurisdictions outside your own, including the United States and the European Economic Area. Where required, we ensure such transfers are protected by appropriate safeguards (for example, Standard Contractual Clauses).</p>
+    </section>
+
+    <section class="clause" id="s14">
+      <h2><span class="n">14.</span> Changes to this Policy</h2>
+      <p>We may update this Privacy Policy from time to time. The updated version will be posted on our website with a new “Last updated” date. Continued use of the Platform after changes take effect signifies your acceptance of the revised Policy.</p>
+    </section>
+
+    <section class="clause" id="s15">
+      <h2><span class="n">15.</span> Contact</h2>
+      <p>For any questions, requests, or privacy concerns, please contact:</p>
+      <p><strong>Toko Studios Ltd</strong><br>Email: <a href="mailto:privacy@toko.app">privacy@toko.app</a></p>
+      <p><a class="backtop" href="#">↑ Back to top</a></p>
+    </section>
+
+  </div>
+</div>
+</body>
+</html>
