@@ -156,7 +156,7 @@
     <p>The collection sub-page where a creator sets the <strong>default claim rule</strong> every new vendor drawing from this collection starts with (then edits per vendor). It is <strong>tier-indexed</strong> (a default per rarity tier), <strong>auto-saves</strong>, and is <strong>required-valid before Review — cost only; rules never gate</strong>. Being a <strong>template</strong>, it stays <strong>editable in every collection state, including Live</strong> (edits are non-retroactive — existing vendors keep their copies). In V1 a rule is two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (allowlist / hold / stake). <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong>. Source: <span class="mono">Design Documentation/collection-defaults-design.md</span>.</p>
     <div class="navlinks">The retired collection "Sale defaults" page is now the <strong>Sale preset</strong> in <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a>. Related: <a href="rarity-states-gallery-2026-06-17.html">Rarity</a> · <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a></div>
   </header>
-  <div class="grey-note" style="border-left:3px solid var(--stage-live); padding-left:var(--s-4)"><strong>V1 scope:</strong> collection defaults carry <strong>only cost + requirements</strong>. Claim <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">Design Documentation/vendor-presets.md</span>.</div>
+  <div class="grey-note" style="border-left:3px solid var(--stage-live); padding-left:var(--s-4)"><strong>V1 scope:</strong> collection defaults carry <strong>only cost + requirements</strong>. Claim <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">Design Documentation/collection-defaults-design.md</span>.</div>
 
   <!-- ============ PART A ============ -->
   <div class="part-divider"><div class="pd-k">Part A</div><h2 class="pd-h">The sale-defaults page</h2><div class="pd-d">The sub-page itself: a per-tier table of the claim rule (cost + requirements), and the rule editor. Auto-saves; stage persistence lives on the collection bar, not here.</div></div>
@@ -167,10 +167,9 @@
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
       <div class="section">
-        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2><div class="lede">The default claim cost &amp; requirements new vendors inherit. One default per rarity tier.</div></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
-        <div class="info-note"><span class="ic">ⓘ</span><div>Collection defaults seed every new vendor that draws from this collection — vendors then edit per vendor. In V1 a rule is <strong>cost + requirements</strong> only; <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong>.</div></div>
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2><div class="lede">The default claim cost &amp; requirements every new vendor drawing from this collection starts with — vendors then edit their own copy. One default per rarity tier.</div></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
         <div class="card">
-          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div></div>
           <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
           <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
           <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
@@ -182,7 +181,7 @@
 
   <!-- A2 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">A2</span><span class="t">Rule editor — collection default</span><span class="d">Opened from "Edit rule" on a tier. A required <strong>cost</strong> (Free, or an accepted currency) plus optional <strong>requirements</strong> (whitelist / holds a token / has a stake), combined with AND. <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong> and not shown here.</span></div>
+    <div class="frame-cap"><span class="num">A2</span><span class="t">Rule editor — collection default</span><span class="d">Opened from "Edit rule" on a tier. A required <strong>cost</strong> (Free, or an accepted currency) plus optional <strong>requirements</strong> (whitelist / holds tokens from a collection / has a stake), combined with AND. Whitelist is V1; the token-hold and stake types are <strong>front-end V2</strong> (backend schema in V1) — see A2b. <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong> and not shown here.</span></div>
     <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
       <header><h4>Claim rule · Founder</h4><span class="x">✕</span></header>
       <div class="mbody">
@@ -194,9 +193,44 @@
         <div>
           <div class="flabel">Requirements <span class="open-chip">optional · combined with AND · none = anyone can claim</span></div>
           <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
-          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Holds a token</div><div class="opt-d">Must hold a token from a chosen collection.</div></div></div>
-          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active SNS / NNS stake.</div></div></div>
-          <div class="hint">Requirements gate eligibility, combined with AND — optional, never a gate. Editable in every state (non-retroactive template). Restrictions &amp; rewards are V2.</div>
+          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least a set number of tokens from a chosen collection.</div></div></div>
+          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active NNS / SNS stake.</div></div></div>
+          <div class="hint">Requirements narrow who can claim, combined with AND — optional. Changes here never affect existing vendors.</div>
+        </div>
+      </div>
+      <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+    </div></div></div>
+  </section>
+
+  <!-- A2b -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A2b</span><span class="t">Rule editor — token-hold &amp; stake requirements configured</span><span class="d">The same editor with <strong>Holds tokens from a collection</strong> and <strong>Has a stake</strong> selected, each revealing its config inline. Token-hold = <span class="mono">collection_id</span> (picked by name, id shown) + <span class="mono">quantity</span> ≥ 1 — never "holds a token" in copy. Stake = <span class="mono">source</span> (NNS or an SNS governance canister) + optional <span class="mono">minimum_stake</span> (quantity of the staked token) + optional <span class="mono">minimum_dissolve_delay</span> (chosen over neuron age — forward commitment, same measure NNS/SNS use for voting eligibility). Both requirement types are <strong>front-end V2</strong>; the <strong>backend schema ships in V1</strong> (ruled 2026-07-03). Both targets must resolve before Save enables. Requirements AND together, so this rule reads: on the whitelist AND holds ≥ 3 AND has the stake.</span></div>
+    <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
+      <header><h4>Claim rule · Founder</h4><span class="x">✕</span></header>
+      <div class="mbody">
+        <div>
+          <div class="flabel">Claim cost <span class="open-chip">required — Free, or an accepted currency</span></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in one of Toko's accepted currencies.</div><div class="row" style="margin-top:.5rem;gap:.5rem"><input class="input" style="width:110px" value="4"><select class="input" style="width:130px"><option selected>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select></div></div></div>
+        </div>
+        <div>
+          <div class="flabel">Requirements <span class="open-chip">optional · combined with AND · none = anyone can claim</span></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least this many tokens from the chosen collection.</div>
+            <div class="row" style="margin-top:.5rem;gap:.5rem;flex-wrap:wrap">
+              <select class="input" style="min-width:230px;flex:1"><option selected>Little Leaf Guardians</option><option>Bitten — First Blood</option><option>Search collections…</option></select>
+              <input class="input" style="width:110px" value="3" aria-label="Quantity required">
+            </div>
+            <div class="hint" style="margin-top:.35rem">Quantity required ≥ 1 · collection <span class="mono">col_9f3k2…7a</span></div>
+          </div></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active NNS / SNS stake.</div>
+            <div class="row" style="margin-top:.5rem;gap:.5rem;flex-wrap:wrap">
+              <select class="input" style="min-width:230px;flex:1"><option selected>NNS</option><option>SNS — governance canister…</option></select>
+              <input class="input" style="width:130px" value="10" aria-label="Minimum stake" placeholder="Min. stake (ICP)">
+              <select class="input" style="width:170px" aria-label="Minimum dissolve delay"><option>Any dissolve delay</option><option selected>≥ 6 months</option><option>≥ 1 year</option><option>≥ 2 years</option><option>≥ 4 years</option><option>≥ 8 years</option></select>
+            </div>
+            <div class="hint" style="margin-top:.35rem">Minimum stake and dissolve delay are optional — leave both empty for "any active stake".</div>
+          </div></div>
+          <div class="hint">Requirements narrow who can claim, combined with AND — optional. Changes here never affect existing vendors.</div>
         </div>
       </div>
       <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
@@ -205,14 +239,14 @@
 
   <!-- A4 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">A4</span><span class="t">Collection defaults — not set yet</span><span class="d">A Draft collection before collection defaults are configured. Tiers exist (from the rarity system) but have no cost. The page is editable in any state, but the collection can't reach Review until every tier has a <strong>cost</strong> set (free is allowed).</span></div>
+    <div class="frame-cap"><span class="num">A4</span><span class="t">Collection defaults — not set yet</span><span class="d">A Draft collection before collection defaults are configured. Tiers exist (from the rarity system) but have no cost. The page is editable in any state; the only gate is at go-Live — every tier needs data (a cost; free is allowed) to pass review.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>New Collection</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
       <div class="section">
         <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
         <div class="card">
-          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--req">Required before Review</span></div>
-          <div class="empty-state"><strong>No collection defaults yet</strong><p>Set a cost for each tier (free is allowed); requirements are optional. A cost is required before Review.</p><button class="btn btn--primary">Set the first tier</button></div>
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--req">Required to go Live</span></div>
+          <div class="empty-state"><strong>No collection defaults yet</strong><p>Set a cost for each tier (free is allowed); requirements are optional. Every tier needs a cost before the collection can go Live.</p><button class="btn btn--primary">Set the first tier</button></div>
         </div>
       </div>
     </div>
@@ -224,18 +258,18 @@
   </div>
 
   <!-- ============ PART B ============ -->
-  <div class="part-divider"><div class="pd-k">Part B</div><h2 class="pd-h">Lifecycle</h2><div class="pd-d">Collection defaults are a <strong>template, not frozen policy</strong> (resolved 2026-07-02): required-valid before Review (cost only — rules never gate), then <strong>editable in every state, including Live</strong>. Edits are non-retroactive — existing vendors keep their imported copies; new vendors start from the current defaults.</div></div>
+  <div class="part-divider"><div class="pd-k">Part B</div><h2 class="pd-h">Lifecycle</h2><div class="pd-d">Collection defaults have <strong>no lifecycle of their own</strong> — the stage badge on the page is the collection's, shown for orientation. They are a <strong>template, editable in every state including Live</strong> (resolved 2026-07-02); edits are non-retroactive — existing vendors keep their imported copies. The single stage-coupled behavior: to pass review and go Live, every tier needs data (a cost — free counts). Requirements never gate.</div></div>
 
   <!-- B1 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">B1</span><span class="t">Draft — not yet valid (change required)</span><span class="d">Being set up. Founder has <strong>no cost set</strong>, so the collection can't be submitted to Review — every tier needs a cost (free is allowed). Everything is editable; each section carries a "Locks on Live" pill so the creator knows it'll freeze later.</span></div>
+    <div class="frame-cap"><span class="num">B1</span><span class="t">Draft — not yet valid for go-Live</span><span class="d">Being set up. Founder has <strong>no cost set</strong>, so the collection can't pass review to go Live — every tier needs a cost (free is allowed). Everything is editable and stays editable; nothing on this page ever locks.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
       <div class="section">
         <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
-        <div class="info-note err-note"><span class="ic">⚠</span><div><strong>Founder has no claim cost set</strong> — every tier needs a cost (free is allowed) before this collection can move to Review.</div></div>
+        <div class="info-note err-note"><span class="ic">⚠</span><div><strong>Founder has no claim cost set</strong> — every tier needs a cost (free is allowed) before this collection can go Live.</div></div>
         <div class="card">
-          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
           <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
           <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
           <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
@@ -247,14 +281,14 @@
 
   <!-- B2 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">B2</span><span class="t">Review — valid &amp; still editable</span><span class="d">Every tier has a cost set, so the collection reached Review. Collection defaults stay editable here — you can still adjust cost &amp; requirements — but each section shows it will lock at Live.</span></div>
+    <div class="frame-cap"><span class="num">B2</span><span class="t">Review — valid &amp; still editable</span><span class="d">Every tier has a cost set, so the collection-defaults check for go-Live passes. Collection defaults stay editable here — and will stay editable at Live too.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
       <div class="section">
         <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></div>
-        <div class="info-note ok-note"><span class="ic">✓</span><div>All tiers have a cost. Collection defaults stay editable in Review; they freeze when the collection goes Live.</div></div>
+        <div class="info-note ok-note"><span class="ic">✓</span><div>All tiers have a cost — this collection can pass review and go Live. Defaults stay editable at every stage; edits never change existing vendors.</div></div>
         <div class="card">
-          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
           <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
           <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
           <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
@@ -289,16 +323,16 @@
     <table class="reftable">
       <thead><tr><th>Stage</th><th>Editable?</th><th>Gate</th></tr></thead>
       <tbody>
-        <tr><td><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></td><td>Yes — fully editable</td><td>Tiers may be unset (fall back to standing default)</td></tr>
-        <tr><td><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></td><td>Yes — still editable</td><td><strong>Required valid</strong>: every tier has a cost set (free is allowed); requirements optional</td></tr>
-        <tr><td><span class="stage-badge sbg--live"><span class="dot"></span>Live</span></td><td>No — read-only</td><td><strong>Frozen</strong>: the collection defaults lock; new vendors still start from them</td></tr>
+        <tr><td><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></td><td>Yes — fully editable</td><td>Tiers may be unset</td></tr>
+        <tr><td><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></td><td>Yes — still editable</td><td><strong>Go-Live check</strong>: every tier has data — a cost set (free is allowed); requirements optional</td></tr>
+        <tr><td><span class="stage-badge sbg--live"><span class="dot"></span>Live</span></td><td>Yes — still editable</td><td>None — edits are non-retroactive; new vendors start from the current defaults, existing vendors keep their imported copies</td></tr>
       </tbody>
     </table>
   </section>
 
   <div class="frame">
     <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part B note (not UI)</span></div>
-    <p class="grey-note">Collection defaults follow the same lifecycle as the collection's other core policy (Attributes, Supply, Rarity, Guards, Collection defaults): editable in Draft and Review, <strong>required-valid before Review</strong>, <strong>frozen at Live</strong>. The only go-Live gate is a <strong>cost set on every tier</strong> (free is allowed); requirements are optional. Go-Live / Review validation is surfaced on the collection's status checklist (see <span class="mono">collection-states-gallery</span>); this sub-page shows field-level state inline only.</p>
+    <p class="grey-note">Collection defaults have <strong>no lifecycle of their own</strong> — the stage badge on this page is the collection's, shown for orientation only. Unlike frozen core policy, defaults are a template: <strong>editable in every state, including Live</strong>, and never retroactive. The single gate is at <strong>go-Live</strong>: to pass review, every tier needs data — a <strong>cost</strong> (free is allowed); requirements are optional and never gate. The check is surfaced on the collection's status checklist (see <span class="mono">collection-states-gallery</span>); this sub-page shows field-level state inline only.</p>
   </div>
 
   <!-- ============ PART C ============ -->
@@ -318,7 +352,7 @@
     <div class="frame-cap"><span class="num">C1</span><span class="t">Uniform — populated</span><span class="d">Uniform rarity has no tiers — one set of collection defaults for the whole collection. A single rule.</span></div>
     <div class="screen"><div class="section">
       <div class="card">
-        <div class="card__head"><div class="ttlwrap"><h3>Collection default</h3><span class="sub">uniform rarity</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+        <div class="card__head"><div class="ttlwrap"><h3>Collection default</h3><span class="sub">uniform rarity</span></div></div>
         <div class="colhead"><span class="c-tier">Scope</span><span class="c-split">Claim rule</span><span></span></div>
         <div class="tier-row"><span class="tr-tier">All tokens</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
       </div>
@@ -330,7 +364,7 @@
     <div class="frame-cap"><span class="num">C2</span><span class="t">Tiered — populated</span><span class="d">Tiered rarity uses the collection's own named tiers. Each tier needs a cost; requirements optional. Cost can escalate per tier.</span></div>
     <div class="screen"><div class="section">
       <div class="card">
-        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered · 3 tiers</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered · 3 tiers</span></div></div>
         <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
         <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
         <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
@@ -344,7 +378,7 @@
     <div class="frame-cap"><span class="num">C3</span><span class="t">Weighted — populated</span><span class="d">Weighted rarity uses the fixed tier set (Common → Legendary). Same model — a cost per tier.</span></div>
     <div class="screen"><div class="section">
       <div class="card">
-        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">weighted · 5 fixed tiers</span></div><span class="lockpill lockpill--lock">◷ Locks on Live</span></div>
+        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">weighted · 5 fixed tiers</span></div></div>
         <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
         <div class="tier-row"><span class="tr-tier">Common</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
         <div class="tier-row"><span class="tr-tier">Uncommon</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
@@ -357,7 +391,7 @@
 
   <div class="frame">
     <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part C note (not UI)</span></div>
-    <p class="grey-note">In V1, a tier carries two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (on a whitelist / holds a token / has a stake — combined with AND; none = anyone can claim). The only go-Live gate is a <strong>cost set on every tier</strong>; requirements are optional. <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">vendor-presets.md</span>.</p>
+    <p class="grey-note">A tier carries two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (on a whitelist / holds tokens from a collection / has a stake — combined with AND; none = anyone can claim). The only go-Live gate is a <strong>cost set on every tier</strong>; requirements are optional. <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">collection-defaults-design.md</span>.</p>
   </div>
 
 </div>
