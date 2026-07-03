@@ -1366,7 +1366,7 @@
 
     <!-- 16 — Layer modals -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">16</span><span class="t">Layer modals · new &amp; edit</span><span class="d">Add a layer (name, inclusion policy, stack order) and edit an existing one — option titles in Mona Sans like the Preflight gen-modes, modal titles in Anton.</span></div>
+      <div class="frame-cap"><span class="num">16</span><span class="t">Layer modals · new &amp; edit</span><span class="d">Add a layer and edit an existing one (updated 2026-07-02 after QA, reconciled with the app). <strong>Visibility</strong> follows the app's pattern: <em>Default</em> (fully opaque) or <em>Custom opacity</em>, which reveals the opacity control — it was in the design model but missing from the modal. <strong>Inclusion</strong> is a <em>selection</em>, never typed: Always, or Optional with a preset probability plus a Custom % for exact values (the app's type-a-number field should become this select). <strong>Order is not a modal control</strong> — the first-layer note is plain hint text (not a banner: notification boxes are for real user alerts only, per the style guide); reordering is drag-in-build-view only.</span></div>
       <div class="cols-2">
         <div class="stage" style="justify-content:center">
           <div class="modal-card">
@@ -1380,12 +1380,14 @@
               <div class="m-field">
                 <span class="eyebrow">Inclusion policy</span>
                 <label class="choice sel"><span class="radio"></span><span><span class="ttl">Always include</span><span class="desc">Every output picks one part from this layer.</span></span></label>
-                <label class="choice"><span class="radio"></span><span><span class="ttl">Optional with probability</span><span class="desc">Include this layer for a portion of outputs. Uses the same preset scale as part weights.<select class="input"><option>Very infrequent · 10%</option><option>Infrequent · 30%</option><option selected>Balanced · 50%</option><option>Frequent · 70%</option><option>Very frequent · 90%</option></select></span></span></label>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Optional with probability</span><span class="desc">Include this layer for a portion of outputs — pick a preset, or Custom for an exact value.<select class="input"><option>Very infrequent · 10%</option><option>Infrequent · 30%</option><option selected>Balanced · 50%</option><option>Frequent · 70%</option><option>Very frequent · 90%</option><option>Custom %…</option></select></span></span></label>
               </div>
               <div class="m-field">
-                <span class="eyebrow">Order</span>
-                <label class="choice is-disabled"><span class="radio"></span><span><span class="ttl">First layer in the stack</span><span class="desc">There are no other layers yet — order will apply once you add a second layer. Drag the layer rows in the build view to reorder them anytime.</span></span></label>
+                <span class="eyebrow">Visibility</span>
+                <label class="choice sel"><span class="radio"></span><span><span class="ttl">Default</span><span class="desc">Layer parts render fully opaque on top of the layers below.</span></span></label>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Custom opacity</span><span class="desc">Render this layer semi-transparent so the layers underneath show through. Selecting this reveals an opacity slider.</span></span></label>
               </div>
+              <p class="hint" style="margin-top:var(--s-4)">This will be the first layer in the stack — order applies once you add a second layer. Drag the layer rows in the build view to reorder anytime.</p>
             </div>
             <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add layer</button></div>
           </div>
@@ -1401,7 +1403,12 @@
               <div class="m-field">
                 <span class="eyebrow">Inclusion policy</span>
                 <label class="choice sel"><span class="radio"></span><span><span class="ttl">Always include</span><span class="desc">Every output picks one part from this layer.</span></span></label>
-                <label class="choice"><span class="radio"></span><span><span class="ttl">Optional with probability</span><span class="desc">Include this layer for a portion of outputs. Uses the same preset scale as part weights.<select class="input"><option>Very infrequent · 10%</option><option>Infrequent · 30%</option><option>Balanced · 50%</option><option selected>Frequent · 70%</option><option>Very frequent · 90%</option></select></span></span></label>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Optional with probability</span><span class="desc">Include this layer for a portion of outputs — pick a preset, or Custom for an exact value.<select class="input"><option>Very infrequent · 10%</option><option>Infrequent · 30%</option><option>Balanced · 50%</option><option selected>Frequent · 70%</option><option>Very frequent · 90%</option><option>Custom %…</option></select></span></span></label>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Visibility</span>
+                <label class="choice"><span class="radio"></span><span><span class="ttl">Default</span><span class="desc">Layer parts render fully opaque on top of the layers below.</span></span></label>
+                <label class="choice sel"><span class="radio"></span><span><span class="ttl">Custom opacity</span><span class="desc">Render this layer semi-transparent so the layers underneath show through.<span style="display:flex;align-items:center;gap:var(--s-3);margin-top:.5rem"><input type="range" min="1" max="99" value="65" style="flex:1" aria-label="Layer opacity percent"><span style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm);font-variant-numeric:tabular-nums;min-width:3.2em;text-align:right">65%</span></span></span></span></label>
               </div>
               <p class="hint" style="margin-top:var(--s-5)">To reorder this layer in the stack, drag its row by the grip handle in the build view.</p>
             </div>
