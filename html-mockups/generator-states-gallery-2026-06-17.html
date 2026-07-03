@@ -1397,7 +1397,7 @@
 
     <!-- 17 — Add part modal (Single / Batch upload) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">17</span><span class="t">Add part · single &amp; batch</span><span class="d">The add-part dialog for a layer — single part with weight preset + cap, and the batch-upload tab. Both surface the transparency warning when opaque files (JPEGs) are selected. Pressing <strong>Add part(s)</strong> runs the project cycles estimate before the files are stored — see 17b–17d.</span></div>
+      <div class="frame-cap"><span class="num">17</span><span class="t">Add part · single &amp; batch</span><span class="d">The add-part dialog for a layer — single part with weight preset + cap + <strong>anti-aliasing on/off</strong> (added 2026-07-02: per the design's part-level anti-aliasing preference — Off preserves crisp pixel-art edges), and the batch-upload tab with a batch-wide anti-aliasing default. Both surface the transparency warning when opaque files (JPEGs) are selected. Pressing <strong>Add part(s)</strong> runs the project cycles estimate before the files are stored — see 17b–17d.</span></div>
       <div class="cols-2">
         <div class="stage" style="justify-content:center">
           <div class="modal-card">
@@ -1424,6 +1424,11 @@
                 <div class="m-grid-2"><select class="input"><option>None</option><option>Percentage</option><option>Fixed count</option></select><input class="input" placeholder="e.g. 15"></div>
                 <p class="hint">Limits how often this part appears in a batch.</p>
               </div>
+              <div class="m-field">
+                <span class="eyebrow">Anti-aliasing</span>
+                <div class="segmented"><button aria-pressed="true">On · smooth edges</button><button>Off · crisp pixels</button></div>
+                <p class="hint">Off keeps hard pixel edges when this part is scaled or composited — essential for pixel art. On smooths edges for painted or photographic parts.</p>
+              </div>
             </div>
             <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add part</button></div>
           </div>
@@ -1442,6 +1447,11 @@
               <div class="m-field">
                 <span class="eyebrow">Default weight for uploaded parts</span>
                 <div class="segmented" style="flex-wrap:wrap"><button>Very infrequent · 1</button><button>Infrequent · 2</button><button aria-pressed="true">Balanced · 3</button><button>Frequent · 5</button><button>Very frequent · 8</button></div>
+              </div>
+              <div class="m-field">
+                <span class="eyebrow">Anti-aliasing · applies to the whole batch</span>
+                <div class="segmented"><button aria-pressed="true">On · smooth edges</button><button>Off · crisp pixels</button></div>
+                <p class="hint">Off keeps hard pixel edges (pixel art). Set per part later if a few differ.</p>
               </div>
               <p class="hint">10 transparent · <span style="color:var(--stage-draft);font-weight:700">2 opaque</span>. You can still add all 12 — each opaque part keeps the warning badge in the grid.</p>
             </div>
