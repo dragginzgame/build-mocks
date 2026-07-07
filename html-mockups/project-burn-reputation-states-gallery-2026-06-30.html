@@ -51,9 +51,13 @@
   .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
   .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
 
-  .ptabs { display:flex; gap:var(--s-5); border-bottom:1px solid var(--border-soft); }
-  .ptabs button { border:0; background:0; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); color:var(--text-secondary); padding:.5rem 0; border-bottom:3px solid transparent; }
-  .ptabs button.active { color:var(--text-primary); border-color:var(--text-primary); }
+  /* tabs — style-guide "Tabs (horizontal)" component (.h-tabs): white pill panel, active = dark fill */
+  .h-tabs { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:5px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:thin; }
+  .h-tabs button { border:0; background:transparent; padding:.625rem 1rem; border-radius:var(--r-2); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; display:inline-flex; align-items:center; gap:.5rem; transition:background 120ms ease, color 120ms ease; }
+  .h-tabs button:hover { color:var(--text-primary); }
+  .h-tabs button.active { background:var(--text-primary); color:var(--text-inverse); }
+  .h-tabs button[disabled] { opacity:.4; cursor:not-allowed; }
+  .soon { display:inline-flex; align-items:center; padding:2px 7px; border-radius:var(--r-pill); background:var(--surface-canvas-deep); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
 
   .statgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-4); }
   @media (max-width:760px){ .statgrid { grid-template-columns:repeat(2,1fr); } }
@@ -123,7 +127,7 @@
   <header>
     <span class="eyebrow">Project · Studio</span>
     <h1>Project Burn &amp; Reputation — states gallery</h1>
-    <p>The project overview's <strong>Burn / Reputation</strong> tab. <strong>Toko Reputation</strong> is the cumulative <span class="toko">$TOKO</span> the project has burned — it gates Project Mastery unlocks. Most is <strong>earned</strong> automatically (every claim routes a min-1% share to a Toko account that converts it to $TOKO and burns it); the rest is <strong>bought</strong> by burning $TOKO from a wallet, tracked separately. Reputation is project-level (shared by the team). Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
+    <p>The project overview's <strong>Burn / Reputation</strong> tab — <strong>a coming-soon feature</strong>: in the current nav this tab renders disabled with a "Soon" chip; this gallery shows the future shipped state (tab nav = the style guide's Tabs component, no Media tab — media lives on Details). <strong>Toko Reputation</strong> is the cumulative <span class="toko">$TOKO</span> the project has burned — it gates Project Mastery unlocks. Most is <strong>earned</strong> automatically (every claim routes a min-1% share to a Toko account that converts it to $TOKO and burns it); the rest is <strong>bought</strong> by burning $TOKO from a wallet, tracked separately. Reputation is project-level (shared by the team). Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
     <div class="navlinks">Source: <span class="mono">Design Documentation/collection-archetype-implementation-plan.md</span>, <span class="mono">project-studio-design.md</span>. Related: <a href="project-mastery-states-gallery-2026-06-30.html">Project Mastery</a> · <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a>.</div>
   </header>
 
@@ -134,7 +138,7 @@
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
       <div class="section">
         <div class="section-head row"><div><div class="eyebrow">Project · Vault One</div><h2>Overview.</h2><p class="lede">Your project at a glance — and the reputation it has built.</p></div><button class="btn btn--toko btn--sm">◆ Burn $TOKO</button></div>
-        <div class="ptabs"><button>Details</button><button>Media</button><button class="active">Burn &amp; Reputation</button><button>Project Mastery</button><button>Billing</button></div>
+        <nav class="h-tabs"><button>Details</button><button>Billing</button><button class="active">Burn &amp; Reputation</button><button disabled>Project Mastery <span class="soon">Soon</span></button></nav>
         <div class="statgrid">
           <div class="statcard feat"><div class="k">Toko Reputation</div><div class="v"><span class="toko">◆</span> 12,500</div><div class="s">total $TOKO burned by this project</div></div>
           <div class="statcard"><div class="k">Earned from claims</div><div class="v">10,100</div><div class="s">81% · the ≥1% claim burn</div></div>
@@ -195,7 +199,7 @@
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: New Project</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
       <div class="section">
-        <div class="ptabs"><button>Details</button><button>Media</button><button class="active">Burn &amp; Reputation</button><button>Project Mastery</button><button>Billing</button></div>
+        <nav class="h-tabs"><button>Details</button><button>Billing</button><button class="active">Burn &amp; Reputation</button><button disabled>Project Mastery <span class="soon">Soon</span></button></nav>
         <div class="empty"><img src="../style-guide/bot-images/recharge/IMG_4945.png" alt="" onerror="this.style.display='none'"><h3>No reputation yet</h3><p>This project hasn't burned any $TOKO. Launch a vendor — every claim routes a min-1% share to Toko that's converted to $TOKO and burned, building reputation automatically. Or burn $TOKO from a wallet to start now.</p><div style="display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:center"><button class="btn">Create a vendor</button><button class="btn btn--toko">◆ Burn $TOKO</button></div></div>
       </div>
     </div>

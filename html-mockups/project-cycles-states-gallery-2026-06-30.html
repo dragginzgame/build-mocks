@@ -49,9 +49,13 @@
   .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
   .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
   .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
-  .ptabs { display:flex; gap:var(--s-5); border-bottom:1px solid var(--border-soft); flex-wrap:wrap; }
-  .ptabs button { border:0; background:0; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); color:var(--text-secondary); padding:.5rem 0; border-bottom:3px solid transparent; }
-  .ptabs button.active { color:var(--text-primary); border-color:var(--text-primary); }
+  /* tabs — style-guide "Tabs (horizontal)" component (.h-tabs): white pill panel, active = dark fill */
+  .h-tabs { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:5px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:thin; }
+  .h-tabs button { border:0; background:transparent; padding:.625rem 1rem; border-radius:var(--r-2); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; display:inline-flex; align-items:center; gap:.5rem; transition:background 120ms ease, color 120ms ease; }
+  .h-tabs button:hover { color:var(--text-primary); }
+  .h-tabs button.active { background:var(--text-primary); color:var(--text-inverse); }
+  .h-tabs button[disabled] { opacity:.4; cursor:not-allowed; }
+  .soon { display:inline-flex; align-items:center; padding:2px 7px; border-radius:var(--r-pill); background:var(--surface-canvas-deep); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
 
   .statgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-4); }
   @media (max-width:760px){ .statgrid { grid-template-columns:repeat(2,1fr); } }
@@ -79,6 +83,8 @@
   .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
   .note--icp { background:rgba(37,99,235,.08); color:#1e40af; } .note--icp .ic { color:var(--icp); }
   .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note--err { background:rgba(239,68,68,.08); color:#7f1d1d; } .note--err .ic { color:var(--notify-error); }
   .note strong { color:inherit; }
 
   .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
@@ -94,6 +100,43 @@
   .num-input .u { color:var(--text-secondary); font-weight:700; }
   .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
   .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; }
+
+  /* form bits + cycles-guard kit (moved with the modals from the overview gallery) */
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .m-field { display:flex; flex-direction:column; }
+  .kvlist { border-top:1px solid var(--border-soft); margin-top:var(--s-4); }
+  .kvlist .r { display:flex; justify-content:space-between; gap:var(--s-3); padding:.625rem 0; font-size:var(--text-base); border-bottom:1px solid var(--border-soft); }
+  .kvlist .r .v { font-family:var(--font-emphasis); font-weight:700; }
+  .info-note { background:rgba(99,102,241,.08); border-radius:var(--r-3); padding:var(--s-4); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
 
   .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
   .gallery > header .eyebrow { color:var(--text-secondary); }
@@ -113,7 +156,7 @@
   <header>
     <span class="eyebrow">Project · Studio</span>
     <h1>Project Billing — cycles management · states gallery</h1>
-    <p>The project overview's <strong>Billing</strong> tab (renamed 2026-07-02 from "Cycles" — billing owns cycles management, plus the storage/Cashier billing shown in the project gallery). In V1 cycles are <strong>self-funded from the project's own treasury</strong>: all claim payments flow into the treasury, a <strong>locked percentage</strong> is reserved for cycles, and on every inflow — plus an <strong>hourly check</strong> — the reserve is topped up by converting funds to ICP via an <strong>AMM</strong> and buying cycles. Only the <strong>excess</strong> above the reserve can be withdrawn. <strong>Anyone logged in</strong> can top a project up via its public link. Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
+    <p>The project overview's <strong>Billing</strong> tab (renamed 2026-07-02 from "Cycles" — billing owns cycles management, plus the storage/Cashier billing that used to sit in an accordion on the project overview; that accordion is retired and its rows now live here). The tab nav uses the style guide's Tabs component; Burn &amp; Reputation and Project Mastery are disabled "Soon". In V1 cycles are <strong>self-funded from the project's own treasury</strong>: all claim payments flow into the treasury, a <strong>locked percentage</strong> is reserved for cycles, and on every inflow — plus an <strong>hourly check</strong> — the reserve is topped up by converting funds to ICP via an <strong>AMM</strong> and buying cycles. Only the <strong>excess</strong> above the reserve can be withdrawn. <strong>Anyone logged in</strong> can fund a project: the public overview's "Fund this project" card takes ICP-only donations of any amount (modal, confirmation, error, and logged-out states below). This gallery also hosts all cycle-management modals (moved from the overview gallery). Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
     <div class="navlinks">Source: <span class="mono">Design Documentation/project-treasury-and-cycles-design.md</span>. Related: <a href="project-burn-reputation-states-gallery-2026-06-30.html">Burn &amp; Reputation</a> · <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a>.</div>
   </header>
 
@@ -123,8 +166,8 @@
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
       <div class="section">
-        <div class="section-head row"><div><div class="eyebrow">Project · Vault One</div><h2>Overview.</h2><p class="lede">Cycles are self-funded from the project treasury — automatically topped up so drops never stall.</p></div><button class="btn btn--icp btn--sm">Top up cycles</button></div>
-        <div class="ptabs"><button>Details</button><button>Media</button><button>Burn &amp; Reputation</button><button>Project Mastery</button><button class="active">Billing</button></div>
+        <div class="section-head row"><div><div class="eyebrow">Project · Vault One</div><h2>Overview.</h2><p class="lede">Cycles are self-funded from the project treasury — automatically topped up so drops never stall.</p></div></div>
+        <nav class="h-tabs"><button>Details</button><button class="active">Billing</button><button disabled>Burn &amp; Reputation <span class="soon">Soon</span></button><button disabled>Project Mastery <span class="soon">Soon</span></button></nav>
         <div class="statgrid">
           <div class="statcard"><div class="k">Monthly cycle cost</div><div class="v">~2.6 T</div><div class="s">≈ 3.4 ICP / month</div></div>
           <div class="statcard"><div class="k">Cycle balance</div><div class="v">8.4 T</div><div class="s"><span class="status status--ok"><span class="dot"></span>~3.2 mo runway</span></div></div>
@@ -150,39 +193,189 @@
             <div class="rule"><span>Next hourly check</span><span class="v">in 42 min</span></div>
             <div class="rule"><span>Withdrawable excess</span><span class="v">≈ 340 ICP</span></div>
             <div style="display:flex;gap:var(--s-2);margin-top:var(--s-4)"><button class="btn btn--icp btn--sm">Top up cycles</button><button class="btn btn--ghost btn--sm">Copy public link</button><button class="btn btn--ghost btn--sm">Withdraw excess</button></div>
-            <div class="note note--icp" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div><strong>Anyone logged in can top up</strong> via the public link — not just admins. Funds convert to ICP through an AMM and buy cycles. Only the excess above the locked reserve can be withdrawn.</div></div>
+            <div class="note note--icp" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div><strong>Anyone logged in can donate</strong> via "Fund this project" on the public overview — not just admins. Donations are ICP only, any amount, and buy cycles directly. Only the excess above the locked reserve can be withdrawn.</div></div>
           </div>
         </div>
+        <div class="panel">
+          <span class="eyebrow">Storage &amp; canister billing</span>
+          <div class="rule"><span>Project canister</span><span class="v">9.452 T</span></div>
+          <div class="rule"><span>Ledger canister cycles <span class="tiny">(read-only)</span></span><span class="v">4.476 T</span></div>
+          <div class="rule"><span>Remote asset storage balance <span class="tiny">(read-only)</span></span><span class="v">0.000 B</span></div>
+          <div class="rule"><span>Idle daily usage</span><span class="v">0.000 / day</span></div>
+          <p class="tiny" style="margin:var(--s-4) 0 0">Remote assets use blob storage, billed through this project canister's Cashier account — auto-funded from project cycles when the balance runs low. (Moved here from the old Overview billing accordion.)</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 02 · public top-up (anyone logged in) -->
+  <!-- 02 · fund this project (public donation, ICP only) -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Public top-up · anyone logged in</span><span class="d">The public-facing cycle top-up, reachable by link. Any logged-in user (not just admins) can contribute in an accepted currency; the amount is converted via an AMM to ICP and used to buy cycles. Login is required only so the payment can be drawn from the contributor's wallet.</span></div>
+    <div class="frame-cap"><span class="num">02</span><span class="t">Fund this project · donate ICP</span><span class="d">Opened from the "Fund this project" card on the project's public overview (or the copyable public link). Donations are <strong>ICP only</strong> and can be <strong>any amount</strong> — the ICP buys cycles for the project directly. Any logged-in user can donate; login is required only so the payment can be drawn from the donor's wallet.</span></div>
     <div class="stage">
       <div class="modal-card">
-        <header><h4>Top up cycles — Vault One</h4><span class="x">✕</span></header>
+        <header><h4>Fund this project — Vault One</h4><span class="x">✕</span></header>
         <div class="mbody">
-          <div class="note note--icp" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span><div>You're topping up a project's cycles — <strong>anyone can help</strong>, you don't need to be an admin. You're logged in as <span class="mono">k1m9…7uvw</span>, so the payment comes from your wallet.</div></div>
-          <div><label class="flabel">Amount</label><div class="num-input"><input value="10"><span class="u">ICP ▾</span></div></div>
-          <div><div class="paykv"><span>Converted via AMM</span><span class="v">10 ICP → cycles</span></div><div class="paykv"><span>Est. cycles bought</span><span class="v">≈ 7.6 T</span></div><div class="paykv"><span>Adds to runway</span><span class="v">≈ +2.9 months</span></div></div>
-          <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div>Contributions go straight to cycles for this project. They are not withdrawable and do not grant any admin rights.</div></div>
+          <div class="note note--icp" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span><div>Donate ICP to fund cycles for your favourite project — <strong>anyone can help</strong>, you don't need to be an admin. You're logged in as <span class="mono">k1m9…7uvw</span>, so the payment comes from your wallet.</div></div>
+          <div><label class="flabel">Amount · any amount, ICP only</label><div class="num-input"><input value="10" inputmode="decimal"><span class="u">ICP</span></div></div>
+          <div><div class="paykv"><span>Wallet balance</span><span class="v">14.2 ICP</span></div><div class="paykv"><span>Est. cycles bought</span><span class="v">≈ 7.6 T</span></div><div class="paykv"><span>Adds to runway</span><span class="v">≈ +2.9 months</span></div></div>
+          <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div>Donations go straight to cycles for this project. They are not withdrawable and do not grant any admin rights.</div></div>
         </div>
-        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Top up</button></div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Donate</button></div>
       </div>
     </div>
   </section>
 
-  <!-- 03 · reserve low — auto-restoring from treasury -->
+  <!-- 03 · fund this project — not logged in -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Reserve low — auto-restoring</span><span class="d">The cycle balance has dipped below the reserve target. No admin action is needed: the next inflow or the hourly check converts treasury funds to cycles. While the reserve is short, withdrawable excess is 0 — the project can't withdraw funds it needs to stay fuelled.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Fund this project · not logged in</span><span class="d">A visitor without a session hits "Fund this project". Donating needs a Toko account (the payment is drawn from the donor's wallet), so the modal explains that and the primary action redirects to the log-in modal. Nothing else is asked for at this step.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Fund this project — Vault One</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>You're not logged in.</strong> You need to create a Toko account (or log in) in order to donate to any projects — donations are paid in ICP from your Toko wallet.</div></div>
+          <p class="tiny" style="margin:0">Logging in brings you straight back here with your amount kept.</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Log in / create account</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · fund this project — donation confirmed -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Fund this project · confirmation</span><span class="d">The donation went through: the ICP was drawn from the donor's wallet and converted to cycles for the project. The summary confirms what was bought and what it did to the runway.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Donation received — thank you</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--ok" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div><strong>10 ICP donated to Vault One.</strong> Your donation has been converted to cycles and added to the project.</div></div>
+          <div><div class="paykv"><span>Donated</span><span class="v">10 ICP</span></div><div class="paykv"><span>Cycles bought</span><span class="v">7.58 T</span></div><div class="paykv"><span>Runway added</span><span class="v">≈ +2.9 months</span></div><div class="paykv"><span>Transaction</span><span class="v mono" style="font-size:var(--text-xs)">block 8,214,377</span></div></div>
+        </div>
+        <div class="footer-row"><button class="btn">Done</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · fund this project — donation failed -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Fund this project · error</span><span class="d">The transfer failed (insufficient wallet balance, ledger rejection, or a network fault mid-call). Nothing was charged; the amount stays in the field so the donor can adjust and retry.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Fund this project — Vault One</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--err" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><strong>Donation failed — nothing was charged.</strong> Your wallet balance (4.2 ICP) doesn't cover this donation. Lower the amount, or top up your wallet and try again.</div></div>
+          <div><label class="flabel">Amount · any amount, ICP only</label><div class="num-input"><input value="10" inputmode="decimal"><span class="u">ICP</span></div></div>
+          <div class="paykv"><span>Wallet balance</span><span class="v" style="color:var(--notify-error)">4.2 ICP</span></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Try again</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · reserve low — auto-restoring from treasury -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Reserve low — auto-restoring</span><span class="d">The cycle balance has dipped below the reserve target. No admin action is needed: the next inflow or the hourly check converts treasury funds to cycles. While the reserve is short, withdrawable excess is 0 — the project can't withdraw funds it needs to stay fuelled.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
       <div class="section">
-        <div class="ptabs"><button>Details</button><button>Media</button><button>Burn &amp; Reputation</button><button>Project Mastery</button><button class="active">Billing</button></div>
+        <nav class="h-tabs"><button>Details</button><button class="active">Billing</button><button disabled>Burn &amp; Reputation <span class="soon">Soon</span></button><button disabled>Project Mastery <span class="soon">Soon</span></button></nav>
         <div class="statgrid">
           <div class="statcard warn"><div class="k">Cycle balance</div><div class="v">1.9 T</div><div class="s"><span class="status status--warn"><span class="dot"></span>below reserve</span></div></div>
           <div class="statcard"><div class="k">Monthly cycle cost</div><div class="v">~2.6 T</div><div class="s">≈ 3.4 ICP / month</div></div>
           <div class="statcard"><div class="k">Treasury</div><div class="v">≈ 48</div><div class="s">ICP-eq · covers the top-up</div></div>
-          <di
+          <div class="statcard warn"><div class="k">Withdrawable excess</div><div class="v">0</div><div class="s">locked until reserve restored</div></div>
+        </div>
+        <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div><strong>Auto-restoring from the treasury.</strong> The next claim inflow or the hourly check (in ~18 min) will convert treasury funds via the AMM and buy cycles to refill the reserve. Withdrawals are paused until the reserve is whole. Anyone can also donate now via "Fund this project" on the public overview.</div></div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap"><button class="btn btn--icp">Top up now</button><button class="btn btn--ghost">Copy public link</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 TOP UP PROJECT CYCLES · modal (moved from the overview gallery) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Top up project cycles · modal</span><span class="d">Opened from the Billing tab — fund the project canister; Toko moves cycles into blob storage when it runs low.</span></div>
+    <div class="stage">
+      <div class="modal-card" style="max-width:480px">
+        <header><h4>Top up project cycles</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <p style="margin:0;font-size:var(--text-sm);line-height:1.6">Top up the project canister only. When blob storage is low, Toko automatically moves project cycles into the project blob storage Cashier account and keeps a project reserve.</p>
+          <div class="kvlist">
+            <div class="r"><span>Project cycles</span><span class="v">2.040 T</span></div>
+            <div class="r"><span>Project blob storage balance</span><span class="v">0.000</span></div>
+            <div class="r"><span>Wallet ICP</span><span class="v">0.5710 ICP</span></div>
+          </div>
+          <div class="info-note" style="margin-top:var(--s-5)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div>Project blob storage is below 500.000 B. Top up project cycles; Toko will automatically move project cycles into blob storage up to 1.000 T while preserving the project reserve.</div></div>
+          <div class="m-field" style="margin-top:var(--s-5)"><label class="flabel">Amount (ICP)</label><input class="input" value="0.3"></div>
+          <p class="tiny" style="margin-top:.5rem">0.3000 ICP will be sent to the project canister.</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up project</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 Upload banner/thumbnail · cycle check (balance OK) — moved from the overview gallery -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Identity image · cycle check (balance OK)</span><span class="d">Saving a project banner or thumbnail stores it in blob storage, funded from project cycles. Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload. With headroom, it saves normally.</span></div>
+    <div class="stage">
+      <div class="modal-card" style="max-width:520px">
+        <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <span class="cyc-staged"><span class="dot"></span>project-header.png staged · 2.4 MB · uploaded &amp; held</span>
+          <div class="cyc-est" style="margin-top:var(--s-4)">
+            <div class="e"><div class="k">Estimated cost</div><div class="v">~0.02 T <small>cycles</small></div></div>
+            <div class="e"><div class="k">Project balance</div><div class="v">2.040 T</div></div>
+            <div class="e ok"><div class="k">After upload</div><div class="v">~2.02 T</div></div>
+          </div>
+          <div class="cyc-note cyc-note--ok" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>Enough cycles to store this image and keep your reserve. Toko moves project cycles into blob storage automatically.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Upload assets</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 Upload banner/thumbnail · low balance — moved from the overview gallery -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Identity image · low balance</span><span class="d">The estimate exceeds the balance. The image stays staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
+    <div class="stage">
+      <div class="modal-card" style="max-width:520px">
+        <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <span class="cyc-staged"><span class="dot"></span>project-header.png staged · 2.4 MB · uploaded &amp; held</span>
+          <div class="cyc-est" style="margin-top:var(--s-4)">
+            <div class="e"><div class="k">Estimated cost</div><div class="v">~0.02 T <small>cycles</small></div></div>
+            <div class="e"><div class="k">Project balance</div><div class="v" style="color:var(--stage-draft)">0.008 T</div></div>
+            <div class="e warn"><div class="k">Shortfall</div><div class="v" style="color:var(--stage-draft)">~0.01 T <small>+ reserve</small></div></div>
+          </div>
+          <div class="cyc-note cyc-note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Not quite enough cycles to store this image.</strong> It stays staged — top up and it saves straight away. Nothing is lost if you top up now.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Top up &amp; upload</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 Top up to continue · image staged — moved from the overview gallery -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, it saves automatically.</span></div>
+    <div class="stage">
+      <div class="modal-card" style="max-width:520px">
+        <header><h4>Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <span class="cyc-staged"><span class="dot"></span>project-header.png staged · 2.4 MB · ready to save</span>
+          <div style="margin-top:var(--s-4)">
+            <div class="cyc-kv"><span>This upload (est.)</span><span class="v">~0.02 T</span></div>
+            <div class="cyc-kv"><span>Project balance</span><span class="v warn">0.008 T</span></div>
+            <div class="cyc-kv"><span>Recommended top-up <span class="tiny">(cost + reserve)</span></span><span class="v">1.000 T</span></div>
+          </div>
+          <div style="margin-top:var(--s-4)">
+            <span class="cyc-flabel">Top up amount</span>
+            <div class="cyc-amount"><input value="1.000" inputmode="decimal"><div class="conv">T cycles · ≈ <b>0.30 ICP</b><div class="tiny">from your wallet to the project canister</div></div></div>
+            <div class="cyc-presets" style="margin-top:var(--s-3)"><button>0.5 T</button><button class="active">1 T</button><button>2 T</button><button>5 T</button></div>
+          </div>
+          <div class="cyc-note" style="margin-top:var(--s-4)"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Cycles are sent to the project canister; Toko moves what's needed into blob storage. After it lands, the staged image saves automatically.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Not now</button><button class="btn btn--primary">Top up &amp; continue</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
