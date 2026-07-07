@@ -156,7 +156,7 @@
   <header>
     <span class="eyebrow">Project · Studio</span>
     <h1>Project Billing — cycles management · states gallery</h1>
-    <p>The project overview's <strong>Billing</strong> tab (renamed 2026-07-02 from "Cycles" — billing owns cycles management, plus the storage/Cashier billing that used to sit in an accordion on the project overview; that accordion is retired and its rows now live here). The tab nav uses the style guide's Tabs component; Burn &amp; Reputation and Project Mastery are disabled "Soon". In V1 cycles are <strong>self-funded from the project's own treasury</strong>: all claim payments flow into the treasury, a <strong>locked percentage</strong> is reserved for cycles, and on every inflow — plus an <strong>hourly check</strong> — the reserve is topped up by converting funds to ICP via an <strong>AMM</strong> and buying cycles. Only the <strong>excess</strong> above the reserve can be withdrawn. <strong>Anyone logged in</strong> can fund a project: the public overview's "Fund this project" card takes ICP-only donations of any amount (modal, confirmation, error, and logged-out states below). This gallery also hosts all cycle-management modals (moved from the overview gallery). Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
+    <p>The project overview's <strong>Billing</strong> tab (renamed 2026-07-02 from "Cycles" — billing owns cycles management, plus the storage/Cashier billing that used to sit in an accordion on the project overview; that accordion is retired and its rows now live here). The tab nav uses the style guide's Tabs component; Burn &amp; Reputation and Project Mastery are disabled "Soon". In V1 cycles are <strong>self-funded from the project's own treasury</strong>: all claim payments flow into the treasury, a <strong>locked percentage</strong> is reserved for cycles, and on every inflow — plus an <strong>hourly check</strong> — the reserve is topped up by converting funds to ICP via an <strong>AMM</strong> and buying cycles. Only the <strong>excess</strong> above the reserve can be withdrawn. <strong>Anyone logged in</strong> can fund a project: the public overview's "Fund this project" card takes ICP-only donations of any amount — those donation modal states live with the public view in the <a href="project-states-gallery-2026-06-13.html">project overview gallery</a> (frames 04–07). This gallery covers the owner-facing Billing tab and its cycle-management modals. Follows the page shell: white for the breadcrumb bar and cards only; header on grey.</p>
     <div class="navlinks">Source: <span class="mono">Design Documentation/project-treasury-and-cycles-design.md</span>. Related: <a href="project-burn-reputation-states-gallery-2026-06-30.html">Burn &amp; Reputation</a> · <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a>.</div>
   </header>
 
@@ -208,72 +208,9 @@
     </div>
   </section>
 
-  <!-- 02 · fund this project (public donation, ICP only) -->
+  <!-- 02 · reserve low — auto-restoring from treasury -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Fund this project · donate ICP</span><span class="d">Opened from the "Fund this project" card on the project's public overview (or the copyable public link). Donations are <strong>ICP only</strong> and can be <strong>any amount</strong> — the ICP buys cycles for the project directly. Any logged-in user can donate; login is required only so the payment can be drawn from the donor's wallet.</span></div>
-    <div class="stage">
-      <div class="modal-card">
-        <header><h4>Fund this project — Vault One</h4><span class="x">✕</span></header>
-        <div class="mbody">
-          <div class="note note--icp" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span><div>Donate ICP to fund cycles for your favourite project — <strong>anyone can help</strong>, you don't need to be an admin. You're logged in as <span class="mono">k1m9…7uvw</span>, so the payment comes from your wallet.</div></div>
-          <div><label class="flabel">Amount · any amount, ICP only</label><div class="num-input"><input value="10" inputmode="decimal"><span class="u">ICP</span></div></div>
-          <div><div class="paykv"><span>Wallet balance</span><span class="v">14.2 ICP</span></div><div class="paykv"><span>Est. cycles bought</span><span class="v">≈ 7.6 T</span></div><div class="paykv"><span>Adds to runway</span><span class="v">≈ +2.9 months</span></div></div>
-          <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div>Donations go straight to cycles for this project. They are not withdrawable and do not grant any admin rights.</div></div>
-        </div>
-        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Donate</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 03 · fund this project — not logged in -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Fund this project · not logged in</span><span class="d">A visitor without a session hits "Fund this project". Donating needs a Toko account (the payment is drawn from the donor's wallet), so the modal explains that and the primary action redirects to the log-in modal. Nothing else is asked for at this step.</span></div>
-    <div class="stage">
-      <div class="modal-card">
-        <header><h4>Fund this project — Vault One</h4><span class="x">✕</span></header>
-        <div class="mbody">
-          <div class="note note--warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>You're not logged in.</strong> You need to create a Toko account (or log in) in order to donate to any projects — donations are paid in ICP from your Toko wallet.</div></div>
-          <p class="tiny" style="margin:0">Logging in brings you straight back here with your amount kept.</p>
-        </div>
-        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Log in / create account</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 04 · fund this project — donation confirmed -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">Fund this project · confirmation</span><span class="d">The donation went through: the ICP was drawn from the donor's wallet and converted to cycles for the project. The summary confirms what was bought and what it did to the runway.</span></div>
-    <div class="stage">
-      <div class="modal-card">
-        <header><h4>Donation received — thank you</h4><span class="x">✕</span></header>
-        <div class="mbody">
-          <div class="note note--ok" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div><strong>10 ICP donated to Vault One.</strong> Your donation has been converted to cycles and added to the project.</div></div>
-          <div><div class="paykv"><span>Donated</span><span class="v">10 ICP</span></div><div class="paykv"><span>Cycles bought</span><span class="v">7.58 T</span></div><div class="paykv"><span>Runway added</span><span class="v">≈ +2.9 months</span></div><div class="paykv"><span>Transaction</span><span class="v mono" style="font-size:var(--text-xs)">block 8,214,377</span></div></div>
-        </div>
-        <div class="footer-row"><button class="btn">Done</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 05 · fund this project — donation failed -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">05</span><span class="t">Fund this project · error</span><span class="d">The transfer failed (insufficient wallet balance, ledger rejection, or a network fault mid-call). Nothing was charged; the amount stays in the field so the donor can adjust and retry.</span></div>
-    <div class="stage">
-      <div class="modal-card">
-        <header><h4>Fund this project — Vault One</h4><span class="x">✕</span></header>
-        <div class="mbody">
-          <div class="note note--err" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><strong>Donation failed — nothing was charged.</strong> Your wallet balance (4.2 ICP) doesn't cover this donation. Lower the amount, or top up your wallet and try again.</div></div>
-          <div><label class="flabel">Amount · any amount, ICP only</label><div class="num-input"><input value="10" inputmode="decimal"><span class="u">ICP</span></div></div>
-          <div class="paykv"><span>Wallet balance</span><span class="v" style="color:var(--notify-error)">4.2 ICP</span></div>
-        </div>
-        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Try again</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 06 · reserve low — auto-restoring from treasury -->
-  <section class="frame">
-    <div class="frame-cap"><span class="num">06</span><span class="t">Reserve low — auto-restoring</span><span class="d">The cycle balance has dipped below the reserve target. No admin action is needed: the next inflow or the hourly check converts treasury funds to cycles. While the reserve is short, withdrawable excess is 0 — the project can't withdraw funds it needs to stay fuelled.</span></div>
+    <div class="frame-cap"><span class="num">02</span><span class="t">Reserve low — auto-restoring</span><span class="d">The cycle balance has dipped below the reserve target. No admin action is needed: the next inflow or the hourly check converts treasury funds to cycles. While the reserve is short, withdrawable excess is 0 — the project can't withdraw funds it needs to stay fuelled.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Overview</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
       <div class="section">
@@ -290,9 +227,9 @@
     </div>
   </section>
 
-  <!-- 07 TOP UP PROJECT CYCLES · modal (moved from the overview gallery) -->
+  <!-- 03 TOP UP PROJECT CYCLES · modal (moved from the overview gallery) -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">07</span><span class="t">Top up project cycles · modal</span><span class="d">Opened from the Billing tab — fund the project canister; Toko moves cycles into blob storage when it runs low.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Top up project cycles · modal</span><span class="d">Opened from the Billing tab — fund the project canister; Toko moves cycles into blob storage when it runs low.</span></div>
     <div class="stage">
       <div class="modal-card" style="max-width:480px">
         <header><h4>Top up project cycles</h4><button class="x" aria-label="Close">✕</button></header>
@@ -312,9 +249,9 @@
     </div>
   </section>
 
-  <!-- 08 Upload banner/thumbnail · cycle check (balance OK) — moved from the overview gallery -->
+  <!-- 04 Upload banner/thumbnail · cycle check (balance OK) — moved from the overview gallery -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">08</span><span class="t">Identity image · cycle check (balance OK)</span><span class="d">Saving a project banner or thumbnail stores it in blob storage, funded from project cycles. Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload. With headroom, it saves normally.</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">Identity image · cycle check (balance OK)</span><span class="d">Saving a project banner or thumbnail stores it in blob storage, funded from project cycles. Before it saves, Toko estimates the cost and checks the balance — the same guard used for every upload. With headroom, it saves normally.</span></div>
     <div class="stage">
       <div class="modal-card" style="max-width:520px">
         <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
@@ -332,9 +269,9 @@
     </div>
   </section>
 
-  <!-- 09 Upload banner/thumbnail · low balance — moved from the overview gallery -->
+  <!-- 05 Upload banner/thumbnail · low balance — moved from the overview gallery -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">09</span><span class="t">Identity image · low balance</span><span class="d">The estimate exceeds the balance. The image stays staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
+    <div class="frame-cap"><span class="num">05</span><span class="t">Identity image · low balance</span><span class="d">The estimate exceeds the balance. The image stays staged — nothing is discarded — and the primary action becomes Top up &amp; upload.</span></div>
     <div class="stage">
       <div class="modal-card" style="max-width:520px">
         <header><h4>Upload assets</h4><button class="x" aria-label="Close">✕</button></header>
@@ -352,9 +289,9 @@
     </div>
   </section>
 
-  <!-- 10 Top up to continue · image staged — moved from the overview gallery -->
+  <!-- 06 Top up to continue · image staged — moved from the overview gallery -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">10</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, it saves automatically.</span></div>
+    <div class="frame-cap"><span class="num">06</span><span class="t">Top up to continue · image staged</span><span class="d">The inline top-up. The staged image is shown at the top so it's clear nothing was cancelled; once cycles land in blob storage, it saves automatically.</span></div>
     <div class="stage">
       <div class="modal-card" style="max-width:520px">
         <header><h4>Top up to continue upload</h4><button class="x" aria-label="Close">✕</button></header>

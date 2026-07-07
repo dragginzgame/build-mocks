@@ -11,7 +11,7 @@
   :root {
     --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
     --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
-    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --icp:#2563EB;
     --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
     --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
     --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
@@ -117,6 +117,29 @@
   .wired .none { font-size:var(--text-sm); color:var(--text-muted); }
   @media (max-width:560px){ .wired .branch{ grid-template-columns:1fr; } }
 
+  /* donation-flow modals (opened from the public view's Fund this project card) */
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+  .btn--icp { background:var(--icp); color:#fff; }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note strong { color:inherit; }
+  .note--icp { background:rgba(37,99,235,.08); color:#1e40af; } .note--icp .ic { color:var(--icp); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note--err { background:rgba(239,68,68,.08); color:#7f1d1d; } .note--err .ic { color:var(--notify-error); }
+  .num-input { display:flex; align-items:center; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:0 .875rem; }
+  .num-input input { border:0; outline:0; background:transparent; width:100%; padding:.65rem 0; font-size:var(--text-xl); font-family:var(--font-emphasis); font-weight:700; }
+  .num-input .u { color:var(--text-secondary); font-weight:700; }
+  .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; }
+
   /* gallery framing */
   .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
   .gallery > header h1 { font-size:2.75rem; }
@@ -134,7 +157,7 @@
     <header>
       <div class="eyebrow">Toko · Consistency reference</div>
       <h1>Project — states &amp; stages.</h1>
-      <p>The single-project overview (there's no separate "empty project" view). The page is organised by the shared project tab nav — <strong>Details · Burn &amp; Reputation (soon) · Project Mastery (soon) · Billing</strong> — using the style guide's Tabs component. <strong>Details</strong> (this gallery) holds the identity container (banner, thumbnail, name, description, socials, show-creator, with its own save footer), the media library entry, the create-a-collection prompt, and the wired-map concertina. <strong>All billing — blob storage and cycles — lives on the Billing tab</strong> (see the <a href="project-cycles-states-gallery-2026-06-30.html">Billing / cycles gallery</a>); the old Billing accordion on this page is retired. Shown populated, just-created, and as the public visitor view.</p>
+      <p>The single-project overview (there's no separate "empty project" view). The page is organised by the shared project tab nav — <strong>Details · Burn &amp; Reputation (soon) · Project Mastery (soon) · Billing</strong> — using the style guide's Tabs component. <strong>Details</strong> (this gallery) holds the identity container (banner, thumbnail, name, description, socials, show-creator, with its own save footer), the media library entry, the create-a-collection prompt, and the wired-map concertina. <strong>All billing — blob storage and cycles — lives on the Billing tab</strong> (see the <a href="project-cycles-states-gallery-2026-06-30.html">Billing / cycles gallery</a>); the old Billing accordion on this page is retired. Shown populated, just-created, and as the public visitor view — plus the public "Fund this project" donation flow (ICP only, any amount): modal, logged-out, confirmation, and error states.</p>
     </header>
 
     <!-- 01 OVERVIEW · populated -->
@@ -273,7 +296,7 @@
 
     <!-- 03 PUBLIC VIEW · visitor -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Project · overview — public view</span><span class="d">What any visitor sees. Read-only identity (creator line only when Show Creator is on), socials as links, the project's Live collections, and the Fund this project card (ICP-only cycle donations — modal states live in the Billing / cycles gallery). Owner-only tabs (Billing) and coming-soon tabs are hidden — the nav shows only what a visitor can open. No save controls anywhere.</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">Project · overview — public view</span><span class="d">What any visitor sees. Read-only identity (creator line only when Show Creator is on), socials as links, the project's Live collections, and the Fund this project card (ICP-only cycle donations — modal states in frames 04–07 below). Owner-only tabs (Billing) and coming-soon tabs are hidden — the nav shows only what a visitor can open. No save controls anywhere.</span></div>
       <div class="screen">
         <div class="context-bar"><span>Projects</span><span class="sep">/</span><span>Ipsum Studio</span></div>
         <div class="section">
@@ -314,8 +337,71 @@
           </details>
           <div class="cta-card">
             <div><h3>Fund this project</h3><p>Donate ICP to fund cycles for your favourite project — any amount helps keep it running. Donations buy cycles directly; they aren't withdrawable and grant no admin rights.</p></div>
-            <button class="btn btn--primary">Fund this project</button>
+            <button class="btn btn--icp">Fund this project</button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · fund this project (public donation, ICP only) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Fund this project · donate ICP</span><span class="d">Opened from the "Fund this project" card on the public view (frame 03) or the shareable public link. Donations are <strong>ICP only</strong> and can be <strong>any amount</strong> — the ICP buys cycles for the project directly. Any logged-in user can donate; login is required only so the payment can be drawn from the donor's wallet.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Fund this project — Ipsum Studio</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--icp" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span><div>Donate ICP to fund cycles for your favourite project — <strong>anyone can help</strong>, you don't need to be an admin. You're logged in as <span class="mono">k1m9…7uvw</span>, so the payment comes from your wallet.</div></div>
+            <div><label class="flabel">Amount · any amount, ICP only</label><div class="num-input"><input value="10" inputmode="decimal"><span class="u">ICP</span></div></div>
+            <div><div class="paykv"><span>Wallet balance</span><span class="v">14.2 ICP</span></div><div class="paykv"><span>Est. cycles bought</span><span class="v">≈ 7.6 T</span></div><div class="paykv"><span>Adds to runway</span><span class="v">≈ +2.9 months</span></div></div>
+            <div class="note note--icp"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><div>Donations go straight to cycles for this project. They are not withdrawable and do not grant any admin rights.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Donate</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · fund this project — not logged in -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Fund this project · not logged in</span><span class="d">A visitor without a session hits "Fund this project". Donating needs a Toko account (the payment is drawn from the donor's wallet), so the modal explains that and the primary action redirects to the log-in modal. Nothing else is asked for at this step.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Fund this project — Ipsum Studio</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>You're not logged in.</strong> You need to create a Toko account (or log in) in order to donate to any projects — donations are paid in ICP from your Toko wallet.</div></div>
+            <p class="tiny" style="margin:0">Logging in brings you straight back here with your amount kept.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Log in / create account</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · fund this project — donation confirmed -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Fund this project · confirmation</span><span class="d">The donation went through: the ICP was drawn from the donor's wallet and converted to cycles for the project. The summary confirms what was bought and what it did to the runway.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Donation received — thank you</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--ok" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div><strong>10 ICP donated to Ipsum Studio.</strong> Your donation has been converted to cycles and added to the project.</div></div>
+            <div><div class="paykv"><span>Donated</span><span class="v">10 ICP</span></div><div class="paykv"><span>Cycles bought</span><span class="v">7.58 T</span></div><div class="paykv"><span>Runway added</span><span class="v">≈ +2.9 months</span></div><div class="paykv"><span>Transaction</span><span class="v mono" style="font-size:var(--text-xs)">block 8,214,377</span></div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--primary">Done</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · fund this project — donation failed -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Fund this project · error</span><span class="d">The transfer failed (insufficient wallet balance, ledger rejection, or a network fault mid-call). Nothing was charged; the amount stays in the field so the donor can adjust and retry.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Fund this project — Ipsum Studio</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--err" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><strong>Donation failed — nothing was charged.</strong> Your wallet balance (4.2 ICP) doesn't cover this donation. Lower the amount, or top up your wallet and try again.</div></div>
+            <div><label class="flabel">Amount · any amount, ICP only</label><div class="num-input"><input value="10" inputmode="decimal"><span class="u">ICP</span></div></div>
+            <div class="paykv"><span>Wallet balance</span><span class="v" style="color:var(--notify-error)">4.2 ICP</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--icp">Try again</button></div>
         </div>
       </div>
     </section>
