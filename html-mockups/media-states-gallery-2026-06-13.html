@@ -116,6 +116,12 @@
   .media-list .thumb.wide { width:56px; height:32px; }
   .media-list .nm { font-weight:600; font-size:var(--text-sm); font-family:ui-monospace,monospace; }
   @media (max-width:820px){ .media-list .row { grid-template-columns:44px 1fr auto; } .media-list .c-hide { display:none; } }
+  /* list view · add-assets row — list-view counterpart of the grid's dashed upload tile */
+  .media-list .row.row-add { display:block; padding:var(--s-3) var(--s-5); }
+  .media-list .add-assets { width:100%; border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; align-items:center; justify-content:center; gap:.5rem; padding:.75rem var(--s-4); color:var(--text-secondary); cursor:pointer; }
+  .media-list .add-assets:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .media-list .add-assets .plus { font-size:1.25rem; line-height:1; }
+  .media-list .add-assets .up-label { font-family:var(--font-emphasis); font-size:var(--text-xs); letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
 
   /* modals */
   .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-8); display:flex; flex-wrap:wrap; gap:var(--s-5); align-items:flex-start; justify-content:center; }
@@ -146,7 +152,7 @@
   .modal-card .confirm p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); line-height:1.55; max-width:42ch; }
 
   /* empty-state */
-  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; }
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; max-width:920px; margin-left:auto; margin-right:auto; }
   .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
   .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
   .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
@@ -296,7 +302,7 @@
 
     <!-- 03 LIST · all assets -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">List · all assets</span><span class="d">List view shows every kind together with a Kind column — the place to see everything at once.</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">List · all assets</span><span class="d">List view shows every kind together with a Kind column — the place to see everything at once. Opens with a full-width dashed Add assets row at the top of the list — the list-view counterpart of the grid&rsquo;s upload tile; it opens the same Upload modal.</span></div>
       <div class="screen">
         <div class="context-bar"><span>All projects</span><span class="sep">/</span><span>Ipsum Studio</span><span class="sep">/</span><span>Media library</span></div>
         <div class="section">
@@ -306,6 +312,7 @@
           </div>
           <div class="media-list">
             <div class="row head"><div></div><div>Name</div><div class="c-hide">Kind</div><div class="c-hide">Type · size</div><div class="c-hide">Used on</div><div></div></div>
+            <div class="row row-add"><button class="add-assets"><span class="plus">+</span><span class="up-label">Add assets</span></button></div>
             <div class="row"><span class="thumb wide art--media-g"></span><div class="nm">project-header.png</div><div class="c-hide"><span class="chip">Banner</span></div><div class="c-hide tiny">PNG · 412 KB</div><div class="c-hide tiny">Project page</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
             <div class="row"><span class="thumb art--media-c"></span><div class="nm">studio-thumb.png</div><div class="c-hide"><span class="chip">Thumbnail</span></div><div class="c-hide tiny">PNG · 96 KB</div><div class="c-hide tiny">Project thumbnail</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
             <div class="row"><span class="thumb wide art--media-a"></span><div class="nm">lorem-header.png</div><div class="c-hide"><span class="chip">Banner</span></div><div class="c-hide tiny">PNG · 388 KB</div><div class="c-hide tiny">Lorem Drop No. 1</div><div class="row"><button class="icon-btn" title="Details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="icon-btn icon-btn--danger" title="Delete"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>
