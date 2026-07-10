@@ -119,6 +119,10 @@ White surface (`--surface-canvas`), `--border-soft`, `--r-3`. Shared patterns:
 - **Inline "add" affordance (add a tier, attribute, token type, value, etc.)**: one shape everywhere — a **dashed pill** (`.add-chip`: `--r-pill`, 1.5px dashed `--border-soft`, `+` and label, muted until hover). Not a full-width rectangle bar, and not a square button. It echoes the item it creates but always reads as the same control across galleries. Exception: a **first-run / empty state** uses a solid primary button (`.btn--primary` "+ Add your first …") as the onboarding CTA, not the dashed pill.
 - **No-name fallback is banned.** A card title must never fall back to a raw principal. Names are required at creation (see the Add modals), so titles always have a human label; the principal shows truncated in the subline as `k1m9…7uvw · {type}`.
 
+## Empty states (first-run hero)
+
+The first-run `.empty-hero` (image + title + sub + CTA) is **centred, not full-width**: `max-width: 920px; margin-inline: auto`, on every surface (Collections, Generators, Media, Access, Whitelists, Beneficiaries, Revenue presets, token galleries, …). One width everywhere — the implemented app currently varies per page (e.g. Collections stretches full-width while Media library centres); the centred version is canonical, matching the mocks as of 2026-07-10. Supporting rows under the hero (fact strip, explainer) keep their own layout and may span the full content width.
+
 ## Do / Don't
 
 Do
