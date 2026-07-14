@@ -73,10 +73,10 @@
         <li><strong>Ratio</strong> — how much scarcer each rarer tier is than the one below it.</li>
         <li><strong>Accelerator</strong> — how much the curve steepens toward the rarest tiers.</li>
       </ul>
-      <p>The moment you choose Weighted, Toko applies sensible defaults — <strong>Max Supply 1,000, ratio 3, accelerator 1.0</strong> — which gives this split on the three-tier set:</p>
+      <p>The moment you choose Weighted, Toko applies sensible defaults — <strong>Max Supply = your archetype's baseline (1,000 here), ratio 3, accelerator 1.0</strong> — which gives this split on the three-tier set:</p>
 
       <div class="fig">
-        <div class="fig-ttl">The default Weighted split — ratio 3, of 1,000</div>
+        <div class="fig-ttl">The default Weighted split — ratio 3, over a 1,000 baseline</div>
         <svg viewBox="0 0 720 56" role="img" aria-label="Common 69.2 percent, Uncommon 23.1 percent, Rare 7.7 percent">
           <rect x="0" y="6" width="494" height="44" rx="6" fill="#64748B"/>
           <rect x="498" y="6" width="165" height="44" rx="6" fill="#16A34A"/>
@@ -158,7 +158,7 @@
         <ul>
           <li><strong>Rarity ≠ weighting.</strong> Weighting is how often a part appears in the art; rarity is collection scarcity policy.</li>
           <li><strong>Three models:</strong> Uniform (none), Tiered (you assign, custom tiers), Weighted (the system assigns by score, fixed tiers).</li>
-          <li><strong>Weighted is shaped by two dials</strong> — ratio and accelerator — over Max Supply. Defaults (1,000 / 3 / 1.0) give ≈ 69% / 23% / 8%.</li>
+          <li><strong>Weighted is shaped by two dials</strong> — ratio and accelerator — over Max Supply. Defaults (archetype baseline / 3 / 1.0 — 1,000 here) give ≈ 69% / 23% / 8%.</li>
           <li><strong>A tier is a mint budget</strong> of copies, enforced first-come at mint. Oversubscription is allowed by design.</li>
           <li><strong>It's deterministic and frozen.</strong> No silent re-tiering; tiers and the whole curve lock at go-live.</li>
         </ul>
