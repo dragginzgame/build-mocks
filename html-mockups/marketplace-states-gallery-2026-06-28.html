@@ -71,10 +71,12 @@
   .carousel .slide-body{font-size:clamp(13px,1.4vw,16px);line-height:1.45;max-width:46ch;margin:0 0 18px;color:rgba(255,255,255,0.92);text-shadow:0 1px 10px rgba(0,0,0,0.4);}
   .carousel .slide-cta{display:inline-flex;align-items:center;background:#fff;color:#1D1D1D;font-family:var(--font-emphasis);font-weight:700;letter-spacing:.04em;font-size:.8125rem;padding:.55rem 1rem;border-radius:var(--r-pill);transition:opacity 120ms ease;}
   .carousel .slide-cta:hover{opacity:.9;}
-  .carousel .nav-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:40px;height:40px;border:none;border-radius:var(--r-pill);background:rgba(255,255,255,0.9);color:#0A0A0A;cursor:pointer;display:grid;place-items:center;font-size:1.25rem;transition:background 150ms ease, transform 150ms ease;box-shadow:0 4px 14px -4px rgba(0,0,0,0.4);}
-  .carousel .nav-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.06);}
+  /* Arrows are hover/focus-reveal only — the always-visible affordance is the dot rail (bottom right); autoplay, swipe and arrow keys also navigate. Translucent dark so they never sit as white discs over slide copy. */
+  .carousel .nav-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:38px;height:38px;border:none;border-radius:var(--r-pill);background:rgba(10,10,10,0.42);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:1.25rem;transition:opacity 150ms ease, background 150ms ease;opacity:0;pointer-events:none;}
+  .carousel:hover .nav-arrow, .carousel:focus-within .nav-arrow{opacity:1;pointer-events:auto;}
+  .carousel .nav-arrow:hover{background:rgba(10,10,10,0.68);}
   .carousel .nav-arrow.prev{left:14px;} .carousel .nav-arrow.next{right:14px;}
-  @media(max-width:720px){.carousel .nav-arrow{width:34px;height:34px;top:auto;bottom:54px;transform:none;} .carousel .nav-arrow:hover{transform:scale(1.06);} .carousel .nav-arrow.prev{left:10px;} .carousel .nav-arrow.next{right:10px;}}
+  @media(max-width:720px){.carousel .nav-arrow{display:none;}}
   .carousel .dots{position:absolute;z-index:3;right:18px;bottom:14px;display:flex;gap:7px;}
   @media(max-width:720px){.carousel .dots{left:0;right:0;bottom:16px;justify-content:center;}}
   .carousel .dot{width:8px;height:8px;padding:0;border:none;border-radius:var(--r-pill);background:rgba(255,255,255,0.45);cursor:pointer;transition:width 250ms ease, background 250ms ease;}
