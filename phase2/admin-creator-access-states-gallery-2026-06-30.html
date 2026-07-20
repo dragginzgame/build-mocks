@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Creator access (admin) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; transition:transform 80ms ease, opacity 120ms ease; }
+  .btn:hover { opacity:.9; } .btn:active { transform:translateY(1px); }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+  .btn svg { width:15px; height:15px; }
+
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--role { background:rgba(37,99,235,.12); color:#1d4ed8; }
+  .req { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:#7a5310; background:rgba(245,158,11,.16); padding:1px 7px; border-radius:var(--r-pill); margin-left:.4rem; }
+  .opt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-left:.4rem; }
+
+  .status { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
+  .status .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .status--active { background:rgba(16,185,129,.14); color:#0a6b4f; }
+  .status--revoked { background:rgba(239,68,68,.1); color:#8a2020; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .princ .id { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+  .head-row { display:flex; align-items:center; gap:var(--s-2); }
+
+  .search { position:relative; min-width:220px; }
+  .search svg { position:absolute; left:.7rem; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-muted); }
+  .search input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.55rem .875rem .55rem 2.1rem; font:inherit; font-size:var(--text-base); }
+  .segmented { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; width:max-content; }
+  .segmented button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); white-space:nowrap; }
+  .segmented button.active { background:var(--text-primary); color:#fff; }
+
+  /* form */
+  .form-grid { display:grid; grid-template-columns:1fr 320px; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .form-grid { grid-template-columns:1fr; } }
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .field { margin-bottom:var(--s-5); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.7rem .875rem; font:inherit; font-size:var(--text-base); color:var(--text-primary); }
+  textarea.input { resize:vertical; line-height:1.5; }
+  .input.mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+  .input.err { border-color:var(--notify-error); background:rgba(239,68,68,.04); }
+  .input::placeholder { color:var(--text-muted); }
+  .hint { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.4rem; }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.4rem; display:flex; align-items:center; gap:.35rem; }
+  .field-err svg { width:13px; height:13px; flex:none; }
+  .acc-row { display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  /* account lookup — button welded to the field adopts the input's --r-2 (style guide radius rule) */
+  .lookup { display:flex; }
+  .lookup .input { border-radius:var(--r-2) 0 0 var(--r-2); }
+  .lookup .btn-find { border:1px solid var(--text-primary); background:var(--text-primary); color:#fff; border-radius:0 var(--r-2) var(--r-2) 0; padding:0 1.1rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.04em; white-space:nowrap; }
+  .chk { display:inline-flex; align-items:center; gap:.5rem; font-size:var(--text-sm); color:var(--text-secondary); }
+  .chk input { accent-color:var(--text-primary); }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  .dcard.side { background:var(--surface-canvas); }
+  .creator-card { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3) var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .creator-card.flat { background:var(--surface-canvas-alt); }
+  .creator-card .cav { width:38px; height:38px; border-radius:50%; flex:none; background:linear-gradient(135deg,#fbbf24,#b45309); }
+  .creator-card .cname { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-base); line-height:1.1; }
+  .creator-card .csub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:2px; }
+  .creator-card .status { margin-left:auto; }
+  .kvlist { margin-top:var(--s-4); padding-top:var(--s-4); border-top:1px solid var(--border-soft); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.4rem 0; font-size:var(--text-sm); }
+  .kv .k { color:var(--text-secondary); } .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note strong { color:inherit; }
+
+  /* table + list bar */
+  .tablewrap { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .admin-table { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .admin-table th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); }
+  .admin-table td { padding:.85rem 1rem; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .admin-table tr:last-child td { border-bottom:0; }
+  .ctd { display:flex; align-items:center; gap:.6rem; }
+  .ctd .cav { width:32px; height:32px; border-radius:50%; flex:none; background:linear-gradient(135deg,#fbbf24,#b45309); }
+  .ctd .nm { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-base); line-height:1.1; }
+  .ctd .sb { font-size:var(--text-xs); color:var(--text-secondary); }
+  .build { color:var(--text-secondary); max-width:30ch; }
+  .gr { color:var(--text-secondary); font-size:var(--text-xs); }
+  .row-acts { display:flex; gap:.3rem; justify-content:flex-end; }
+  .icon-btn { width:32px; height:32px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .icon-btn:hover { color:var(--text-primary); }
+  .icon-btn svg { width:15px; height:15px; }
+  .icon-btn--danger:hover { color:var(--notify-error); border-color:var(--notify-error); }
+  @media (max-width:760px){ .admin-table .hide { display:none; } }
+
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; } .results-count strong { color:var(--text-primary); }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:40px; height:40px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); font:inherit; font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; } .pg button:disabled { color:var(--text-muted); opacity:.45; } .pg .gap { min-width:24px; text-align:center; color:var(--text-muted); }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); font-size:var(--text-xs); color:var(--text-secondary); } .perpage select { height:36px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); font:inherit; padding:0 .5rem; }
+  @media (max-width:620px){ .results-count, .perpage { display:none; } }
+
+  /* modal stage */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-6); width:100%; max-width:840px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.55rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; }
+
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks .mono { font-size:.85em; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Admin · Access</span>
+    <h1>Creator access (admin) — states gallery</h1>
+    <p>An internal admin surface for granting an <strong>existing Toko account</strong> the <strong>creator role</strong> so they can build and launch collections (redesigned 2026-07-07 per <strong>R58</strong>: account creation is never gated — the creator role is the only beta gate, and it is granted to accounts that already exist). The admin <strong>looks the account up</strong> by User ID or principal; the account's <strong>own profile identity</strong> (name, avatar, User ID) is displayed, never admin-entered. The only admin-authored fields are a description of what they're here to build and optional internal notes. Follows the page shell: white is used only for the breadcrumb bar, the cards, and the list bar; the header, search and filters sit on the grey. Anton for headings, Mona Sans for everything else.</p>
+    <div class="navlinks">Follows <span class="mono">build-mocks/style-guide/page-shell.md</span>. Ruling: R58 in <span class="mono">design-doc-review-2026-07-02.md</span>; context: <span class="mono">Design Documentation/WIP/beta-readiness-failsafes.md</span> §3.3. Ties to the Beta "approved creators only" gate in the landing / trust copy. Profile identity per <a href="../user-profile-states-gallery-2026-06-28.html">user profile</a>.</div>
+  </header>
+
+  <!-- 01 · grant form -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Grant creator access · account lookup</span><span class="d">R58 flow: the admin looks up an <strong>existing account</strong> by User ID or principal. On resolve, the account's own profile identity (avatar, name, User ID) appears — read-only, never admin-entered. The admin authors only "what they're building" and internal notes, then grants. The side panel shows the resolved account and the grant summary.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Admin</a><span class="sep">/</span><a>Access</a><span class="sep">/</span><span class="here">Grant creator access</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="id">admin · q7w8…3xyz</span></span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Admin · Access</div><h2>Grant creator access.</h2><p class="lede">Give a Toko account the creator role so they can build and launch collections. During Beta, only approved creators can publish.</p></div></div>
+        <div class="form-grid">
+          <div class="dcard">
+            <span class="eyebrow">Find the account</span>
+            <div class="field"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono" value="usr_01H8R2K4FM9C" placeholder="usr_…   or   k1m9…7uvw"><button class="btn-find">Find account</button></div><p class="hint">The account must already exist — account creation is never gated (R58). Lookup accepts a User ID or a principal.</p></div>
+            <div class="field"><label class="flabel">Account <span class="opt">from their profile — read-only</span></label><div class="creator-card"><span class="cav"></span><div><div class="cname">Mara Okafor</div><div class="csub mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div><span class="tag">Member since Mar 2026</span></div><p class="hint">Identity comes from the account's own profile (name, avatar, User ID) — it is never entered or edited here.</p></div>
+            <div class="field"><label class="flabel">What they're building</label><textarea class="input" rows="3" placeholder="A short description of the collections / project this creator is here to make."></textarea><p class="hint">Helps the team understand the intent behind the access grant.</p></div>
+            <div class="field"><label class="flabel">Internal notes <span class="opt">optional</span></label><textarea class="input" rows="3" placeholder="Vetting status, contact, links — anything other admins should know."></textarea><p class="hint">Internal only — never shown publicly.</p></div>
+            <div class="field" style="margin-bottom:0"><label class="flabel">Access</label><div class="acc-row"><span class="tag tag--role">Creator role</span><label class="chk"><input type="checkbox" checked> Approved for Beta (can publish)</label><label class="chk"><input type="checkbox" checked> Notify the user</label></div></div>
+            <div class="dactions"><button class="btn">Grant access</button><button class="btn btn--ghost">Cancel</button></div>
+          </div>
+          <aside class="dcard side">
+            <span class="eyebrow">Resolved account</span>
+            <div class="creator-card"><span class="cav"></span><div><div class="cname">Mara Okafor</div><div class="csub mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div><span class="status status--active"><span class="dot"></span>Active</span></div>
+            <p class="hint" style="margin-top:var(--s-3)">How the creator will appear across Toko once access is granted — their profile identity, plus the creator role.</p>
+            <div class="kvlist"><div class="kv"><span class="k">Role</span><span class="v">Creator</span></div><div class="kv"><span class="k">Beta publish</span><span class="v">Approved</span></div><div class="kv"><span class="k">Granted by</span><span class="v mono">q7w8…3xyz</span></div></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · validation -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Lookup states</span><span class="d">Everything the account lookup can return. The grant is unreachable until an account resolves. Errors live on the field — not in a banner. The old "display name required" validation is gone (R58): identity comes from the profile, so there is nothing for the admin to name.</span></div>
+    <div class="showcase">
+      <div class="dcard"><span class="eyebrow">Invalid format</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono err" value="not-an-id"><button class="btn-find">Find account</button></div><div class="field-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> That isn't a valid User ID or principal.</div></div></div>
+      <div class="dcard"><span class="eyebrow">No account found</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono err" value="usr_01ZZZZZZZZZZ"><button class="btn-find">Find account</button></div><div class="field-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> No Toko account matches this ID. The person must create an account first — creation is open to everyone.</div></div></div>
+      <div class="dcard"><span class="eyebrow">Found · no profile name yet</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Account <span class="opt">from their profile</span></label><div class="creator-card"><span class="cav" style="background:linear-gradient(135deg,#9ca3af,#4b5563)"></span><div><div class="cname" style="color:var(--text-muted)">Unnamed account</div><div class="csub mono">usr_01J0XQ7M2A4D · b3c7…9pqr</div></div></div><p class="hint" style="margin-top:.5rem">This account hasn't set a profile name. Granting still works — ask them to complete their profile so their collections aren't labelled by an unnamed account.</p></div></div>
+      <div class="dcard"><span class="eyebrow">Already a creator</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Account <span class="opt">from their profile</span></label><div class="creator-card"><span class="cav"></span><div><div class="cname">Mara Okafor</div><div class="csub mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div><span class="status status--active"><span class="dot"></span>Active</span></div><div class="note note--info" style="margin-top:var(--s-3)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>This account already has creator access (granted 2 Jun 2026). Open their row in the access list to edit notes or revoke.</div></div></div></div>
+    </div>
+  </section>
+
+  <!-- 03 · confirm & granted -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Confirm &amp; granted</span><span class="d">Granting access is an explicit, confirmed action. The confirm modal restates the resolved account (its own profile identity) and the access level; on success a confirmation shows and the account appears in the access list. Both are real product modals — not documentation dressed as UI.</span></div>
+    <div class="stage">
+      <div class="modal-grid">
+        <div class="modal-card">
+          <header><h4>Grant creator access?</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="creator-card flat"><span class="cav"></span><div><div class="cname">Mara Okafor</div><div class="csub mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div></div>
+            <div><div class="paykv"><span>Role</span><span class="v">Creator</span></div><div class="paykv"><span>Beta publish</span><span class="v">Approved</span></div><div class="paykv"><span>Building</span><span class="v">Mineral songbird collections</span></div></div>
+            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>They'll be able to create collections and launch drops. You can revoke access at any time.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Grant access</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Access granted</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>Mara Okafor now has creator access.</strong> They've been notified and can start building.</div></div>
+            <div class="creator-card flat"><span class="cav"></span><div><div class="cname">Mara Okafor</div><div class="csub mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div><span class="status status--active"><span class="dot"></span>Active</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Grant another</button><button class="btn">View access list</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · access list -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Creators with access</span><span class="d">The management list of every account granted creator access: profile identity (name from their profile, User ID + truncated principal), what they're building, who granted it and when, and status. Search and the status filter sit on the grey; the table is a white card with the white list bar attached as a footer band. Revoke moves a creator to Revoked — kept for the record, not deleted; the account itself is untouched (R58: accounts are never gated, only the creator role is).</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Admin</a><span class="sep">/</span><span class="here">Access</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="id">admin · q7w8…3xyz</span></span></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Admin · Access</div><h2>Creator access.</h2><p class="lede">Everyone granted the creator role. Grant new access, edit notes, or revoke.</p></div><div class="head-row"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search name or principal…"></div><a class="btn btn--sm" href="#">+ Grant creator access</a></div></div>
+        <div class="segmented"><button class="active">All · 128</button><button>Active · 121</button><button>Revoked · 7</button></div>
+        <div class="tablewrap">
+          <table class="admin-table">
+            <thead><tr><th>Creator</th><th class="hide">Building</th><th class="hide">Granted</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="ctd"><span class="cav"></span><div><div class="nm">Mara Okafor</div><div class="sb mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div></div></td><td class="hide"><div class="build">Mineral songbird collections (Crystal Birds)</div></td><td class="hide"><div class="gr">q7w8…3xyz · 2 Jun 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></span><div><div class="nm">Night Market Studio</div><div class="sb mono">usr_01H9T6WQ3ZRV · f8a1…2klm</div></div></div></td><td class="hide"><div class="build">Lanterns, masks &amp; charms — seasonal drops</div></td><td class="hide"><div class="gr">q7w8…3xyz · 28 May 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#34d399,#065f46)"></span><div><div class="nm">Deep Blue Collective</div><div class="sb mono">usr_01HFA8D2MK6P · c4d5…1abc</div></div></div></td><td class="hide"><div class="build">Generative deep-sea creatures</div></td><td class="hide"><div class="gr">q7w8…3xyz · 19 May 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#a78bfa,#5b21b6)"></span><div><div class="nm">Solara Works</div><div class="sb mono">usr_01HKX3B7QSTW · e9f0…3def</div></div></div></td><td class="hide"><div class="build">Sun Sprites — editioned art</div></td><td class="hide"><div class="gr">q7w8…3xyz · 11 May 2026</div></td><td><span class="status status--revoked"><span class="dot"></span>Revoked</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" aria-label="Restore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>1–25</strong> of <strong>128</strong></span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button>2</button><button>3</button><span class="gap">…</span><button>6</button><button>›</button></div><label class="perpage">Per page <select><option>25</option><option>50</option><option>100</option></select></label></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

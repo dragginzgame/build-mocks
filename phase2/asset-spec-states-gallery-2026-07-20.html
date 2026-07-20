@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Asset spec (Phase 2) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --notify-warn:#D97706;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,monospace; font-size:.85em; }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .input { border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .tag { display:inline-flex; align-items:center; gap:6px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.14); color:#B45309; }
+  .tag--green { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); }
+  .card .head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-4); flex-wrap:wrap; }
+  .card .head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .spec-row { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) 0; border-bottom:1px solid var(--surface-canvas-deep); }
+  .spec-row:last-child { border-bottom:0; }
+  .spec-row .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .spec-row .ds { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.125rem; }
+  .add-chip { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); padding:.5rem 1rem; color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .add-chip:hover { color:var(--text-primary); border-color:var(--text-primary); }
+  .slot-row { display:flex; align-items:center; gap:var(--s-3); padding:.5rem 0; border-bottom:1px solid var(--surface-canvas-deep); font-size:var(--text-sm); }
+  .slot-row:last-child { border-bottom:0; }
+  .slot-row .key { font-family:ui-monospace,monospace; font-size:var(--text-xs); background:var(--surface-canvas-deep); border-radius:var(--r-1); padding:1px 7px; color:var(--text-secondary); }
+  .slot-row .lbl { font-weight:600; font-family:var(--font-emphasis); }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .pick-row { display:flex; align-items:center; gap:var(--s-3); padding:.5rem 0; font-size:var(--text-sm); }
+  .cbx { width:18px; height:18px; border-radius:4px; border:1.5px solid var(--border-soft); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .cbx.on { background:var(--text-primary); border-color:var(--text-primary); color:#fff; font-size:.65rem; font-weight:700; }
+  .check-row { display:flex; align-items:flex-start; gap:.75rem; padding:.75rem 0; border-bottom:1px solid var(--surface-canvas-deep); }
+  .check-row:last-child { border-bottom:0; }
+  .check-row .ic { flex:none; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; }
+  .check-row.ok .ic { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .check-row.fail .ic { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .check-row .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .check-row .ds { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.125rem; }
+  .slotbox { width:130px; aspect-ratio:3/4; border-radius:var(--r-3); border:1.5px dashed var(--border-soft); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.375rem; color:var(--text-muted); font-size:var(--text-xs); text-align:center; padding:var(--s-2); }
+  .slotbox.filled { border-style:solid; background:linear-gradient(160deg,#0f172a,#334155); color:#cbd5e1; }
+  .slotbox.missing { border-color:var(--notify-error); color:var(--notify-error); }
+  .grey-note { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.6; max-width:100ch; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Phase 2 · Consistency reference</div>
+      <h1>Asset spec — states gallery.</h1>
+      <p>First-pass mock for <strong>asset specs</strong> — named templates of required media slots, per <span class="mono">Design Documentation/Phase 2/asset-spec-design.md</span>. A spec is applied to <strong>token types</strong> and <strong>gates go-Live</strong>: a token can't go Live until every required slot has a file. It verifies <strong>existence only, never content</strong> — human review stays the content check. First consumer: the graded-slabs programme (front + back photos required per slab). Snapshot-on-apply, versioned — editing the template never mutates tokens that already carry a copy.</p>
+    </header>
+
+    <!-- 01 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Project · Asset specs list</span><span class="d">A project-level template list — same card grammar as revenue presets. Each spec shows its slots, version, and where it's applied.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Toko Studios (internal)</span><span class="sep">/</span><span>Asset specs</span></div>
+        <div class="section">
+          <div class="card">
+            <div class="head"><h3>Asset specs</h3><span class="tag tag--green">2 specs</span></div>
+            <div class="spec-row"><div><div class="nm">Graded slab <span class="tag" style="margin-left:.375rem">v2</span></div><div class="ds">2 required slots: Front photo · Back photo — applied to 1 token type (Slab, Vaulted Slabs — Series 1).</div></div><button class="btn btn--ghost btn--sm">Edit</button></div>
+            <div class="spec-row"><div><div class="nm">Signed print <span class="tag" style="margin-left:.375rem">v1</span></div><div class="ds">1 required slot: Signature close-up — not applied yet.</div></div><button class="btn btn--ghost btn--sm">Edit</button></div>
+            <div style="margin-top:var(--s-4)"><button class="add-chip">+ New asset spec</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Spec editor</span><span class="d">A spec is a list of slots: <span class="mono">key</span> (slug, unique in the spec) + display label + kind (V1 ships image-only) — all listed slots are required in V1 (optional slots are a V2 nicety). Saving a change bumps the version; already-applied token types keep the version they snapshotted until re-applied pre-Live.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Asset spec · Graded slab</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div style="margin-bottom:var(--s-5)"><label class="flabel">Spec name</label><input class="input" style="width:100%" value="Graded slab"></div>
+            <label class="flabel">Required slots</label>
+            <div class="slot-row"><span class="key">front</span><span class="lbl">Front photo</span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <div class="slot-row"><span class="key">back</span><span class="lbl">Back photo</span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <div style="margin-top:var(--s-3)"><button class="add-chip">+ Add slot</button></div>
+            <p class="tiny" style="margin-top:var(--s-4)">Currently version 2. Saving changes creates version 3 — token types that already carry version 2 are not changed until you re-apply.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--primary">Save spec</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Batch apply · pick token types</span><span class="d">The established batch-select pattern (token-state policy attach, bulk listing): pick a spec → select token types → apply. A collection with one token type is effectively a whole-collection application. <strong>Live tokens are skipped</strong> (locked).</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Apply · Graded slab v2</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <label class="flabel">Token types</label>
+            <div class="pick-row"><span class="cbx on">✓</span><span><strong>Slab</strong> · Vaulted Slabs — Series 1 <span class="tiny">(42 tokens · 40 Draft, 2 Live — Live skipped)</span></span></div>
+            <div class="pick-row"><span class="cbx on">✓</span><span><strong>Slab</strong> · Vaulted Slabs — Series 2 <span class="tiny">(18 tokens · all Draft)</span></span></div>
+            <div class="pick-row"><span class="cbx"></span><span><strong>Poster</strong> · Print Vault <span class="tiny">(no physical media requirement)</span></span></div>
+            <p class="tiny" style="margin-top:var(--s-3)">Each selected type snapshots version 2 of this spec. Editing the spec later never changes them — re-apply pre-Live to update.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Apply to 2 types</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">The gate · token slots + status checklist</span><span class="d">Existence check only, on effective state, via one shared function (the R34/R61 pattern; mirrors the default-variant R50 gate). The token editor shows the slots; the collection status checklist names exactly which tokens are missing which slots. Slot files come from the project media library (or direct upload into the slot, which lands in the library) — for slabs, the vault partner's intake photos.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Toko Studios</span><span class="sep">/</span><span>Vaulted Slabs — Series 1</span><span class="sep">/</span><span>Manage</span></div>
+        <div class="section">
+          <div class="card" style="margin-bottom:var(--s-6)">
+            <div class="head"><h3>#042 · Required media</h3><span class="tag">Graded slab v2</span></div>
+            <div class="row" style="gap:var(--s-4)">
+              <div class="slotbox filled">Front photo<br>✓ on file</div>
+              <div class="slotbox missing">Back photo<br>missing — required</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head"><h3>Collection status</h3></div>
+            <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Required media — Series 1 (40 of 42)</div><div class="ds">40 tokens have every required slot filled.</div></div></div>
+            <div class="check-row fail"><span class="ic">✕</span><div><div class="nm">2 tokens missing required media</div><div class="ds">#042 — missing: back · #051 — missing: front, back. These can't go Live until their slots are filled.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="frame">
+      <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Note (not UI) — open questions</span></div>
+      <p class="grey-note">From <span class="mono">asset-spec-design.md</span>: per-variant slots (deferred — digital tokens only; variants never apply to RWA items, ruled 2026-07-07); optional slots and non-image kinds (V1 or V2); whether a token type can carry multiple specs (recommend one — merge templates instead); and the creator-facing name ("Asset spec" vs "Media requirements" — glossary entry once ruled). Generator-produced art is not a spec slot in V1 — specs cover <em>additional</em> required media. After Live, slot files follow the standard media mutability rules; the spec itself locks with the token.</p>
+    </div>
+
+  </div>
+</body>
+</html>
