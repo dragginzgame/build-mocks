@@ -134,17 +134,31 @@
   .perpage { display:inline-flex; align-items:center; gap:var(--s-2); font-size:var(--text-xs); color:var(--text-secondary); } .perpage select { height:36px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); font:inherit; padding:0 .5rem; }
   @media (max-width:620px){ .results-count, .perpage { display:none; } }
 
+  /* empty state — centred hero, style guide */
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; max-width:920px; margin-left:auto; margin-right:auto; width:100%; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  .empty-hero__cta { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
   /* modal stage */
   .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
   .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-6); width:100%; max-width:840px; align-items:start; }
-  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
   .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
   .modal-card header h4 { font-size:var(--text-xl); }
-  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); }
   .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
   .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
   .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.55rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
   .paykv:first-of-type { border-top:0; } .paykv .v { font-family:var(--font-emphasis); font-weight:700; }
+  /* destructive confirm body — red triangle + left-aligned consequence text (Simple Modal Base) */
+  .mwarn { display:flex; gap:var(--s-3); align-items:flex-start; font-size:var(--text-sm); line-height:1.55; color:var(--text-secondary); text-align:left; }
+  .mwarn .ic { flex:none; margin-top:1px; color:var(--notify-error); }
+  .mwarn svg { width:20px; height:20px; }
+  .mwarn strong { color:var(--text-primary); }
 
   /* gallery chrome */
   .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
@@ -167,12 +181,56 @@
     <span class="eyebrow">Admin · Access</span>
     <h1>Creator access (admin) — states gallery</h1>
     <p>An internal admin surface for granting an <strong>existing Toko account</strong> the <strong>creator role</strong> so they can build and launch collections (redesigned 2026-07-07 per <strong>R58</strong>: account creation is never gated — the creator role is the only beta gate, and it is granted to accounts that already exist). The admin <strong>looks the account up</strong> by User ID or principal; the account's <strong>own profile identity</strong> (name, avatar, User ID) is displayed, never admin-entered. The only admin-authored fields are a description of what they're here to build and optional internal notes. Follows the page shell: white is used only for the breadcrumb bar, the cards, and the list bar; the header, search and filters sit on the grey. Anton for headings, Mona Sans for everything else.</p>
+    <p><strong>The flow (reordered 2026-07-20):</strong> the <strong>access list (01)</strong> is the home surface, reached from the Admin nav. <strong>+ Grant creator access</strong> in its white context bar opens the <strong>grant page (03)</strong>; granting confirms via modal (05) and, on success, closes back onto the list with the new row present. <strong>Revoke</strong> from a row asks the canonical red destructive confirm (06) first.</p>
     <div class="navlinks">Follows <span class="mono">build-mocks/style-guide/page-shell.md</span>. Ruling: R58 in <span class="mono">design-doc-review-2026-07-02.md</span>; context: <span class="mono">Design Documentation/WIP/beta-readiness-failsafes.md</span> §3.3. Ties to the Beta "approved creators only" gate in the landing / trust copy. Profile identity per <a href="../user-profile-states-gallery-2026-06-28.html">user profile</a>.</div>
   </header>
 
-  <!-- 01 · grant form -->
+  <!-- 01 · access list (home) -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">01</span><span class="t">Grant creator access · account lookup</span><span class="d">R58 flow: the admin looks up an <strong>existing account</strong> by User ID or principal. On resolve, the account's own profile identity (avatar, name, User ID) appears — read-only, never admin-entered. The admin authors only "what they're building" and internal notes, then grants. The side panel shows the resolved account and the grant summary.</span></div>
+    <div class="frame-cap"><span class="num">01</span><span class="t">Creators with access · the home surface</span><span class="d">The entry point, reached from the Admin nav. Every account granted creator access: profile identity (name from their profile, User ID + truncated principal), what they're building, who granted it and when, and status. <strong>+ Grant creator access</strong> sits in the white context bar (the style-guide add-button placement) and opens the grant page (03). Search and the status filter sit on the grey; the table is a white card with the white list bar attached as a footer band. Revoke moves a creator to Revoked — kept for the record, not deleted; the account itself is untouched (R58: accounts are never gated, only the creator role is).</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Admin</a><span class="sep">/</span><span class="here">Access</span></div><div class="actions"><a class="btn btn--sm" href="#">+ Grant creator access</a><span class="princ"><span class="av"></span><span class="id">admin · q7w8…3xyz</span></span></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Admin · Access</div><h2>Creator access.</h2><p class="lede">Everyone granted the creator role. Grant new access, edit notes, or revoke.</p></div><div class="head-row"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search name or principal…"></div></div></div>
+        <div class="segmented"><button class="active">All · 128</button><button>Active · 121</button><button>Revoked · 7</button></div>
+        <div class="tablewrap">
+          <table class="admin-table">
+            <thead><tr><th>Creator</th><th class="hide">Building</th><th class="hide">Granted</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="ctd"><span class="cav"></span><div><div class="nm">Mara Okafor</div><div class="sb mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div></div></td><td class="hide"><div class="build">Mineral songbird collections (Crystal Birds)</div></td><td class="hide"><div class="gr">q7w8…3xyz · 2 Jun 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></span><div><div class="nm">Night Market Studio</div><div class="sb mono">usr_01H9T6WQ3ZRV · f8a1…2klm</div></div></div></td><td class="hide"><div class="build">Lanterns, masks &amp; charms — seasonal drops</div></td><td class="hide"><div class="gr">q7w8…3xyz · 28 May 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#34d399,#065f46)"></span><div><div class="nm">Deep Blue Collective</div><div class="sb mono">usr_01HFA8D2MK6P · c4d5…1abc</div></div></div></td><td class="hide"><div class="build">Generative deep-sea creatures</div></td><td class="hide"><div class="gr">q7w8…3xyz · 19 May 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#a78bfa,#5b21b6)"></span><div><div class="nm">Solara Works</div><div class="sb mono">usr_01HKX3B7QSTW · e9f0…3def</div></div></div></td><td class="hide"><div class="build">Sun Sprites — editioned art</div></td><td class="hide"><div class="gr">q7w8…3xyz · 11 May 2026</div></td><td><span class="status status--revoked"><span class="dot"></span>Revoked</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" aria-label="Restore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>1–25</strong> of <strong>128</strong></span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button>2</button><button>3</button><span class="gap">…</span><button>6</button><button>›</button></div><label class="perpage">Per page <select><option>25</option><option>50</option><option>100</option></select></label></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · empty state -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Empty · nobody has access yet</span><span class="d">First-run state of the same page: the centred empty-state hero (style guide: max-width 920px, image + title + sub + CTA). The context-bar add button stays available; the filters and table are simply absent until the first grant exists.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Admin</a><span class="sep">/</span><span class="here">Access</span></div><div class="actions"><a class="btn btn--sm" href="#">+ Grant creator access</a><span class="princ"><span class="av"></span><span class="id">admin · q7w8…3xyz</span></span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Admin · Access</div><h2>Creator access.</h2><p class="lede">Everyone granted the creator role. Grant new access, edit notes, or revoke.</p></div></div>
+        <div class="empty-hero">
+          <div class="empty-hero__img"><img src="../../style-guide/empty-state-hero/no_access.jpg" alt="Creator access — nobody granted yet"></div>
+          <div class="empty-hero__body">
+            <h3 class="empty-hero__ttl">No creators yet.</h3>
+            <p class="empty-hero__sub">During Beta, publishing is limited to approved creators. Grant the creator role to an existing Toko account and they'll appear here — account creation itself is never gated.</p>
+            <div class="empty-hero__cta"><button class="btn">+ Grant creator access</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · grant form -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Grant creator access · account lookup</span><span class="d">Opened from <strong>+ Grant creator access</strong> on the list (01). R58 flow: the admin looks up an <strong>existing account</strong> by User ID or principal. On resolve, the account's own profile identity (avatar, name, User ID) appears — read-only, never admin-entered. The admin authors only "what they're building" and internal notes, then grants (which confirms via the modal in 05). Cancel returns to the list. The side panel shows the resolved account and the grant summary.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Admin</a><span class="sep">/</span><a>Access</a><span class="sep">/</span><span class="here">Grant creator access</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="id">admin · q7w8…3xyz</span></span></div></div>
       <div class="section">
@@ -198,9 +256,9 @@
     </div>
   </section>
 
-  <!-- 02 · validation -->
+  <!-- 04 · validation -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Lookup states</span><span class="d">Everything the account lookup can return. The grant is unreachable until an account resolves. Errors live on the field — not in a banner. The old "display name required" validation is gone (R58): identity comes from the profile, so there is nothing for the admin to name.</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">Lookup states</span><span class="d">Everything the account lookup can return. The grant is unreachable until an account resolves. Errors live on the field — not in a banner. The old "display name required" validation is gone (R58): identity comes from the profile, so there is nothing for the admin to name.</span></div>
     <div class="showcase">
       <div class="dcard"><span class="eyebrow">Invalid format</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono err" value="not-an-id"><button class="btn-find">Find account</button></div><div class="field-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> That isn't a valid User ID or principal.</div></div></div>
       <div class="dcard"><span class="eyebrow">No account found</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono err" value="usr_01ZZZZZZZZZZ"><button class="btn-find">Find account</button></div><div class="field-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> No Toko account matches this ID. The person must create an account first — creation is open to everyone.</div></div></div>
@@ -209,9 +267,9 @@
     </div>
   </section>
 
-  <!-- 03 · confirm & granted -->
+  <!-- 05 · confirm & granted -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Confirm &amp; granted</span><span class="d">Granting access is an explicit, confirmed action. The confirm modal restates the resolved account (its own profile identity) and the access level; on success a confirmation shows and the account appears in the access list. Both are real product modals — not documentation dressed as UI.</span></div>
+    <div class="frame-cap"><span class="num">05</span><span class="t">Confirm &amp; granted</span><span class="d">Granting access is an explicit, confirmed action. The confirm modal restates the resolved account (its own profile identity) and the access level. On success the confirmation shows one action only — <strong>Done</strong> (or ✕) closes the modal and you're back on the access list (01) with the new row present. No "grant another" from inside the modal: starting a new grant goes back through the list's context-bar button.</span></div>
     <div class="stage">
       <div class="modal-grid">
         <div class="modal-card">
@@ -229,32 +287,22 @@
             <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>Mara Okafor now has creator access.</strong> They've been notified and can start building.</div></div>
             <div class="creator-card flat"><span class="cav"></span><div><div class="cname">Mara Okafor</div><div class="csub mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div><span class="status status--active"><span class="dot"></span>Active</span></div>
           </div>
-          <div class="footer-row"><button class="btn btn--ghost">Grant another</button><button class="btn">View access list</button></div>
+          <div class="footer-row"><button class="btn">Done</button></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 04 · access list -->
+  <!-- 06 · revoke confirm -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">Creators with access</span><span class="d">The management list of every account granted creator access: profile identity (name from their profile, User ID + truncated principal), what they're building, who granted it and when, and status. Search and the status filter sit on the grey; the table is a white card with the white list bar attached as a footer band. Revoke moves a creator to Revoked — kept for the record, not deleted; the account itself is untouched (R58: accounts are never gated, only the creator role is).</span></div>
-    <div class="screen">
-      <div class="context-bar"><div class="crumb"><a>Admin</a><span class="sep">/</span><span class="here">Access</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="id">admin · q7w8…3xyz</span></span></div></div>
-      <div class="section">
-        <div class="section-head row"><div><div class="eyebrow">Admin · Access</div><h2>Creator access.</h2><p class="lede">Everyone granted the creator role. Grant new access, edit notes, or revoke.</p></div><div class="head-row"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search name or principal…"></div><a class="btn btn--sm" href="#">+ Grant creator access</a></div></div>
-        <div class="segmented"><button class="active">All · 128</button><button>Active · 121</button><button>Revoked · 7</button></div>
-        <div class="tablewrap">
-          <table class="admin-table">
-            <thead><tr><th>Creator</th><th class="hide">Building</th><th class="hide">Granted</th><th>Status</th><th></th></tr></thead>
-            <tbody>
-              <tr><td><div class="ctd"><span class="cav"></span><div><div class="nm">Mara Okafor</div><div class="sb mono">usr_01H8R2K4FM9C · k1m9…7uvw</div></div></div></td><td class="hide"><div class="build">Mineral songbird collections (Crystal Birds)</div></td><td class="hide"><div class="gr">q7w8…3xyz · 2 Jun 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
-              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></span><div><div class="nm">Night Market Studio</div><div class="sb mono">usr_01H9T6WQ3ZRV · f8a1…2klm</div></div></div></td><td class="hide"><div class="build">Lanterns, masks &amp; charms — seasonal drops</div></td><td class="hide"><div class="gr">q7w8…3xyz · 28 May 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
-              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#34d399,#065f46)"></span><div><div class="nm">Deep Blue Collective</div><div class="sb mono">usr_01HFA8D2MK6P · c4d5…1abc</div></div></div></td><td class="hide"><div class="build">Generative deep-sea creatures</div></td><td class="hide"><div class="gr">q7w8…3xyz · 19 May 2026</div></td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn icon-btn--danger" aria-label="Revoke"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></button></div></td></tr>
-              <tr><td><div class="ctd"><span class="cav" style="background:linear-gradient(135deg,#a78bfa,#5b21b6)"></span><div><div class="nm">Solara Works</div><div class="sb mono">usr_01HKX3B7QSTW · e9f0…3def</div></div></div></td><td class="hide"><div class="build">Sun Sprites — editioned art</div></td><td class="hide"><div class="gr">q7w8…3xyz · 11 May 2026</div></td><td><span class="status status--revoked"><span class="dot"></span>Revoked</span></td><td><div class="row-acts"><button class="icon-btn" aria-label="Edit notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" aria-label="Restore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button></div></td></tr>
-            </tbody>
-          </table>
-          <div class="listbar"><span class="results-count">Showing <strong>1–25</strong> of <strong>128</strong></span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button>2</button><button>3</button><span class="gap">…</span><button>6</button><button>›</button></div><label class="perpage">Per page <select><option>25</option><option>50</option><option>100</option></select></label></div>
+    <div class="frame-cap"><span class="num">06</span><span class="t">Revoke access · destructive confirm</span><span class="d">Revoking from a row (01) asks first — the canonical <strong>red</strong> destructive confirm from the style guide (Simple Modal Base, left-aligned): title names the action and target, red warning triangle beside the consequence text, ghost Cancel + red Revoke. Because the grant record is kept and Restore exists, the copy states what actually happens — no false "can't be undone".</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Revoke creator access · Mara Okafor?</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="mwarn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Mara Okafor</strong> immediately loses the creator role — they can no longer create collections or launch drops. Their account is untouched (accounts are never gated, R58) and the grant is kept in the list as <strong>Revoked</strong>. You can restore access at any time; they'll be notified either way.</div></div>
         </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Revoke access</button></div>
       </div>
     </div>
   </section>
