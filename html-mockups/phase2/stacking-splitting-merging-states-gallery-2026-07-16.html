@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Stacking, splitting &amp; merging · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--stack { background:rgba(6,176,230,.14); color:#075f80; }
+  .tag--single { background:rgba(99,102,241,.12); color:#4338ca; }
+  .tag--variant { background:rgba(220,38,38,.1); color:#b91c1c; }
+  .tag--variant.g { background:rgba(16,132,72,.12); color:#0a6b4f; }
+  .tag--lock { background:rgba(245,158,11,.16); color:#92580b; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .crumb .sep { color:var(--text-muted); } .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:rgba(16,185,129,.16); color:#0a6b4f; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .twocol { grid-template-columns:1fr; } }
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .panel > .eyebrow { display:block; margin-bottom:var(--s-4); }
+
+  /* holding cards */
+  .hgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,300px)); gap:var(--s-5); }
+  .holding { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; max-width:300px; position:relative; }
+  .holding .hart { aspect-ratio:1/1; background:linear-gradient(135deg,#9ca3af,#374151); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.04em; text-transform:uppercase; position:relative; }
+  .holding .hart--v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .holding .qbadge { position:absolute; top:10px; right:10px; background:rgba(10,10,10,.82); color:#fff; font-family:var(--font-display); letter-spacing:.03em; font-size:var(--text-lg); padding:2px 10px; border-radius:var(--r-pill); }
+  .holding .selbox { position:absolute; top:10px; left:10px; width:22px; height:22px; border-radius:6px; border:2px solid #fff; background:rgba(10,10,10,.4); display:flex; align-items:center; justify-content:center; color:#fff; }
+  .holding .selbox.on { background:var(--brand-cyan); border-color:var(--brand-cyan); color:#012; }
+  .holding.inelig { opacity:.5; }
+  .holding.sel { outline:2px solid var(--brand-cyan); outline-offset:-2px; }
+  .holding .hbody { padding:var(--s-4) var(--s-5) var(--s-5); }
+  .holding .httl { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-lg); }
+  .holding .hsub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:2px; }
+  .holding .hrow { display:flex; gap:.4rem; align-items:center; margin-top:var(--s-3); flex-wrap:wrap; }
+  .holding .hacts { display:flex; gap:var(--s-2); margin-top:var(--s-4); flex-wrap:wrap; }
+
+  /* inventory table */
+  .itable { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .itable th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); padding:0 var(--s-3) var(--s-3); border-bottom:1px solid var(--border-soft); }
+  .itable td { padding:var(--s-3); border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .itable tr:last-child td { border-bottom:0; }
+  .itable .art { width:34px; height:34px; border-radius:var(--r-2); background:linear-gradient(135deg,#9ca3af,#374151); flex:none; }
+  .itable .art--v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .itable .nm { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-base); }
+  .itable .cell { display:flex; align-items:center; gap:.6rem; }
+  .itable .qty { font-family:var(--font-display); letter-spacing:.03em; }
+  .rowacts { display:flex; gap:.35rem; justify-content:flex-end; flex-wrap:wrap; }
+  .icon-btn { width:32px; height:32px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .icon-btn:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .icon-btn svg { width:15px; height:15px; }
+
+  /* modal */
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:440px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .miniseg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:2px; }
+  .miniseg button { padding:.35rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); }
+  .miniseg button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .hcard-sm { display:flex; align-items:center; gap:var(--s-3); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3); }
+  .hcard-sm .art { width:38px; height:38px; border-radius:var(--r-2); background:linear-gradient(135deg,#9ca3af,#374151); flex:none; }
+  .hcard-sm .art--v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .hcard-sm .nm { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-base); }
+  .qty-stepper { display:flex; align-items:stretch; border:1px solid var(--border-soft); border-radius:var(--r-2); overflow:hidden; width:max-content; }
+  .qty-stepper button { width:42px; background:var(--surface-canvas-alt); font-size:var(--text-lg); color:var(--text-primary); }
+  .qty-stepper input { width:72px; border:0; border-left:1px solid var(--border-soft); border-right:1px solid var(--border-soft); text-align:center; font:inherit; font-family:var(--font-display); font-size:var(--text-lg); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-of-type { border-top:0; } .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .split-viz { display:flex; align-items:center; gap:var(--s-3); }
+  .split-viz .chip { flex:1; text-align:center; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3); }
+  .split-viz .chip .n { font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.03em; }
+  .split-viz .chip .l { font-size:var(--text-2xs); color:var(--text-secondary); text-transform:uppercase; letter-spacing:.08em; }
+  .split-viz .op { font-family:var(--font-display); color:var(--text-muted); font-size:var(--text-xl); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note strong { color:inherit; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note--err { background:rgba(239,68,68,.08); color:#7f1d1d; } .note--err .ic { color:var(--notify-error); }
+
+  /* spec / developer-reference frame — grey, deliberately not product chrome */
+  .spec { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-8); }
+  .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .rulegrid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); }
+  @media (max-width:860px){ .rulegrid { grid-template-columns:1fr; } }
+  .rulegrid .rule { border-left:3px solid var(--brand-cyan); padding-left:var(--s-4); }
+  .rulegrid .rule h5 { margin:0 0 .3rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); text-transform:none; letter-spacing:0; }
+  .rulegrid .rule p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); }
+  .matrix { width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas); border-radius:var(--r-3); overflow:hidden; }
+  .matrix th, .matrix td { padding:.6rem .8rem; border-bottom:1px solid var(--border-soft); text-align:center; }
+  .matrix th { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); background:var(--surface-canvas-alt); }
+  .matrix td:first-child, .matrix th:first-child { text-align:left; }
+  .matrix .y { color:var(--stage-live); font-weight:700; }
+  .matrix .n { color:var(--text-muted); }
+  .matrix tr:last-child td { border-bottom:0; }
+
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-3); }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks .mono { font-size:.85em; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  /* ===== real-surface components (aligned to sibling galleries) ===== */
+  /* canonical token card: rarity frame + white card (wallet · launchpad · marketplace) */
+  .rarity-frame { display:block; position:relative; padding:8px; border-radius:14px; background:var(--border-soft); text-align:left; }
+  .rarity-frame--default { background:var(--border-soft); }
+  .rarity-frame--common { background:#E6E6E6; }
+  .rarity-frame--uncommon { background:#2ECC71; }
+  .rarity-frame--rare { background:#2F80ED; }
+  .rarity-frame--epic { background:#8F3DFF; }
+  .rarity-frame--legendary { background:#FCD34D; }
+  .rarity-frame.sel { box-shadow:0 0 0 4px var(--surface-page), 0 0 0 7px var(--text-primary); }
+  .selcheck { position:absolute; top:10px; left:10px; width:24px; height:24px; border-radius:50%; background:var(--text-primary); color:#fff; display:inline-flex; align-items:center; justify-content:center; z-index:3; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .selcheck svg { width:13px; height:13px; }
+  .rarity-frame.dim { opacity:.5; }
+  .tok-card { background:#fff; border:0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column; }
+  .tok-card .art { display:flex; align-items:center; justify-content:center; aspect-ratio:1/1; position:relative; background:linear-gradient(135deg,#9ca3af,#374151); color:#fff; font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.04em; text-transform:uppercase; overflow:hidden; }
+  .tok-card .art.wide { aspect-ratio:16/10; }
+  .tok-card .art--v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .stack-badge { position:absolute; top:10px; right:10px; background:rgba(0,0,0,.78); color:#fff; border-radius:var(--r-pill); padding:4px 10px; font-size:var(--text-xs); font-weight:700; font-variant-numeric:tabular-nums; display:inline-flex; align-items:center; gap:2px; z-index:1; }
+  .stack-badge .x { opacity:.7; margin-right:1px; }
+  .left-pill { position:absolute; top:8px; left:8px; z-index:1; display:inline-flex; align-items:center; gap:2px; padding:3px 9px; border-radius:var(--r-pill); background:rgba(20,20,20,.82); color:#fff; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .left-pill .x { opacity:.7; }
+  .tok-card .meta { padding:var(--s-3) var(--s-4) 0; display:grid; gap:4px; }
+  .tok-card .meta.pb { padding-bottom:var(--s-4); }
+  .tok-card .top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tok-card .name { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.04em; text-transform:uppercase; margin:0; }
+  .tok-card .issue { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .tok-card .by { font-size:var(--text-xs); color:var(--text-secondary); }
+  .tok-card .col { font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .tok-card .meta-row { font-size:var(--text-sm); }
+  .tok-card .meta-row .val-soft { color:var(--text-secondary); font-style:italic; }
+  .vbar { height:6px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; margin:var(--s-3) var(--s-4) 0; }
+  .vbar > span { display:block; height:100%; background:var(--text-primary); }
+  .tok-card .foot { display:flex; align-items:center; justify-content:space-between; gap:var(--s-2); padding:var(--s-3) var(--s-4) var(--s-4); }
+  .tok-card .pr { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .tok-card .pr .u { font-size:.65rem; color:var(--text-muted); font-weight:700; }
+  .tok-card .ct { font-size:var(--text-xs); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .tok-card .buy { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:#fff; background:var(--text-primary); border-radius:var(--r-pill); padding:5px 11px; }
+  .st { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--stage-live); }
+  .st .d { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  /* wallet controls */
+  .wtabs { display:inline-flex; gap:var(--s-1); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; align-self:flex-start; }
+  .wtabs button { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .wtabs button .ct { background:var(--surface-canvas-deep); color:var(--text-secondary); border-radius:var(--r-pill); padding:1px 7px; font-size:var(--text-3xs); }
+  .wtabs button.active { background:var(--text-primary); color:#fff; }
+  .wtabs button.active .ct { background:rgba(255,255,255,.2); color:#fff; }
+  .controls { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .search { position:relative; flex:1; min-width:200px; }
+  .search svg { position:absolute; left:.7rem; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-muted); }
+  .search input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem .625rem 2.1rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .sortsel { height:38px; padding:0 1.6rem 0 .7rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-sm); font-weight:600; }
+  .view-toggle { display:inline-flex; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; gap:2px; flex:none; }
+  .view-toggle button { border:0; background:transparent; width:34px; height:30px; border-radius:var(--r-pill); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .view-toggle button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .view-toggle svg { width:15px; height:15px; }
+  /* select mode + bulk bar */
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:var(--s-4); }
+  .chk { position:absolute; top:12px; left:12px; width:22px; height:22px; border-radius:6px; background:rgba(255,255,255,.95); border:1.5px solid var(--border-strong); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); z-index:2; }
+  .chk svg { width:13px; height:13px; }
+  .chk.empty { color:transparent; }
+  .bulkbar { display:flex; align-items:center; gap:var(--s-3); background:var(--text-primary); color:#fff; border-radius:var(--r-3); padding:.625rem var(--s-4); flex-wrap:wrap; }
+  .bulkbar .b-count { font-family:var(--font-emphasis); font-weight:700; }
+  .bulkbar .b-hint { font-size:var(--text-xs); color:rgba(255,255,255,.72); }
+  .bulkbar .b-actions { margin-left:auto; display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .bulkbar .bb { background:var(--surface-canvas); color:var(--text-primary); border-radius:var(--r-2); padding:.45rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .bulkbar .bb--danger { background:var(--notify-error); color:#fff; }
+  .bulkbar .bb--clear { background:transparent; border:1px solid rgba(255,255,255,.32); color:#fff; }
+  /* manage-minted card (collection inventory) */
+  .mm-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:var(--s-4); }
+  .tk-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; position:relative; }
+  .tk-card.rar-common { border:3px solid #B8B8B8; }
+  .tk-card.rar-uncommon { border:3px solid #15803D; }
+  .tk-card.rar-rare { border:3px solid #1e40af; }
+  .tk-card.rar-epic { border:3px solid #6D28D9; }
+  .tk-card.rar-legendary { border:3px solid #B45309; }
+  .tk-card .mmart { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#fff; font-family:var(--font-display); letter-spacing:.04em; background:linear-gradient(135deg,#9ca3af,#374151); }
+  .tk-card .mmart.v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .tk-card .mmeta { padding:var(--s-3) var(--s-4) var(--s-4); display:flex; flex-direction:column; gap:.4rem; }
+  .tk-card .nm { font-family:var(--font-display); font-size:var(--text-base); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-card .trow { display:flex; align-items:center; justify-content:space-between; gap:.375rem; font-size:var(--text-xs); }
+  .tk-card .copyn { color:var(--text-secondary); font-weight:700; font-family:var(--font-emphasis); }
+  .tk-card .rname { font-weight:700; font-family:var(--font-emphasis); text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-3xs); }
+  .tk-card .status { position:absolute; top:8px; left:8px; display:inline-flex; align-items:center; gap:5px; background:rgba(10,10,10,.62); color:#fff; border-radius:var(--r-pill); padding:3px 8px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; }
+  .tk-card .status .dot { width:6px; height:6px; border-radius:50%; background:var(--stage-live); }
+  .tk-card .copies { position:absolute; bottom:8px; right:8px; background:rgba(10,10,10,.72); color:#fff; border-radius:var(--r-pill); padding:2px 8px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); }
+  .tk-card .chk { top:8px; left:8px; }
+  .tk-card.sel { box-shadow:0 0 0 2px var(--border-strong); }
+  .summary-strip { display:flex; gap:var(--s-8); flex-wrap:wrap; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); }
+  .summary-strip .sm .l { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .summary-strip .sm .v { font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.02em; }
+  .summary-strip .sm .v small { font-family:var(--font-body); font-size:var(--text-xs); color:var(--text-muted); }
+  /* list rows (manage-minted list view) */
+  .listwrap { padding:0; }
+  .hold { display:flex; align-items:center; gap:var(--s-3); padding:.75rem var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .hold:last-child { border-bottom:0; }
+  .hold .th { width:44px; height:44px; border-radius:var(--r-2); background:linear-gradient(135deg,#9ca3af,#374151); flex:none; position:relative; }
+  .hold .th.v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .hold .th .stackn { position:absolute; bottom:-6px; right:-6px; background:rgba(10,10,10,.85); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .hold .hn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .hold .hd { color:var(--text-secondary); font-size:var(--text-xs); }
+  .hold .hspacer { margin-left:auto; }
+  /* vendor stage/runtime badges + tabs */
+  .sb { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .sb .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sb--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .sb--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .sb--grey { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .lockpill { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:rgba(245,158,11,.14); color:#92580b; }
+  .vtabs { display:inline-flex; gap:var(--s-1); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .vtabs button { padding:.5rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); white-space:nowrap; }
+  .vtabs button.active { background:var(--text-primary); color:#fff; }
+  .inv-filters { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .head-actions { display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap; }
+  /* modal asset row + totals + quantity picker (claim / marketplace) */
+  .mini-asset { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#9ca3af,#374151); }
+  .mini-asset .mart.v2 { background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-base); }
+  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+  .paykv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.55rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .paykv:first-of-type { border-top:0; }
+  .paykv .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .paykv.total .v { font-size:var(--text-lg); }
+  .qlabel { display:block; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-secondary); margin-bottom:.4rem; }
+  .qpick { display:flex; align-items:center; gap:var(--s-3); }
+  .qpick .num { max-width:70px; text-align:center; padding:.5rem; border:1px solid var(--border-soft); border-radius:var(--r-2); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); }
+  .qpick .rem { font-size:var(--text-sm); color:var(--text-muted); }
+  .field-input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.75rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .hint { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.4rem; }
+  .btn--danger { background:var(--notify-error); color:#fff; border-color:transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Tokens · Minted holdings</span>
+    <h1>Stacking, splitting &amp; merging · states gallery</h1>
+    <p>The front-end for the finalized minted-holding interaction model — how a holder or a team works with a <strong>Stack</strong> (a fungible bucket with a quantity) versus a <strong>Single</strong> (an individualized unit). One consolidated reference for every surface where you can meet a stackable holding: the wallet, collection minted-token inventory, vendor inventory, the launchpad, claiming, and the marketplace. Backend is built; these are the FE locations that drive it.</p>
+    <div class="navlinks">Source: <span class="mono">Design Documentation/token-system-design.md</span> → Inventory Stack Interaction Model + Holding Operation Matrix; <span class="mono">wallet.md</span>. Related: <a href="../my-tokens-states-gallery-2026-06-22.html">My Tokens</a> · <a href="../manage-minted-states-gallery-2026-06-19.html">Manage minted</a> · <a href="../vendor-claim-token-view-states-gallery-2026-06-22.html">Vendor claim</a> · <a href="../marketplace-list-states-gallery-2026-06-28.html">Marketplace listing</a> · <a href="variants-states-gallery-2026-07-16.html">Variants</a>.</div>
+  </header>
+
+  <!-- 01 · rules -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">The rules every surface obeys</span><span class="d">Developer reference — not a screen. The same canonical checks gate every stack operation, everywhere; the UI just exposes them per surface. These four hold across the wallet, inventory, launchpad, claim and marketplace.</span></div>
+    <div class="spec">
+      <span class="speclabel">Canonical rules</span>
+      <div class="rulegrid">
+        <div class="rule"><h5>Merge identity = account + token + variant + frozen split</h5><p>Two holdings only stack when all match. <span class="mono">token_id</span> is the family, <span class="mono">variant</span> is the class, the frozen resale split rides along — different-split copies of the same token coexist as separate stacks, never silently merge.</p></div>
+        <div class="rule"><h5>Variant is identity everywhere</h5><p>Every variant is its own line — never a mixed-variant stack. Combine and Merge scope to a single variant; holdings of other variants are greyed out as ineligible, and copy names the variant (“2 Red stacks”), not just “identical copies”.</p></div>
+        <div class="rule"><h5>Listed or locked blocks every mutation</h5><p>A holding that is listed for sale, mid-claim, or in an in-flight operation is action-locked: Split, Unstack, Merge, Combine, Compact and Transfer are all blocked until the listing is cancelled or the lock clears.</p></div>
+        <div class="rule"><h5>No rollback → seams are benign</h5><p>On the IC a failed step never reverses a committed one. Two-step flows (split-then-open, split-then-transfer) are designed so a half-finished sequence loses nothing — the split Single simply stays, ready to retry.</p></div>
+      </div>
+      <span class="speclabel" style="margin-top:var(--s-8)">Which operations live on which surface</span>
+      <table class="matrix">
+        <thead><tr><th>Operation</th><th>Wallet</th><th>Collection inventory</th><th>Vendor inventory</th><th>Claim / Launchpad</th><th>Marketplace</th></tr></thead>
+        <tbody>
+          <tr><td>Split stack (N)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td>Merge (drag / fold)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td>Combine (multi-select)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td>Compact all</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td>Unstack (1 / all)</td><td class="y">✓</td><td class="n">opt.</td><td class="n">opt.</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td>Transfer amount (partial)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td>Claim / buy partial quantity</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+        </tbody>
+      </table>
+      <p class="tiny" style="margin-top:var(--s-4)">Unstack is a wallet convenience (break a stack into individually transferable/burnable Singles); it may be omitted on creator/vendor surfaces where per-unit individualization isn’t needed. Claim and marketplace never mutate a stack’s structure — they draw units off it at a per-unit price (R41). On the vendor surface these tools run through Select while the vendor is Paused; returning stock is “Remove from vendor” (it returns to the collection), never a “transfer back”.</p>
+    </div>
+  </section>
+
+  <!-- 02 · wallet stack + actions -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Wallet · the stack holding &amp; its actions</span><span class="d">My Tokens is the wallet home — a grid of the canonical token card. A stack shows a <span class="mono">×N</span> badge on its artwork; a single shows its edition. The grid card carries no buttons: opening a holding reveals its actions, and <strong>Stack actions</strong> (Split / Unstack / Merge) is one of them. Everything is scoped to the holding’s <span class="mono">(token, variant)</span> and blocked while it is listed.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><span class="here">My Tokens</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Wallet</div><h2>My Tokens.</h2><p class="lede">Everything owned by your connected principal. Stacks show a quantity; singles show their own state.</p></div></div>
+        <div class="wtabs"><button class="active">Tokens <span class="ct">42</span></button><button>Balances <span class="ct">3</span></button><button>Activity</button></div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search your tokens…"></div>
+          <div class="seg"><button class="active">All</button><button>Singles</button><button>Stacks</button></div>
+          <select class="sortsel"><option>Recently acquired</option><option>Name A–Z</option></select>
+          <div class="view-toggle"><button aria-pressed="true" aria-label="Grid"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></button><button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div>
+        </div>
+        <div class="tk-grid">
+          <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art">Swampie<span class="stack-badge"><span class="x">×</span>12</span></div><div class="meta pb"><div class="top"><h3 class="name">Swampie</h3></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+          <a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art art--v2">Swampie<span class="stack-badge"><span class="x">×</span>4</span></div><div class="meta pb"><div class="top"><h3 class="name">Swampie</h3></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+          <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art">Staff</div><div class="meta pb"><div class="top"><h3 class="name">Ember Staff</h3><span class="issue">#007</span></div><div class="meta-row"><span class="val-soft">Single · Durability 60%</span></div></div></div></a>
+        </div>
+        <p class="tiny" style="margin:0">Open a holding to reach its actions — Transfer, List for sale, Burn, and for a stack, Stack actions. A single has no stack tools.</p>
+      </div>
+    </div>
+    <div class="stage" style="margin-top:var(--s-6)">
+      <div class="modal-card">
+        <header><h4>Stack actions · Swampie · Green</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="hcard-sm"><span class="art"></span><div><div class="nm">Swampie · ×12</div><div class="tiny">Stackable · Green · 12 in this stack</div></div></div>
+          <div class="seg"><button class="active">Split</button><button>Unstack</button><button>Merge</button></div>
+          <p class="tiny" style="margin:0">Split peels an amount into a new stack · Unstack turns copies into individual Singles · Merge folds two same-variant stacks into one. (Frame 03 shows each tab.)</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Close</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · split · unstack · merge = the three tabs of the modal -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Wallet · Split · Unstack · Merge — the three tabs of one modal</span><span class="d">These are not separate screens or floating panels: they are the three tabs of the <strong>Stack actions</strong> modal opened in frame 02. Each acts on a single stack. Split peels <span class="mono">N</span> (1 ≤ N &lt; quantity) into a new stack of the same identity (12 → 8 + 4). Unstack materializes Singles (one, or all). Merge folds two same-variant stacks you hold into one.</span></div>
+    <div class="stage">
+      <div class="modal-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--s-6);width:100%;max-width:1000px;align-items:start">
+        <div class="modal-card">
+          <header><h4>Stack actions · Swampie · Green</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="hcard-sm"><span class="art"></span><div><div class="nm">Swampie · ×12</div><div class="tiny">Stackable · Green</div></div></div>
+            <div class="seg"><button class="active">Split</button><button>Unstack</button><button>Merge</button></div>
+            <div><label class="qlabel">Amount to split off</label><div class="qpick"><button class="btn btn--ghost btn--sm">−</button><input class="num" value="4"><button class="btn btn--ghost btn--sm">+</button></div></div>
+            <div class="split-viz"><div class="chip"><div class="n">8</div><div class="l">This stack</div></div><span class="op">+</span><div class="chip"><div class="n">4</div><div class="l">New stack</div></div></div>
+            <p class="tiny" style="margin:0">Creates a new stack of 4; this one keeps 8. Same token &amp; variant — they can be re-merged later.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Split off 4</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Stack actions · Swampie · Green</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="hcard-sm"><span class="art"></span><div><div class="nm">Swampie · ×12</div><div class="tiny">Stackable · Green</div></div></div>
+            <div class="seg"><button>Split</button><button class="active">Unstack</button><button>Merge</button></div>
+            <div class="miniseg"><button aria-pressed="true">Unstack 1</button><button aria-pressed="false">Unstack all</button></div>
+            <div class="split-viz"><div class="chip"><div class="n">11</div><div class="l">This stack</div></div><span class="op">+</span><div class="chip"><div class="n">×1</div><div class="l">New single</div></div></div>
+            <p class="tiny" style="margin:0"><strong>Unstack all</strong> on ×12 creates 12 Singles (large counts run as a chunked job).</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Unstack 1</button></div>
+        </div>
+        <div class="modal-card">
+          <header><h4>Stack actions · Swampie · Green</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="hcard-sm"><span class="art"></span><div><div class="nm">Swampie · ×12</div><div class="tiny">Stackable · Green</div></div></div>
+            <div class="seg"><button>Split</button><button>Unstack</button><button class="active">Merge</button></div>
+            <p class="tiny" style="margin:0">You hold 2 Green stacks of Swampie — fold them into one.</p>
+            <div class="split-viz"><div class="chip"><div class="n">12</div><div class="l">Stack A</div></div><span class="op">+</span><div class="chip"><div class="n">8</div><div class="l">Stack B</div></div><span class="op">→</span><div class="chip" style="border-color:var(--brand-cyan)"><div class="n">20</div><div class="l">Merged</div></div></div>
+            <p class="tiny" style="margin:0">Dragging one stack directly onto another performs the same merge.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Merge into ×20</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · combine = select mode over My Tokens -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Wallet · Combine &amp; Compact — a Select mode over My Tokens</span><span class="d">There is no separate “Combine” section. Combine is a <strong>Select mode</strong> on the My Tokens grid: turn it on and corner checkboxes appear. Tick identical, unlocked holdings of one token+variant to <strong>Combine into a stack</strong>, or <strong>Compact stacks</strong> to fold every eligible stack of that token at once. Other variants and listed copies are ineligible — the golden rule, enforced visually.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><span class="here">My Tokens</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Wallet · select</div><h2>My Tokens.</h2><p class="lede">Combine identical copies (same variant, same resale terms) into a stack, or compact all eligible stacks of a token.</p></div></div>
+        <div class="bulkbar"><span class="b-count">2 selected</span><span class="b-hint">Swampie · Green · identical &amp; unlocked</span><span class="b-actions"><button class="bb">Combine into stack</button><button class="bb">Compact stacks</button><button class="bb bb--clear">Clear</button></span></div>
+        <div class="tk-grid">
+          <a class="rarity-frame rarity-frame--common sel"><span class="selcheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art">Swampie<span class="stack-badge"><span class="x">×</span>12</span></div><div class="meta pb"><div class="top"><h3 class="name">Swampie</h3></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+          <a class="rarity-frame rarity-frame--common sel"><span class="selcheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art">Swampie<span class="stack-badge"><span class="x">×</span>4</span></div><div class="meta pb"><div class="top"><h3 class="name">Swampie</h3></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+          <a class="rarity-frame rarity-frame--common dim"><div class="tok-card"><div class="art art--v2">Swampie<span class="stack-badge"><span class="x">×</span>4</span></div><div class="meta pb"><div class="top"><h3 class="name">Swampie</h3></div><div class="meta-row"><span class="val-soft">Open edition</span></div><div class="meta-row"><span class="tiny">Other variant — can’t combine</span></div></div></div></a>
+          <a class="rarity-frame rarity-frame--common dim"><div class="tok-card"><div class="art">Swampie<span class="stack-badge"><span class="x">×</span>3</span></div><div class="meta pb"><div class="top"><h3 class="name">Swampie</h3></div><div class="meta-row"><span class="val-soft">Open edition</span></div><div class="meta-row"><span class="tag tag--lock">Listed — cancel first</span></div></div></div></a>
+        </div>
+        <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span><div>Only identical, unlocked copies of the same token <strong>and variant</strong> — carrying the <strong>same resale terms</strong> — can be combined. A copy that is listed for sale must have its listing cancelled first. Greyed cards here are ineligible.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · transfer + listed lock -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Wallet · Transfer &amp; the listed lock</span><span class="d">Transfer aligns with the wallet’s existing Transfer modal — recipient principal, the “no undo” warning, Confirm transfer. For a stack it adds exactly one field: an amount (a split immediately followed by a transfer, in one atomic step; variant is always preserved). A listed stack is the locked state: the wallet disables its stack tools with one route out — cancel the listing.</span></div>
+    <div class="twocol">
+      <div class="stage" style="padding:var(--s-8)">
+        <div class="modal-card">
+          <header><h4>Transfer token</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"></span><span><div class="mn">Swampie · ×12</div><div class="ms">Marsh Run · Green · Stack</div></span></div>
+            <div><label class="qlabel">Amount to send</label><div class="qpick"><button class="btn btn--ghost btn--sm">−</button><input class="num" value="5"><button class="btn btn--ghost btn--sm">+</button><span class="rem">of 12</span></div></div>
+            <div><label class="qlabel">Recipient principal</label><input class="field-input mono" value="q9y7-aaae-mmm3-…-aaae-q"><div class="hint">Ownership moves immediately on confirm. There’s no undo.</div></div>
+            <div class="paykv"><span>They receive</span><span class="v">×5 Green</span></div>
+            <div class="paykv"><span>You keep</span><span class="v">×7 Green</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Confirm transfer</button></div>
+        </div>
+      </div>
+      <div class="panel" style="align-self:start">
+        <span class="eyebrow">Listed stack — sale-locked</span>
+        <div style="margin-top:var(--s-4)">
+          <div style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:.03em;font-size:var(--text-lg)">Swampie · ×6</div>
+          <div class="tiny" style="margin-top:2px">Marsh Run · Green · listed at 0.8 ICP each</div>
+          <div class="hrow" style="display:flex;gap:.4rem;margin-top:var(--s-3)"><span class="tag tag--lock">Listed · selling in parts</span></div>
+          <div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div><strong>4 of 6 sold · 2 left.</strong> While listed, Transfer, Burn and Stack actions are sale-locked — cancel the listing to edit the stack.</div></div>
+          <div class="hacts" style="display:flex;gap:var(--s-2);margin-top:var(--s-4)"><button class="btn btn--danger btn--sm">Cancel listing</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Stack actions</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Transfer</button></div>
+        </div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Buyers still take partial quantity off the listing (frame 09) — the lock is only on the owner’s structural edits.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · collection minted inventory (grid + list) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Collection minted-token inventory — grid &amp; list</span><span class="d">The team surface is the collection’s Minted page (manage-minted). It shows minted copies the collection itself holds, in <strong>grid</strong> or <strong>list</strong> view via the same toggle. A stack shows a <span class="mono">×N</span> badge and reads “stack ×N”. The stack tools are a minor addition: Select → <strong>Compact stacks</strong> in the bulk bar, and Split / Merge on one stack via its Stack actions (the same modal as the wallet). These act on minted holdings only, never on token definitions.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Marsh Run</a><span class="sep">/</span><a>Collections</a><span class="sep">/</span><a>Marsh Run</a><span class="sep">/</span><span class="here">Minted</span></div><div class="actions"></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Collection · Minted</div><h2>Minted.</h2><p class="lede">Minted copies currently held by this collection. Moving to a vendor, selling, or transferring out removes it from this list.</p></div><div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><button class="btn btn--ghost btn--sm">Export CSV</button><button class="btn btn--ghost btn--sm">Select</button></div></div>
+        <div class="summary-strip"><div class="sm"><div class="l">Minted</div><div class="v">1,000 <small>of 1,000</small></div></div><div class="sm"><div class="l">Held here</div><div class="v" style="color:#066D4E">620</div></div><div class="sm"><div class="l">In vendors</div><div class="v" style="color:#0560A0">180</div></div><div class="sm"><div class="l">Held externally</div><div class="v" style="color:#3F40B6">200</div></div><div class="sm"><div class="l">Burned</div><div class="v">0</div></div></div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search by name, issue or copy number…"></div>
+          <div class="seg"><button class="active">All held · 620</button><button>Stacks</button><button>Singles</button></div>
+          <div class="view-toggle"><button aria-pressed="true" aria-label="Grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></button><button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3.5" y1="6" x2="3.5" y2="6"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="18" x2="3.5" y2="18"/></svg></button></div>
+        </div>
+        <div class="mm-grid">
+          <div class="tk-card rar-common"><div class="mmart">Swampie</div><span class="status"><span class="dot"></span>Held</span><span class="copies">×220</span><div class="mmeta"><div class="nm">Swampie</div><div class="trow"><span class="copyn">stack ×220 · Green</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+          <div class="tk-card rar-common"><div class="mmart v2">Swampie</div><span class="status"><span class="dot"></span>Held</span><span class="copies">×64</span><div class="mmeta"><div class="nm">Swampie</div><div class="trow"><span class="copyn">stack ×64 · Red</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+          <div class="tk-card rar-uncommon"><div class="mmart">Staff</div><span class="status"><span class="dot"></span>Held</span><div class="mmeta"><div class="nm">Ember Staff</div><div class="trow"><span class="copyn">copy 3 / 50</span><span class="rname" style="color:#15803D">Uncommon</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="frame-cap" style="margin-top:var(--s-6)"><span class="num" style="visibility:hidden">06</span><span class="t" style="font-size:var(--text-sm)">List view — same holdings, same toggle</span></div>
+    <div class="screen">
+      <div class="section" style="padding:var(--s-5) var(--s-8)">
+        <div class="controls"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search by name, issue or copy number…"></div><div class="view-toggle"><button aria-pressed="false" aria-label="Grid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></button><button aria-pressed="true" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3.5" y1="6" x2="3.5" y2="6"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="18" x2="3.5" y2="18"/></svg></button></div></div>
+        <div class="panel listwrap">
+          <div class="hold"><span class="th"><span class="stackn">×220</span></span><div><div class="hn">Swampie</div><div class="hd">Green · Stack · Common · tok_swmp</div></div><span class="hspacer"></span><span class="tag tag--stack">Held</span></div>
+          <div class="hold"><span class="th v2"><span class="stackn">×64</span></span><div><div class="hn">Swampie</div><div class="hd">Red · Stack · Common · tok_swmp</div></div><span class="hspacer"></span><span class="tag tag--stack">Held</span></div>
+          <div class="hold"><span class="th"></span><div><div class="hn">Ember Staff</div><div class="hd">Copy 3 / 50 · Single · Uncommon · tok_staf</div></div><span class="hspacer"></span><span class="tag tag--single">Held</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="twocol" style="margin-top:var(--s-6)">
+      <div><span class="eyebrow" style="display:block;margin-bottom:var(--s-2)">Where the stack tools live here</span><p class="tiny" style="margin:0">Turn on <strong>Select</strong> → the bulk bar exposes <strong>Compact stacks</strong> (fold every eligible stack of a token). Split and Merge on one stack open its <strong>Stack actions</strong> — the same modal as frames 02–03.</p></div>
+      <div><span class="eyebrow" style="display:block;margin-bottom:var(--s-2)">Minor addition, not a redesign</span><p class="tiny" style="margin:0">Everything above is the existing Minted page. Stacks simply carry a ×N badge and gain the same Compact / Split / Merge already available in the wallet.</p></div>
+    </div>
+  </section>
+
+  <!-- 07 · vendor inventory -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Vendor inventory (staged for claim)</span><span class="d">Vendor inventory is the vendor’s <strong>Inventory</strong> tab — staged stock as token cards with a <span class="mono">×N</span> stack badge. Editing is gated on <strong>Pause</strong> (a collector could be claiming while it is Running). The real return path is Select → <strong>Remove from vendor</strong>, which returns those copies to the <strong>collection</strong> — there is no “Transfer back to project”. Stack tools (Split / Merge / Compact) run through the same Select → bulk actions, only while Paused. What is staged here is exactly what claimants draw from on the launchpad (frame 08).</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Marsh Run</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Corner Shop</a><span class="sep">/</span><span class="here">Inventory</span></div><div class="actions"></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Vendor · Inventory</div><h2>Staged stock.</h2><p class="lede">Minted stacks staged to this vendor. Pause to edit; removing returns copies to their collection.</p></div><div class="head-actions"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--amber"><span class="dot"></span>Paused</span><span class="lockpill">Editable · paused</span><button class="btn btn--primary btn--sm">+ Add tokens</button></div></div>
+        <div class="vtabs"><button>Overview</button><button>Storefront</button><button>Lifecycle</button><button class="active">Inventory</button><button>Costs &amp; rules</button><button>Revenue</button></div>
+        <div class="bulkbar"><span class="b-count">1 selected</span><span class="b-hint">Swampie · Green · staged</span><span class="b-actions"><button class="bb">Compact stacks</button><button class="bb bb--danger">Remove from vendor</button><button class="bb bb--clear">Clear</button></span></div>
+        <div class="row" style="display:flex;gap:var(--s-3);flex-wrap:wrap"><div class="inv-filters"><select class="sortsel"><option>All collections · 83</option><option>Marsh Run · 83</option></select><select class="sortsel"><option>All rarities</option><option>Common</option></select></div></div>
+        <div class="tk-grid">
+          <div class="tk-card rar-common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="mmart">Swampie</div><span class="copies">×80</span><div class="mmeta"><div class="nm">Swampie</div><div class="trow"><span class="copyn">stack ×80 · Green</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+          <div class="tk-card rar-common"><span class="chk empty"></span><div class="mmart v2">Swampie</div><span class="copies">×3</span><div class="mmeta"><div class="nm">Swampie</div><div class="trow"><span class="copyn">stack ×3 · Red</span><span class="rname" style="color:#6B6B6B">Common</span></div></div></div>
+        </div>
+        <p class="tiny" style="margin:0">Per-unit claim price for staged stock is set on the <strong>Costs &amp; rules</strong> tab, per tier — not on the inventory card. Low stock (×3) surfaces to claimants as “×3 left”.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · launchpad + claim -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Launchpad &amp; claiming · draw units off a stack</span><span class="d">Discovery and claim never restructure a stack — they draw units off it at a per-unit price (R41). The storefront card shows the stack as availability (<span class="mono">×N left</span>) + a per-unit price; the claim modal is a “How many?” quantity picker (1 … remaining) with a running total. If someone claims first, it fails cleanly with the remaining count and a one-tap “claim the remaining N”.</span></div>
+    <div class="twocol">
+      <div class="panel" style="align-self:start">
+        <span class="eyebrow">Launchpad · claimable stack card</span>
+        <div style="max-width:260px;margin-top:var(--s-3)"><a class="rarity-frame rarity-frame--default"><div class="tok-card"><div class="art wide">Swampie<span class="left-pill"><span class="x">×</span>80 left</span></div><div class="meta"><div class="col">Corner Shop · Marsh Run</div><div class="top"><h3 class="name">Swampie</h3></div></div><div class="foot"><span class="pr">0.5 ICP <span class="u">each</span></span><span class="st st--live"><span class="d"></span>Available</span></div></div></a></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">The card shows availability + a per-unit price — no split/merge tools on a discovery surface. (Vendors carry no rarity colour, so the frame is neutral.)</p>
+      </div>
+      <div class="stage" style="padding:var(--s-8)">
+        <div class="modal-card">
+          <header><h4>Claim Swampie · Green</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"></span><span><div class="mn">Swampie · Green</div><div class="ms">×80 available · 0.5 ICP each</div></span></div>
+            <div><label class="qlabel">How many?</label><div class="qpick"><button class="btn btn--ghost btn--sm">−</button><input class="num" value="6"><button class="btn btn--ghost btn--sm">+</button><span class="rem">of 80 remaining</span></div></div>
+            <div class="paykv"><span>Cost per unit</span><span class="v">0.5 ICP</span></div>
+            <div class="paykv total"><span>Total (6 × 0.5 ICP)</span><span class="v">3.0 ICP</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Claim 6 · 3.0 ICP</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="stage" style="margin-top:var(--s-6)">
+      <div class="modal-card">
+        <header><h4>Only 2 left</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Someone beat you to it! There are still 2 available, do you want to claim them?</div></div>
+          <div class="paykv total"><span>New total (2 × 0.5 ICP)</span><span class="v">1.0 ICP</span></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Claim the remaining 2 · 1.0 ICP</button></div>
+      </div>
+    </div>
+    <p class="tiny" style="margin-top:var(--s-3)">Quantity is race-protected by an atomic check-and-decrement — first call wins; remaining 0 falls through to sold-out. A single Single can be peeled straight off a stack too (the “open one” pattern from <span class="mono">variants</span>); if the open half fails, the split Single stays, ready to retry.</p>
+  </section>
+
+  <!-- 09 · marketplace -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Marketplace · list a stack, buy in parts</span><span class="d">Secondary listings price a stack <span class="mono">per unit</span> with partial buys allowed (R41). The browse card reads “each · ×N left”; the seller sets a per-unit price; the buy modal is the same “How many?” picker with the same take-the-remainder race handling. Listing a stack is what sale-locks it from the owner’s stack tools (frame 05).</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">Marketplace · browse card</span>
+        <div style="max-width:240px;margin-top:var(--s-3)"><a class="rarity-frame rarity-frame--common"><div class="tok-card"><div class="art">Swampie<span class="left-pill"><span class="x">×</span>6 left</span></div><div class="meta"><div class="col">Marsh Run · Green</div><div class="top"><h3 class="name">Swampie</h3></div></div><div class="foot"><span class="pr">0.8 ICP <span class="u">each · ×6 left</span></span><span class="buy">Buy</span></div></div></a></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">“each · ×N left” tells a buyer it is a divisible stack, not a single item.</p>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">List a stack · priced per unit</span>
+        <div class="mini-asset" style="margin-bottom:var(--s-4)"><span class="mart"></span><span><div class="mn">Swampie · ×6</div><div class="ms">Green · your stack</div></span></div>
+        <label class="qlabel">Price per unit · ×6 listed</label>
+        <input class="field-input" style="font-family:var(--font-display);font-size:var(--text-lg)" value="0.8 ICP">
+        <p class="hint">Per unit — buyers choose how many to take. Full stack total: 4.8 ICP.</p>
+        <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span><div><strong>Buyers can take any amount.</strong> Someone might buy all 6, or just 1 — each pays quantity × your unit price, and whatever is left stays listed until it sells out or the listing ends.</div></div>
+        <div class="note note--warn" style="margin-top:var(--s-3)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div>Once listed, this stack is sale-locked from Split, Merge and Combine until you cancel the listing.</div></div>
+        <div style="display:flex;gap:var(--s-2);margin-top:var(--s-4)"><button class="btn btn--ghost btn--sm">Cancel</button><button class="btn btn--primary btn--sm">List ×6 at 0.8</button></div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Buy · pick a quantity</span>
+        <div class="mini-asset" style="margin-bottom:var(--s-4)"><span class="mart"></span><span><div class="mn">Swampie · Green</div><div class="ms">Marsh Run · ×6 remaining · seller k1m9…7uvw</div></span></div>
+        <label class="qlabel">How many?</label>
+        <div class="qpick"><button class="btn btn--ghost btn--sm">−</button><input class="num" value="3"><button class="btn btn--ghost btn--sm">+</button><span class="rem">of 6 remaining</span></div>
+        <div class="paykv" style="margin-top:var(--s-3)"><span>Price per unit</span><span class="v">0.8 ICP</span></div>
+        <div class="paykv total"><span>You pay (3 × 0.8)</span><span class="v">2.4 ICP</span></div>
+        <div style="display:flex;gap:var(--s-2);margin-top:var(--s-4)"><button class="btn btn--ghost btn--sm">Cancel</button><button class="btn btn--primary btn--sm">Buy 3 · 2.4 ICP</button></div>
+      </div>
+    </div>
+    <div class="stage" style="margin-top:var(--s-6)">
+      <div class="modal-card">
+        <header><h4>Only 1 left</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>Someone beat you to it! There is still 1 available, do you want to buy that?</div></div>
+          <div class="paykv total"><span>New total (1 × 0.8 ICP)</span><span class="v">0.8 ICP</span></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Buy the remaining 1 · 0.8 ICP</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
