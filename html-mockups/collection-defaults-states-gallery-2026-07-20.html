@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Collection defaults (V1) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { opacity:.45; cursor:not-allowed; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head .ttlwrap { display:flex; align-items:baseline; gap:var(--s-3); flex-wrap:wrap; }
+  .card__head h3 { font-size:var(--text-xl); }
+  .card__head .sub { font-size:var(--text-xs); color:var(--text-muted); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .input.is-error { border-color:var(--notify-error); } .input.is-ok { border-color:var(--stage-live); }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .colhead { display:flex; gap:var(--s-3); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); padding-bottom:.35rem; }
+  .colhead .c-tier { min-width:120px; } .colhead .c-split { width:210px; } .colhead .c-state { flex:1; }
+  .tier-row { display:flex; align-items:center; gap:var(--s-3); padding:.7rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .tier-row:first-child { border-top:0; }
+  .tier-row .tr-tier { font-family:var(--font-emphasis); font-weight:700; min-width:120px; }
+  .tier-row .tr-split { width:210px; font-size:var(--text-sm); }
+  .tier-row .tr-state { flex:1; display:flex; gap:.35rem; flex-wrap:wrap; min-width:200px; align-items:center; }
+  .tier-row .tr-actions { display:flex; gap:var(--s-2); margin-left:auto; }
+  .open-chip { font-size:var(--text-xs); color:var(--text-muted); font-style:italic; }
+  .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); flex:none; position:relative; }
+  .radio.on { border-color:var(--text-primary); } .radio.on::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .opt { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); border:1px solid var(--border-soft); border-radius:var(--r-3); }
+  .opt + .opt { margin-top:var(--s-3); }
+  .opt.on { border-color:var(--text-primary); box-shadow:inset 0 0 0 1px var(--text-primary); }
+  .opt.disabled { opacity:.5; }
+  .opt .opt-main { flex:1; }
+  .opt .opt-ttl { font-family:var(--font-emphasis); font-weight:700; }
+  .opt .opt-d { font-size:var(--text-xs); color:var(--text-secondary); }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .empty-state { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .empty-state strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state p { margin:0; font-size:var(--text-sm); }
+  .ben-row { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3) var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .ben-row + .ben-row { margin-top:var(--s-3); }
+  .ben-row .bn { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .ben-row .bd { font-size:var(--text-xs); color:var(--text-secondary); }
+  .ben-row .pct { width:84px; }
+  .ben-row.addopt { cursor:pointer; color:var(--text-muted); } .ben-row.addopt:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .plusmark { width:18px; height:18px; border-radius:50%; border:2px dashed var(--text-muted); display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:13px; line-height:1; flex:none; }
+  .sumbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-3) var(--s-4); border-radius:var(--r-3); background:var(--surface-canvas-deep); font-size:var(--text-sm); }
+  .sumbar .k { color:var(--text-secondary); } .sumbar .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .sumbar.bad .v { color:var(--notify-error); }
+  .vcheck { display:flex; gap:var(--s-3); align-items:flex-start; padding:.65rem 0; border-top:1px solid var(--border-soft); }
+  .vcheck:first-child { border-top:0; }
+  .vcheck .vi { flex:none; margin-top:1px; } .vcheck .vi.err { color:var(--notify-error); } .vcheck .vi.ok { color:var(--stage-live); }
+  .vcheck .vt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .vcheck .vd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:1px; }
+  .vcheck .vfix { margin-left:auto; color:var(--info); font-weight:700; font-size:var(--text-xs); white-space:nowrap; align-self:center; }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .single-modal .modal-card.wide { max-width:640px; } .single-modal .modal-card.narrow { max-width:480px; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .modelbar { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-5); }
+  .modelbar .mb { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); flex:1; min-width:200px; }
+  .modelbar .mb .k { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); }
+  .modelbar .mb .v { font-size:var(--text-xs); color:var(--text-secondary); margin-top:2px; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:94ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sbg--draft { background:rgba(245,158,11,.15); color:var(--stage-draft); }
+  .sbg--review{ background:rgba(99,102,241,.12); color:var(--stage-review); }
+  .sbg--live  { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .lockpill { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
+  .lockpill--lock { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .lockpill--locked { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .lockpill--req { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .card.locked-card { background:var(--surface-canvas-alt); }
+  .lock-note { background:var(--surface-canvas-deep); } .lock-note .ic { color:var(--text-muted); }
+  .lifebar { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); }
+  .lifebar .lb { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); flex:1; min-width:210px; }
+  .lifebar .lb .k { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); display:flex; align-items:center; gap:var(--s-2); }
+  .lifebar .lb .v { font-size:var(--text-xs); color:var(--text-secondary); margin-top:4px; }
+  .part-divider { margin-top:var(--s-10); padding-top:var(--s-6); border-top:2px solid var(--border-strong); }
+  .part-divider .pd-k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .part-divider .pd-h { font-size:var(--text-3xl); margin-top:.25rem; }
+  .part-divider .pd-d { color:var(--text-secondary); font-size:var(--text-sm); margin-top:var(--s-2); max-width:82ch; }
+  .grey-note { color:var(--text-secondary); font-size:var(--text-sm); max-width:94ch; }
+  .grey-note strong { color:var(--text-primary); }
+  .reftable { width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .reftable th { text-align:left; font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; padding:.6rem .85rem; border-bottom:1px solid var(--border-soft); }
+  .reftable td { padding:.7rem .85rem; border-bottom:1px solid var(--border-soft); } .reftable tr:last-child td { border-bottom:0; }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Creator studio · Collection</span>
+    <h1>Collection defaults.</h1>
+    <p>The collection sub-page where a creator sets the <strong>default claim rule</strong> every new vendor drawing from this collection starts with (then edits per vendor). It is <strong>tier-indexed</strong> (a default per rarity tier), <strong>auto-saves</strong>, and is <strong>required-valid before Review — cost only; rules never gate</strong>. Being a <strong>template</strong>, it stays <strong>editable in every collection state, including Live</strong> (edits are non-retroactive — existing vendors keep their copies). In V1 a rule is two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (allowlist / hold / stake). <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong>. Source: <span class="mono">Design Documentation/collection-defaults-design.md</span>. <strong>Refreshed 2026-07-20</strong> for the post-06-30 rulings: cost inheritance (R61 — the gate tests effective resolution), requirements never inherit (R72), full-tier-set gate (R73), sparse vendor snapshot (R74), fail-closed unenforced requirement kinds (R75), and the V1 weighted tier set (3 tiers).</p>
+    <div class="navlinks">The retired collection "Sale defaults" page is now the <strong>Sale preset</strong> in <a href="revenue-presets-states-gallery-2026-06-22.html">Revenue presets</a>. Related: <a href="rarity-states-gallery-2026-06-17.html">Rarity</a> · <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a></div>
+  </header>
+  <div class="grey-note" style="border-left:3px solid var(--stage-live); padding-left:var(--s-4)"><strong>V1 scope:</strong> collection defaults carry <strong>only cost + requirements</strong>. Claim <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">Design Documentation/collection-defaults-design.md</span>.</div>
+
+  <!-- ============ PART A ============ -->
+  <div class="part-divider"><div class="pd-k">Part A</div><h2 class="pd-h">The sale-defaults page</h2><div class="pd-d">The sub-page itself: a per-tier table of the claim rule (cost + requirements), and the rule editor. Auto-saves; stage persistence lives on the collection bar, not here.</div></div>
+
+  <!-- A1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A1</span><span class="t">Collection defaults — set</span><span class="d">A collection with collection defaults in place. Each rarity tier has a <strong>cost</strong> plus optional <strong>requirements</strong>. This is a collection sub-page, so it auto-saves — no Save/Discard here; stage persistence (Submit to Review / Publish to Live) lives on the collection bar.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2><div class="lede">The default claim cost &amp; requirements every new vendor drawing from this collection starts with — vendors then edit their own copy. One default per rarity tier.</div></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">4 ICP · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A2</span><span class="t">Rule editor — collection default</span><span class="d">Opened from "Edit rule" on a tier. A required <strong>cost</strong> (Free, or an accepted currency) plus optional <strong>requirements</strong> (whitelist / holds tokens from a collection / has a stake), combined with AND. Whitelist is V1; the token-hold and stake types are <strong>front-end V2</strong> (backend schema in V1) — see A2b. <strong>Restrictions</strong> (claim limits) and <strong>Rewards</strong> (payouts) are <strong>V2</strong> and not shown here. Dev note (2026-07-17): <strong>Free and unset are distinct wire states</strong> — never coerce an absent value into Free; on the tier update endpoints an <em>omitted</em> tier means unchanged, and clearing a tier back to unset is an explicit operation, never inferred from omission.</span></div>
+    <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
+      <header><h4>Claim rule · Founder</h4><span class="x">✕</span></header>
+      <div class="mbody">
+        <div>
+          <div class="flabel">Claim cost <span class="open-chip">required — Free, or an accepted currency</span></div>
+          <div class="opt"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Free</div><div class="opt-d">Anyone eligible can claim at no cost.</div></div></div>
+          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in one of Toko's accepted currencies.</div><div class="row" style="margin-top:.5rem;gap:.5rem"><input class="input" style="width:110px" value="4"><select class="input" style="width:130px"><option selected>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select></div></div></div>
+        </div>
+        <div>
+          <div class="flabel">Requirements <span class="open-chip">optional · combined with AND · none = anyone can claim</span></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
+          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least a set number of tokens from a chosen collection.</div></div></div>
+          <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active NNS / SNS stake.</div></div></div>
+          <div class="hint">Requirements narrow who can claim, combined with AND — optional. Changes here never affect existing vendors.</div>
+        </div>
+      </div>
+      <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+    </div></div></div>
+  </section>
+
+  <!-- A2b -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A2b</span><span class="t">Rule editor — token-hold &amp; stake requirements configured</span><span class="d">The same editor with <strong>Holds tokens from a collection</strong> and <strong>Has a stake</strong> selected, each revealing its config inline. Token-hold = <span class="mono">collection_id</span> (picked by name, id shown) + <span class="mono">quantity</span> ≥ 1 — never "holds a token" in copy. Stake = <span class="mono">source</span> (NNS or an SNS governance canister) + optional <span class="mono">minimum_stake</span> (quantity of the staked token) + optional <span class="mono">minimum_dissolve_delay</span> (chosen over neuron age — forward commitment, same measure NNS/SNS use for voting eligibility). Both requirement types are <strong>front-end V2</strong>; the <strong>backend schema ships in V1</strong> (ruled 2026-07-03). Both targets must resolve before Save enables. Requirements AND together — never OR — so this rule reads: on the whitelist AND holds ≥ 3 AND has the stake. A tier may carry <strong>two stake gates (one NNS + one SNS)</strong>, both of which must then be satisfied. <strong>Fail-closed (R75, 2026-07-17):</strong> any requirement kind not enforced end-to-end — token-hold today — is rejected by backend validation on every live claim path, at save <em>and</em> at claim; a stored schema is never, by itself, permission to enforce.</span></div>
+    <div class="stage"><div class="single-modal" style="width:100%;max-width:640px"><div class="modal-card wide">
+      <header><h4>Claim rule · Founder</h4><span class="x">✕</span></header>
+      <div class="mbody">
+        <div>
+          <div class="flabel">Claim cost <span class="open-chip">required — Free, or an accepted currency</span></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in one of Toko's accepted currencies.</div><div class="row" style="margin-top:.5rem;gap:.5rem"><input class="input" style="width:110px" value="4"><select class="input" style="width:130px"><option selected>ICP</option><option>ckBTC</option><option>ckETH</option><option>ckUSDC</option><option>ckUSDT</option><option>ckSOL</option><option>$TOKO</option><option>$DKP</option></select></div></div></div>
+        </div>
+        <div>
+          <div class="flabel">Requirements <span class="open-chip">optional · combined with AND · none = anyone can claim</span></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least this many tokens from the chosen collection.</div>
+            <div class="row" style="margin-top:.5rem;gap:.5rem;flex-wrap:wrap">
+              <select class="input" style="min-width:230px;flex:1"><option selected>Little Leaf Guardians</option><option>Bitten — First Blood</option><option>Search collections…</option></select>
+              <input class="input" style="width:110px" value="3" aria-label="Quantity required">
+            </div>
+            <div class="hint" style="margin-top:.35rem">Quantity required ≥ 1 · collection <span class="mono">col_9f3k2…7a</span></div>
+          </div></div>
+          <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active NNS / SNS stake.</div>
+            <div class="row" style="margin-top:.5rem;gap:.5rem;flex-wrap:wrap">
+              <select class="input" style="min-width:230px;flex:1"><option selected>NNS</option><option>SNS — governance canister…</option></select>
+              <input class="input" style="width:130px" value="10" aria-label="Minimum stake" placeholder="Min. stake (ICP)">
+              <select class="input" style="width:170px" aria-label="Minimum dissolve delay"><option>Any dissolve delay</option><option selected>≥ 6 months</option><option>≥ 1 year</option><option>≥ 2 years</option><option>≥ 4 years</option><option>≥ 8 years</option></select>
+            </div>
+            <div class="hint" style="margin-top:.35rem">Minimum stake and dissolve delay are optional — leave both empty for "any active stake".</div>
+          </div></div>
+          <div class="hint">Requirements narrow who can claim, combined with AND — optional. Changes here never affect existing vendors.</div>
+        </div>
+      </div>
+      <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+    </div></div></div>
+  </section>
+
+  <!-- A4 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A4</span><span class="t">Collection defaults — not set yet</span><span class="d">A Draft collection before collection defaults are configured. Tiers exist (from the rarity system) but have no cost. The page is editable in any state; the only gate is at go-Live — every tier must <strong>resolve</strong> to a cost (its own, or one inherited from the tier below; free is allowed — R61) to pass review.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>New Collection</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--req">Required to go Live</span></div>
+          <div class="empty-state"><strong>No collection defaults yet</strong><p>Set a cost for each tier (free is allowed); requirements are optional. Unset tiers inherit the cost from the tier below; every tier must resolve to a cost before the collection can go Live.</p><button class="btn btn--primary">Set the first tier</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part A note (not UI) — what isn't here</span></div>
+    <p class="grey-note">Collection defaults are the per-collection <strong>starting point</strong> for vendor claim rules — every new vendor drawing from this collection inherits them, then can edit per vendor. The vendor's copy keeps the <strong>sparse authored</strong> per-tier values (the unset / explicit-Free / amount distinction) plus a revision stamp; tier inheritance is applied <strong>at claim</strong> by the same shared resolution function, never flattened at copy time (R74, 2026-07-17). In V1 a rule is just <strong>cost + requirements</strong>. <strong>Restrictions</strong> (claim limits — e.g. max per human) and <strong>Rewards</strong> (extra payout on claim) are <strong>V2 — not yet configurable</strong>. Promo / redemption codes are project-level, not collection defaults.</p>
+  </div>
+
+  <!-- ============ PART B ============ -->
+  <div class="part-divider"><div class="pd-k">Part B</div><h2 class="pd-h">Lifecycle</h2><div class="pd-d">Collection defaults have <strong>no lifecycle of their own</strong> — the stage badge on the page is the collection's, shown for orientation. They are a <strong>template, editable in every state including Live</strong> (resolved 2026-07-02); edits are non-retroactive — existing vendors keep their imported copies. The single stage-coupled behavior: to pass review and go Live, every tier must resolve to a cost — its own, or one inherited from the tier below (free counts; R61). Requirements never gate.</div></div>
+
+  <!-- B1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B1</span><span class="t">Draft — unset tier inherits from below (valid)</span><span class="d">Ruled 2026-07-07 (R61): the go-Live gate tests <strong>effective resolution, not storage</strong>. An unset tier inherits the nearest set cost from the tier below it, so Founder — with no cost of its own — resolves to Keeper's 2 ICP and the collection IS ready for Review. The row shows the inherited value muted with an "Inherited" tag (informational coverage); the checklist and the claim path share <strong>one</strong> resolution function, never two. Everything is editable and stays editable; nothing on this page ever locks.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="info-note"><span class="ic">ⓘ</span><div><strong>Founder inherits its cost from Keeper (2 ICP).</strong> Every tier resolves to a cost, so this collection is ready for Review. Setting a cost on Founder overrides the inherited value.</div></div>
+        <div class="info-note"><span class="ic">⚠</span><div>Editing <strong>Keeper</strong> warns before saving: "Founder inherits this cost — changing it also changes 1 inheriting tier." A guardrail, never a gate.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split" style="color:var(--text-muted)">2 ICP <span class="tag" style="margin-left:6px">Inherited from Keeper</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B1b -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B1b</span><span class="t">Draft — blocked (first tier unset)</span><span class="d">The genuinely blocked state under R61: inheritance flows downward only, so an unset <strong>first</strong> tier has nothing to inherit from and fails to resolve. Only then does the go-Live check fail; the error copy points at the fix.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
+        <div class="info-note err-note"><span class="ic">⚠</span><div><strong>Patron has no claim cost and no tier below it to inherit from.</strong> Set a cost on Patron (free is allowed) before this collection can go Live.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split" style="color:var(--notify-error)">No cost set ⚠</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split" style="color:var(--text-muted)">2 ICP <span class="tag" style="margin-left:6px">Inherited</span></span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B2</span><span class="t">Review — valid &amp; still editable</span><span class="d">Every tier <strong>resolves</strong> to a cost — its own, or one inherited from the tier below (R61) — so the collection-defaults check for go-Live passes. Collection defaults stay editable here — and will stay editable at Live too.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></div>
+        <div class="info-note ok-note"><span class="ic">✓</span><div>All tiers resolve to a cost — this collection can pass review and go Live. Defaults stay editable at every stage; edits never change existing vendors.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">4 ICP · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B3 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B3</span><span class="t">Live — still editable (template)</span><span class="d">Resolved 2026-07-02: collection defaults do NOT freeze at Live — they're a non-retroactive template. Editing at Live changes only what future vendors inherit; existing vendors keep their imported copies. An info note makes the non-retroactivity explicit.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
+      <div class="section">
+        <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--live"><span class="dot"></span>Live</span></div>
+        <div class="info-note"><span class="ic">ⓘ</span><div>These are a <strong>template</strong> — still editable while Live. Changes apply only to <strong>vendors created from now on</strong>; existing vendors keep the copy they imported.</div></div>
+        <div class="card">
+          <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
+          <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+          <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+          <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">4 ICP · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit</button></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B4 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B4</span><span class="t">Stage gates — reference</span><span class="d">Where collection defaults sit in the collection lifecycle. A plain reference table on grey (not UI).</span></div>
+    <table class="reftable">
+      <thead><tr><th>Stage</th><th>Editable?</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></td><td>Yes — fully editable</td><td>Tiers may be unset</td></tr>
+        <tr><td><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></td><td>Yes — still editable</td><td><strong>Go-Live check</strong>: every tier in the collection's rarity-mode tier set <strong>resolves</strong> to a cost — its own, or one inherited from the tier below (free is allowed); zero-budget tiers included, no carve-out (R61/R73). Requirements optional, never a gate</td></tr>
+        <tr><td><span class="stage-badge sbg--live"><span class="dot"></span>Live</span></td><td>Yes — still editable</td><td>None — edits are non-retroactive; new vendors start from the current defaults, existing vendors keep their imported copies</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part B note (not UI)</span></div>
+    <p class="grey-note">Collection defaults have <strong>no lifecycle of their own</strong> — the stage badge on this page is the collection's, shown for orientation only. Unlike frozen core policy, defaults are a template: <strong>editable in every state, including Live</strong>, and never retroactive. The single gate is at <strong>go-Live</strong>: to pass review, every tier in the collection's rarity-mode tier set must <strong>resolve</strong> to a <strong>cost</strong> — its own, or one inherited downward from the tier below (free is allowed; zero-budget tiers included, no carve-out — R61/R73). The checklist calls the <strong>same resolution function the claim path uses</strong>, never a second implementation. Requirements are optional and never gate. The check is surfaced on the collection's status checklist (see <span class="mono">collection-states-gallery</span>); this sub-page shows field-level state inline only.</p>
+  </div>
+
+  <!-- ============ PART C ============ -->
+  <div class="part-divider"><div class="pd-k">Part C</div><h2 class="pd-h">Rarity modes</h2><div class="pd-d">Collection defaults are tier-indexed, so the table shape follows the collection's rarity mode — exactly like collection defaults.</div></div>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Modes</span></div>
+    <div class="modelbar">
+      <div class="mb"><div class="k">Uniform</div><div class="v">No tiers — one default for the whole collection.</div></div>
+      <div class="mb"><div class="k">Tiered</div><div class="v">The collection's own named tiers (Patron / Keeper / Founder).</div></div>
+      <div class="mb"><div class="k">Weighted</div><div class="v">The collection's weighted tier set — Common / Uncommon / Rare in V1 (Epic / Legendary only once unlocked, Phase 3).</div></div>
+    </div>
+  </div>
+
+  <!-- C1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">C1</span><span class="t">Uniform — populated</span><span class="d">Uniform rarity has no tiers — one set of collection defaults for the whole collection. A single rule.</span></div>
+    <div class="screen"><div class="section">
+      <div class="card">
+        <div class="card__head"><div class="ttlwrap"><h3>Collection default</h3><span class="sub">uniform rarity</span></div></div>
+        <div class="colhead"><span class="c-tier">Scope</span><span class="c-split">Claim rule</span><span></span></div>
+        <div class="tier-row"><span class="tr-tier">All tokens</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- C2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">C2</span><span class="t">Tiered — populated</span><span class="d">Tiered rarity uses the collection's own named tiers. Each tier needs a cost; requirements optional. Cost can escalate per tier.</span></div>
+    <div class="screen"><div class="section">
+      <div class="card">
+        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered · 3 tiers</span></div></div>
+        <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+        <div class="tier-row"><span class="tr-tier">Patron</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Keeper</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Founder</span><span class="tr-split">4 ICP · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- C3 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">C3</span><span class="t">Weighted — populated</span><span class="d">Weighted rarity uses the <strong>collection's</strong> weighted tier set — in V1 that is <strong>Common / Uncommon / Rare</strong> for every collection (Epic / Legendary are locked platform-wide until the Phase 3 Mastery unlock; their rows appear only on collections whose project has unlocked them pre-Live). Same model — a cost per tier, with downward inheritance.</span></div>
+    <div class="screen"><div class="section">
+      <div class="card">
+        <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">weighted · 3 tiers (V1 set)</span></div></div>
+        <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>
+        <div class="tier-row"><span class="tr-tier">Common</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Uncommon</span><span class="tr-split">Free · On a whitelist</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+        <div class="tier-row"><span class="tr-tier">Rare</span><span class="tr-split">2 ICP</span><span class="tr-actions"><button class="btn btn--ghost btn--sm">Edit rule</button></span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <div class="frame">
+    <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Part C note (not UI)</span></div>
+    <p class="grey-note">A tier carries two things: a required <strong>cost</strong> (Free, or an accepted currency) and optional <strong>requirements</strong> (on a whitelist / holds tokens from a collection / has a stake — combined with AND; none = anyone can claim). The only go-Live gate is that <strong>every tier resolves to a cost</strong> — its own, or one inherited from the tier below (R61); requirements are optional. <strong>Restrictions</strong> (how often / how many — e.g. max per human) and <strong>Rewards</strong> (extra payout) are <strong>V2 — not yet configurable</strong>. Source: <span class="mono">collection-defaults-design.md</span>.</p>
+  </div>
+
+</div>
+</body>
+</html>
