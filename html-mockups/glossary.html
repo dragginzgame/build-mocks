@@ -106,14 +106,47 @@
   </section>
 
   <section class="grp">
+    <h2>Vaults &amp; physical items (RWA)</h2>
+    <div class="term"><h3>RWA archetype</h3><p>The gated collection type (platform allowlist — Toko-only at first, never a Reputation unlock) for custody-backed physical items. Every token is a <b>1/1</b> backed by a vaulted item; <b>no variants, ever</b>; an asset spec is <b>required</b>; the only archetype whose tokens can enter vault custody.</p></div>
+    <div class="term"><h3>Vault / vault provider</h3><p>A vetted custody company holding physically-redeemable stock. One registry entry per <b>physical vault</b>; stages Draft → Review → Live (+ Suspended — frozen read-only, history preserved forever).</p></div>
+    <div class="term"><h3>Vaultie · Dweller · Overseer</h3><p>The vault workspace roles, granted <b>per vault location</b>. Vaultie = any vault team member. Dweller = intake + redemption fulfilment. Overseer = a Dweller who also manages vaulties, edits the vault profile, and countersigns high-value dispatches.</p></div>
+    <div class="term"><h3>Custody record</h3><p>The per-(token, vault) state machine, separate from the token's own status: awaiting processing → vaulted → redeem requested → shipped → <b>delivered | lost-in-transit | returned-to-sender | disputed</b> — post-ship states live here; the token itself stays <code>Redeemed</code>. Every transition is logged and feeds the public custody timeline.</p></div>
+    <div class="term"><h3>Custody arrangement</h3><p>The per-(collection × vault) <b>two-party handshake</b>: Draft → Proposed → Active; either party may propose amendments, flagged for the other's review; pending changes never freeze operations. <b>Nothing ships to a vault without an Active arrangement</b>; RWA go-Live requires one with a Live vault. It summarises an off-platform contract — <b>Toko is never the counterparty</b>.</p></div>
+    <div class="term"><h3>Custody continuity event</h3><p>The platform-admin-gated bulk action (never available to vaults) for <b>relocation</b> (records move to a new registry entry, history preserved) and <b>emergency</b> (vault failure: records annotated <code>custody-uncertain</code>, owners notified, emergency migration or return). The sanctioned exception to "no vault→vault transfer".</p></div>
+    <div class="term"><h3>Redemption / redeem lock</h3><p>Exchanging a vaulted token for its physical item. The holding <b>locks the moment Redeem is pressed</b> (no sale, transfer, burn, or listing; Redeem is blocked while listed). Unlock = pay shipping (<b>direct to the vault</b>) or cancel; unpaid requests <b>auto-cancel after 30 days</b>. Payment makes it binding; <code>Redeemed</code> (terminal) lands at tracking entry. Customs are the <b>redeemer's</b> responsibility.</p></div>
+    <div class="term"><h3>Declared · insured · oracle value</h3><p>Three distinct per-item values, never conflated: declared (customs + carrier claim, set at fulfilment) · insured (custody insurance, set at intake, public) · oracle (pricing suggestion engine — rolling market average, never binding).</p></div>
+    <div class="term"><h3>Storage clock</h3><p>Every purchased RWA token includes <b>12 months of vault storage</b>; <b>each paid sale restarts the year</b> (free transfers inherit the remaining clock). After that: sell, redeem, or arrange with the vault directly — if the holder does nothing, Catcha absorbs the cost; nothing is ever confiscated.</p></div>
+    <div class="term"><h3>Vault attestation (proof-of-reserves)</h3><p>Periodic Overseer count confirmation — physical items vs custody records, per collection; mismatches raise flags; shown publicly as "Last audited {date}". Ships with the vault directory.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Asset specs</h2>
+    <div class="term"><h3>Asset spec</h3><p>A named, project-level <b>template of required media slots</b>, applied to <b>token types</b> (batch, snapshot-on-apply, versioned) and enforced as a <b>go-Live gate</b>. Verifies <b>existence only, never content</b> — human Review stays the content check. Deliberately not NFT-specific: tokens are simply the first consumer.</p></div>
+    <div class="term"><h3>Slot · key · label</h3><p>A slot is one required-media position in the template. Its <code>key</code> is the immutable machine slug files bind to; its label is the freely-renameable display name (unique within the spec); plus optional description, explicit sort order, allowed filetypes + max size, and <code>max_files</code> (default 1, schema-only in V1). At most one slot carries the <b>primary-asset flag</b> — its file becomes the token's card image.</p></div>
+    <div class="term"><h3>Slot states</h3><p>Derived, never stored: Missing · Uploading · Present · Failed. <b>The gate counts only Present.</b> Replace is atomic (never transiently empty); replaced files are retained as recoverable version history.</p></div>
+  </section>
+
+  <section class="grp">
+    <h2>Notifications</h2>
+    <div class="term"><h3>The bell / notification queue</h3><p>A <b>durable, pull-based, per-principal</b> message queue — no push, no device registration. Events append rows; the badge shows the unread count; rows persist across sessions and devices until read or dismissed. Ordered by <code>occurred_at</code> (event time).</p></div>
+    <div class="term"><h3>Coalescing</h3><p>Flood control, not a digest: a new event matching an <b>unread</b> row's kind + subject updates that row (count +1, <code>occurred_at</code> refreshed) instead of appending. Per-source cap: 5 unread rows per subject.</p></div>
+    <div class="term"><h3>event_id</h3><p>The idempotency key on notification creation: a replayed or cross-canister duplicate event is a <b>no-op</b> — not a new row and not a count bump.</p></div>
+    <div class="term"><h3>Severity &amp; categories</h3><p>Every kind carries a severity (info · success · warning · error · critical) and one category: <b>Marketplace · Studio · Billing · Projects · Access &amp; security · Vault</b>. Access &amp; security is platform-native only — login/device events belong to Internet Identity, invisible to Toko.</p></div>
+    <div class="term"><h3>Retention classes</h3><p><b>Persistent</b> kinds (payouts, moderation, Access &amp; security, cycle runway) never expire unread; <b>informational</b> kinds expire even unread after ~90 days. Read rows purge after 7 days; 50-row cap with the drop ladder (read → expired → coalesce → informational unread → persistent last).</p></div>
+    <div class="term"><h3>Delivery semantics</h3><p>Five guarantees: best-effort side effect · idempotent creation on <code>event_id</code> · at-least-once with duplicate suppression at insertion · <b>authorization at the destination, never at read time</b> · rows are immutable records (a dead deep-link lands on "This item is no longer available", never an error).</p></div>
+  </section>
+
+  <section class="grp">
     <h2>Identity</h2>
+    <div class="term"><h3>Creator</h3><p><i>The creator of a project</i>: the unique, permanent first role on a project (the account that created it). "Creator" always means this project role — never a platform-wide permission.</p></div>
+    <div class="term"><h3>Studio access</h3><p>Renamed 2026-07-21 (formerly "creator access", R58) — the platform-level capability that lets an account use the creative studio (create projects and collections). Requested via the public request modal; granted / revoked / restored by Toko admins. Distinct from <b>Creator</b>: studio access is account-wide and Toko-granted; Creator is per-project and automatic.</p></div>
     <div class="term"><h3>Principal</h3><p>The auth-level identifier of an account on the IC; what routes like <code>/profile/:principal</code> and transfers resolve against.</p></div>
     <div class="term"><h3>User ID (usr_…)</h3><p>The stable Toko platform identity, shown as a copyable chip on the owner's profile. It is what <code>Recipient::User</code> resolves against in revenue presets, and the key the (WIP) friends list is built on.</p></div>
   </section>
 
   <div class="noresults" id="noresults"><strong>No matching terms.</strong>Try a different word — or clear the filter.</div>
 
-  <p class="foot-note">Source of truth: <code>Design Documentation/glossary.md</code> (updated 2026-07-03). This page mirrors it for easy browsing — when they disagree, the markdown wins and this page needs a refresh.</p>
+  <p class="foot-note">Source of truth: <code>Design Documentation/glossary.md</code> (updated 2026-07-21). This page mirrors it for easy browsing — when they disagree, the markdown wins and this page needs a refresh.</p>
 </div>
 
 <script>
