@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Token State (living-state machine) · states gallery · FUTURE / WIP</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:10px 18px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:7px 14px; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--sys { background:rgba(99,102,241,.14); color:#4338CA; }
+  .tag--pub { background:rgba(16,185,129,.14); color:#0a6b4f; }
+  .tag--own { background:rgba(37,99,235,.12); color:#1d4ed8; }
+  .tag--app { background:rgba(244,114,182,.16); color:#BE185D; }
+  .tag--warn { background:rgba(245,158,11,.16); color:#92580b; }
+  .stage-badge { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:rgba(245,158,11,.16); color:#92580b; }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .tgl { display:inline-flex; align-items:center; gap:.45rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .tgl .sw { width:32px; height:18px; border-radius:var(--r-pill); background:var(--surface-canvas-deep); border:1px solid var(--border-soft); position:relative; flex:none; }
+  .tgl .sw::after { content:""; position:absolute; top:1.5px; left:2px; width:13px; height:13px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .tgl.on .sw { background:var(--text-primary); border-color:transparent; }
+  .tgl.on .sw::after { left:15px; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .crumb .sep { color:var(--text-muted); } .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+
+  .twocol { display:grid; grid-template-columns:1.35fr 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .twocol { grid-template-columns:1fr; } }
+  .threecol { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--s-5); align-items:start; }
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .panel > .eyebrow { display:block; margin-bottom:var(--s-4); }
+
+  .frow { padding:.8rem 0; border-top:1px solid var(--border-soft); }
+  .frow:first-of-type { border-top:0; }
+  .frow .top { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+  .frow .fname { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; font-size:var(--text-base); }
+  .frow .ftype { font-size:var(--text-xs); color:var(--text-muted); }
+  .frow .r { margin-left:auto; display:flex; gap:.35rem; align-items:center; flex-wrap:wrap; }
+  .frow .rules { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:.4rem; color:var(--text-secondary); font-size:var(--text-xs); }
+  .frow .rules b { color:var(--text-primary); }
+  .add-chip { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); padding:.45rem 1rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); margin-top:var(--s-4); }
+  .add-chip:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .input, select.input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.6rem .875rem; font:inherit; font-size:var(--text-base); color:var(--text-primary); }
+  .fgrid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); }
+  @media (max-width:560px){ .fgrid { grid-template-columns:1fr; } }
+
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-of-type { border-top:0; }
+  .kv .k { color:var(--text-secondary); } .kv .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; } .note svg { width:18px; height:18px; }
+  .note strong { color:inherit; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--warn { background:rgba(245,158,11,.12); color:#7a5310; } .note--warn .ic { color:var(--stage-draft); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+
+  /* batch attach */
+  .trow-check { display:flex; align-items:center; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .trow-check:first-of-type { border-top:0; }
+  .trow-check input { accent-color:var(--text-primary); }
+  .trow-check .art { width:30px; height:30px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#6EE7B7,#1E3A8A); }
+  .trow-check .nm { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.03em; }
+  .trow-check .r { margin-left:auto; }
+
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks .mono { font-size:.85em; }
+  .future-band { margin-top:var(--s-5); display:inline-flex; align-items:center; gap:.5rem; padding:.5rem 1rem; border:1.5px dashed var(--stage-review); border-radius:var(--r-pill); color:var(--stage-review); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.06em; text-transform:uppercase; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Studio · Token State — future system</span>
+    <h1>Token State — living-state machine · states gallery</h1>
+    <p><strong>FUTURE WORK — Phase 2+ of <span class="mono">Design Documentation/WIP/token-state-design.md</span>. Nothing in this gallery is being implemented: current dev work on variants is the backend data store only, no UI.</strong> The Phase-1 UI reference (for when front-end work starts) is <a href="phase2/variant-reveal-states-gallery-2026-07-07.html"><strong>variant-reveal-states-gallery</strong></a>. This one explores the generalized machine that follows: <strong>Attributes = identity</strong> (locked at Live — traits, rarity inputs, filtering) vs <strong>State = memory</strong> (mutable after claim — XP, cooldowns, hunger, wear, quest flags). A <strong>State Policy</strong> is authored once as a project-level preset and batch-applied to many tokens; <strong>State Values</strong> then live inside it. Rolling limits are measured in hours; cooldowns are per-field; <span class="mono">variant</span> never resets on transfer; listed holdings are state-frozen.</p>
+    <div class="navlinks">Source: <span class="mono">Design Documentation/WIP/token-state-design.md</span> (decisions ruled 2026-07-07). Related: <a href="phase2/variant-reveal-states-gallery-2026-07-07.html">Variant reveal (current dev scope)</a> · <a href="token-draft-states-gallery-2026-06-29.html">Token draft</a>.</div>
+    <div class="future-band">Future / WIP — not current implementation scope</div>
+  </header>
+
+  <!-- 01 · policy preset editor -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Policy preset · “Garden Pet v1” (project-level)</span><span class="d">A State Policy is a project resource, like revenue presets — authored once, versioned, then batch-attached to token definitions (frame 03) as a snapshot copy. Left: the fields, each with type, writers, and write rules (per-field cooldowns; rolling windows in hours). <span class="mono">variant</span> appears as a system field whose transition graph is read off the Actions. Right: the Actions — <strong>nothing changes without an enabled Action</strong>; a variant transition is the simplest one (verb, from → to, cooldown, <strong>one-way toggle</strong>: on = irreversible, off = reversible). Phase-3 rows (interaction, derived) are shown greyed-context for the future. Auto-saves; policy locks per-token when that token goes Live.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Garden</a><span class="sep">/</span><a>State policies</a><span class="sep">/</span><span class="here">Garden Pet v1</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="section-head row"><div><div class="eyebrow">Project · State policies</div><h2>Garden Pet v1.</h2><p class="lede">The locked rulebook for living tokens — fields, write rules, and actions. Attach it to tokens with the batch tool.</p></div><span class="tag">Version 3</span></div>
+        <div class="twocol">
+          <div class="panel">
+            <span class="eyebrow">State fields</span>
+            <div class="frow">
+              <div class="top"><span class="fname">variant</span><span class="ftype">enum · system</span><span class="r"><span class="tag tag--sys">System</span><span class="tag tag--pub">Public</span></span></div>
+              <div class="rules"><span>Transitions · <b>A ⇄ B → C</b></span><span>Cooldown · <b>6 h</b></span><span>Transfer · <b>persists — never resets</b></span></div>
+            </div>
+            <div class="frow">
+              <div class="top"><span class="fname">points</span><span class="ftype">number</span><span class="r"><span class="tag tag--pub">Public</span><span class="tag tag--app">Approved app</span></span></div>
+              <div class="rules"><span>Range · <b>0 – 1,000,000</b></span><span>Rolling limit · <b>+500 / 24 h</b></span><span>Cooldown · <b>none</b></span><span>Transfer · <b>persist</b></span></div>
+            </div>
+            <div class="frow">
+              <div class="top"><span class="fname">hunger</span><span class="ftype">number</span><span class="r"><span class="tag tag--pub">Public</span><span class="tag tag--app">Approved app</span></span></div>
+              <div class="rules"><span>Range · <b>0 – 100</b></span><span>Marketplace · <b>warn below 20</b></span><span>Transfer · <b>persist</b></span></div>
+            </div>
+            <div class="frow">
+              <div class="top"><span class="fname">last_watered</span><span class="ftype">timestamp</span><span class="r"><span class="tag tag--own">Owner</span></span></div>
+              <div class="rules"><span>Write · <b>derived-only</b> (set by the Water action)</span><span>Transfer · <b>persist</b></span></div>
+            </div>
+            <button class="add-chip">+ Add state field</button>
+          </div>
+          <div>
+            <div class="panel" style="margin-bottom:var(--s-5)">
+              <span class="eyebrow">Actions · authored in this preset — nothing changes without one</span>
+              <div class="frow">
+                <div class="top"><span class="fname">Bloom</span><span class="ftype">transition · A → B</span><span class="r"><span class="tag">Owner-run</span><span class="tgl"><span class="sw"></span>One-way · off</span></span></div>
+                <div class="rules"><span>Effect · <b>set variant B</b></span><span>Cooldown · <b>6 h</b></span><span>Reversible — the toggle is off, so <b>B → A</b> is also allowed</span></div>
+              </div>
+              <div class="frow">
+                <div class="top"><span class="fname">Ascend</span><span class="ftype">transition · B → C</span><span class="r"><span class="tag">Owner-run</span><span class="tgl on"><span class="sw"></span>One-way · on</span></span></div>
+                <div class="rules"><span>Effect · <b>set variant C</b></span><span>Cooldown · <b>24 h</b></span><span>Irreversible — one-way is toggled on</span></div>
+              </div>
+              <div class="frow">
+                <div class="top"><span class="fname">Water</span><span class="ftype">interaction · Phase 3</span><span class="r"><span class="tag">Owner-run</span></span></div>
+                <div class="rules"><span>Input · <b>1 × Water token</b> (4 charges, −1 per use, burns at 0)</span><span>Effect · <b>points +1</b>, sets <b>last_watered</b></span></div>
+              </div>
+              <div class="frow">
+                <div class="top"><span class="fname">Evolve trigger</span><span class="ftype">derived · Phase 3</span><span class="r"><span class="tag tag--sys">Derived</span></span></div>
+                <div class="rules"><span>Rule · <b>if variant = A and points &gt; 10 → variant = B, points −5</b></span></div>
+              </div>
+              <button class="add-chip">+ Add action</button>
+            </div>
+            <div class="panel">
+              <span class="eyebrow">Preset summary</span>
+              <div class="kv"><span class="k">Fields</span><span class="v">4 (1 system)</span></div>
+              <div class="kv"><span class="k">Actions</span><span class="v">2</span></div>
+              <div class="kv"><span class="k">Attached to</span><span class="v">14 tokens · v3</span></div>
+              <div class="kv"><span class="k">App allowlist</span><span class="v">garden-app · scoped</span></div>
+              <div class="kv"><span class="k">Listed holdings</span><span class="v">state-frozen</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · add field modal -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Add state field · modal</span><span class="d">Everything a field needs, declared up front: type, default, visibility, writers, write rules (cooldown + rolling window measured in hours), transfer behaviour, marketplace display. Per-field cooldowns only — there is no shared per-holding pool.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Add state field</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="fgrid">
+            <div><label class="flabel">Name</label><input class="input mono" value="xp"></div>
+            <div><label class="flabel">Type</label><select class="input"><option>number</option><option>text</option><option>boolean</option><option>timestamp</option><option>enum</option><option>token_reference</option></select></div>
+            <div><label class="flabel">Default</label><input class="input" value="0"></div>
+            <div><label class="flabel">Visibility</label><select class="input"><option>Public</option><option>Owner only</option><option>Approved app only</option><option>Creator / admin</option></select></div>
+            <div><label class="flabel">Writers</label><select class="input"><option>Approved app</option><option>Owner</option><option>Creator</option><option>System</option><option>Nobody</option></select></div>
+            <div><label class="flabel">Write rule</label><select class="input"><option>Increase only</option><option>Decrease only</option><option>Any within range</option><option>One-time write</option><option>Append-only</option><option>Derived-only</option></select></div>
+            <div><label class="flabel">Range</label><input class="input" value="0 – 1,000,000"></div>
+            <div><label class="flabel">Cooldown (hours)</label><input class="input" value="none"></div>
+            <div><label class="flabel">Rolling limit</label><input class="input" value="+500 per 24 h"></div>
+            <div><label class="flabel">Transfer behaviour</label><select class="input"><option>Persist</option><option>Reset on transfer</option><option>Freeze on transfer</option><option>Pause until new owner interacts</option></select></div>
+          </div>
+          <div><label class="flabel">Marketplace display</label><select class="input"><option>Show</option><option>Show, warn below threshold…</option><option>Hidden</option></select></div>
+          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Rolling limits use <strong>rolling hours</strong> from each write — never calendar days, so there's no midnight reset to game and no timezone question.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Add field</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · batch attach -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Batch attach · apply the preset to many tokens</span><span class="d">Never one token at a time. Select token definitions and apply the preset — attach is a snapshot copy of the current version (editing the preset later never mutates already-attached tokens; re-run this tool to re-apply pre-Live). Live tokens are skipped: their policy is locked.</span></div>
+    <div class="stage">
+      <div class="modal-card" style="max-width:560px">
+        <header><h4>Apply “Garden Pet v1” (v3)</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div>
+            <div class="trow-check"><input type="checkbox" checked><span class="art"></span><span class="nm">Fern Sprout</span><span class="r tiny">Draft · will update to v3</span></div>
+            <div class="trow-check"><input type="checkbox" checked><span class="art" style="background:linear-gradient(135deg,#FDE68A,#F472B6)"></span><span class="nm">Moss Kit</span><span class="r tiny">Draft · will update to v3</span></div>
+            <div class="trow-check"><input type="checkbox" checked><span class="art" style="background:linear-gradient(135deg,#93C5FD,#A78BFA)"></span><span class="nm">Dew Fox</span><span class="r tiny">Draft · currently v1 → v3</span></div>
+            <div class="trow-check"><input type="checkbox" disabled><span class="art" style="background:linear-gradient(135deg,#9ca3af,#4b5563)"></span><span class="nm" style="color:var(--text-muted)">Sun Sprite</span><span class="r"><span class="tag tag--warn">Live · locked</span></span></div>
+          </div>
+          <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div><strong>14 Draft tokens will snapshot v3.</strong> 3 Live tokens skipped — their policy locked at go-Live and can never change.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Apply to 14 tokens</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · token detail split -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Token detail · Attributes / Living State / State Rules</span><span class="d">The buyer-facing split, straight from the design principle: identity, memory, and the rulebook — what can this token become, who can change it, and what state am I inheriting. Value-affecting fields are always visible before purchase; hunger below its threshold carries the marketplace warning.</span></div>
+    <div class="threecol">
+      <div class="panel">
+        <span class="eyebrow">Attributes · permanent identity</span>
+        <div class="kv"><span class="k">Species</span><span class="v">Fern Sprout</span></div>
+        <div class="kv"><span class="k">Pot</span><span class="v">Terracotta</span></div>
+        <div class="kv"><span class="k">Rarity</span><span class="v">Uncommon</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Locked at Live. Traits, rarity inputs, filtering — state never touches these.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Living state · current memory</span>
+        <div class="kv"><span class="k">Variant</span><span class="v">B · Bloomed</span></div>
+        <div class="kv"><span class="k">Points</span><span class="v">7</span></div>
+        <div class="kv"><span class="k">Hunger</span><span class="v" style="color:#92580b">14 ⚠</span></div>
+        <div class="kv"><span class="k">Last watered</span><span class="v">2 d ago</span></div>
+        <div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Hunger is below 20.</strong> This is the state you inherit if you buy.</div></div>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">State rules · the rulebook</span>
+        <div class="kv"><span class="k">Can become</span><span class="v">A ⇄ B → C</span></div>
+        <div class="kv"><span class="k">Who can change it</span><span class="v">Owner · garden-app</span></div>
+        <div class="kv"><span class="k">On transfer</span><span class="v">Everything persists</span></div>
+        <div class="kv"><span class="k">While listed</span><span class="v">State frozen</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Policy locked at Live · preset Garden Pet v1 (v3). No one can add rules later.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · frozen while listed -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Listed = state-frozen</span><span class="d">Structural, not a warning: a listed holding rejects every state write — owner, app, or system — so buyers purchase exactly the state they saw. An app write against a listed holding fails cleanly with the reason.</span></div>
+    <div class="stage">
+      <div class="modal-card" style="max-width:480px">
+        <header><h4>Water · Fern Sprout #012</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div><strong>This token is listed for sale — its state is frozen.</strong> Cancel the listing to water it. Nothing about a listed token can change while a buyer could be purchasing it.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn">View listing</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

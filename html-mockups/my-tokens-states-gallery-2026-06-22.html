@@ -157,11 +157,11 @@
   .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; font-variant-numeric:tabular-nums; }
   .results-count strong { color:var(--text-primary); font-weight:700; }
   .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
-  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button { min-width:40px; height:40px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
   .pg button:hover:not(:disabled):not([aria-current="page"]) { background:var(--surface-canvas-alt); color:var(--text-primary); }
   .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; cursor:default; }
   .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
-  .pg .pg-gap { min-width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); }
+  .pg .pg-gap { min-width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); }
   .pg .pg-arrow svg { width:16px; height:16px; }
   .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
   .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
@@ -174,9 +174,16 @@
   .guard h3 { font-size:var(--text-2xl); }
   .guard p { color:var(--text-secondary); font-size:var(--text-base); max-width:42ch; margin:0; }
   .guard .row { display:flex; gap:var(--s-3); flex-wrap:wrap; justify-content:center; margin-top:var(--s-2); }
-  /* empty wallet — character + two acquisition-path CTAs */
+  /* first-run empty state — centred empty-state hero (style guide, 920px max) */
+  .empty-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; max-width:920px; margin-left:auto; margin-right:auto; width:100%; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:1.75rem 1.5rem 2rem; display:flex; flex-direction:column; align-items:center; gap:.625rem; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  /* welcome / unauthenticated — character + two acquisition-path CTAs */
   .empty-wrap { display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s-3); padding:var(--s-8) var(--s-4) var(--s-6); }
-  .empty-wrap img { width:160px; height:auto; }
+  .empty-wrap > img { width:160px; height:auto; }
   .empty-wrap h3 { font-size:var(--text-3xl); }
   .empty-wrap > p { color:var(--text-secondary); font-size:var(--text-base); max-width:48ch; margin:0; }
   .cta-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:var(--s-4); width:100%; max-width:780px; margin:var(--s-5) auto 0; }
@@ -246,9 +253,12 @@
   .input:focus { outline:2px solid var(--text-primary); outline-offset:1px; }
   .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.4rem; display:flex; align-items:center; gap:.35rem; }
   .mini-asset { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
-  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#d6356d,#831843); }
-  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-base); }
+  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#d6356d,#831843); position:relative; }
+  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); }
   .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mini-asset .mart img { width:100%; height:100%; object-fit:cover; display:block; border-radius:var(--r-2); }
+  .mini-asset .mart .stackn { position:absolute; bottom:-6px; right:-6px; background:rgba(10,10,10,.85); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .modal-actions { display:flex; gap:var(--s-2); flex-wrap:wrap; }
 
   /* ---- gallery chrome ---- */
   .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
@@ -445,7 +455,7 @@
 
     <!-- 04 · Empty wallet -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Empty wallet</span><span class="d">No holdings and no balances for this principal. Rather than a dead end, the empty state turns into the two ways to acquire a first token — a character moment over two acquisition-path CTA cards: Launchpad (claim fresh from a live drop) and the Marketplace (buy from another collector), each echoing that surface's own voice. The empty state owns the character illustration; it never appears in the list bar or dense data views.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Empty wallet</span><span class="d">No holdings and no balances for this principal. Rather than a dead end, the empty state turns into the two ways to acquire a first token — the centred empty-state hero (style-guide <span class="mono">no_tokens.jpg</span>, 920px max) over two acquisition-path CTA cards: Launchpad (claim fresh from a live drop) and the Marketplace (buy from another collector), each echoing that surface's own voice. The empty state owns the illustration; it never appears in the list bar or dense data views.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><span class="here">My Tokens</span></div>
@@ -468,9 +478,13 @@
             <button>Activity</button>
           </div>
           <div class="empty-wrap">
-            <img src="../style-guide/bot-images/point/IMG_5347.png" alt="" onerror="this.style.display='none'">
-            <h3>No tokens yet</h3>
-            <p>Nothing is held by this principal. There are two ways to get your first token — claim one fresh from a live drop, or pick one up from another collector. It'll appear here the moment ownership transfers.</p>
+            <div class="empty-hero">
+              <div class="empty-hero__img"><img src="../style-guide/empty-state-hero/no_tokens.jpg" alt="No tokens yet" onerror="this.style.display='none'"></div>
+              <div class="empty-hero__body">
+                <div class="empty-hero__ttl">No tokens yet</div>
+                <p class="empty-hero__sub">Nothing is held by this principal. There are two ways to get your first token — claim one fresh from a live drop, or pick one up from another collector. It'll appear here the moment ownership transfers.</p>
+              </div>
+            </div>
             <div class="cta-grid">
               <div class="cta-card">
                 <span class="ci" style="background:#d6356d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5 3 21l4.5-1.5M14 4s4 1 6 3 3 6 3 6l-6 4-7-7 4-6Z"/><circle cx="15" cy="9" r="1.6"/></svg></span>
@@ -536,7 +550,7 @@
         </div>
         <div class="section">
           <div class="empty-wrap">
-            <img src="../style-guide/bot-images/hi/IMG_5266.png" alt="" onerror="this.style.display='none'">
+            <img src="../style-guide/bot-images/cheerful_wave.png" alt="" onerror="this.style.display='none'">
             <h3>Browse freely — sign in to collect</h3>
             <p>Anyone can explore drops and the marketplace without an account. Connect your identity when you're ready to claim, buy, or see the tokens you already own.</p>
             <a class="btn btn--primary" style="padding:.85rem 1.4rem;margin-top:var(--s-2)">Connect identity</a>
@@ -865,10 +879,10 @@
             </span>
           </div>
           <div class="tk-grid">
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>12</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Stack of 12</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>4</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Stack of 4</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Single</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Single</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>12</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>4</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
+            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
             <a class="rarity-frame rarity-frame--rare"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#014</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">14/500</span></div></div></div></a>
             <a class="rarity-frame rarity-frame--epic"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Sprite</h3><span class="issue">#003</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">3/250</span></div></div></div></a>
           </div>
@@ -886,7 +900,7 @@
           <div class="mbody">
             <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · Rare</div></span></div>
             <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>Your listing expired unsold</strong> on 14 Jul, 18:00 — the token is back in your wallet and fully unlocked. You were charged nothing (no sale, no fee).</div></div>
-            <div class="seg" style="justify-content:flex-start"><button>Transfer</button><button>Burn</button><button>List for sale</button><button>Stack actions</button></div>
+            <div class="modal-actions"><button class="btn btn--ghost btn--sm">Transfer</button><button class="btn btn--ghost btn--sm">Burn</button><button class="btn btn--ghost btn--sm">List for sale</button><button class="btn btn--ghost btn--sm">Stack actions</button></div>
           </div>
           <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">Relist</button></div>
         </div>
@@ -902,9 +916,25 @@
           <div class="mbody">
             <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"><span class="stackn">×5</span></span><span><div class="mn">Swampie #221</div><div class="ms">Swamp Things · Common · Stack</div></span></div>
             <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div><strong>7 of 12 sold · 5 left</strong> at 2.5 ICP each. Proceeds so far: 16.10 ICP (after royalties + referral). Listing ends 14 Jul, 18:00 — anything unsold returns here.</div></div>
-            <div class="seg" style="justify-content:flex-start"><button disabled title="Sale-locked — cancel the listing first">Transfer</button><button disabled title="Sale-locked — cancel the listing first">Burn</button><button disabled title="Sale-locked — cancel the listing first">Stack actions</button></div>
+            <div class="modal-actions"><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Transfer</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Burn</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Stack actions</button></div>
           </div>
           <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--danger">Cancel listing</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 · Redemption requested — token locked (pay or cancel) -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">17</span><span class="t">Redemption requested — token locked (pay or cancel)</span><span class="d">Ruled 2026-07-21 (<span class="mono">vault-provider-system-design §7</span>): the moment the owner hits <strong>Redeem</strong> on a redeemable (vaulted) token, the holding <strong>locks</strong> — no transfer, burn, or listing — but stays visible in the wallet. It unlocks only by <strong>paying the shipping quote</strong> (paid directly to the vault) or <strong>cancelling the request</strong>; an unpaid request <strong>auto-cancels after 30 days</strong> (passive expiry, timestamp-authoritative) and the token unlocks itself, with bell warnings before expiry. After payment the redemption is <strong>binding</strong> — Cancel disappears and the lock holds until the item ships. Redeem is blocked while a token is listed (cancel the listing first, frame 16's lock in reverse). Grid cards show a status pill following the vault-inventory pattern. UI copy stays consumer-friendly — never backend state names.</span></div>
+      <div class="stage">
+        <div class="modal-card single">
+          <header><h4>Eelektross · Grade 10</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></span><span><div class="mn">Eelektross · Grade 10</div><div class="ms">Catcha Slabs · 1 of 1 · Vaulted in France</div></span></div>
+            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div><strong>Redemption requested</strong> — this card is reserved while your redemption is open. Pay shipping to get it on its way, or cancel to keep using the token. If nothing happens, the request cancels itself in <strong>27 days</strong>.</div></div>
+            <div class="modal-actions"><button class="btn btn--ghost btn--sm" disabled title="Locked while a redemption is open — pay shipping or cancel first">Transfer</button><button class="btn btn--ghost btn--sm" disabled title="Locked while a redemption is open — pay shipping or cancel first">Burn</button><button class="btn btn--ghost btn--sm" disabled title="Locked while a redemption is open — pay shipping or cancel first">List for sale</button></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel redemption</button><button class="btn btn--primary">Pay shipping · 14.20 ICP</button></div>
         </div>
       </div>
     </section>
