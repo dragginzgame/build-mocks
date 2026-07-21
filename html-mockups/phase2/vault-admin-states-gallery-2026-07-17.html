@@ -149,8 +149,8 @@
   <header>
     <span class="eyebrow">Studio · Vaults · Vault admin</span>
     <h1>Vault admin (registry) · states gallery</h1>
-    <p>The Toko-internal registry where a platform admin adds and manages <strong>vault providers</strong>. Follows the admin-creator-access pattern (account lookup, resolved identity read-only). Registry entries carry the platform stage lifecycle — <strong>Draft → Review → Live</strong> — and only <strong>Live</strong> providers appear in the creator-facing vault directory. Suspension ends a live relationship without deleting history.</p>
-    <div class="navlinks">Source: <span class="mono">Design Documentation/WIP/vault-provider-system-design.md</span> §2 (registry; lifecycle updated 2026-07-17 to Draft/Review/Live). Pattern: <a href="admin-creator-access-states-gallery-2026-06-30.html">Admin · creator access</a>. Related: <a href="vault-management-states-gallery-2026-07-18.html">Vault workspace (vaulties)</a>.</div>
+    <p>The Toko-internal registry where a platform admin adds and manages <strong>vault providers</strong>. Follows the admin-studio-access pattern (account lookup, resolved identity read-only). Registry entries carry the platform stage lifecycle — <strong>Draft → Review → Live</strong> — and only <strong>Live</strong> providers appear in the creator-facing vault directory. Suspension ends a live relationship without deleting history.</p>
+    <div class="navlinks">Source: <span class="mono">Design Documentation/WIP/vault-provider-system-design.md</span> §2 (registry; lifecycle updated 2026-07-17 to Draft/Review/Live). Pattern: <a href="admin-studio-access-states-gallery-2026-06-30.html">Admin · studio access</a>. Related: <a href="vault-management-states-gallery-2026-07-18.html">Vault workspace (vaulties)</a>.</div>
   </header>
 
   <!-- 01 · registry index -->
@@ -247,7 +247,7 @@
 
   <!-- 03 · toko id lookup states -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Toko account lookup — states</span><span class="d">Identical to the creator-access pattern (R58): the account must already exist, lookup accepts a User ID or principal, and the resolved identity is shown read-only — the admin never authors a name for someone else's account.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Toko account lookup — states</span><span class="d">Identical to the studio-access pattern (R58): the account must already exist, lookup accepts a User ID or principal, and the resolved identity is shown read-only — the admin never authors a name for someone else's account.</span></div>
     <div class="showcase">
       <div class="dcard"><span class="eyebrow">Invalid format</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono err" value="not-an-id"><button class="btn-find">Find account</button></div><div class="field-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> That isn't a valid User ID or principal.</div></div></div>
       <div class="dcard"><span class="eyebrow">No account found</span><div class="field" style="margin-top:var(--s-3);margin-bottom:0"><label class="flabel">Toko account · User ID or principal</label><div class="lookup"><input class="input mono err" value="usr_01ZZZZZZZZZZ"><button class="btn-find">Find account</button></div><div class="field-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> No Toko account matches this ID. The provider must create an account first.</div></div></div>

@@ -185,7 +185,7 @@
 
   <!-- 03 · panel open -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Panel · the queue, newest first</span><span class="d">Each row: icon by kind · title · one-line body · relative time. Unread rows carry a blue dot and stronger title weight; read rows are muted. Clicking a row follows its deep-link and marks it read; the × dismisses (deletes) the row. Header: Mark all read; filter All / Unread. Footer: Load more via the IcyDB cursor — the panel paginates, it never fetches the whole queue. The ×12 tally on the claim row is flood-control coalescing (frame 04), not a digest.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Panel · the queue, newest first</span><span class="d">Each row: icon by kind, tinted by severity (info / success / warning / error / critical — ruled 2026-07-21; the ok/warn/err tints shown here are that field) · title · one-line body · relative time (ordered by occurred_at). Unread rows carry a blue dot and stronger title weight; read rows are muted. Clicking a row follows its deep-link and marks it read; the × dismisses (deletes) the row. Header: Mark all read; filter All / Unread. Footer: Load more via the IcyDB cursor — the panel paginates, it never fetches the whole queue. The ×12 tally on the claim row is flood-control coalescing (frame 04), not a digest.</span></div>
     <div class="stage">
       <div class="npanel">
         <div class="nhead"><h4>Notifications</h4><button class="markall">Mark all read</button></div>
@@ -197,7 +197,7 @@
           <div class="nrow"><span class="nic nic--ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg></span><div class="nc"><div class="nt">Export complete <span class="ndot"></span></div><div class="nb">Generator Vaulties · batch #7 (500 outputs) is ready to download.</div><div class="nm2">Yesterday</div></div><button class="nx">✕</button></div>
           <div class="nrow nrow--read"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span><div class="nc"><div class="nt">You were paid</div><div class="nb">Royalty payout · 12.40 ICP from a Paper Trail sale.</div><div class="nm2">2d ago</div></div><button class="nx">✕</button></div>
           <div class="nrow nrow--read"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18l-2 13H5z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg></span><div class="nc"><div class="nt">Vendor started</div><div class="nb">Corner Shop went live on the Launchpad.</div><div class="nm2">3d ago</div></div><button class="nx">✕</button></div>
-          <div class="nrow nrow--read"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-4 0m4 0l0 4"/></svg></span><div class="nc"><div class="nt">Creator access granted</div><div class="nb">Your account can now create projects and collections.</div><div class="nm2">6d ago</div></div><button class="nx">✕</button></div>
+          <div class="nrow nrow--read"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-4 0m4 0l0 4"/></svg></span><div class="nc"><div class="nt">Studio access granted</div><div class="nb">Your account can now create projects and collections.</div><div class="nm2">6d ago</div></div><button class="nx">✕</button></div>
         </div>
         <div class="nfoot"><button class="btn btn--ghost btn--sm">Load more</button></div>
       </div>
@@ -207,7 +207,7 @@
 
   <!-- 04 · flood control -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">Flood control · coalescing + per-source cap (V1)</span><span class="d">Queue protection, not a digest: one noisy vendor must never bury the rest of the bell. Coalescing — an event whose recipient already holds an unread row with the same kind + subject_ref updates that row: count +1, created_at refreshed, so it re-sorts to the top. Per-source cap — one subject_ref may hold at most 5 unread rows across all kinds; past that, new events coalesce into the source's newest row regardless of kind. Cross-kind / cross-source summaries ("12 claims today") remain the V2 digest feature.</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">Flood control · coalescing + per-source cap (V1)</span><span class="d">Queue protection, not a digest: one noisy vendor must never bury the rest of the bell. Coalescing — an event whose recipient already holds an unread row with the same kind + subject_ref updates that row: count +1, occurred_at updated to the newest occurrence, so it re-sorts to the top (occurred_at is the feed sort key — ruled 2026-07-21; created_at keeps the insertion time). Per-source cap — one subject_ref may hold at most 5 unread rows across all kinds; past that, new events coalesce into the source's newest row regardless of kind. Cross-kind / cross-source summaries ("12 claims today") remain the V2 digest feature.</span></div>
     <div class="twocol">
       <div class="panel">
         <span class="eyebrow">Coalescing · same kind + subject, unread</span>
@@ -269,7 +269,7 @@
 
   <!-- 07 · lifecycle & guarantees -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">07</span><span class="t">Lifecycle, endpoints &amp; IC guarantees</span><span class="d">Developer reference — not a screen. The write is a best-effort side-effect after the real action commits: icydb has no rollback, so a failed notification write must never fail or reverse the action (the export still happened even if the row didn't land). Personal events write one row; team events fan out one row per project-admin principal (insert_many_atomic, Decision 2). All endpoints are caller-scoped: a principal only ever reads or mutates its own queue.</span></div>
+    <div class="frame-cap"><span class="num">07</span><span class="t">Lifecycle, endpoints &amp; IC guarantees</span><span class="d">Developer reference — not a screen. The write is a best-effort side-effect after the real action commits: icydb has no rollback, so a failed notification write must never fail or reverse the action (the export still happened even if the row didn't land). Personal events write one row; team events fan out one row per project-admin principal (insert_many_atomic, Decision 2). All endpoints are caller-scoped: a principal only ever reads or mutates its own queue. 2026-07-21 rulings: creation is idempotent on event_id (cross-canister duplicates are no-ops, not ×2 counts); a failed write retries 3× on a timer then drops with a log line — no full outbox in V1; rows order by occurred_at (event time). Schema deltas for dev authority: severity · event_id · occurred_at · expires_at.</span></div>
     <div class="spec">
       <span class="speclabel">Row lifecycle</span>
       <div class="flow">
@@ -281,7 +281,7 @@
         <span class="arr">→</span>
         <div class="n"><div class="t">Read</div><div class="d">Click-through, per-row, or Mark all read · <span class="mono">read_at</span> stamped.</div></div>
         <span class="arr">→</span>
-        <div class="n"><div class="t">Housekeeping</div><div class="d">Read rows purge after 7 days; hard cap 50 per principal, oldest read dropped first (Decision 3).</div></div>
+        <div class="n"><div class="t">Housekeeping</div><div class="d">Read rows purge after 7 days; informational kinds expire unread at ~90 days (expires_at); cap 50 with the drop ladder — read → expired → coalesce → informational unread → persistent last (ruled 2026-07-21).</div></div>
       </div>
       <div class="specref">
         <div>
@@ -290,12 +290,26 @@
           <div class="rk"><span class="mono">unread_count()</span><span class="v">bell badge</span></div>
           <div class="rk"><span class="mono">mark_read(id) / mark_all_read()</span><span class="v">read = true</span></div>
           <div class="rk"><span class="mono">dismiss(id) / clear_read()</span><span class="v">delete rows</span></div>
+          <p class="tiny" style="margin:var(--s-2) 0 0">All idempotent &amp; last-write-wins — acting on an already-dismissed row is a no-op, never an error (ruled 2026-07-21). Fetch cadence: page load · 60s while logged in · after own mutations · on bell open.</p>
         </div>
         <div>
           <span class="speclabel">V1 event set (Decision 4)</span>
-          <p class="tiny" style="margin:0">Upload / generate / export complete · vendor started / empty / ending soon / ended · claim received · sale completed · you were paid · cycles low / top-up · <strong>runway watchdog 30/14/3</strong> · listing about to expire · creator access granted · review outcome.</p>
+          <p class="tiny" style="margin:0">Upload / generate / export complete · vendor started / empty / ending soon / ended · claim received · sale completed · you were paid · cycles low / top-up · <strong>runway watchdog 30/14/3</strong> · listing about to expire · studio access granted · review outcome.</p>
           <p class="tiny" style="margin:var(--s-3) 0 0"><strong>Deferred with their features:</strong> auction ended / outbid / won / closing soon (post-v1 auctions), buyback offer (V2), dormancy / at-risk warnings (future permanence doc).</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · dead target & delivery semantics -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Dead target — "no longer available" (+ the five delivery guarantees)</span><span class="d">Notifications are immutable historical records; the deep-link target resolves at click time through one shared resolve-or-fallback helper (R34 spirit — never re-implemented per surface). A deleted or absent target — a removed draft, a pre-Live object that's gone — lands on this calm dead-end, never an error page. Authorization also happens here, at the destination: a notification is a record, not a permission, so a removed admin simply can't open the target page. Rare by construction — Live vendors end into read-only records (R54), collections delete pre-Live only (R47). The five delivery guarantees (ruled 2026-07-21, in the design doc for Gabriel to confirm): best-effort side effect · idempotent creation on event_id · at-least-once with duplicate suppression at insertion · authorization at the destination · immutable rows except read/dismiss state.</span></div>
+    <div class="stagec" style="background:var(--surface-page);border:1px solid #cfcfcf;border-radius:var(--r-4);padding:var(--s-10) var(--s-8);display:flex;justify-content:center">
+      <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-4);max-width:480px;width:100%;padding:var(--s-10) var(--s-8);text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--s-3)">
+        <span style="width:44px;height:44px;border-radius:50%;background:var(--surface-canvas-deep);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span>
+        <h3 style="font-size:var(--text-2xl)">This item is no longer available</h3>
+        <p class="tiny" style="max-width:40ch;margin:0;font-size:var(--text-base);color:var(--text-secondary)">The thing this notification pointed to has since been removed. Nothing is wrong with your account — the notification stays in your feed as a record.</p>
+        <button class="nx" style="position:static;width:auto;height:auto;border-radius:var(--r-pill);border:0;background:var(--text-primary);color:#fff;font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-sm);padding:.625rem 1.25rem;margin-top:var(--s-2)">Back to notifications</button>
       </div>
     </div>
   </section>

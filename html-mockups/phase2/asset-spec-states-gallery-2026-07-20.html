@@ -112,15 +112,17 @@
 
     <!-- 02 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">02</span><span class="t">Spec editor</span><span class="d">A spec is a list of slots: <span class="mono">key</span> (slug, unique in the spec) + display label + kind (V1 ships image-only) — all listed slots are required in V1 (optional slots are a V2 nicety). Saving a change bumps the version; already-applied token types keep the version they snapshotted until re-applied pre-Live.</span></div>
+      <div class="frame-cap"><span class="num">02</span><span class="t">Spec editor</span><span class="d">A spec is an ordered list of slots (fields ruled 2026-07-21): <span class="mono">key</span> (slug, unique, <strong>immutable after creation</strong> — renaming is a label change only, so files never orphan) · display label (unique in the spec) · optional <strong>description</strong> written for whoever fills the slot · explicit sort order (drag handle, never creation order) · kind (V1 image-only) + allowed filetypes and optional max size (per the RWA archetype ruling). One slot may carry the <strong>primary-asset flag</strong> (★) — its file automatically becomes the token's card image, so nobody uploads a duplicate front view for art. Dev note: <span class="mono">max_files</span> exists in the schema (default 1) but the V1 editor doesn't expose it. Saving bumps the version; applied token types keep their snapshot until re-applied pre-Live.</span></div>
       <div class="stage">
         <div class="modal-card">
           <header><h4>Asset spec · Graded slab</h4><button class="x" aria-label="Close">✕</button></header>
           <div class="mbody">
             <div style="margin-bottom:var(--s-5)"><label class="flabel">Spec name</label><input class="input" style="width:100%" value="Graded slab"></div>
             <label class="flabel">Required slots</label>
-            <div class="slot-row"><span class="key">front</span><span class="lbl">Front photo</span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
-            <div class="slot-row"><span class="key">back</span><span class="lbl">Back photo</span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">front</span><span class="lbl">Front photo <span title="Primary asset — this file becomes the token's card image">★</span></span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <p class="tiny" style="margin:.25rem 0 var(--s-2) 1.5rem">Full slab, certification number visible, high resolution.</p>
+            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">back</span><span class="lbl">Back photo</span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <p class="tiny" style="margin:.25rem 0 var(--s-2) 1.5rem">Entire reverse of the slab; barcode must be visible.</p>
             <div style="margin-top:var(--s-3)"><button class="add-chip">+ Add slot</button></div>
             <p class="tiny" style="margin-top:var(--s-4)">Currently version 2. Saving changes creates version 3 — token types that already carry version 2 are not changed until you re-apply.</p>
           </div>
@@ -169,9 +171,45 @@
       </div>
     </section>
 
+    <!-- 05 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Slot states · atomic replace · version history</span><span class="d">Ruled 2026-07-21. Slot states are derived, never stored: Missing · Uploading · Present · Failed — <strong>the gate counts only Present</strong> (a completed file reference); an in-flight upload is pending, not present. The existing asset uploader already owns the in-progress/failed mechanics — no new machinery. <strong>Replace is atomic</strong>: the current file stays active until the new upload completes, then swaps — the slot never transiently empties, so the go-Live checklist never flickers. <strong>Replaced files are retained</strong> (latest active, priors recoverable, actor + date logged) — dispute evidence for RWA. Ref-vs-blob drift is caught by the periodic invariant audit; a dangling reference fails the gate closed.</span></div>
+      <div class="screen"><div class="section">
+        <div class="card" style="margin-bottom:var(--s-6)">
+          <div class="head"><h3>#042 · Required media</h3><span class="tag">Graded slab v2</span></div>
+          <div class="row" style="gap:var(--s-4);flex-wrap:wrap">
+            <div class="slotbox filled">Front photo<br>✓ Present</div>
+            <div class="slotbox" style="border-style:dashed;color:var(--text-secondary)">Back photo<br>◌ Uploading… 62%</div>
+            <div class="slotbox missing">Label detail<br>Missing — required</div>
+            <div class="slotbox missing" style="border-color:var(--notify-error);color:var(--notify-error)">Cert scan<br>✕ Upload failed — retry</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="head"><h3>Front photo · history</h3><span class="tag tag--green">Present</span></div>
+          <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Version 3 · active</div><div class="ds">front_v3.jpg · replaced 21 Jul 2026 by vault · Geneva Vault SA</div></div></div>
+          <div class="check-row" style="opacity:.65"><span class="ic">·</span><div><div class="nm">Version 2</div><div class="ds">front_v2.jpg · replaced 18 Jul 2026 — retained, recoverable</div></div></div>
+          <div class="check-row" style="opacity:.65"><span class="ic">·</span><div><div class="nm">Version 1</div><div class="ds">front.jpg · uploaded 14 Jul 2026 at intake</div></div></div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- 06 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">After Live · vault-added photos &amp; visibility</span><span class="d">Ruled 2026-07-21. The spec and its slot list lock on Live (keys never removed or renamed on a Live snapshot); slot files follow standard media permissions. The vault may add <strong>additional photos after Live</strong> (extra angles, re-shoots) — supplementary media, <strong>not public by default</strong>. The creator enables public visibility <strong>per token</strong>, with batch visibility controls on the minted bulk-select pattern so enabling a whole series isn't tedious. These are token media — distinct from the custody vault-images (insurance/dispute evidence, never token assets).</span></div>
+      <div class="screen"><div class="section">
+        <div class="card">
+          <div class="head"><h3>#042 · Additional photos <span class="tiny" style="font-family:var(--font-body);text-transform:none;letter-spacing:0">added by Geneva Vault SA</span></h3><span class="tag">3 photos</span></div>
+          <div class="check-row"><span class="ic">▣</span><div style="flex:1"><div class="nm">angle_left.jpg</div><div class="ds">Added 20 Jul 2026 · after Live</div></div><span class="tag">Not public</span><button class="btn btn--ghost btn--sm">Make public</button></div>
+          <div class="check-row"><span class="ic">▣</span><div style="flex:1"><div class="nm">corner_detail.jpg</div><div class="ds">Added 20 Jul 2026 · after Live</div></div><span class="tag">Not public</span><button class="btn btn--ghost btn--sm">Make public</button></div>
+          <div class="check-row ok"><span class="ic">▣</span><div style="flex:1"><div class="nm">case_reshoot.jpg</div><div class="ds">Added 21 Jul 2026 · after Live</div></div><span class="tag tag--green">Public</span><button class="btn btn--ghost btn--sm">Hide</button></div>
+          <p class="tiny" style="margin-top:var(--s-3)">Batch: select tokens in Manage minted → bulk bar → "Photo visibility" applies one choice across the selection.</p>
+        </div>
+      </div></div>
+    </section>
+
     <div class="frame">
       <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Note (not UI) — open questions</span></div>
-      <p class="grey-note">From <span class="mono">asset-spec-design.md</span>: per-variant slots (deferred — digital tokens only; variants never apply to RWA items, ruled 2026-07-07); optional slots and non-image kinds (V1 or V2); whether a token type can carry multiple specs (recommend one — merge templates instead); and the creator-facing name ("Asset spec" vs "Media requirements" — glossary entry once ruled). Generator-produced art is not a spec slot in V1 — specs cover <em>additional</em> required media. After Live, slot files follow the standard media mutability rules; the spec itself locks with the token.</p>
+      <p class="grey-note">From <span class="mono">asset-spec-design.md</span> (post-ruling 2026-07-21): still open — per-variant slots (deferred; variants never apply to RWA); the creator-facing name ("Asset spec" vs "Media requirements", glossary once ruled); and <strong>blob lifecycle</strong> (deferred to dev — replaced-file retention 30d ordinary / indefinite RWA proposed; does Canic offer object versioning? @gabriel). Ruled: one spec per token type in V1 with <strong>inheritance/composition noted as the future expansion</strong>; per-slot Review approval rejected (R50 — Review is stage-only; the gate stays existence-only); filetype set + max size ship (RWA archetype ruling); the entity is deliberately <strong>not NFT-specific</strong> — applies_to is a typed reference, tokens are just the first consumer. Generator-produced art is still not a spec slot — specs cover <em>additional</em> required media.</p>
     </div>
 
   </div>
