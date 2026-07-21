@@ -70,7 +70,7 @@ loading, populated, error, locked, etc.) on a single page. Grouped by area, as o
   terms / privacy, navigation, top bar, side navigation, hero carousel,
   page footer.
 - **Creator studio — project** — studio, projects list, project, team & access,
-  admin / creator access, beneficiaries, whitelists, media library, revenue
+  admin / studio access, beneficiaries, whitelists, media library, revenue
   presets, cycles / billing, burn & reputation, project mastery.
 - **Creator studio — collection** — collections list, collection, creation,
   attributes, rarity, supply, guards, variants, collection defaults.
