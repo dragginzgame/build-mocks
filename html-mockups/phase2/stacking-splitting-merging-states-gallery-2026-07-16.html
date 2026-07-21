@@ -301,14 +301,16 @@
 
   <!-- 01 · rules -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">01</span><span class="t">The rules every surface obeys</span><span class="d">Developer reference — not a screen. The same canonical checks gate every stack operation, everywhere; the UI just exposes them per surface. These four hold across the wallet, inventory, launchpad, claim and marketplace.</span></div>
+    <div class="frame-cap"><span class="num">01</span><span class="t">The rules every surface obeys</span><span class="d">Developer reference — not a screen. The same canonical checks gate every stack operation, everywhere; the UI just exposes them per surface. These six hold across the wallet, inventory, launchpad, claim and marketplace (rules 3, 5 and 6 updated/added per the 2026-07-21 rulings).</span></div>
     <div class="spec">
       <span class="speclabel">Canonical rules</span>
       <div class="rulegrid">
-        <div class="rule"><h5>Merge identity = account + token + variant + frozen split</h5><p>Two holdings only stack when all match. <span class="mono">token_id</span> is the family, <span class="mono">variant</span> is the class, the frozen resale split rides along — different-split copies of the same token coexist as separate stacks, never silently merge.</p></div>
+        <div class="rule"><h5>Merge identity = account + token + variant + frozen split</h5><p>Two holdings only stack when all match. <span class="mono">token_id</span> is the family, <span class="mono">variant</span> is the class, the frozen resale split rides along — different-split copies of the same token coexist as separate stacks, never silently merge. Never-vendored copies get the R11 fallback split <strong>stamped at their first ownership event</strong> (ruled 2026-07-21), so "unset vs unset" never arises in the compatibility check.</p></div>
         <div class="rule"><h5>Variant is identity everywhere</h5><p>Every variant is its own line — never a mixed-variant stack. Combine and Merge scope to a single variant; holdings of other variants are greyed out as ineligible, and copy names the variant (“2 Red stacks”), not just “identical copies”.</p></div>
-        <div class="rule"><h5>Listed or locked blocks every mutation</h5><p>A holding that is listed for sale, mid-claim, or in an in-flight operation is action-locked: Split, Unstack, Merge, Combine, Compact and Transfer are all blocked until the listing is cancelled or the lock clears.</p></div>
+        <div class="rule"><h5>Listed or locked blocks every mutation</h5><p>A holding that is listed for sale, mid-claim, <strong>redemption-locked</strong> (ruled 2026-07-21 — locked from the moment Redeem is pressed until paid-and-shipped or cancelled; auto-cancels unpaid after 30 days), or in an in-flight operation is action-locked: Split, Unstack, Merge, Combine, Compact and Transfer are all blocked until the listing is cancelled or the lock clears. (Redeemable tokens are RWA 1/1s, so the redemption lock never meets a stack tool in practice — but the shared Transfer path honours it.)</p></div>
         <div class="rule"><h5>No rollback → seams are benign</h5><p>On the IC a failed step never reverses a committed one. Two-step flows (split-then-open, split-then-transfer) are designed so a half-finished sequence loses nothing — the split Single simply stays, ready to retry.</p></div>
+        <div class="rule"><h5>Copy identity exists from mint</h5><p>Ruled 2026-07-21 (#480): a quantity mint of N allocates N <span class="mono">copy_sequence</span> values up front and the stack holds them as a set — <strong>split partitions the set, merge unions it</strong>, unstack materializes its members. Ledger events always carry copy identity + quantity (R43); sequences are never invented later.</p></div>
+        <div class="rule"><h5>Large operations run as capped batches</h5><p>Ruled 2026-07-21 (#480): unstack-all / compact over big stacks execute as bounded per-call batches (~100 units; dev tunes the number) with client-driven continuation carrying an idempotency key — resumable by construction, no job runner in V1.</p></div>
       </div>
       <span class="speclabel" style="margin-top:var(--s-8)">Which operations live on which surface</span>
       <table class="matrix">
@@ -364,7 +366,7 @@
 
   <!-- 03 · split · unstack · merge = the three tabs of the modal -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">Wallet · Split · Unstack · Merge — the three tabs of one modal</span><span class="d">These are not separate screens or floating panels: they are the three tabs of the <strong>Stack actions</strong> modal opened in frame 02. Each acts on a single stack. Split peels <span class="mono">N</span> (1 ≤ N &lt; quantity) into a new stack of the same identity (12 → 8 + 4). Unstack materializes Singles (one, or all). Merge folds two same-variant stacks you hold into one.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Wallet · Split · Unstack · Merge — the three tabs of one modal</span><span class="d">These are not separate screens or floating panels: they are the three tabs of the <strong>Stack actions</strong> modal opened in frame 02. Each acts on a single stack. Split peels <span class="mono">N</span> (1 ≤ N &lt; quantity) into a new stack of the same identity (12 → 8 + 4). Unstack materializes Singles (one, or all). Merge folds two same-variant stacks you hold into one. <strong>Unstack all</strong> on a very large stack runs as capped batches that continue automatically (~100 units per call, ruled 2026-07-21) — the modal shows progress; an interrupted run resumes cleanly (idempotent continuation).</span></div>
     <div class="stage">
       <div class="modal-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--s-6);width:100%;max-width:1000px;align-items:start">
         <div class="modal-card">
@@ -425,7 +427,7 @@
 
   <!-- 05 · transfer + listed lock -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">05</span><span class="t">Wallet · Transfer &amp; the listed lock</span><span class="d">Transfer aligns with the wallet’s existing Transfer modal — recipient principal, the “no undo” warning, Confirm transfer. For a stack it adds exactly one field: an amount (a split immediately followed by a transfer, in one atomic step; variant is always preserved). A listed stack is the locked state: the wallet disables its stack tools with one route out — cancel the listing.</span></div>
+    <div class="frame-cap"><span class="num">05</span><span class="t">Wallet · Transfer &amp; the listed lock</span><span class="d">Transfer aligns with the wallet’s existing Transfer modal — recipient principal, the “no undo” warning, Confirm transfer. For a stack it adds exactly one field: an amount (a split immediately followed by a transfer, in one atomic step; variant is always preserved). A listed stack is the locked state: the wallet disables its stack tools with one route out — cancel the listing. (The wallet’s other holding lock — the RWA <strong>redemption lock</strong>, ruled 2026-07-21 — never appears on stacks: redeemable tokens are 1/1; Transfer honours it all the same. See my-tokens frame 17.)</span></div>
     <div class="twocol">
       <div class="stage" style="padding:var(--s-8)">
         <div class="modal-card">
