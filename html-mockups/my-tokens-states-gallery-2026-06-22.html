@@ -280,8 +280,8 @@
     <header>
       <div class="eyebrow">Toko · Wallet · consistency reference</div>
       <h1>My Tokens — Wallet.</h1>
-      <p>The end-user wallet, centred on <strong>My Tokens</strong>: everything owned by the connected principal. Three surfaces live under one page as tabs — <strong>Tokens</strong> (owned NFT holdings, singles and stacks), <strong>Balances</strong> (ICRC-1 and NNS fungibles, view-only in v1), and <strong>Activity</strong> (transaction history). Selecting a holding opens a read-only detail with the shipped owner actions — <strong>Transfer</strong>, <strong>Burn</strong>, and <strong>stack management</strong> (split, unstack, merge, combine, compact). Planned secondary <strong>sale / auction listing and offers/bids</strong> remain out of scope here ("coming soon"), matching the current app. Source: <span class="mono">Design Documentation/wallet.md</span>.</p>
-      <div class="navlinks">Surfaces: <strong>Tokens</strong> · <strong>Balances</strong> · <strong>Activity</strong> · Detail · Transfer · Burn · Stack actions · States &amp; guards</div>
+      <p>The end-user wallet, centred on <strong>My Tokens</strong>: everything owned by the connected principal. Three surfaces live under one page as tabs — <strong>Tokens</strong> (owned NFT holdings, singles and stacks), <strong>Balances</strong> (ICRC-1 and NNS fungibles, view-only in v1), and <strong>Activity</strong> (transaction history). Selecting a holding opens a read-only detail with the shipped owner actions — <strong>Transfer</strong> and <strong>Burn</strong>. Later-phase features live in their own galleries (scoped out 2026-07-21): <strong>stack management</strong> in <a href="stacking-splitting-merging-states-gallery-2026-07-16.html">stacking · splitting · merging</a>, <strong>physical redemption</strong> (RWA collections only) in <a href="phase2/redemption-states-gallery-2026-07-21.html">redemption</a>. Planned secondary <strong>sale / auction listing and offers/bids</strong> remain out of scope here ("coming soon"), matching the current app. Source: <span class="mono">Design Documentation/wallet.md</span>.</p>
+      <div class="navlinks">Surfaces: <strong>Tokens</strong> · <strong>Balances</strong> · <strong>Activity</strong> · Detail · Transfer · Burn · States &amp; guards</div>
     </header>
 
     <!-- 01 · Tokens tab (populated) -->
@@ -577,7 +577,7 @@
 
     <!-- 07 · Token detail — single -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">07</span><span class="t">Token detail — single holding (owned)</span><span class="d">The minted-token viewer: this is the same read-only component as the creator-side "Single minted copy" view (manage-minted gallery, frame 03) and the Live definition view — reused here with the wallet's owner actions. Media gallery with clickable thumbnails (asset shown large, read-only), identity (collection, token id, ledger), rarity/score, attributes, and claim provenance. Footer actions are the two shipped owner actions — Transfer and Burn. Detail must resolve against the active principal's holdings; a link to a token you don't own lands on the guard in frame 12.</span></div>
+      <div class="frame-cap"><span class="num">07</span><span class="t">Token detail — single holding (owned)</span><span class="d">The minted-token viewer: this is the same read-only component as the creator-side "Single minted copy" view (manage-minted gallery, frame 03) and the Live definition view — reused here with the wallet's owner actions. Media gallery with clickable thumbnails (asset shown large, read-only), identity (collection, token id, ledger), rarity/score, attributes, and claim provenance. Footer actions are the two shipped owner actions — Transfer and Burn. Detail must resolve against the active principal's holdings; a link to a token you don't own lands on the guard in frame 11.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><a>My Tokens</a><span class="sep">/</span><span class="here">Little Leaf #014</span></div>
@@ -594,7 +594,6 @@
                 <button class="asset-thumb"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></button>
                 <button class="asset-thumb"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></button>
               </div>
-              <p class="tiny" style="margin-top:.6rem">Main asset shown large. Click a thumbnail to view it — assets are read-only.</p>
             </div>
             <div class="dcard">
               <div class="dhead">
@@ -637,63 +636,10 @@
       </div>
     </section>
 
-    <!-- 08 · Token detail — stack -->
-    <section class="frame">
-      <div class="frame-cap"><span class="num">08</span><span class="t">Token detail — stack holding (owned)</span><span class="d">A stack of identical minted copies held as one holding. Same read-only detail, with the holding line showing the quantity (×12). A <strong>Stack actions</strong> button sits alongside Transfer and Burn and opens split / unstack / merge for this stack (frame 13); combining separate holdings and compacting all stacks happen from the grid's select mode (frame 14).</span></div>
-      <div class="screen">
-        <div class="context-bar">
-          <div class="crumb"><a>My Tokens</a><span class="sep">/</span><span class="here">Swampie #221</span></div>
-          <div class="actions">
-            <span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span>
-          </div>
-        </div>
-        <div class="section">
-          <div class="detail-grid">
-            <div>
-              <div class="asset-main" style="border:6px solid #E6E6E6;background:linear-gradient(135deg,#60a5fa,#1e3a8a)"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div>
-              <div class="asset-thumbs">
-                <button class="asset-thumb" aria-pressed="true"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></button>
-              </div>
-            </div>
-            <div class="dcard">
-              <div class="dhead">
-                <div>
-                  <h3>Swampie #221</h3>
-                  <div class="sub">Swampies <span class="tag">Common</span></div>
-                </div>
-                <span class="tag tag--cyan">Stack · ×12</span>
-              </div>
-              <div class="kv"><span class="k">Token ID</span><span class="v mono">swmp-221</span></div>
-              <div class="kv"><span class="k">Ledger canister</span><span class="v mono">2ouva…cai</span></div>
-              <div class="kv"><span class="k">Holding</span><span class="v">Stack · 12 copies</span></div>
-              <div class="kv"><span class="k">Acquired</span><span class="v">21 Jun 2026 · mint</span></div>
-              <div class="dsec">
-                <span class="eyebrow">Description</span>
-                <p class="about">Swampies are the bog's sleepy locals — happiest half-sunk under a lily pad with one eye open. This one comes as a stack of identical copies. Creator-written flavour travels with every copy.</p>
-              </div>
-              <div class="dsec">
-                <span class="eyebrow">Attributes</span>
-                <div class="attrs">
-                  <div class="attr"><div class="t">Body</div><div class="v">Bog Green</div></div>
-                  <div class="attr"><div class="t">Hat</div><div class="v">Lily Pad</div></div>
-                  <div class="attr"><div class="t">Mood</div><div class="v">Sleepy</div></div>
-                </div>
-              </div>
-              <div class="dactions">
-                <a class="btn btn--primary" href="marketplace-list-states-gallery-2026-06-28.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg> List for sale</a>
-                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 12l10 5 10-5"/><path d="M2 17l10 5 10-5"/></svg> Stack actions</button>
-                <button class="btn btn--ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Transfer</button>
-                <button class="btn btn--danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s4 1 4-6Z"/></svg> Burn</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- 09 · Transfer modal states -->
+    <!-- 08 · Transfer modal states -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">09</span><span class="t">Transfer — modal &amp; inline validation</span><span class="d">Transfer asks for a recipient principal and confirms in one modal. Validation is inline at the field: a malformed principal and a self-transfer are both rejected before the destructive confirm is reachable. The asset being moved is shown so there's no ambiguity about which holding leaves the wallet.</span></div>
+      <div class="frame-cap"><span class="num">08</span><span class="t">Transfer — modal &amp; inline validation</span><span class="d">Transfer asks for a recipient principal and confirms in one modal. Validation is inline at the field: a malformed principal and a self-transfer are both rejected before the destructive confirm is reachable. The asset being moved is shown so there's no ambiguity about which holding leaves the wallet.</span></div>
       <div class="stage">
         <div class="modal-grid">
           <div class="modal-card">
@@ -736,9 +682,9 @@
       </div>
     </section>
 
-    <!-- 10 · Transfer result -->
+    <!-- 09 · Transfer result -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">10</span><span class="t">Transfer — success &amp; stale-state conflict</span><span class="d">On success the token leaves the wallet list and the modal confirms. If ownership or listing state changed between page load and confirm, the mutation fails safely (pre-submit revalidation) rather than acting on stale state — the wallet is refreshed and the user retries. Submits are single-flight: the confirm button disables while a transfer is in flight.</span></div>
+      <div class="frame-cap"><span class="num">09</span><span class="t">Transfer — success &amp; stale-state conflict</span><span class="d">On success the token leaves the wallet list and the modal confirms. If ownership or listing state changed between page load and confirm, the mutation fails safely (pre-submit revalidation) rather than acting on stale state — the wallet is refreshed and the user retries. Submits are single-flight: the confirm button disables while a transfer is in flight.</span></div>
       <div class="stage">
         <div class="modal-grid" style="max-width:760px">
           <div class="modal-card">
@@ -759,9 +705,9 @@
       </div>
     </section>
 
-    <!-- 11 · Burn confirm -->
+    <!-- 10 · Burn confirm -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">11</span><span class="t">Burn — destructive confirm</span><span class="d">Burn is permanent and unrecoverable, so it's an explicit destructive confirm with a typed acknowledgement. The ledger keeps a Burned record for audit, but the holding leaves the wallet for good. The primary action is styled as danger and stays disabled until the confirm phrase is typed.</span></div>
+      <div class="frame-cap"><span class="num">10</span><span class="t">Burn — destructive confirm</span><span class="d">Burn is permanent and unrecoverable, so it's an explicit destructive confirm with a typed acknowledgement. The ledger keeps a Burned record for audit, but the holding leaves the wallet for good. The primary action is styled as danger and stays disabled until the confirm phrase is typed.</span></div>
       <div class="stage">
         <div class="modal-card single">
           <header><h4>Burn token</h4><span class="x">✕</span></header>
@@ -778,9 +724,9 @@
       </div>
     </section>
 
-    <!-- 12 · Detail guard & error states -->
+    <!-- 11 · Detail guard & error states -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">12</span><span class="t">Detail guards &amp; error states</span><span class="d">The safe fallbacks for a detail route: an invalid or untrusted token link, a link to a token the active principal doesn't own, and a stale link to a token that's since been burned. Each is a calm dead-end with a single route back to the wallet — never a broken or half-rendered detail. Shown together here as a reference set on grey.</span></div>
+      <div class="frame-cap"><span class="num">11</span><span class="t">Detail guards &amp; error states</span><span class="d">The safe fallbacks for a detail route: an invalid or untrusted token link, a link to a token the active principal doesn't own, and a stale link to a token that's since been burned. Each is a calm dead-end with a single route back to the wallet — never a broken or half-rendered detail. Shown together here as a reference set on grey.</span></div>
       <div class="stage">
         <div class="modal-grid">
           <div class="modal-card">
@@ -808,136 +754,40 @@
       </div>
     </section>
 
-    <!-- 13 · Stack actions modal -->
-    <section class="frame">
-      <div class="frame-cap"><span class="num">13</span><span class="t">Stack actions — split · unstack · merge</span><span class="d">On a stackable holding, the Stack actions button opens this modal. Split peels an amount into a new stack; Unstack turns copies into individual single holdings (one or all); Merge folds two stacks of the same token held by the same principal into one. Listed/locked holdings are blocked until the listing is cancelled. Combining separate holdings and compacting live in the grid (frame 14).</span></div>
-      <div class="stage">
-        <div class="modal-grid">
-          <div class="modal-card">
-            <header><h4>Stack actions · Swampie #221</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <div class="hold"><span class="th"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"><span class="stackn">×12</span></span><div><div class="hn">Swampie #221</div><div class="hd">Stackable · 12 in this stack</div></div></div>
-              <div class="seg"><button class="active">Split</button><button>Unstack</button><button>Merge</button></div>
-            </div>
-          </div>
-          <div class="modal-card">
-            <header><h4>Split stack</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <div><label class="flabel">Amount to split off</label><input class="input" type="number" value="4" style="max-width:140px"><div class="hint">Creates a new stack of 4; this stack keeps 8.</div></div>
-              <div class="kv"><span class="k">This stack</span><span class="v">12 → 8</span></div>
-              <div class="kv"><span class="k">New stack</span><span class="v">×4</span></div>
-            </div>
-            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Split off 4</button></div>
-          </div>
-          <div class="modal-card">
-            <header><h4>Unstack</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <div class="seg"><button class="active">Unstack 1</button><button>Unstack all</button></div>
-              <p class="tiny" style="margin:0">Turns stacked copies into individual single holdings you can transfer or burn one by one.</p>
-              <div class="kv"><span class="k">This stack</span><span class="v">12 → 11</span></div>
-              <div class="kv"><span class="k">New singles</span><span class="v">×1</span></div>
-            </div>
-            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Unstack 1</button></div>
-          </div>
-          <div class="modal-card">
-            <header><h4>Merge stacks</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <p class="tiny" style="margin:0">You hold 2 stacks of <strong>Swampie #221</strong> — fold them into one.</p>
-              <div class="kv"><span class="k">Stack A</span><span class="v">×12</span></div>
-              <div class="kv"><span class="k">Stack B</span><span class="v">×4</span></div>
-              <div class="kv"><span class="k">After merge</span><span class="v">×16</span></div>
-            </div>
-            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Merge into ×16</button></div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- 14 · Combine & compact (multi-select) -->
-    <section class="frame">
-      <div class="frame-cap"><span class="num">14</span><span class="t">Combine &amp; compact — grid multi-select</span><span class="d">From the Tokens grid, select mode reveals corner checkboxes. Tick identical, unlocked holdings of the same token to Combine them into one stack, or Compact stacks to fold every eligible stack of that token at once (the V1 interaction; drag-stack-onto-stack does the same merge directly). Only identical, unlocked copies combine — mixed or listed selections are rejected with a clear reason.</span></div>
-      <div class="screen">
-        <div class="context-bar">
-          <div class="crumb"><span class="here">My Tokens</span></div>
-          <div class="actions"><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div>
-        </div>
-        <div class="section">
-          <div class="section-head">
-            <div>
-              <div class="eyebrow">Wallet · select</div>
-              <h2>My Tokens.</h2>
-              <div class="lede">Combine identical copies (same variant, same resale terms) into a stack, or compact all eligible stacks of a token.</div>
-            </div>
-          </div>
-          <div class="bulkbar">
-            <span class="b-count">4 selected</span>
-            <span class="tiny" style="color:rgba(255,255,255,.72)">Swampie #221 · identical &amp; unlocked</span>
-            <span class="b-actions">
-              <button class="bb">Combine into stack</button>
-              <button class="bb">Compact stacks</button>
-              <button class="bb bb--clear">Clear</button>
-            </span>
-          </div>
-          <div class="tk-grid">
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>12</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><div class="stack-badge"><span class="x">×</span>4</div><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--common sel"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Swampie</h3><span class="issue">#221</span></div><div class="meta-row"><span class="val-soft">Open edition</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--rare"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Little Leaf</h3><span class="issue">#014</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">14/500</span></div></div></div></a>
-            <a class="rarity-frame rarity-frame--epic"><span class="chk" style="background:rgba(255,255,255,.95);border-color:var(--border-soft);color:transparent"></span><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></div><div class="meta"><div class="top"><h3 class="name">Sun Sprite</h3><span class="issue">#003</span></div><div class="meta-row"><span class="label-strong">Edition</span><span class="val-strong">3/250</span></div></div></div></a>
-          </div>
-          <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Only identical, unlocked copies of the same token <strong>and variant</strong> — carrying the <strong>same resale royalty terms</strong> — can be combined. Tokens listed for sale must have the listing cancelled first. Greyed checkboxes here are eligible but unticked.</div></div>
-        </div>
-      </div>
-    </section>
 
-    <!-- 15 · Listing expired — passive unlock -->
+    <!-- 12 · Listing expired — passive unlock -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">15</span><span class="t">Listing expired — token already unlocked</span><span class="d">Listing expiry is <strong>passive</strong>: the expiry timestamp is authoritative and nothing runs at the expiry moment. The instant a listing lapses, the wallet computes the token as unlocked — every action is available again and there is <strong>no stuck state</strong>. A quiet note records that the listing ended unsold; nothing was charged. (One shared eligibility check evaluates sale-lock + expiry everywhere — never duplicated per surface.)</span></div>
+      <div class="frame-cap"><span class="num">12</span><span class="t">Listing expired — token already unlocked</span><span class="d">Listing expiry is <strong>passive</strong>: the expiry timestamp is authoritative and nothing runs at the expiry moment. The instant a listing lapses, the wallet computes the token as unlocked — every action is available again and there is <strong>no stuck state</strong>. A quiet note records that the listing ended unsold; nothing was charged. (One shared eligibility check evaluates sale-lock + expiry everywhere — never duplicated per surface.)</span></div>
       <div class="stage">
         <div class="modal-card single">
           <header><h4>Little Leaf #014</h4><span class="x">✕</span></header>
           <div class="mbody">
             <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · Rare</div></span></div>
             <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>Your listing expired unsold</strong> on 14 Jul, 18:00 — the token is back in your wallet and fully unlocked. You were charged nothing (no sale, no fee).</div></div>
-            <div class="modal-actions"><button class="btn btn--ghost btn--sm">Transfer</button><button class="btn btn--ghost btn--sm">Burn</button><button class="btn btn--ghost btn--sm">List for sale</button><button class="btn btn--ghost btn--sm">Stack actions</button></div>
+            <div class="modal-actions"><button class="btn btn--ghost btn--sm">Transfer</button><button class="btn btn--ghost btn--sm">Burn</button><button class="btn btn--ghost btn--sm">List for sale</button></div>
           </div>
           <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--primary">Relist</button></div>
         </div>
       </div>
     </section>
 
-    <!-- 16 · Listed stack — partial sales -->
+    <!-- 13 · Listed stack — partial sales -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">16</span><span class="t">Listed stack — selling in parts</span><span class="d">A listed stack sells <strong>per unit</strong>: buyers take any quantity, and the wallet card tracks the remainder. The stack stays <strong>sale-locked</strong> while listed (no split/merge/transfer/burn — cancel first); each partial sale pays out as it settles (royalties + referral taken from that sale's amount). When the last unit sells the listing closes; an unsold remainder returns at expiry.</span></div>
+      <div class="frame-cap"><span class="num">13</span><span class="t">Listed stack — selling in parts</span><span class="d">A listed stack sells <strong>per unit</strong>: buyers take any quantity, and the wallet card tracks the remainder. The stack stays <strong>sale-locked</strong> while listed (no split/merge/transfer/burn — cancel first); each partial sale pays out as it settles (royalties + referral taken from that sale's amount). When the last unit sells the listing closes; an unsold remainder returns at expiry.</span></div>
       <div class="stage">
         <div class="modal-card single">
           <header><h4>Swampie #221 · listed</h4><span class="x">✕</span></header>
           <div class="mbody">
             <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example2.png" onerror="this.remove()"><span class="stackn">×5</span></span><span><div class="mn">Swampie #221</div><div class="ms">Swamp Things · Common · Stack</div></span></div>
             <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div><strong>7 of 12 sold · 5 left</strong> at 2.5 ICP each. Proceeds so far: 16.10 ICP (after royalties + referral). Listing ends 14 Jul, 18:00 — anything unsold returns here.</div></div>
-            <div class="modal-actions"><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Transfer</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Burn</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Stack actions</button></div>
+            <div class="modal-actions"><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Transfer</button><button class="btn btn--ghost btn--sm" disabled title="Sale-locked — cancel the listing first">Burn</button></div>
           </div>
           <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn btn--danger">Cancel listing</button></div>
         </div>
       </div>
     </section>
 
-    <!-- 17 · Redemption requested — token locked (pay or cancel) -->
-    <section class="frame">
-      <div class="frame-cap"><span class="num">17</span><span class="t">Redemption requested — token locked (pay or cancel)</span><span class="d">Ruled 2026-07-21 (<span class="mono">vault-provider-system-design §7</span>): the moment the owner hits <strong>Redeem</strong> on a redeemable (vaulted) token, the holding <strong>locks</strong> — no transfer, burn, or listing — but stays visible in the wallet. It unlocks only by <strong>paying the shipping quote</strong> (paid directly to the vault) or <strong>cancelling the request</strong>; an unpaid request <strong>auto-cancels after 30 days</strong> (passive expiry, timestamp-authoritative) and the token unlocks itself, with bell warnings before expiry. After payment the redemption is <strong>binding</strong> — Cancel disappears and the lock holds until the item ships. Redeem is blocked while a token is listed (cancel the listing first, frame 16's lock in reverse). Grid cards show a status pill following the vault-inventory pattern. UI copy stays consumer-friendly — never backend state names.</span></div>
-      <div class="stage">
-        <div class="modal-card single">
-          <header><h4>Eelektross · Grade 10</h4><span class="x">✕</span></header>
-          <div class="mbody">
-            <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example3.png" onerror="this.remove()"></span><span><div class="mn">Eelektross · Grade 10</div><div class="ms">Catcha Slabs · 1 of 1 · Vaulted in France</div></span></div>
-            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div><strong>Redemption requested</strong> — this card is reserved while your redemption is open. Pay shipping to get it on its way, or cancel to keep using the token. If nothing happens, the request cancels itself in <strong>27 days</strong>.</div></div>
-            <div class="modal-actions"><button class="btn btn--ghost btn--sm" disabled title="Locked while a redemption is open — pay shipping or cancel first">Transfer</button><button class="btn btn--ghost btn--sm" disabled title="Locked while a redemption is open — pay shipping or cancel first">Burn</button><button class="btn btn--ghost btn--sm" disabled title="Locked while a redemption is open — pay shipping or cancel first">List for sale</button></div>
-          </div>
-          <div class="footer-row"><button class="btn btn--ghost">Cancel redemption</button><button class="btn btn--primary">Pay shipping · 14.20 ICP</button></div>
-        </div>
-      </div>
-    </section>
 
   </div>
 </body>
