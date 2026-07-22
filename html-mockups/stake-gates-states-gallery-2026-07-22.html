@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../site-nav.js"></script>
+<title>Toko — Vendors · Creation states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.375rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .notif-bell { position:relative; width:36px; height:36px; border-radius:var(--r-2); background:transparent; border:1px solid var(--border-soft); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .notif-bell .badge { position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 .3125rem; border-radius:999px; background:var(--notify-error); color:#fff; font-size:var(--text-3xs); font-weight:700; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-5); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-4xl); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head .head-actions { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .sb { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .sb .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sb--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .sb--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .sb--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .sb--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .sb--grey { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .axes { display:flex; gap:var(--s-5); flex-wrap:wrap; }
+  .axis { display:flex; flex-direction:column; gap:.35rem; }
+  .axis .al { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6) var(--s-8) var(--s-8); }
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding-bottom:var(--s-5); margin-bottom:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .card__head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  select.input { appearance:auto; }
+  textarea.input { resize:vertical; min-height:72px; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:680px){ .grid2 { grid-template-columns:1fr; } }
+  .search { position:relative; flex:1; min-width:200px; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-child { border-top:0; }
+  .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .progress { height:8px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .progress .fill { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .choice { display:grid; grid-template-columns:20px 1fr; gap:var(--s-3); align-items:start; border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); }
+  .choice + .choice { margin-top:var(--s-3); }
+  .choice.sel { border-color:var(--border-strong); background:var(--surface-canvas-alt); box-shadow:0 0 0 1px var(--border-strong); }
+  .choice.disabled { opacity:.55; }
+  .choice .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); margin-top:1px; position:relative; flex:none; }
+  .choice.sel .radio { border-color:var(--text-primary); }
+  .choice.sel .radio::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .choice .ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-md); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .choice .desc { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.25rem; }
+  .type-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--s-4); }
+  @media (max-width:680px){ .type-grid { grid-template-columns:1fr; } }
+  .type-card { text-align:left; border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-3); min-height:200px; }
+  .type-card:not(.disabled):hover { border-color:var(--border-strong); }
+  .type-card.sel { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .type-card.disabled { opacity:.55; }
+  .type-card .tc-ic { width:44px; height:44px; border-radius:var(--r-2); background:var(--surface-canvas-deep); display:inline-flex; align-items:center; justify-content:center; font-size:1.375rem; flex:none; }
+  .type-card .tc-ttl { font-family:var(--font-display); font-size:var(--text-xl); text-transform:uppercase; letter-spacing:.02em; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .type-card .tc-desc { color:var(--text-secondary); font-size:var(--text-sm); }
+  .type-card .tc-foot { margin-top:auto; }
+  .dgroup { border:1px solid var(--border-soft); border-left:3px solid var(--dg,var(--border-soft)); border-radius:var(--r-3); padding:var(--s-4) var(--s-5) var(--s-5); }
+  .dgroup + .dgroup { margin-top:var(--s-4); }
+  .dgroup__head { display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-4); }
+  .dgroup__n { width:22px; height:22px; border-radius:50%; background:var(--dg,var(--text-muted)); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); flex:none; }
+  .dgroup__t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .stepper { display:flex; align-items:center; flex-wrap:wrap; gap:var(--s-2); }
+  .stepper .step { display:flex; align-items:center; gap:var(--s-2); color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .stepper .step .n { width:24px; height:24px; border-radius:50%; background:var(--surface-canvas-deep); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; font-size:var(--text-2xs); }
+  .stepper .step.active { color:var(--text-primary); }
+  .stepper .step.active .n { background:var(--text-primary); color:#fff; }
+  .stepper .step.done .n { background:var(--stage-live); color:#fff; }
+  .stepper .sepl { width:20px; height:1px; background:var(--border-soft); flex:none; }
+  @media (max-width:760px){ .stepper .step .lbl { display:none; } }
+  .coll-card--new { border:2px dashed var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-3); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-2); text-align:center; color:var(--text-secondary); min-height:200px; padding:var(--s-6); cursor:pointer; }
+  .media-zones { display:flex; gap:var(--s-4); align-items:stretch; flex-wrap:wrap; }
+  .dropzone { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.25rem; color:var(--text-secondary); text-align:center; cursor:pointer; padding:var(--s-4); }
+  .dropzone:hover { border-color:var(--border-strong); color:var(--text-primary); }
+  .dropzone .dz-plus { font-size:1.5rem; line-height:1; }
+  .dropzone .dz-lbl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .media-thumb { width:120px; height:120px; flex:none; }
+  .media-banner { flex:1; min-width:260px; min-height:200px; }
+  .acc { border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; background:var(--surface-canvas); }
+  .acc + .acc { margin-top:var(--s-3); }
+  .acc__head { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-4) var(--s-5); background:var(--surface-canvas-alt); }
+  .acc__head .acc-ttl { font-family:var(--font-display); font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; }
+  .acc__head .chev { margin-left:auto; color:var(--text-muted); }
+  .acc__body { padding:0 var(--s-5) var(--s-3); }
+  .tier-row { display:flex; align-items:center; gap:var(--s-3); padding:.7rem 0; border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .tier-row:first-child { border-top:0; }
+  .tier-row .tr-tier { font-family:var(--font-emphasis); font-weight:700; min-width:120px; }
+  .tier-row .tr-cost { width:96px; }
+  .tier-row .tr-reqs { flex:1; display:flex; gap:.35rem; flex-wrap:wrap; min-width:160px; }
+  .tier-row .tr-actions { display:flex; gap:var(--s-2); margin-left:auto; }
+  .single-modal .modal-card.wide { max-width:640px; }
+  .splitbar { height:14px; border-radius:var(--r-pill); overflow:hidden; display:flex; }
+  .splitbar > i { display:block; height:100%; }
+  .splitlegend { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); }
+  .splitlegend span { display:inline-flex; align-items:center; gap:.375rem; }
+  .splitlegend i { width:9px; height:9px; border-radius:3px; }
+  .bene-head, .bene-row { display:grid; grid-template-columns:1fr 84px 1fr 36px; gap:var(--s-2); align-items:center; }
+  .bene-head span { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  @media (max-width:620px){ .bene-head, .bene-row { grid-template-columns:1fr 64px 1fr 32px; } }
+  .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:var(--s-3); }
+  .tk-card { background:var(--surface-canvas); border:2px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; position:relative; }
+  .tk-card.rar-common { border-color:#B8B8B8; } .tk-card.rar-uncommon { border-color:#15803D; } .tk-card.rar-rare { border-color:#1e40af; } .tk-card.rar-epic { border-color:#6D28D9; } .tk-card.rar-legendary { border-color:#B45309; }
+  .tk-card .art { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2rem; background:linear-gradient(135deg,#f59e0b,#b45309); }
+  .tk-card .stackn { position:absolute; top:6px; right:6px; background:rgba(10,10,10,.72); color:#fff; border-radius:999px; padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); }
+  .tk-card .meta { padding:.45rem .55rem .6rem; }
+  .tk-card .nm { font-family:var(--font-display); font-size:var(--text-sm); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-card .rn { font-size:var(--text-3xs); font-weight:700; font-family:var(--font-emphasis); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); margin-top:.1rem; }
+  .controls { display:flex; gap:var(--s-3); flex-wrap:wrap; }
+  .tk-card.pick { cursor:pointer; }
+  .tk-card .pick-box { position:absolute; top:6px; left:6px; width:20px; height:20px; border-radius:6px; border:2px solid #fff; background:rgba(10,10,10,.4); display:inline-flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .tk-card .pick-box svg { width:13px; height:13px; opacity:0; }
+  .tk-card.sel { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary); }
+  .tk-card.sel .pick-box { background:var(--text-primary); border-color:var(--text-primary); }
+  .tk-card.sel .pick-box svg { opacity:1; }
+  .cbx { width:18px; height:18px; border-radius:5px; border:2px solid var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; color:#fff; }
+  .cbx svg { width:12px; height:12px; opacity:0; }
+  .cbx.on { background:var(--text-primary); border-color:var(--text-primary); }
+  .cbx.on svg { opacity:1; }
+  .cbx.some { background:var(--text-primary); border-color:var(--text-primary); }
+  .selectall { display:inline-flex; align-items:center; gap:var(--s-2); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-primary); cursor:pointer; }
+  .pickscroll { max-height:340px; overflow:auto; margin:0 calc(-1 * var(--s-2)); padding:0 var(--s-2); }
+  .modal-empty { text-align:center; padding:var(--s-8) var(--s-4); display:flex; flex-direction:column; align-items:center; gap:var(--s-2); }
+  .modal-empty .me-ttl { font-family:var(--font-display); font-size:var(--text-2xl); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state { border:1.5px dashed var(--border-soft); border-radius:var(--r-3); padding:var(--s-8) var(--s-5); text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--s-3); color:var(--text-secondary); }
+  .empty-state strong { font-family:var(--font-display); font-weight:400; font-size:var(--text-xl); color:var(--text-primary); text-transform:uppercase; letter-spacing:.02em; }
+  .empty-state p { margin:0; font-size:var(--text-sm); max-width:52ch; }
+  .andstack { display:flex; flex-direction:column; }
+  .andreq { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.65rem .85rem; display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .andreq .rq-t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .andreq .rq-d { color:var(--text-secondary); font-size:var(--text-xs); margin-left:auto; }
+  .andsep { display:flex; align-items:center; gap:var(--s-3); padding:.3rem 0 .3rem .85rem; }
+  .andsep b { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; color:var(--text-secondary); background:var(--surface-canvas-deep); border-radius:var(--r-pill); padding:2px 9px; }
+  .andsep i { flex:1; height:1px; background:var(--border-soft); }
+  .input.is-error { border-color:var(--notify-error); }
+  .input.is-ok { border-color:var(--stage-live); }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .field-ok { color:var(--stage-live); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .field-checking { color:var(--text-muted); font-size:var(--text-xs); margin-top:.3rem; display:flex; align-items:center; gap:.35rem; }
+  .req-plus { color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); font-size:var(--text-sm); padding:0 1px; }
+  .acc.disabled-acc { opacity:.55; }
+  .acc.disabled-acc .acc__head { cursor:not-allowed; }
+  .acc__head.clickable { cursor:pointer; }
+  .acc__head .acc-note { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .vcheck { display:flex; gap:var(--s-3); align-items:flex-start; padding:.65rem 0; border-top:1px solid var(--border-soft); }
+  .vcheck:first-child { border-top:0; }
+  .vcheck .vi { flex:none; margin-top:1px; }
+  .vcheck .vi.err { color:var(--notify-error); } .vcheck .vi.ok { color:var(--stage-live); }
+  .vcheck .vt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .vcheck .vd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:1px; }
+  .vcheck .vfix { margin-left:auto; color:var(--info); font-weight:700; font-size:var(--text-xs); white-space:nowrap; align-self:center; }
+  .lockpill { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:4px; }
+  .lockpill--lock { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .lockpill--edit { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:var(--s-6); width:100%; max-width:1040px; align-items:start; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:74ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .step-actions { display:flex; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; }
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin:var(--s-2) calc(-1 * var(--s-8)) calc(-1 * var(--s-8)); padding:var(--s-4) var(--s-8); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); white-space:nowrap; }
+  .results-count strong { color:var(--text-primary); font-weight:700; }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:38px; height:38px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body); font-size:var(--text-base); font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; cursor:not-allowed; }
+  .pg .pg-arrow svg { width:16px; height:16px; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); white-space:nowrap; }
+  .perpage label { font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; padding:0 1.5rem 0 .6rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-primary); font-family:var(--font-body); font-size:var(--text-xs); font-weight:700; }
+  @media (max-width:620px){ .listbar { justify-content:center; } .results-count, .perpage { display:none; } }
+
+  /* ---- cycles guard (estimate → check → inline top-up) · shared kit ---- */
+  .cyc-staged { display:inline-flex; align-items:center; gap:var(--s-2); padding:.45rem .85rem; border-radius:var(--r-pill); background:var(--surface-canvas-deep); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--text-secondary); align-self:flex-start; }
+  .cyc-staged .dot { width:8px; height:8px; border-radius:50%; background:var(--stage-live); flex:none; }
+  .cyc-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; background:rgba(99,102,241,.07); }
+  .cyc-note .ic { flex:none; margin-top:1px; color:var(--stage-review); }
+  .cyc-note strong { color:var(--text-primary); }
+  .cyc-note--ok { background:rgba(16,185,129,.08); } .cyc-note--ok .ic { color:var(--stage-live); }
+  .cyc-note--warn { background:rgba(245,158,11,.1); } .cyc-note--warn .ic { color:var(--stage-draft); }
+  .cyc-note--err { background:rgba(239,68,68,.08); } .cyc-note--err .ic { color:var(--notify-error); }
+  .cyc-link { color:var(--info,#2563EB); font-weight:700; font-size:var(--text-sm); }
+  .cyc-est { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--s-3); }
+  @media (max-width:560px){ .cyc-est { grid-template-columns:1fr; } }
+  .cyc-est .e { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); }
+  .cyc-est .e.warn { border-color:rgba(245,158,11,.5); background:rgba(245,158,11,.08); }
+  .cyc-est .e.ok { border-color:rgba(16,185,129,.4); background:rgba(16,185,129,.06); }
+  .cyc-est .e .k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+  .cyc-est .e .v { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-xl); margin-top:.3rem; }
+  .cyc-est .e .v small { font-size:var(--text-xs); color:var(--text-secondary); font-weight:600; }
+  .cyc-kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.65rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-base); }
+  .cyc-kv:first-child { border-top:0; }
+  .cyc-kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .cyc-kv .v.warn { color:var(--stage-draft); }
+  .cyc-amount { display:flex; align-items:flex-end; gap:var(--s-4); flex-wrap:wrap; }
+  .cyc-amount input { font-family:var(--font-emphasis); font-weight:800; font-size:var(--text-2xl); border:1.5px solid var(--border-soft); border-radius:var(--r-2); padding:.4rem .75rem; width:150px; text-align:center; background:var(--surface-canvas); color:var(--text-primary); }
+  .cyc-amount .conv { color:var(--text-secondary); font-size:var(--text-sm); }
+  .cyc-amount .conv b { color:var(--text-primary); font-family:var(--font-emphasis); }
+  .cyc-presets { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .cyc-presets button { border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); background:transparent; }
+  .cyc-presets button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .cyc-prog { height:10px; background:var(--surface-canvas-deep); border-radius:var(--r-pill); overflow:hidden; }
+  .cyc-prog .f { height:100%; background:var(--text-primary); border-radius:var(--r-pill); }
+  .cyc-prog .f.warn { background:var(--stage-draft); }
+  .cyc-prog .f.ok { background:var(--stage-live); }
+  .cyc-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .cyc-tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+
+  /* claim-panel requirement rows (from vendor-claim gallery) */
+  .reqs { display:flex; flex-direction:column; gap:var(--s-2); }
+  .req { display:flex; align-items:flex-start; gap:var(--s-3); padding:.7rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
+  .req .ri { width:22px; height:22px; border-radius:50%; flex:none; display:grid; place-items:center; }
+  .req.met .ri { background:rgba(16,185,129,.16); color:var(--stage-live); }
+  .req.unmet .ri { background:rgba(239,68,68,.13); color:var(--notify-error); }
+  .req .rt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .req .rd { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.1rem; }
+  .req svg { width:13px; height:13px; }
+  .panelcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); max-width:420px; width:100%; display:flex; flex-direction:column; gap:var(--s-4); }
+  .paykv { display:flex; justify-content:space-between; font-size:var(--text-sm); padding:.35rem 0; }
+  .paykv .v { font-weight:700; font-variant-numeric:tabular-nums; }
+  .paykv.total { border-top:1px solid var(--border-soft); padding-top:.6rem; }
+  .mini-asset { display:flex; gap:var(--s-3); align-items:center; }
+  .mini-asset .mart { width:52px; height:52px; border-radius:var(--r-2); background:linear-gradient(135deg,#9ca3af,#374151); flex:none; }
+  .mini-asset .mn { font-family:var(--font-emphasis); font-weight:700; }
+  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+  /* neuron picker rows */
+  .neu { display:flex; align-items:center; gap:var(--s-3); padding:.65rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas); }
+  .neu.on { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary); }
+  .neu .rad { width:18px; height:18px; border-radius:50%; border:2px solid var(--border-strong); flex:none; }
+  .neu.on .rad { border-color:var(--text-primary); background:radial-gradient(circle at center, var(--text-primary) 0 45%, transparent 50%); }
+  .neu .nid { font-family:var(--font-mono, ui-monospace, monospace); font-size:var(--text-xs); }
+  .neu .nmeta { margin-left:auto; display:flex; gap:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); font-variant-numeric:tabular-nums; flex-wrap:wrap; }
+  .neu .role { font-size:var(--text-3xs); font-weight:700; letter-spacing:.05em; text-transform:uppercase; background:var(--surface-canvas-deep); border-radius:var(--r-pill); padding:2px 8px; color:var(--text-secondary); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <span class="eyebrow">Vendors &amp; collection defaults · claim requirements</span>
+      <h1>Stake gates — NNS + SNS · V1 enablement</h1>
+      <p>Change gallery for <strong>enabling the two stake gates in V1</strong> (Donna, 2026-07-22 — prompted by Remco: the backend NNS/SNS claim checks are already working). "Has a stake" stops being a disabled teaser and becomes authorable wherever claim requirements are edited — the vendor tier editor and the collection-defaults rule editor — and visible wherever requirements are shown. <strong>Holds tokens from a collection stays front-end V2</strong> and fail-closed (R75); Restrictions and Rewards are untouched. Requirement semantics are unchanged: types combine with <strong>AND</strong>; whitelists remain one union gate (ruling 2026-07-22); a tier may carry <strong>one NNS and one SNS gate</strong>, both binding.</p>
+      <div class="navlinks">Change spec: <span class="mono">Design Documentation/stake-gates-v1-enablement.md</span>. Base galleries this modifies: <a href="vendor-creation-states-gallery-2026-06-19.html">Vendor creation</a> (frame 07/A26) · <a href="collection-defaults-states-gallery-2026-07-20.html">Collection defaults</a> (A2/A2b) · <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">Vendor claim</a> (frames 01/02/05).</div>
+    </header>
+
+    <!-- 01 · requirement editor, stake gates active -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Requirement editor — stake gates authorable</span><span class="d">The tier requirement editor (vendor creation frame 07; the collection-defaults rule editor A2b gets the identical change) with the two stake accordions <strong>active</strong> instead of "Coming soon". Each gate: NNS = an ICP neuron; SNS = a governance canister that must <strong>resolve before Save enables</strong>. Both carry optional <span class="mono">minimum_stake</span> (the staked token — ICP for NNS, the SNS's native token otherwise) and optional <span class="mono">minimum_dissolve_delay</span> (dissolve delay, <strong>not neuron age</strong> — ruled 2026-07-03); both empty = any active stake. Within a gate the two fields AND together. <strong>One NNS + one SNS max per tier</strong> — a second SNS requirement is rejected at save (existing checklist rule). Token-hold stays a disabled teaser.</span></div>
+      <div class="stage">
+        <div class="modal-grid" style="max-width:560px">
+          <div class="modal-card">
+            <header><h4>Edit tier — Founder</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Requirements combine with AND.</strong> A collector must satisfy every active requirement below. Whitelists count as a single requirement — selected lists merge into one eligible list, so a collector only needs to appear on one of them.</div></div>
+              <label class="flabel">Requirements</label>
+
+              <div class="acc">
+                <div class="acc__head clickable"><span class="acc-ttl">Whitelists</span><span class="tag tag--green">2 selected</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
+              </div>
+
+              <div class="acc">
+                <div class="acc__head clickable"><span class="acc-ttl">Has a stake — NNS (ICP neuron)</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+                <div class="acc__body">
+                  <div class="row" style="display:flex;gap:var(--s-4);flex-wrap:wrap">
+                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum stake <span class="tiny">(ICP · optional)</span></label><input class="field-input" value="10"></div>
+                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum dissolve delay <span class="tiny">(optional)</span></label><select class="field-input"><option>6 months</option><option>3 months</option><option>1 year</option><option>None</option></select></div>
+                  </div>
+                  <p class="hint" style="margin-top:.4rem">Leave both empty to accept <strong>any active ICP neuron</strong>. The claimant proves a neuron they control — or are hotkeyed to — at claim time.</p>
+                </div>
+              </div>
+
+              <div class="acc">
+                <div class="acc__head clickable"><span class="acc-ttl">Has a stake — SNS (ICRC-1 neuron)</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+                <div class="acc__body">
+                  <div><label class="qlabel">Governance canister</label><input class="field-input mono" value="2jvtu-yqaaa-aaaaq-aaama-cai"><p class="hint" style="margin-top:.3rem">Resolved: <strong>OpenChat</strong> · native token <span class="mono">CHAT</span>. Save stays disabled until the canister resolves.</p></div>
+                  <div class="row" style="display:flex;gap:var(--s-4);flex-wrap:wrap;margin-top:var(--s-2)">
+                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum stake <span class="tiny">(CHAT · optional)</span></label><input class="field-input" value="500"></div>
+                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum dissolve delay <span class="tiny">(optional)</span></label><select class="field-input"><option>None</option><option>3 months</option><option>6 months</option></select></div>
+                  </div>
+                  <p class="hint" style="margin-top:.4rem">One SNS gate per tier — adding a second is rejected at save.</p>
+                </div>
+              </div>
+
+              <div class="acc disabled-acc">
+                <div class="acc__head"><span class="acc-ttl">Holds tokens from a collection</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+              </div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · public claim panel with stake requirements -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Public claim panel — stake requirements shown</span><span class="d">Buyer-facing requirement rows on the vendor claim views (claim gallery frames 01/02): public panels stop hiding non-allowlist requirements (the old V1-scope rule, A28) and list the stake gates with the same met / unmet treatment. Copy pattern: <span class="mono">Stake: &lt;network&gt; neuron</span> + the thresholds in plain words. Allowlists stay <strong>one row</strong> (union — "on any one of these lists"). Eligibility remains a cached hint, re-validated at claim time.</span></div>
+      <div class="stage">
+        <div class="panelcard">
+          <span class="eyebrow">This tier requires</span>
+          <div class="reqs">
+            <div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">On an allowlist — Spring OG or Founders</div><div class="rd">You're on Spring OG. Being on any one list is enough.</div></span></div>
+            <div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Stake: ICP (NNS) neuron</div><div class="rd">At least 10 ICP staked, dissolve delay 6 months or more. Your neuron 4f7a… qualifies.</div></span></div>
+            <div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><div class="rt">Stake: OpenChat (SNS) neuron</div><div class="rd">At least 500 CHAT staked. No qualifying neuron found for your principal.</div></span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--s-2)">
+            <button class="btn btn--primary btn--lg" disabled>Claim now</button>
+            <button class="btn btn--ghost btn--lg">View requirements</button>
+            <p class="tiny" style="text-align:center;margin:0">Meet every requirement to claim. Eligibility is re-checked at claim time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · claim confirm — prove the stake -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Claim confirm — prove the stake · failure state</span><span class="d">The claim payload carries <strong>one NNS neuron id and one SNS neuron id</strong> (existing wire shape). When a tier has stake gates, the confirm modal adds a <strong>neuron picker per gate</strong> — neurons the wallet controls or is hotkeyed to, pre-filtered to qualifying ones. The gate is re-verified against the governance canister before settlement; on failure nothing is charged. Canonical error copy per the enforcement checklist: missing id → <span class="mono">CLAIM_NEURON_MISSING</span>; a neuron that stopped qualifying fails cleanly with the reason.</span></div>
+      <div class="stage">
+        <div class="modal-grid">
+          <div class="modal-card">
+            <header><h4>Confirm claim</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="mini-asset"><span class="mart"></span><span><div class="mn">Ember Staff #007</div><div class="ms">Marsh Run · Rare · from Founder tier</div></span></div>
+              <div>
+                <div class="paykv"><span>Claim cost</span><span class="v">4.0000 ICP</span></div>
+                <div class="paykv"><span>Network fee</span><span class="v">0.0001 ICP</span></div>
+                <div class="paykv total"><span>Total</span><span class="v">4.0001 ICP</span></div>
+              </div>
+              <div><label class="qlabel">Your ICP (NNS) neuron · needs ≥ 10 ICP &amp; ≥ 6 mo dissolve</label>
+                <div class="reqs" style="margin-top:.3rem">
+                  <div class="neu on"><span class="rad"></span><span class="nid">4f7a…c218</span><span class="nmeta"><span>12.4 ICP</span><span>8 mo dissolve</span><span class="role">Controller</span></span></div>
+                  <div class="neu"><span class="rad"></span><span class="nid">90de…77b1</span><span class="nmeta"><span>25.0 ICP</span><span>1 y dissolve</span><span class="role">Hotkey</span></span></div>
+                </div>
+              </div>
+              <div><label class="qlabel">Your OpenChat (SNS) neuron · needs ≥ 500 CHAT</label>
+                <div class="reqs" style="margin-top:.3rem">
+                  <div class="neu on"><span class="rad"></span><span class="nid">ae21…04f9</span><span class="nmeta"><span>720 CHAT</span><span class="role">Controller</span></span></div>
+                </div>
+              </div>
+              <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Your stake stays yours — nothing is locked or spent. Toko re-checks the neuron just before settlement; if it no longer qualifies, nothing is charged.</div></div>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Claim</button></div>
+          </div>
+          <div class="modal-card">
+            <header><h4>Stake check failed</h4><span class="x">✕</span></header>
+            <div class="mbody">
+              <div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Your neuron no longer meets this tier's stake requirement.</strong> Its dissolve delay dropped below 6 months after you loaded this page. Nothing was charged.</div></div>
+              <p class="tiny" style="margin:0">Pick a different neuron, or adjust this one's dissolve delay and try again.</p>
+            </div>
+            <div class="footer-row"><button class="btn btn--ghost">Back to drop</button><button class="btn btn--primary">Choose another neuron</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
