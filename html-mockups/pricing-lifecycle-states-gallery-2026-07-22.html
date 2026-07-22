@@ -271,149 +271,69 @@
   .cyc-tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
   .cyc-flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
 
-  /* claim-panel requirement rows (from vendor-claim gallery) */
-  .reqs { display:flex; flex-direction:column; gap:var(--s-2); }
-  .req { display:flex; align-items:flex-start; gap:var(--s-3); padding:.7rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
-  .req .ri { width:22px; height:22px; border-radius:50%; flex:none; display:grid; place-items:center; }
-  .req.met .ri { background:rgba(16,185,129,.16); color:var(--stage-live); }
-  .req.unmet .ri { background:rgba(239,68,68,.13); color:var(--notify-error); }
-  .req .rt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
-  .req .rd { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.1rem; }
-  .req svg { width:13px; height:13px; }
-  .panelcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); max-width:420px; width:100%; display:flex; flex-direction:column; gap:var(--s-4); }
-  .paykv { display:flex; justify-content:space-between; font-size:var(--text-sm); padding:.35rem 0; }
-  .paykv .v { font-weight:700; font-variant-numeric:tabular-nums; }
-  .paykv.total { border-top:1px solid var(--border-soft); padding-top:.6rem; }
-  .mini-asset { display:flex; gap:var(--s-3); align-items:center; }
-  .mini-asset .mart { width:52px; height:52px; border-radius:var(--r-2); background:linear-gradient(135deg,#9ca3af,#374151); flex:none; }
-  .mini-asset .mn { font-family:var(--font-emphasis); font-weight:700; }
-  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
-  /* neuron picker rows */
-  .neu { display:flex; align-items:center; gap:var(--s-3); padding:.65rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas); }
-  .neu.on { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary); }
-  .neu .rad { width:18px; height:18px; border-radius:50%; border:2px solid var(--border-strong); flex:none; }
-  .neu.on .rad { border-color:var(--text-primary); background:radial-gradient(circle at center, var(--text-primary) 0 45%, transparent 50%); }
-  .neu .nid { font-family:var(--font-mono, ui-monospace, monospace); font-size:var(--text-xs); }
-  .neu .nmeta { margin-left:auto; display:flex; gap:var(--s-3); font-size:var(--text-xs); color:var(--text-secondary); font-variant-numeric:tabular-nums; flex-wrap:wrap; }
-  .neu .role { font-size:var(--text-3xs); font-weight:700; letter-spacing:.05em; text-transform:uppercase; background:var(--surface-canvas-deep); border-radius:var(--r-pill); padding:2px 8px; color:var(--text-secondary); }
+  /* readiness checklist (from token-review gallery) */
+  .checklist { display:flex; flex-direction:column; gap:var(--s-2); }
+  .check { display:flex; align-items:flex-start; gap:var(--s-3); padding:.75rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
+  .check .ci { width:24px; height:24px; border-radius:50%; flex:none; display:grid; place-items:center; }
+  .check .ci svg { width:13px; height:13px; }
+  .check.pass .ci { background:rgba(16,185,129,.15); color:var(--stage-live); }
+  .check.fail .ci { background:rgba(245,158,11,.18); color:var(--stage-draft); }
+  .check.info .ci { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .check .cm { flex:1; min-width:0; }
+  .check .ct { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .check .cd { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.125rem; }
+  .check .cact { margin-left:auto; align-self:center; }
+  .panelcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5); width:100%; max-width:460px; display:flex; flex-direction:column; gap:var(--s-4); }
 </style>
 </head>
 <body>
   <div class="gallery">
     <header>
-      <span class="eyebrow">Vendors &amp; collection defaults · claim requirements</span>
-      <h1>Stake gates — NNS + SNS · V1 enablement</h1>
-      <p>Change gallery for <strong>enabling the two stake gates in V1</strong> (Donna, 2026-07-22 — prompted by Remco: the backend NNS/SNS claim checks are already working). "Has a stake" stops being a disabled teaser and becomes authorable wherever claim requirements are edited — the vendor tier editor and the collection-defaults rule editor — and visible wherever requirements are shown. <strong>Holds tokens from a collection stays front-end V2</strong> and fail-closed (R75); Restrictions and Rewards are untouched. Requirement semantics are unchanged: types combine with <strong>AND</strong>; whitelists remain one union gate (ruling 2026-07-22); a tier may carry <strong>one NNS and one SNS gate</strong>, both binding.</p>
-      <div class="navlinks">Change spec: <span class="mono">Design Documentation/stake-gates-v1-enablement.md</span>. Base galleries this modifies: <a href="vendor-creation-states-gallery-2026-06-19.html">Vendor creation</a> (frame 07/A26) · <a href="collection-defaults-states-gallery-2026-07-20.html">Collection defaults</a> (A2/A2b) · <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">Vendor claim</a> (frames 01/02/05).</div>
+      <span class="eyebrow">Collections &amp; vendors · lifecycle</span>
+      <h1>Pricing lifecycle — decoupled gates (R81)</h1>
+      <p>Ruled 2026-07-22 (raised by Gabriel): <strong>collection publishing is decoupled from distribution pricing</strong>. Collection defaults are now <strong>optional templates</strong> — a collection reaches Review/Live with no claim costs configured, and its status checklist shows cost coverage <strong>informationally only</strong>. The gate moved to the <strong>vendor</strong>: a Draft vendor may be unpriced, but before its Review/Live every tier must <strong>resolve to a cost</strong> on the vendor's own copy (own entry, or R61 tier-to-tier inheritance; free counts; R73 full tier set). Vendor gate copy: <strong>Reviewed, stocked and priced</strong>. Unset ≠ Free — a vendor created without defaults starts unset, never silently free.</p>
+      <div class="navlinks">Change spec + GitHub-ready task list: <span class="mono">Design Documentation/pricing-lifecycle-decoupling.md</span>. Reframed galleries: <a href="collection-defaults-states-gallery-2026-07-20.html">Collection defaults</a> · <a href="vendor-management-states-gallery-2026-06-19.html">Vendor management</a>.</div>
     </header>
 
-    <!-- 01 · requirement editor, stake gates active -->
+    <!-- 01 · collection checklist — informational coverage -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">01</span><span class="t">Requirement editor — stake gates authorable</span><span class="d">The tier requirement editor (vendor creation frame 07; the collection-defaults rule editor A2b gets the identical change) with the two stake accordions <strong>active</strong> instead of "Coming soon". Each gate: NNS = an ICP neuron; SNS = a governance canister that must <strong>resolve before Save enables</strong>. Both carry optional <span class="mono">minimum_stake</span> (the staked token — ICP for NNS, the SNS's native token otherwise) and optional <span class="mono">minimum_dissolve_delay</span> (dissolve delay, <strong>not neuron age</strong> — ruled 2026-07-03); both empty = any active stake. Within a gate the two fields AND together. <strong>One NNS + one SNS max per tier</strong> — a second SNS requirement is rejected at save (existing checklist rule). Token-hold stays a disabled teaser.</span></div>
+      <div class="frame-cap"><span class="num">01</span><span class="t">Collection Review checklist — cost coverage never blocks</span><span class="d">The collection's Draft → Review readiness list under R81. The old blocker "every tier resolves to a cost" is gone; in its place an <strong>informational coverage line</strong> (grey, no pass/fail) reports how much of the tier set the optional templates cover — here 2 of 4 — and where the real gate lives. Everything else on the checklist is unchanged.</span></div>
       <div class="stage">
-        <div class="modal-grid" style="max-width:560px">
-          <div class="modal-card">
-            <header><h4>Edit tier — Founder</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Requirements combine with AND.</strong> A collector must satisfy every active requirement below. Whitelists count as a single requirement — selected lists merge into one eligible list, so a collector only needs to appear on one of them.</div></div>
-              <label class="flabel">Requirements</label>
-
-              <div class="acc">
-                <div class="acc__head clickable"><span class="acc-ttl">Whitelists</span><span class="tag tag--green">2 selected</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
-              </div>
-
-              <div class="acc">
-                <div class="acc__head clickable"><span class="acc-ttl">Has a stake — NNS (ICP neuron)</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-                <div class="acc__body">
-                  <div class="row" style="display:flex;gap:var(--s-4);flex-wrap:wrap">
-                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum stake <span class="tiny">(ICP · optional)</span></label><input class="field-input" value="10"></div>
-                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum dissolve delay <span class="tiny">(optional)</span></label><select class="field-input"><option>6 months</option><option>3 months</option><option>1 year</option><option>None</option></select></div>
-                  </div>
-                  <div style="margin-top:var(--s-2)"><label class="qlabel">Max claims per neuron <span class="tiny">(this vendor)</span></label><div class="qpick"><button class="btn btn--ghost btn--sm">−</button><input class="num" value="1"><button class="btn btn--ghost btn--sm">+</button></div></div>
-                  <p class="hint" style="margin-top:.4rem">Leave stake and dissolve empty to accept <strong>any active ICP neuron</strong>. The claimant proves a neuron they control — or are hotkeyed to — at claim time. The claim limit counts per neuron across this whole vendor, whichever hotkeyed address claims — 1 is the safe default.</p>
-                </div>
-              </div>
-
-              <div class="acc">
-                <div class="acc__head clickable"><span class="acc-ttl">Has a stake — SNS (ICRC-1 neuron)</span><span class="tag tag--green">Active</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-                <div class="acc__body">
-                  <div><label class="qlabel">Governance canister</label><input class="field-input mono" value="2jvtu-yqaaa-aaaaq-aaama-cai"><p class="hint" style="margin-top:.3rem">Resolved: <strong>OpenChat</strong> · native token <span class="mono">CHAT</span>. Save stays disabled until the canister resolves.</p></div>
-                  <div class="row" style="display:flex;gap:var(--s-4);flex-wrap:wrap;margin-top:var(--s-2)">
-                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum stake <span class="tiny">(CHAT · optional)</span></label><input class="field-input" value="500"></div>
-                    <div style="flex:1;min-width:150px"><label class="qlabel">Minimum dissolve delay <span class="tiny">(optional)</span></label><select class="field-input"><option>None</option><option>3 months</option><option>6 months</option></select></div>
-                  </div>
-                  <div style="margin-top:var(--s-2)"><label class="qlabel">Max claims per neuron <span class="tiny">(this vendor)</span></label><div class="qpick"><button class="btn btn--ghost btn--sm">−</button><input class="num" value="1"><button class="btn btn--ghost btn--sm">+</button></div></div>
-                  <p class="hint" style="margin-top:.4rem">One SNS gate per tier — adding a second is rejected at save.</p>
-                </div>
-              </div>
-
-              <div class="acc disabled-acc">
-                <div class="acc__head"><span class="acc-ttl">Holds tokens from a collection</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
-              </div>
-            </div>
-            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save</button></div>
+        <div class="panelcard" style="max-width:560px">
+          <span class="eyebrow">Ready for Review?</span>
+          <div class="checklist">
+            <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Required attributes assigned</div></div></div>
+            <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Rarity valid for model</div></div></div>
+            <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Required media present</div><div class="cd">Every required slot has a file.</div></div></div>
+            <div class="check info"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div class="cm"><div class="ct">Claim-cost templates — optional</div><div class="cd">2 of 4 tiers have a default cost. That's fine — defaults are templates. Each vendor prices its own copy before it goes Live.</div></div><a class="cact btn btn--ghost btn--sm" href="#">Edit defaults</a></div>
           </div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn--primary">Submit for Review</button></div>
         </div>
       </div>
     </section>
 
-    <!-- 02 · public claim panel with stake requirements -->
+    <!-- 02 · vendor gate — priced vs blocked -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">02</span><span class="t">Public claim panel — stake requirements shown</span><span class="d">Buyer-facing requirement rows on the vendor claim views (claim gallery frames 01/02): public panels stop hiding non-allowlist requirements (the old V1-scope rule, A28) and list the stake gates with the same met / unmet treatment. Copy pattern: <span class="mono">Stake: &lt;network&gt; neuron</span> + the thresholds in plain words. Allowlists stay <strong>one row</strong> (union — "on any one of these lists"). Eligibility remains a cached hint, re-validated at claim time.</span></div>
-      <div class="stage">
-        <div class="panelcard">
-          <span class="eyebrow">This tier requires</span>
-          <div class="reqs">
-            <div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">On an allowlist — Spring OG or Founders</div><div class="rd">You're on Spring OG. Being on any one list is enough.</div></span></div>
-            <div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Stake: ICP (NNS) neuron</div><div class="rd">At least 10 ICP staked, dissolve delay 6 months or more. Your neuron 4f7a… qualifies.</div></span></div>
-            <div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><div class="rt">Stake: OpenChat (SNS) neuron</div><div class="rd">At least 500 CHAT staked. No qualifying neuron found for your principal.</div></span></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:var(--s-2)">
-            <button class="btn btn--primary btn--lg" disabled>Claim now</button>
-            <button class="btn btn--ghost btn--lg">View requirements</button>
-            <p class="tiny" style="text-align:center;margin:0">Meet every requirement to claim. Eligibility is re-checked at claim time.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 03 · claim confirm — prove the stake -->
-    <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Claim confirm — prove the stake · failure state</span><span class="d">The claim payload carries <strong>one NNS neuron id and one SNS neuron id</strong> (existing wire shape). When a tier has stake gates, the confirm modal adds a <strong>neuron picker per gate</strong> — the FE fetches the wallet's controlled and hotkeyed neurons (hotkeys count — genesis neurons are hotkeyed; 99 in 100 in practice), pre-filtered to qualifying ones. Eligibility is a <strong>live check</strong> (ruled 2026-07-22): one staked neuron backs claims across any number of drops and collections. Within a single drop, claims per neuron are capped by the gate's <strong>Max claims per neuron</strong> (default 1; set per vendor, or in collection defaults like any claim rule) — counted regardless of which hotkeyed address presents it, so a neuron hotkeyed to 100 addresses can't replay the gate at the default. A neuron at its limit on <em>this</em> vendor shows as <strong>Used</strong> (error key <span class="mono">CLAIM_NEURON_LIMIT_REACHED</span>); it stays fully usable on every other drop. The gate is re-verified against the governance canister before settlement; on failure nothing is charged. Canonical error copy per the enforcement checklist: missing id → <span class="mono">CLAIM_NEURON_MISSING</span>; a neuron that stopped qualifying fails cleanly with the reason.</span></div>
+      <div class="frame-cap"><span class="num">02</span><span class="t">Vendor Review/Live — "Reviewed, stocked and priced"</span><span class="d">The pricing gate at its new home. Left: every tier resolves on the vendor's copy — Keeper has its own cost, Founder inherits it (R61) — so the vendor can go Live. Right: the blocked state — Founder is the <strong>first</strong> tier, has no cost and nothing below to inherit from, so it fails to resolve; the error names the tier and both fixes. Stable error key: <span class="mono">VENDOR_TIER_COST_UNRESOLVED</span>. Draft vendors may stay unpriced indefinitely — only Review/Live enforces.</span></div>
       <div class="stage">
         <div class="modal-grid">
-          <div class="modal-card">
-            <header><h4>Confirm claim</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <div class="mini-asset"><span class="mart"></span><span><div class="mn">Ember Staff #007</div><div class="ms">Marsh Run · Rare · from Founder tier</div></span></div>
-              <div>
-                <div class="paykv"><span>Claim cost</span><span class="v">4.0000 ICP</span></div>
-                <div class="paykv"><span>Network fee</span><span class="v">0.0001 ICP</span></div>
-                <div class="paykv total"><span>Total</span><span class="v">4.0001 ICP</span></div>
-              </div>
-              <div><label class="qlabel">Your ICP (NNS) neuron · needs ≥ 10 ICP &amp; ≥ 6 mo dissolve</label>
-                <div class="reqs" style="margin-top:.3rem">
-                  <div class="neu on"><span class="rad"></span><span class="nid">4f7a…c218</span><span class="nmeta"><span>12.4 ICP</span><span>8 mo dissolve</span><span class="role">Controller</span></span></div>
-                  <div class="neu"><span class="rad"></span><span class="nid">90de…77b1</span><span class="nmeta"><span>25.0 ICP</span><span>1 y dissolve</span><span class="role">Hotkey</span></span></div>
-                  <div class="neu" style="opacity:.5"><span class="rad"></span><span class="nid">b3c1…e402</span><span class="nmeta"><span>18.0 ICP</span><span>7 mo dissolve</span><span class="role">Used · this drop</span></span></div>
-                </div>
-              </div>
-              <div><label class="qlabel">Your OpenChat (SNS) neuron · needs ≥ 500 CHAT</label>
-                <div class="reqs" style="margin-top:.3rem">
-                  <div class="neu on"><span class="rad"></span><span class="nid">ae21…04f9</span><span class="nmeta"><span>720 CHAT</span><span class="role">Controller</span></span></div>
-                </div>
-              </div>
-              <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><div>Your stake stays yours — nothing is locked or spent. Toko re-checks the neuron just before settlement; if it no longer qualifies, nothing is charged.</div></div>
+          <div class="panelcard">
+            <span class="eyebrow">Corner Shop · ready for Launchpad</span>
+            <div class="checklist">
+              <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Reviewed</div></div></div>
+              <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Stocked</div><div class="cd">83 tokens staged from Marsh Run.</div></div></div>
+              <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Priced</div><div class="cd">Every tier resolves: Keeper 2 ICP · Founder inherits 2 ICP.</div></div></div>
             </div>
-            <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Claim</button></div>
+            <div style="display:flex;justify-content:flex-end"><button class="btn btn--primary">Set Live</button></div>
           </div>
-          <div class="modal-card">
-            <header><h4>Stake check failed</h4><span class="x">✕</span></header>
-            <div class="mbody">
-              <div class="note note--warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Your neuron no longer meets this tier's stake requirement.</strong> Its dissolve delay dropped below 6 months after you loaded this page. Nothing was charged.</div></div>
-              <p class="tiny" style="margin:0">Pick a different neuron, or adjust this one's dissolve delay and try again.</p>
+          <div class="panelcard">
+            <span class="eyebrow">Corner Shop · not ready</span>
+            <div class="checklist">
+              <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Reviewed</div></div></div>
+              <div class="check pass"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Stocked</div><div class="cd">83 tokens staged from Marsh Run.</div></div></div>
+              <div class="check fail"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v5M12 16h.01"/></svg></span><div class="cm"><div class="ct">Priced</div><div class="cd">Tier <strong>Founder</strong> doesn't resolve to a cost. Set a cost, or set one on a lower tier for it to inherit.</div></div><a class="cact btn btn--ghost btn--sm" href="#">Open costs &amp; rules</a></div>
             </div>
-            <div class="footer-row"><button class="btn btn--ghost">Back to drop</button><button class="btn btn--primary">Choose another neuron</button></div>
+            <div style="display:flex;justify-content:flex-end"><button class="btn btn--primary" disabled>Set Live</button></div>
           </div>
         </div>
       </div>

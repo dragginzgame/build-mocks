@@ -266,7 +266,7 @@
                 <div class="row" style="margin-top:.35rem"><span>128 left</span><span>74%</span></div>
               </div>
               <div class="reqs">
-                <div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Open to everyone</div><div class="rd">No neuron, allowlist or hold requirement on this drop.</div></span></div>
+                <div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Open to everyone</div><div class="rd">This drop has no claim requirements.</div></span></div>
               </div>
               <div class="cta-wrap">
                 <button class="btn btn--primary btn--lg">Claim now · 1.50 ICP</button>
@@ -280,7 +280,7 @@
 
     <!-- 02 · Requirements not met -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">02</span><span class="t">Not eligible — requirements not met</span><span class="d">The drop is gated. The claim panel surfaces each requirement with a met/unmet state so the buyer sees exactly what's blocking them; the CTA becomes <strong>View requirements</strong> and the Claim action is disabled until they qualify. Programmable claim conditions are first-class per the Launchpad spec — in V1 that means allowlists; the stake and token-hold gates are front-end V2.</span></div>
+      <div class="frame-cap"><span class="num">02</span><span class="t">Not eligible — requirements not met</span><span class="d">The drop is gated. The claim panel surfaces each requirement with a met/unmet state so the buyer sees exactly what's blocking them; the CTA becomes <strong>View requirements</strong> and the Claim action is disabled until they qualify. Programmable claim conditions are first-class per the Launchpad spec — allowlists (one union row: on any one list passes) and the two stake gates (ratified 2026-07-22), each with plain-word thresholds; token-hold remains front-end V2.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><a>Launchpad</a><span class="sep">/</span><a>Founders Vault</a><span class="sep">/</span><span class="here">Sun Sprite #003</span></div>
@@ -323,8 +323,8 @@
                 <div class="row" style="margin-top:.35rem"><span>60 left</span><span>40%</span></div>
               </div>
               <div class="reqs">
-                <div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><div class="rt">On the Spring OG allowlist</div><div class="rd">Your principal isn't on this list.</div></span></div>
-                <div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><div class="rt">On the Founders allowlist</div><div class="rd">Your principal isn't on this list.</div></span></div>
+                <div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><div class="rt">On an allowlist — Spring OG or Founders</div><div class="rd">Your principal isn't on either list — any one would do.</div></span></div>
+                <div class="req unmet"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg></span><span><div class="rt">Stake: ICP (NNS) neuron</div><div class="rd">At least 10 ICP staked, dissolve delay 6 months or more. No qualifying neuron found.</div></span></div>
               </div>
               <div class="cta-wrap">
                 <button class="btn btn--primary btn--lg" disabled>Claim now</button>
@@ -430,7 +430,7 @@
 
     <!-- 05 · Claim confirm -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">05</span><span class="t">Claim confirm — wallet &amp; payment context</span><span class="d">Claiming is explicit and user-confirmed. Before anything settles, the modal shows exactly what's being received and what's being paid from the connected wallet, including the running balance. On confirm, claim consumes vendor inventory atomically and the token transfers to the wallet.</span></div>
+      <div class="frame-cap"><span class="num">05</span><span class="t">Claim confirm — wallet &amp; payment context</span><span class="d">When the tier carries stake gates, this modal adds a <strong>neuron picker per gate</strong> (the FE fetches the wallet's controlled/hotkeyed neurons — 99 in 100 are hotkeyed; eligibility is a live check, so one neuron can back claims across any number of drops — capped by the gate's per-vendor claims-per-neuron limit, default 1, whichever hotkeyed address presents it) — see the <a href="stake-gates-states-gallery-2026-07-22.html">stake-gates gallery</a> frame 03. Claiming is explicit and user-confirmed. Before anything settles, the modal shows exactly what's being received and what's being paid from the connected wallet, including the running balance. On confirm, claim consumes vendor inventory atomically and the token transfers to the wallet.</span></div>
       <div class="stage">
         <div class="modal-card single">
           <header><h4>Confirm claim</h4><span class="x">✕</span></header>
