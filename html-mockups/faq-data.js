@@ -27,6 +27,7 @@ window.TOKO_FAQ = {
     { id: "wallet",      label: "Wallet" },
     { id: "launchpad",   label: "Buying" },
     { id: "marketplace", label: "Trading", wip: true },
+    { id: "physical",    label: "Physical items", wip: true },
     { id: "generator",   label: "Generator" },
     { id: "collections", label: "Collections" },
     { id: "attributes",  label: "Attributes" },
@@ -858,7 +859,7 @@ window.TOKO_FAQ = {
           Requirements can include holdings, staking, or allowlist membership, and are evaluated per tier. Higher tiers inherit rules from lower tiers where they aren't set explicitly.
         </p>
         <p>
-          Allowlists come from your project's whitelists, and you can also set per-person claim limits.
+          Allowlists come from your project's whitelists. Per-person claim limits are planned for a later release — v1 control is per-tier costs, requirements and restrictions.
         </p>
       `
     },
@@ -1001,10 +1002,10 @@ That's at most 3%, so the seller keeps at least <strong>97%</strong> before the 
       q: "What is a collection archetype?",
       a: `
         <p>
-          An archetype is the <strong>starting envelope</strong> you pick when you create a collection — a safe set of defaults for a kind of project: Curated Art, Generated Art, Editioned Art, Game Items, Game Currency, Access Pass, or Custom.
+          An archetype is the <strong>starting envelope</strong> you pick when you create a collection — a safe set of defaults for a kind of project. At launch there are three: <strong>Curated Art</strong>, <strong>Generated Art</strong>, and <strong>Editioned Art</strong>.
         </p>
         <p>
-          It's chosen at creation and <strong>can't be switched</strong> afterwards. It sets sensible limits (supply shape, editions, and so on); you grow beyond those limits through Project Mastery, not by changing archetype.
+          It's chosen at creation and <strong>can't be switched</strong> afterwards. It sets sensible limits (supply shape, editions, and so on); you grow beyond those limits through Project Mastery, not by changing archetype. More types arrive later — physically-backed collections come next (Toko-run at first), with game-focused archetypes under consideration after that.
         </p>
       `,
       wip: true
@@ -1028,7 +1029,97 @@ That's at most 3%, so the seller keeps at least <strong>97%</strong> before the 
           A project's Toko Reputation is the <strong>$TOKO it has burned</strong>. It's mostly <strong>earned automatically</strong>: every vendor routes a minimum 1% of each claim to a Toko account that converts it to $TOKO and burns it — so the more you sell, the more you unlock. You can also <strong>top it up</strong> by burning $TOKO from a wallet (tracked separately as bought vs earned). You never need to buy $TOKO to grow.
         </p>
         <p>
-          Reputation is a <strong>spendable</strong> balance. You spend it on <strong>permanent skill unlocks</strong> and on <strong>repeatable purchases</strong> — consumable, time-boxed boosts like a Launchpad hero slot for a week. (Project Mastery and repeatable purchases are a <strong>v2</strong> concept.)
+          Reputation is <strong>committed, never spent</strong> — your lifetime total only ever goes up, and unlocks reserve part of it (available = lifetime − committed). Permanent skill unlocks commit Reputation once; <strong>repeatable purchases</strong> — consumable, time-boxed boosts like a Launchpad hero slot for a week — are the one exception that works like a purchase. (Project Mastery and repeatable purchases are a <strong>v2</strong> concept.)
+        </p>
+      `,
+      wip: true
+    },
+
+    /* ===================== PHYSICAL ITEMS (both) ===================== */
+    {
+      aud: "both",
+      cat: "physical",
+      q: "What does it mean when a token is backed by a physical item?",
+      a: `
+        <p>
+          Some collections sell tokens that stand for a real object — like a graded trading card — stored in a professional vault. Each of those tokens is a one-of-one: one token, one physical item.
+        </p>
+        <p>
+          The token page shows the item's journey: photographed and checked in at the vault, insured, and stored until you decide what to do with it. The photos you see were taken of the actual item.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "both",
+      cat: "physical",
+      q: "How do I redeem a physical item?",
+      a: `
+        <p>
+          Hit <strong>Redeem</strong> on a token you own and pick a shipping address. From that moment the token is <strong>reserved</strong> — it can't be sold, sent, or listed while your redemption is open.
+        </p>
+        <p>
+          Pay the shipping quote (paid directly to the vault) and your item is packed, shipped and tracked; once it's on its way, the token becomes a permanent record of the redemption. Change your mind before paying? Cancel any time — and if nothing happens, an unpaid request cancels itself after 30 days and the token unlocks again.
+        </p>
+        <p>
+          Shipping, transit insurance, and any customs or import charges are paid by you. Tip: the marketplace can filter by vault country, so you can buy items stored close to home.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "both",
+      cat: "physical",
+      q: "Do I have to redeem it? What about storage?",
+      a: `
+        <p>
+          No — that's the point. Keep it digital and resell it any time, or redeem whenever you're ready.
+        </p>
+        <p>
+          Every purchase includes <strong>a year of vault storage</strong>, and a fresh year starts each time the item is bought — so a card you buy always comes with twelve months included. After that, you can sell it, redeem it, or arrange continued storage with the vault directly.
+        </p>
+      `,
+      wip: true
+    },
+    {
+      aud: "both",
+      cat: "physical",
+      q: "Where does my item ship from?",
+      a: `
+        <p>
+          Each listing shows the country its vault is in, with an estimated delivery time — for example "Ships from France · est. 2–4 days". Items ship directly from the vault that stores them.
+        </p>
+        <p>
+          Buying from a vault in your own region usually means faster delivery and no customs charges.
+        </p>
+      `,
+      wip: true
+    },
+
+    /* ===================== ACCESS & NOTIFICATIONS ===================== */
+    {
+      aud: "creator",
+      cat: "about",
+      q: "How do I get access to create on Toko?",
+      a: `
+        <p>
+          Anyone can make an account, browse, buy and trade — that's never gated. During the beta, <strong>publishing</strong> is limited: creating projects and collections needs <strong>studio access</strong>, granted by the Toko team.
+        </p>
+        <p>
+          Request it from the studio access form — tell us what you'd like to launch, and we grant access to your existing account in onboarding waves. If access is ever removed, your account and everything you own stay untouched.
+        </p>
+      `
+    },
+    {
+      aud: "both",
+      cat: "wallet",
+      q: "How do notifications work?",
+      a: `
+        <p>
+          When you're signed in, the <strong>bell</strong> in the top bar collects everything worth knowing — a claim came in, your export finished, a drop sold out, you got paid.
+        </p>
+        <p>
+          Notifications wait for you: they stay across devices and sessions until you read or dismiss them, and clicking one takes you straight to the thing it's about. No email, no push — just the bell, at your pace.
         </p>
       `,
       wip: true

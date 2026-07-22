@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Toko — FAQ</title>
 <style>
-  @font-face { font-family:"Anton"; src:url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
-  @font-face { font-family:"Mona Sans"; src:url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Anton"; src:url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Mona Sans"; src:url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
   :root{
     --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
     --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
@@ -110,14 +110,14 @@
 </head>
 <body>
   <div class="topbar">
-    <a class="brand" href="../index.html">
-      <img class="face" src="../style-guide/logos/2026-05 - face.svg" alt="" onerror="this.style.display='none'">
-      <img class="word" src="../style-guide/logos/app-name.png" alt="Toko" onerror="this.style.display='none'">
+    <a class="brand" href="../../index.html">
+      <img class="face" src="../../style-guide/logos/2026-05 - face.svg" alt="" onerror="this.style.display='none'">
+      <img class="word" src="../../style-guide/logos/app-name.png" alt="Toko" onerror="this.style.display='none'">
     </a>
     <nav class="nav">
-      <a href="../index.html">Mockups</a>
-      <a href="../learn.html">Learn</a>
-      <a href="../style-guide/styleguide.html">Style guide</a>
+      <a href="../../index.html">Mockups</a>
+      <a href="../../learn.html">Learn</a>
+      <a href="../../style-guide/styleguide.html">Style guide</a>
       <a href="faq.html" class="here">FAQ</a>
     </nav>
   </div>
@@ -194,14 +194,14 @@
       </div></section>
 
       <section class="faq-cat"><h2>Rarity</h2><div class="faq-card">
-        <div class="faq-qa"><h3 class="faq-qs">What rarity models are there?</h3><div class="faq-as"><p>Rarity is set at the collection level, and every collection starts in <strong>Uniform</strong>.</p><ul><li><strong>Uniform</strong> — every token is treated as equal.</li><li><strong>Tiered</strong> — you define your own tiers and assign them by hand; the system shows score guidance but never picks for you.</li><li><strong>Weighted</strong> — Toko's fixed official tiers (Common, Uncommon, Rare, with Epic and Legendary unlockable), assigned automatically by score.</li></ul><p>Switching models requires confirmation and resets any rarity assignments you'd made. For a full walkthrough, see the <a href="../learn-rarity.html">Rarity article</a>.</p></div></div>
+        <div class="faq-qa"><h3 class="faq-qs">What rarity models are there?</h3><div class="faq-as"><p>Rarity is set at the collection level, and every collection starts in <strong>Uniform</strong>.</p><ul><li><strong>Uniform</strong> — every token is treated as equal.</li><li><strong>Tiered</strong> — you define your own tiers and assign them by hand; the system shows score guidance but never picks for you.</li><li><strong>Weighted</strong> — Toko's fixed official tiers (Common, Uncommon, Rare, with Epic and Legendary unlockable), assigned automatically by score.</li></ul><p>Switching models requires confirmation and resets any rarity assignments you'd made. For a full walkthrough, see the <a href="../../learn-rarity.html">Rarity article</a>.</p></div></div>
         <div class="faq-qa"><h3 class="faq-qs">How is the Weighted distribution decided?</h3><div class="faq-as"><p>You shape the curve with two dials, and Toko computes the per-tier quotas over your Max Supply:</p><ul><li><strong>Ratio</strong> — how much scarcer each rarer tier is than the one below it.</li><li><strong>Accelerator</strong> — how steeply the curve bends toward the rarest tiers.</li></ul><p>The defaults (Max Supply 1,000, ratio 3, accelerator 1.0) produce roughly 69% Common, 23% Uncommon, and 8% Rare.</p></div></div>
         <div class="faq-qa"><h3 class="faq-qs">What does a Weighted tier quota actually limit?</h3><div class="faq-as"><p>A tier's quota is a <strong>mint budget</strong> — a cap on how many copies across that whole tier can ever be minted.</p><p>It is not a cap on how many token definitions can carry the tier. You can author more "Rare" definitions than the Rare budget allows.</p><p>The budget is enforced only at mint, first-come, and it's frozen when the collection goes Live.</p></div></div>
         <div class="faq-qa"><h3 class="faq-qs">Will my tiers change on their own?</h3><div class="faq-as"><p>No. Toko never re-tiers tokens silently in the background.</p><p>A collection-wide redistribution only happens when you run an explicit <strong>Rebalance</strong>.</p><p>You can also override any token's tier by hand; an overridden token is excluded from rebalances until you undo it, and its tier locks permanently when the collection goes Live.</p></div></div>
       </div></section>
 
       <section class="faq-cat"><h2>Token score</h2><div class="faq-card">
-        <div class="faq-qa"><h3 class="faq-qs">How is a token's score calculated?</h3><div class="faq-as"><p>A token's final score is its attribute score multiplied by a layer multiplier.</p><p>The attribute score comes from the numbers you map onto attributes, combined using Add Values, Multiply, or Highest.</p><p>The layer multiplier scales the result based on generator-layer weighting. When no generator is linked it's 1.0, so the final score simply equals the attribute score. For a full breakdown, see the <a href="../learn-score.html">Token score article</a>.</p></div></div>
+        <div class="faq-qa"><h3 class="faq-qs">How is a token's score calculated?</h3><div class="faq-as"><p>A token's final score is its attribute score multiplied by a layer multiplier.</p><p>The attribute score comes from the numbers you map onto attributes, combined using Add Values, Multiply, or Highest.</p><p>The layer multiplier scales the result based on generator-layer weighting. When no generator is linked it's 1.0, so the final score simply equals the attribute score. For a full breakdown, see the <a href="../../learn-score.html">Token score article</a>.</p></div></div>
         <div class="faq-qa"><h3 class="faq-qs">Is score the same as rank?</h3><div class="faq-as"><p>No. Score is a number; rank is a token's position relative to others.</p><p>Rank is always calculated <strong>within a single token type</strong>, never across the whole collection — otherwise types with more scoring attributes would dominate the top tiers.</p><p>The interface always shows the scope, for example "Score Rank is within Character · 312 tokens".</p></div></div>
         <div class="faq-qa"><h3 class="faq-qs">What is a "stale score"?</h3><div class="faq-as"><p>A score is "stale" when something that feeds it has changed and it hasn't been recalculated yet.</p><p>Triggers include editing composition or attribute values, changing the value mapping, adjusting layer weights, or switching the calculation method.</p><p>A token can't move from <strong>Review</strong> to <strong>Live</strong> while its score is stale, so live tokens always reflect their current inputs. A bulk refresh recomputes all stale scores at once.</p></div></div>
         <div class="faq-qa"><h3 class="faq-qs">Is the score always visible to collectors?</h3><div class="faq-as"><p>No. Whether a token's score is shown to collectors is a separate, per-collection setting, independent of the rarity model.</p></div></div>
@@ -228,7 +228,7 @@
     </div>
 
     <div class="faq-help">
-      <img src="../style-guide/bot-images/question/IMG_5522.png" alt="" onerror="this.style.display='none'">
+      <img src="../../style-guide/bot-images/scratch_head_puzzled.png" alt="" onerror="this.style.display='none'">
       <div>
         <h3>Still stuck?</h3>
         <p>Can't find your answer here? Reach the team and we'll help — and your question might end up on this page.</p>
