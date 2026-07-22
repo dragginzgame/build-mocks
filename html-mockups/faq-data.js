@@ -859,7 +859,7 @@ window.TOKO_FAQ = {
           Requirements can include holdings, staking, or allowlist membership, and are evaluated per tier. Higher tiers inherit rules from lower tiers where they aren't set explicitly.
         </p>
         <p>
-          Allowlists come from your project's whitelists. Per-person claim limits are planned for a later release — v1 control is per-tier costs, requirements and restrictions.
+          Allowlists come from your project's whitelists — pick several and they merge into one eligible list (you only need to be on one). Per-person claim limits are planned for a later release — v1 control is per-tier costs, requirements and restrictions.
         </p>
       `
     },
@@ -974,7 +974,7 @@ That's at most 3%, so the seller keeps at least <strong>97%</strong> before the 
         </p>
         <ul>
           <li><strong>Cost</strong> — required: Free, or an amount in an accepted currency (ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP). An unset cost blocks go-live.</li>
-          <li><strong>Requirements</strong> — optional eligibility gates (an allowlist, or holding a token / neuron), combined with AND.</li>
+          <li><strong>Requirements</strong> — optional eligibility gates (an allowlist, or holding a token / neuron), combined with AND. Several allowlists on one tier merge into a single eligible list — you only need to be on one of them.</li>
         </ul>
         <p>
           The other two parts — <strong>Restrictions</strong> (e.g. a cap per verified human) and <strong>Rewards</strong> (a payout on claim) — are <strong>v2</strong>, unlocked once the <strong>project</strong> has enough <strong>Toko Reputation</strong> (see Project Mastery).

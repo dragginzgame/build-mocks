@@ -780,7 +780,7 @@
       </div>
 
       <!-- 07 modal · Requirement editor — accordions (configured) -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same editor concepts as the collection defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free, or an accepted currency); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors, and when the stake gates ship a tier can carry an NNS <em>and</em> an SNS gate (ANDed, one of each). <strong>Whitelists is the only active requirement in V1</strong> (ruled 2026-07-03, consistent with collection defaults): the stake gates (NNS + SNS) and Holds-tokens-from-a-collection are disabled teasers — front-end V2, backend schema ships in V1 — as are Restrictions and Rewards. Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same editor concepts as the collection defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free, or an accepted currency); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors, and when the stake gates ship a tier can carry an NNS <em>and</em> an SNS gate (ANDed, one of each). Whitelists are <em>one</em> gate, not many: selecting several lists merges them into a single de-duplicated eligible list — a collector needs to appear on <em>any one</em> of them, never all. <strong>Whitelists is the only active requirement in V1</strong> (ruled 2026-07-03, consistent with collection defaults): the stake gates (NNS + SNS) and Holds-tokens-from-a-collection are disabled teasers — front-end V2, backend schema ships in V1 — as are Restrictions and Rewards. Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
       <div class="stage single-modal">
         <div class="modal-card wide">
           <header><h4>Edit · Spring Foxes · Rare</h4><button class="x" aria-label="Close">✕</button></header>
@@ -792,7 +792,7 @@
               </div>
               <p class="hint" style="margin-top:.4rem">Pick <strong>Free</strong> or one of Toko's accepted currencies — ICP, ckBTC, ckETH, ckUSDC, ckUSDT, ckSOL, $TOKO, $DKP. No custom canisters.</p>
             </div>
-            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Requirements combine with AND.</strong> A collector must satisfy every active requirement below — the more you add, the fewer people can claim this tier.</div></div>
+            <div class="info-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong style="color:var(--text-primary)">Requirements combine with AND.</strong> A collector must satisfy every active requirement below — the more you add, the fewer people can claim this tier. Whitelists count as a single requirement: selected lists merge into one eligible list, so a collector only needs to appear on one of them.</div></div>
             <label class="flabel">Requirements</label>
 
             <div class="acc">
@@ -802,7 +802,7 @@
                 <div class="tier-row" style="gap:var(--s-3)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><span class="tr-tier" style="min-width:0;flex:1">Spring OG</span><span class="tiny">420 addresses</span><span class="sb sb--green">Live</span></div>
                 <div class="tier-row" style="gap:var(--s-3)"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><span class="tr-tier" style="min-width:0;flex:1">Allowlist 2</span><span class="tiny">1,200 addresses</span><span class="sb sb--green">Live</span></div>
                 <div class="tier-row" style="gap:var(--s-3)"><span class="cbx"></span><span class="tr-tier" style="min-width:0;flex:1">Founders</span><span class="tiny">88 addresses</span><span class="sb sb--green">Live</span></div>
-                <p class="hint" style="margin-top:.4rem">Only the project's <strong>Live</strong> whitelists appear here — Draft and Review lists aren't shown. Add as many as you need; manage them in Project Studio.</p>
+                <p class="hint" style="margin-top:.4rem">Only the project's <strong>Live</strong> whitelists appear here — Draft and Review lists aren't shown. Add as many as you need — they merge into one eligible list, so a collector only needs to appear on one; manage them in Project Studio.</p>
               </div>
             </div>
 
