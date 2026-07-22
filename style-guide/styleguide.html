@@ -43,7 +43,7 @@
   <ol>
     <li class="group-label">Toko site</li>
     <li><a href="../index.html">Mockups</a></li>
-    <li><a href="../faq.html">FAQ</a></li>
+    <li><a href="../html-mockups/faq.html">FAQ</a></li>
     <li><a href="#intro">Introduction</a></li>
     <li><a href="#brand">Brand</a></li>
     <li class="group-label">Foundations</li>
@@ -101,7 +101,7 @@
       <h1>Toko</h1>
       <p class="lede" style="margin-bottom:0;">The visual and component system behind Toko — Internet Computer-native generator, wallet, launchpad, and secondary marketplace. This guide is a single source for type, color, components, and the patterns the product is built on.</p>
     </div>
-    <img src="bot-images/hi/IMG_4993.png" alt="Toko character saying hi" />
+    <img src="bot-images/cheerful_wave.png" alt="Toko character saying hi" />
   </div>
   <p class="note">Rendered with the project's own fonts (Anton, Mona Sans, Mona Sans) and the canonical logo and character art. Built to hold up at desktop and at ~375px wide. Use the <strong>Light / Dark</strong> toggle (top-right of the page) to flip the entire guide between modes and verify every component reads correctly on both surfaces.</p>
 </section>
@@ -132,30 +132,30 @@
   <p class="note"><b>Use:</b> the logo is two files — the character (<code>2026-05 - face.svg</code>, preferred; <code>2026-05 - face.png</code> as a raster fallback for surfaces that can't render SVG) and the wordmark (<code>app-name.png</code>). Default to the SVG; only reach for the PNG when SVG isn't supported or you specifically need a fixed-pixel raster (e.g. OG/social images, older email clients). The wordmark file is white as shipped, so use it as-is on dark surfaces; on light surfaces apply <code>filter: brightness(0)</code> to flip it to black. Never recolor the character. Pair the character and wordmark with a gap and clear-space equal to the height of the "T".</p>
 
   <h3 class="section-h">Character library</h3>
-  <p class="note">Each emotion is a folder of frames in <code>bot-images/</code> — pick a single frame when used statically, sequence frames when used as a Lottie/GIF. Below is the full library at one representative frame each.</p>
+  <p class="note">Frames live flat in <code>bot-images/</code>, named by pose (e.g. <code>cheerful_wave.png</code>, <code>inspect.png</code>). Below is one representative frame per emotion; several emotions have multiple frames to choose from — see the folder for the full set.</p>
   <div class="canvas char-grid">
-    <figure class="char"><img src="bot-images/hi/IMG_4993.png" alt="Hi" /><figcaption>Hi</figcaption></figure>
-    <figure class="char"><img src="bot-images/laugh/laugh_1.png" alt="Laugh" /><figcaption>Laugh</figcaption></figure>
-    <figure class="char"><img src="bot-images/thumbs-up/IMG_5005.png" alt="Thumbs up" /><figcaption>Thumbs up</figcaption></figure>
-    <figure class="char"><img src="bot-images/confident/IMG_6700.png" alt="Confident" /><figcaption>Confident</figcaption></figure>
-    <figure class="char"><img src="bot-images/love/IMG_5284.png" alt="Love" /><figcaption>Love</figcaption></figure>
-    <figure class="char"><img src="bot-images/grateful/IMG_5142.png" alt="Grateful" /><figcaption>Grateful</figcaption></figure>
-    <figure class="char"><img src="bot-images/party/IMG_6341.png" alt="Party" /><figcaption>Party</figcaption></figure>
-    <figure class="char"><img src="bot-images/spotlight/IMG_5547.png" alt="Spotlight" /><figcaption>Spotlight</figcaption></figure>
-    <figure class="char"><img src="bot-images/mic-drop/IMG_6195.png" alt="Mic drop" /><figcaption>Mic drop</figcaption></figure>
-    <figure class="char"><img src="bot-images/podcaster/IMG_6413.png" alt="Podcaster" /><figcaption>Podcaster</figcaption></figure>
-    <figure class="char"><img src="bot-images/determined/IMG_6276.png" alt="Determined" /><figcaption>Determined</figcaption></figure>
-    <figure class="char"><img src="bot-images/teach-or-present/IMG_5262.png" alt="Teach or present" /><figcaption>Teach / present</figcaption></figure>
-    <figure class="char"><img src="bot-images/question/IMG_5343.png" alt="Question" /><figcaption>Question</figcaption></figure>
-    <figure class="char"><img src="bot-images/point/IMG_5320.png" alt="Point" /><figcaption>Point</figcaption></figure>
-    <figure class="char"><img src="bot-images/inspect/IMG_5593.png" alt="Inspect" /><figcaption>Inspect</figcaption></figure>
-    <figure class="char"><img src="bot-images/read/IMG_5571.png" alt="Read" /><figcaption>Read</figcaption></figure>
-    <figure class="char"><img src="bot-images/type/IMG_5560.png" alt="Type" /><figcaption>Type</figcaption></figure>
-    <figure class="char"><img src="bot-images/recharge/IMG_4914.png" alt="Recharge" /><figcaption>Recharge</figcaption></figure>
-    <figure class="char"><img src="bot-images/oops-sorry/IMG_4838.png" alt="Oops / sorry" /><figcaption>Oops / sorry</figcaption></figure>
-    <figure class="char"><img src="bot-images/not-mathing/IMG_5579.png" alt="Not mathing" /><figcaption>Not mathing</figcaption></figure>
-    <figure class="char"><img src="bot-images/anxious/IMG_4839.png" alt="Anxious" /><figcaption>Anxious</figcaption></figure>
-    <figure class="char"><img src="bot-images/unwell/IMG_4843.png" alt="Unwell" /><figcaption>Unwell</figcaption></figure>
+    <figure class="char"><img src="bot-images/cheerful_wave.png" alt="Hi" /><figcaption>Hi</figcaption></figure>
+    <figure class="char"><img src="bot-images/laugh_belly_laugh.png" alt="Laugh" /><figcaption>Laugh</figcaption></figure>
+    <figure class="char"><img src="bot-images/thumbs_up_bright.png" alt="Thumbs up" /><figcaption>Thumbs up</figcaption></figure>
+    <figure class="char"><img src="bot-images/confident_stance.png" alt="Confident" /><figcaption>Confident</figcaption></figure>
+    <figure class="char"><img src="bot-images/love_heart_hands.png" alt="Love" /><figcaption>Love</figcaption></figure>
+    <figure class="char"><img src="bot-images/grateful_sincere.png" alt="Grateful" /><figcaption>Grateful</figcaption></figure>
+    <figure class="char"><img src="bot-images/celebrate_party_hat.png" alt="Party" /><figcaption>Party</figcaption></figure>
+    <figure class="char"><img src="bot-images/raise_hand_spotlight.png" alt="Spotlight" /><figcaption>Spotlight</figcaption></figure>
+    <figure class="char"><img src="bot-images/explain_with_mic.png" alt="Mic drop" /><figcaption>Mic drop</figcaption></figure>
+    <figure class="char"><img src="bot-images/podcast_recording.png" alt="Podcaster" /><figcaption>Podcaster</figcaption></figure>
+    <figure class="char"><img src="bot-images/we_can_do_it.png" alt="Determined" /><figcaption>Determined</figcaption></figure>
+    <figure class="char"><img src="bot-images/raise_hand_presenting.png" alt="Teach or present" /><figcaption>Teach / present</figcaption></figure>
+    <figure class="char"><img src="bot-images/raise_hand_question.png" alt="Question" /><figcaption>Question</figcaption></figure>
+    <figure class="char"><img src="bot-images/point_left.png" alt="Point" /><figcaption>Point</figcaption></figure>
+    <figure class="char"><img src="bot-images/inspect.png" alt="Inspect" /><figcaption>Inspect</figcaption></figure>
+    <figure class="char"><img src="bot-images/read_big_book.png" alt="Read" /><figcaption>Read</figcaption></figure>
+    <figure class="char"><img src="bot-images/typing_standing_up.png" alt="Type" /><figcaption>Type</figcaption></figure>
+    <figure class="char"><img src="bot-images/recharging.png" alt="Recharge" /><figcaption>Recharge</figcaption></figure>
+    <figure class="char"><img src="bot-images/sorry_raise_hand.png" alt="Oops / sorry" /><figcaption>Oops / sorry</figcaption></figure>
+    <figure class="char"><img src="bot-images/hand_on_chin_not_right.png" alt="Not mathing" /><figcaption>Not mathing</figcaption></figure>
+    <figure class="char"><img src="bot-images/anxious.png" alt="Anxious" /><figcaption>Anxious</figcaption></figure>
+    <figure class="char"><img src="bot-images/crying_bashed_up.png" alt="Unwell" /><figcaption>Unwell</figcaption></figure>
   </div>
 
   <h3 class="section-h">When to use which</h3>
@@ -2395,7 +2395,7 @@
       <p class="note" style="margin:6px 0 0;">Payout identities that earn a royalty on each sale, after fees.</p>
     </div>
     <div style="background:var(--surface-canvas,#fff); border:1px solid var(--border-soft); border-radius:16px; overflow:hidden; text-align:center;">
-      <div style="aspect-ratio:16/6; background:#0A0A0A;"><img src="empty-state-hero/no-projects.jpg" alt="" style="width:100%; height:100%; object-fit:cover; display:block;" /></div>
+      <div style="aspect-ratio:16/6; background:#0A0A0A;"><img src="empty-state-hero/no_projects.jpg" alt="" style="width:100%; height:100%; object-fit:cover; display:block;" /></div>
       <div style="padding:24px; display:flex; flex-direction:column; align-items:center; gap:10px;">
         <div style="font-family:var(--font-display); font-size:26px; text-transform:uppercase; letter-spacing:0.02em; line-height:1.05;">No beneficiaries yet.</div>
         <p class="note" style="margin:0; max-width:46ch;">Add the people, charities, or partners who should earn a royalty on each sale.</p>
@@ -2407,7 +2407,7 @@
   <h3 class="section-h">Compact — inline empty</h3>
   <p class="note">For an empty region inside a populated page (an empty table, a filtered list with no matches). No hero image — a small character frame, one line, and the action.</p>
   <div class="canvas" style="text-align:center; padding:var(--s-12);">
-    <img src="bot-images/inspect/IMG_5593.png" alt="" style="width:140px; margin:0 auto var(--s-4);" />
+    <img src="bot-images/inspect.png" alt="" style="width:140px; margin:0 auto var(--s-4);" />
     <div style="font-family:var(--font-display); font-size:24px; text-transform:uppercase; letter-spacing:0.04em;">No tokens yet</div>
     <p class="note" style="margin:var(--s-2) auto var(--s-4); max-width:36ch;">When you mint or claim something, it'll show up here.</p>
     <button class="btn">Browse Launchpad</button>
