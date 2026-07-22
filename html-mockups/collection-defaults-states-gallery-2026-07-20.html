@@ -227,8 +227,9 @@
               <select class="input" style="min-width:230px;flex:1"><option selected>NNS</option><option>SNS — governance canister…</option></select>
               <input class="input" style="width:130px" value="10" aria-label="Minimum stake" placeholder="Min. stake (ICP)">
               <select class="input" style="width:170px" aria-label="Minimum dissolve delay"><option>Any dissolve delay</option><option selected>≥ 6 months</option><option>≥ 1 year</option><option>≥ 2 years</option><option>≥ 4 years</option><option>≥ 8 years</option></select>
+              <input class="input" style="width:150px" value="1" aria-label="Max claims per neuron" placeholder="Max claims / neuron">
             </div>
-            <div class="hint" style="margin-top:.35rem">Minimum stake and dissolve delay are optional — leave both empty for "any active stake".</div>
+            <div class="hint" style="margin-top:.35rem">Minimum stake and dissolve delay are optional — leave both empty for "any active stake". Max claims per neuron defaults to <strong>1</strong>, counted per vendor whichever hotkeyed address claims.</div>
           </div></div>
           <div class="hint">Requirements narrow who can claim, combined with AND — optional. Changes here never affect existing vendors.</div>
         </div>
@@ -246,7 +247,7 @@
         <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--draft"><span class="dot"></span>Draft</span></div>
         <div class="card">
           <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3><span class="sub">tiered rarity · 3 tiers</span></div><span class="lockpill lockpill--req">Required to go Live</span></div>
-          <div class="empty-state"><strong>No collection defaults yet</strong><p>Set a cost for each tier (free is allowed); requirements are optional. Unset tiers inherit the cost from the tier below; every tier must resolve to a cost before the collection can go Live.</p><button class="btn btn--primary">Set the first tier</button></div>
+          <div class="empty-state"><strong>No collection defaults yet</strong><p>Set a cost for each tier (free is allowed); requirements are optional. Unset tiers inherit the cost from the tier below. Entirely optional (R81) — the collection can go Live regardless; each vendor prices its own copy before it goes Live.</p><button class="btn btn--primary">Set the first tier</button></div>
         </div>
       </div>
     </div>
@@ -306,7 +307,7 @@
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Little Leaf Guardians</a><span class="sep">/</span><span class="here">Collection defaults</span></div></div>
       <div class="section">
         <div class="section-head"><div><div class="eyebrow">Collection · Defaults</div><h2>Collection defaults.</h2></div><span class="stage-badge sbg--review"><span class="dot"></span>Review</span></div>
-        <div class="info-note ok-note"><span class="ic">✓</span><div>All tiers resolve to a cost — this collection can pass review and go Live. Defaults stay editable at every stage; edits never change existing vendors.</div></div>
+        <div class="info-note ok-note"><span class="ic">✓</span><div>All tiers resolve to a cost — every vendor created from this collection starts fully priced (coverage is informational; it never gates the collection — R81). Defaults stay editable at every stage; edits never change existing vendors.</div></div>
         <div class="card">
           <div class="card__head"><div class="ttlwrap"><h3>Per-tier defaults</h3></div></div>
           <div class="colhead"><span class="c-tier">Tier</span><span class="c-split">Claim rule</span><span></span></div>

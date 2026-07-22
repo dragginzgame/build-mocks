@@ -188,7 +188,7 @@
 
     <!-- 02 · Bulk — Review -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">02</span><span class="t">Manage (Review) — route to Draft or Live</span><span class="d">The Review view: per-card <strong>→ Draft</strong> / <strong>Set Live</strong> for routing one token, or Select for the bulk toolbar (Set Live, Return to Draft, Run content check) to route many at once. Review is stage-only — no editing. Header keeps just the Collection · Tokens eyebrow.</span></div>
+      <div class="frame-cap"><span class="num">02</span><span class="t">Manage (Review) — route to Draft or Live</span><span class="d">The Review view: per-card <strong>→ Draft</strong> / <strong>Set Live</strong> for routing one token, or Select for the bulk toolbar (Set Live, Return to Draft) to route many at once. Review is stage-only — no editing. Header keeps just the Collection · Tokens eyebrow.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -205,12 +205,12 @@
               <button aria-pressed="false" aria-label="List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3.5" y1="6" x2="3.5" y2="6"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="18" x2="3.5" y2="18"/></svg></button>
             </div>
           </div>
-          <div class="bulkbar"><span class="b-count">12 selected</span><div class="b-actions"><button class="bb">Set Live</button><button class="bb">Return to Draft</button><button class="bb">Run content check</button><button class="bb bb--clear">Clear</button></div></div>
+          <div class="bulkbar"><span class="b-count">12 selected</span><div class="b-actions"><button class="bb">Set Live</button><button class="bb">Return to Draft</button><button class="bb bb--clear">Clear</button></div></div>
           <div class="tk-grid">
             <div class="tk-card sel"><div class="art"></div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="meta"><div class="nm">Fox #018</div><div class="sub">Review · #2</div></div></div>
             <div class="tk-card sel"><div class="art b"></div><span class="chk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="meta"><div class="nm">Fox #244</div><div class="sub">Review · #7</div></div></div>
             <div class="tk-card"><div class="art g"></div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="meta"><div class="nm">Fox #501</div><div class="sub">Review · #58</div></div></div>
-            <div class="tk-card" style="overflow:visible;z-index:3"><div class="art y"></div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="tk-menu"><button>Set Live</button><button>Return to Draft</button><div class="sepln"></div><button>Run content check</button></div><div class="meta"><div class="nm">Fox #777</div><div class="sub">Review · #201</div></div></div>
+            <div class="tk-card" style="overflow:visible;z-index:3"><div class="art y"></div><span class="chk" style="background:rgba(255,255,255,.92);border-color:var(--border-soft);color:transparent"></span><button class="tk-more" aria-label="Token actions"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button><div class="tk-menu"><button>Set Live</button><button>Return to Draft</button></div><div class="meta"><div class="nm">Fox #777</div><div class="sub">Review · #201</div></div></div>
           </div>
           <div class="listbar">
             <span class="results-count">Showing <strong>1–24</strong> of <strong>36</strong></span>
@@ -225,30 +225,9 @@
       </div>
     </section>
 
-    <!-- 03 · Content review (pre-live) -->
+    <!-- 03 · Move to Live (set-live readiness) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Content review (pre-live)</span><span class="d">An external check screens images and text for offensive content before tokens can go Live. Flagged items block go-live until resolved.</span></div>
-      <div class="screen">
-        <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
-        <div class="section">
-          <div class="section-head">
-            <div><div class="eyebrow">Collection · Tokens</div><h2>Content review.</h2><p class="lede">Each token's image and text are screened by an external service. Go-live is blocked while anything is flagged or still scanning.</p></div>
-            <div class="head-actions"><span class="stage-badge stage-badge--review"><span class="dot"></span>Review</span><button class="btn btn--primary" disabled>Set Live · blocked</button></div>
-          </div>
-          <div class="row" style="gap:var(--s-3)"><span class="tag tag--green">142 passed</span><span class="tag tag--indigo">2 scanning</span><span class="tag tag--red">1 flagged</span></div>
-          <div class="card" style="padding:0">
-            <div class="mod-row"><span class="mt" style="background:linear-gradient(135deg,#fde68a,#b45309)"></span><div class="mm"><div class="mn">Aurora Key</div><div class="md">Image + name + description</div></div><span class="tag tag--red">Flagged · text</span><button class="btn btn--ghost btn--sm" style="margin-left:var(--s-3)">Review</button></div>
-            <div class="mod-row"><span class="mt" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)"></span><div class="mm"><div class="mn">Fox #244</div><div class="md">Image + name + description</div></div><span class="tag tag--indigo">Scanning…</span></div>
-            <div class="mod-row"><span class="mt"></span><div class="mm"><div class="mn">Fox #018</div><div class="md">Image + name + description</div></div><span class="tag tag--green">Passed</span></div>
-          </div>
-          <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">"Aurora Key" was flagged on its description.</strong> Return it to Draft to edit the content and re-run the check, or request a manual review. Tokens can't be set Live until every item passes.</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 04 · Move to Live (set-live readiness) -->
-    <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">Move to Live (set-live readiness)</span><span class="d">Every gate that must pass before Review tokens can be set Live and minted, shown as a checklist with one blocker. Issue numbers are assigned in live-order at this step.</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">Move to Live (set-live readiness)</span><span class="d">Every gate that must pass before Review tokens can be set Live and minted, shown as a checklist with one blocker. Issue numbers are assigned in live-order at this step.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -267,7 +246,7 @@
               <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Live-definition cap</div><div class="cd">Hard cap: 1,000 definitions may be Live. 612 live now — these 36 fit (648). The cap blocks go-live; it can't be oversubscribed.</div></div></div>
               <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Copy supply — not a blocker</div><div class="cd">Definitions may collectively promise more copies than Max Supply (1,000) or a tier's quota. That's allowed at go-live; actual minting is rationed at the mint step, not here.</div></div></div>
               <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Issue numbers free of collisions</div><div class="cd">Held reservations are re-checked against Live and other reserved tokens; at go-live each number is assigned atomically (reserved value consumed, else next in live-order) and shared by all copies. Any collision blocks go-live.</div></div></div>
-              <div class="check fail"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v5M12 16h.01"/></svg></span><div class="cm"><div class="ct">Content review passed</div><div class="cd">1 token flagged by the external content check — resolve it before go-live.</div></div><a class="cact btn btn--ghost btn--sm" href="#">Open content review</a></div>
+              <div class="check fail"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v5M12 16h.01"/></svg></span><div class="cm"><div class="ct">Required media present</div><div class="cd">1 token has an empty required slot. Existence only — a file must be there; what it shows is never checked (ruled 2026-07-22).</div></div><a class="cact btn btn--ghost btn--sm" href="#">Open token</a></div>
               <div class="check pass"><span class="ci"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div class="cm"><div class="ct">Scores fresh (Weighted)</div></div></div>
             </div>
           </div>
@@ -275,9 +254,9 @@
       </div>
     </section>
 
-    <!-- 05 · Move to Draft (return-to-draft confirm) -->
+    <!-- 04 · Move to Draft (return-to-draft confirm) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">05</span><span class="t">Move to Draft (return to Draft)</span><span class="d">Send Review tokens back to Draft to edit them again — single and bulk. Returning re-opens editing, releases any reserved issue numbers, and means the content check must pass again.</span></div>
+      <div class="frame-cap"><span class="num">04</span><span class="t">Move to Draft (return to Draft)</span><span class="d">Send Review tokens back to Draft to edit them again — single and bulk. Returning re-opens editing, releases any reserved issue numbers, and the tokens go through Review again before go-live.</span></div>
       <div class="stage">
         <div class="modal-grid">
           <div class="modal-card">
@@ -300,9 +279,9 @@
       </div>
     </section>
 
-    <!-- 06 · Review — no Review tokens -->
+    <!-- 05 · Review — no Review tokens -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">06</span><span class="t">Review — no Review tokens</span><span class="d">The Review view when nothing is in Review — either no Draft tokens have been submitted yet, or they've all gone Live. Distinct from first-run "No tokens": the Draft / Review / Live tabs stay, and it points back to Draft.</span></div>
+      <div class="frame-cap"><span class="num">05</span><span class="t">Review — no Review tokens</span><span class="d">The Review view when nothing is in Review — either no Draft tokens have been submitted yet, or they've all gone Live. Distinct from first-run "No tokens": the Draft / Review / Live tabs stay, and it points back to Draft.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Spring Foxes</a><span class="sep">/</span><span class="here">Tokens · Review</span></div><div class="actions"><button class="notif-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -317,16 +296,16 @@
           <div class="card" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--s-3);padding:var(--s-10) var(--s-6)">
             <img src="../Toko%20Character%20Examples/normal.png" alt="" style="width:116px;height:auto" onerror="this.style.display='none'">
             <h3 style="font-size:var(--text-2xl)">No tokens in Review.</h3>
-            <p style="color:var(--text-secondary);max-width:54ch;margin:0">Submit tokens from <strong>Draft</strong> when they're complete and they'll appear here for the content check and go-live. If everything's already gone Live, you'll find it under <strong>Live</strong>.</p>
+            <p style="color:var(--text-secondary);max-width:54ch;margin:0">Submit tokens from <strong>Draft</strong> when they're complete and they'll appear here for review and go-live. If everything's already gone Live, you'll find it under <strong>Live</strong>.</p>
             <div class="row" style="justify-content:center;margin-top:var(--s-2)"><button class="btn btn--primary">Go to Draft · 8</button><button class="btn btn--ghost">View Live · 612</button></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 07 · Set Live blocked — live-definition cap -->
+    <!-- 06 · Set Live blocked — live-definition cap -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">07</span><span class="t">Set Live blocked — definition cap</span><span class="d">The live-definition cap is a hard gate at Review → Live (unlike copy supply, which may be oversubscribed). Two cases: the cap is already full (nothing can go Live), or there's partial room (only some of the selection fits). Draft and Review are never capped — only the move to Live.</span></div>
+      <div class="frame-cap"><span class="num">06</span><span class="t">Set Live blocked — definition cap</span><span class="d">The live-definition cap is a hard gate at Review → Live (unlike copy supply, which may be oversubscribed). Two cases: the cap is already full (nothing can go Live), or there's partial room (only some of the selection fits). Draft and Review are never capped — only the move to Live.</span></div>
       <div class="stage">
         <div class="modal-grid">
           <div class="modal-card">

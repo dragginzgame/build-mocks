@@ -780,7 +780,7 @@
       </div>
 
       <!-- 07 modal · Requirement editor — accordions (configured) -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same editor concepts as the collection defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free, or an accepted currency); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors, and when the stake gates ship a tier can carry an NNS <em>and</em> an SNS gate (ANDed, one of each). Whitelists are <em>one</em> gate, not many: selecting several lists merges them into a single de-duplicated eligible list — a collector needs to appear on <em>any one</em> of them, never all. <strong>Whitelists is the only active requirement in V1</strong> (ruled 2026-07-03, consistent with collection defaults): the stake gates (NNS + SNS) and Holds-tokens-from-a-collection are disabled teasers — front-end V2, backend schema ships in V1 — as are Restrictions and Rewards. Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — accordions</span><span class="d">Opened from "Edit" on a tier — the same editor concepts as the collection defaults (Cost · Requirements · Restrictions · Rewards), pre-filled with the copied default. Claim cost sits at the top (free, or an accepted currency); each requirement type is its own accordion. Requirements combine with AND — more gates means fewer eligible collectors, and when the stake gates ship a tier can carry an NNS <em>and</em> an SNS gate (ANDed, one of each). Whitelists are <em>one</em> gate, not many: selecting several lists merges them into a single de-duplicated eligible list — a collector needs to appear on <em>any one</em> of them, never all. <strong>Authorable in V1: whitelists + the two stake gates</strong> (ratified 2026-07-22 — full editor states in the <a href="stake-gates-states-gallery-2026-07-22.html">stake-gates gallery</a>; the SNS editor caps at one row). Holds-tokens-from-a-collection remains a disabled teaser — front-end V2, backend schema ships in V1 — as are Restrictions and Rewards. Promo / redemption codes aren't here — they're project-level code sets (future).</span></div>
       <div class="stage single-modal">
         <div class="modal-card wide">
           <header><h4>Edit · Spring Foxes · Rare</h4><button class="x" aria-label="Close">✕</button></header>
@@ -806,11 +806,11 @@
               </div>
             </div>
 
-            <div class="acc disabled-acc">
-              <div class="acc__head"><span class="acc-ttl">Has a stake — NNS (ICP neuron)</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">Has a stake — NNS (ICP neuron)</span><span class="tag">None</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
             </div>
-            <div class="acc disabled-acc">
-              <div class="acc__head"><span class="acc-ttl">Has a stake — SNS (ICRC-1 neuron)</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">Has a stake — SNS (ICRC-1 neuron)</span><span class="tag">None</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
             </div>
             <div class="acc disabled-acc">
               <div class="acc__head"><span class="acc-ttl">Holds tokens from a collection</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
@@ -827,7 +827,7 @@
       </div>
 
       <!-- 07 modal · Requirement editor — default open/closed behaviour -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — default open / closed</span><span class="d">The same editor when only some requirements are set. An accordion with a selection opens on load (Whitelists); the V2 requirement types — the two stake gates and Holds tokens from a collection — plus Restrictions and Rewards stay disabled (coming soon).</span></div>
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">07 ·</span><span class="t">Requirement editor — default open / closed</span><span class="d">The same editor when only some requirements are set. An accordion with a selection opens on load (Whitelists); the stake gates are active but unset here (“None”); Holds tokens from a collection, Restrictions and Rewards stay disabled (coming soon).</span></div>
       <div class="stage single-modal">
         <div class="modal-card wide">
           <header><h4>Edit · Spring Foxes · Uncommon</h4><button class="x" aria-label="Close">✕</button></header>
@@ -851,11 +851,11 @@
               </div>
             </div>
 
-            <div class="acc disabled-acc">
-              <div class="acc__head"><span class="acc-ttl">Has a stake — NNS (ICP neuron)</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">Has a stake — NNS (ICP neuron)</span><span class="tag">None</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
             </div>
-            <div class="acc disabled-acc">
-              <div class="acc__head"><span class="acc-ttl">Has a stake — SNS (ICRC-1 neuron)</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+            <div class="acc">
+              <div class="acc__head clickable"><span class="acc-ttl">Has a stake — SNS (ICRC-1 neuron)</span><span class="tag">None</span><span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span></div>
             </div>
             <div class="acc disabled-acc">
               <div class="acc__head"><span class="acc-ttl">Holds tokens from a collection</span><span class="tag">Coming soon</span><span class="chev"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
