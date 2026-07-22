@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Friends list (Phase 3) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --notify-warn:#D97706;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .section { padding:var(--s-8); }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-6); flex-wrap:wrap; }
+  .section-head h2 { font-size:var(--text-3xl); }
+  .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .input { border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .input.is-error { border-color:var(--notify-error); box-shadow:0 0 0 1px var(--notify-error) inset; }
+  .field-error { display:flex; align-items:center; gap:.375rem; margin-top:.5rem; color:var(--notify-error); font-size:var(--text-xs); font-weight:600; font-family:var(--font-emphasis); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .tag { display:inline-flex; align-items:center; gap:6px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.14); color:#B45309; }
+  .tag--green { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); }
+  .card .head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-4); flex-wrap:wrap; }
+  .card .head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .fr-row { display:flex; align-items:center; gap:var(--s-4); padding:var(--s-3) 0; border-bottom:1px solid var(--surface-canvas-deep); }
+  .fr-row:last-child { border-bottom:0; }
+  .fr-row .av { width:36px; height:36px; border-radius:50%; flex:none; }
+  .fr-row .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .fr-row .sub { color:var(--text-secondary); font-size:var(--text-xs); }
+  .fr-row .main { flex:1; }
+  .fr-row .acts { display:flex; gap:var(--s-2); }
+  .empty-hero { background:#fff; border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; max-width:920px; margin-left:auto; margin-right:auto; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; display:flex; align-items:center; justify-content:center; color:#4b5563; font-family:var(--font-emphasis); letter-spacing:.12em; text-transform:uppercase; font-size:var(--text-xs); }
+  .empty-hero__body { padding:28px 24px 32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:1.75rem; line-height:1.05; }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); line-height:1.5; max-width:52ch; margin:0; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:460px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .mbody-confirm { display:flex; gap:var(--s-3); align-items:flex-start; }
+  .mbody-confirm .ico { color:var(--notify-error); flex:none; margin-top:2px; }
+  .mbody-confirm p { margin:0; font-size:var(--text-sm); line-height:1.5; color:var(--text-secondary); }
+  .mbody-confirm strong { color:var(--text-primary); }
+  .pick-row { display:flex; align-items:center; gap:var(--s-3); padding:.5rem .625rem; font-size:var(--text-sm); border-radius:var(--r-2); cursor:pointer; }
+  .pick-row:hover { background:var(--surface-canvas-alt); }
+  .pick-row .av { width:28px; height:28px; border-radius:50%; flex:none; }
+  .grey-note { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.6; max-width:100ch; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Phase 3 · Consistency reference</div>
+      <h1>Friends list — states gallery.</h1>
+      <p>First-pass mock for the <strong>friends list</strong>, per <span class="mono">Design Documentation/Phase3/friends-list-design.md</span> (proposed 2026-07-03 — most decisions are proposals for review). Friendships are keyed by the <strong>Toko User ID</strong> (<span class="mono">usr_…</span>) — decided — and are <strong>mutual (request / accept)</strong>, one row per pair. V1 utility: the wallet <strong>transfer picker</strong>, <span class="mono">Recipient::User</span> suggestions in revenue presets, and profile shortcuts. The list is <strong>private to its owner</strong> — no public counts, no mutual-friends display. Blocks are separate, one-way, and silent.</p>
+    </header>
+
+    <!-- 01 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Friends page · populated</span><span class="d">Owner-only surface (placement open: profile section vs its own page). Accepted list with profile links and remove; incoming requests (accept / decline); outgoing requests (cancellable). Declines and removals are silent to the other side.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Account</span><span class="sep">/</span><span>Friends</span></div>
+        <div class="section">
+          <div class="section-head"><div><div class="eyebrow">Account · Friends</div><h2>Friends.</h2><p class="lede">Your private list — only you can see it. Add a friend with their User ID (it's on their profile).</p></div><button class="btn btn--primary">+ Add friend</button></div>
+          <div class="card" style="margin-bottom:var(--s-5)">
+            <div class="head"><h3>Requests</h3><span class="tag tag--amber">2 incoming · 1 outgoing</span></div>
+            <div class="fr-row"><span class="av" style="background:linear-gradient(135deg,#fbcfe8,#f472b6)"></span><div class="main"><div class="nm">Mara Okafor</div><div class="sub">usr_8H2K…M4Q · wants to be friends</div></div><div class="acts"><button class="btn btn--primary btn--sm">Accept</button><button class="btn btn--ghost btn--sm">Decline</button></div></div>
+            <div class="fr-row"><span class="av" style="background:linear-gradient(135deg,#bfdbfe,#60a5fa)"></span><div class="main"><div class="nm">Jonas Feld</div><div class="sub">usr_2X9C…A7T · wants to be friends</div></div><div class="acts"><button class="btn btn--primary btn--sm">Accept</button><button class="btn btn--ghost btn--sm">Decline</button></div></div>
+            <div class="fr-row"><span class="av" style="background:linear-gradient(135deg,#ddd6fe,#a78bfa)"></span><div class="main"><div class="nm">nightowl.icp</div><div class="sub">usr_5T1P…R2W · request sent — waiting</div></div><div class="acts"><button class="btn btn--ghost btn--sm">Cancel request</button></div></div>
+          </div>
+          <div class="card">
+            <div class="head"><h3>Friends</h3><span class="tag tag--green">3</span></div>
+            <div class="fr-row"><span class="av" style="background:linear-gradient(135deg,#a7f3d0,#34d399)"></span><div class="main"><div class="nm">Selo Arts</div><div class="sub">usr_9D4F…K8L</div></div><div class="acts"><button class="btn btn--ghost btn--sm">View profile</button><button class="btn btn--ghost btn--sm">Remove</button></div></div>
+            <div class="fr-row"><span class="av" style="background:linear-gradient(135deg,#fde68a,#f59e0b)"></span><div class="main"><div class="nm">kiln&amp;wheel</div><div class="sub">usr_3M7B…X1E</div></div><div class="acts"><button class="btn btn--ghost btn--sm">View profile</button><button class="btn btn--ghost btn--sm">Remove</button></div></div>
+            <div class="fr-row"><span class="av" style="background:linear-gradient(135deg,#c7d2fe,#818cf8)"></span><div class="main"><div class="nm">Petra V.</div><div class="sub">usr_6Q2N…J9S</div></div><div class="acts"><button class="btn btn--ghost btn--sm">View profile</button><button class="btn btn--ghost btn--sm">Remove</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Empty state</span><span class="d">Standard centred empty hero (max-width 920, per the shell). The copy teaches the add gesture: paste a friend's User ID — theirs is on their profile.</span></div>
+      <div class="screen">
+        <div class="section">
+          <div class="empty-hero">
+            <div class="empty-hero__img">Toko character art</div>
+            <div class="empty-hero__body">
+              <div class="empty-hero__ttl">No friends yet.</div>
+              <p class="empty-hero__sub">Add a friend with their User ID — you'll find it on their profile as a copyable chip. Friends make gifting tokens and picking payout recipients quicker.</p>
+              <button class="btn btn--primary" style="margin-top:8px">+ Add your first friend</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Add friend · exact User ID, resolve-before-send</span><span class="d">V1 adds are by exact <span class="mono">usr_…</span> ID only — no name search (display names aren't unique; exact-ID adds avoid discovery/spam surface). The ID must resolve to an existing account before Send enables (the resolve-before-save pattern). Self-add is rejected; an existing pending/accepted pair short-circuits idempotently.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Add friend</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <label class="flabel">Friend's User ID</label>
+            <input class="input is-error" style="width:100%" value="usr_TYP0…BAD1">
+            <div class="field-error"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7.5" x2="12" y2="12.5"/><line x1="12" y1="16.5" x2="12" y2="16.5"/></svg>We couldn't find an account with that User ID. Check it and try again.</div>
+            <p class="tiny" style="margin-top:var(--s-4)">They'll get a request to accept — you'll be friends once they do.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled style="opacity:.5">Send request</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Transfer picker · the V1 payoff</span><span class="d">The wallet transfer modal offers "Choose a friend" beside raw principal entry — no more copy-pasting principals to gift a token. The transfer still settles through normal validation; how a User ID resolves to a receiving account is an open backend question (likely the account's primary principal).</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Transfer · Fern Keeper #018</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <label class="flabel">Send to</label>
+            <input class="input" style="width:100%" placeholder="Paste a principal…">
+            <div class="flabel" style="margin-top:var(--s-5)">Or choose a friend</div>
+            <div class="pick-row"><span class="av" style="background:linear-gradient(135deg,#a7f3d0,#34d399)"></span><span><strong>Selo Arts</strong> <span class="tiny">usr_9D4F…K8L</span></span></div>
+            <div class="pick-row" style="background:var(--surface-canvas-alt)"><span class="av" style="background:linear-gradient(135deg,#fde68a,#f59e0b)"></span><span><strong>kiln&amp;wheel</strong> <span class="tiny">usr_3M7B…X1E</span></span></div>
+            <div class="pick-row"><span class="av" style="background:linear-gradient(135deg,#c7d2fe,#818cf8)"></span><span><strong>Petra V.</strong> <span class="tiny">usr_6Q2N…J9S</span></span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Review transfer</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Remove friend · canonical destructive confirm</span><span class="d">The one canonical delete/confirm shape: left-aligned, red warning icon, red action — no character art, not centred. Removal is one-sided and silent; the other side simply no longer sees the friendship.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Remove friend · kiln&amp;wheel?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="mbody-confirm">
+              <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.8 1.8 18.5a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13.5"/><line x1="12" y1="17.5" x2="12" y2="17.5"/></svg></span>
+              <p>This removes <strong>kiln&amp;wheel</strong> from your friends list. They won't be notified. To be friends again, one of you sends a new request. <strong>This can't be undone.</strong></p>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove friend</button></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="frame">
+      <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Note (not UI) — open questions</span></div>
+      <p class="grey-note">From <span class="mono">friends-list-design.md</span>: mutual vs one-way follow (mutual proposed — fits the gifting use case; follow could arrive later as a separate thing); placement (profile section vs dedicated page); request limits / rate limits / a manage-blocks list; whether public profiles get an "Add friend" button (still resolving to a request) or paste-the-ID is enough for V1; and the User ID → receiving-account resolution rule for transfers (backend to confirm). Friend request / accepted notifications route through the standard bell (see the Notification system gallery); declines and removals are silent. Explicitly not V1: activity feeds, seeing a friend's holdings, messaging, presence.</p>
+    </div>
+
+  </div>
+</body>
+</html>
