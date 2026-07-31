@@ -926,7 +926,7 @@
 
     <!-- 08 · Create — revenue -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">08</span><span class="t">Create — revenue (select a preset)</span><span class="d">Step 6: revenue is set by a project-level <strong>revenue preset</strong> — a vendor <strong>must use one</strong> (there's no free-style split editing here). Select an existing <strong>Live</strong> preset; its fees and royalties are <strong>copied onto the vendor and shown read-only</strong>, locking on Live. (The split includes the preset's <strong>Toko burn</strong> — a min-1% share of each claim, converted to $TOKO and burned to build the project's reputation; it's authored in the preset, shown read-only here.) Presets aren't created from this step — they're created and edited in <strong>Project · Revenue presets</strong>. Selecting a preset is required to continue. The project's <strong>default</strong> preset is <strong>pre-selected</strong> (the creator can change it).</span></div>
+      <div class="frame-cap"><span class="num">08</span><span class="t">Create — revenue (select two presets: Claim + Sale)</span><span class="d">Step 6: revenue is set by project-level <strong>revenue presets</strong> — a vendor <strong>must select two</strong>, one of each kind, and there's no free-style split editing here. The <strong>Claim preset</strong> splits the primary claim proceeds; the <strong>Sale preset</strong> is the secondary resale split (<strong>royalties ≤ 3% total</strong>, no Toko burn, no referral) that gets <strong>stamped onto every copy at claim</strong> as its immutable <strong>locked_sale_split</strong>. Both are copied onto the vendor and shown read-only, and both lock on Live — the vendor locks the price <em>and</em> the royalties that apply. (The claim split includes the preset's <strong>Toko burn</strong> — a min-1% share of each claim, converted to $TOKO and burned to build the project's reputation; it's authored in the preset, shown read-only here.) Presets aren't created from this step — they're created and edited in <strong>Project · Revenue presets</strong> (Claim · Sale tabs). Selecting <strong>both</strong> is required to continue. The project's <strong>default</strong> preset of each kind is <strong>pre-selected</strong> (the creator can change either). Two Sale-side behaviours the UI only implies: a fixed-period royalty's taper clock runs <strong>per copy</strong> from that copy's own claim timestamp (not the vendor's start), so copies of the same token distributed by different vendors can carry different resale splits; and the seller's <strong>1–10% referral fee</strong> is set per listing on the marketplace, never in a preset.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
         <div class="section">
@@ -941,9 +941,9 @@
             <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
           </div>
           <div class="card">
-            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Revenue preset</h3><span class="tag tag--red">required</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
-            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">Revenue is defined by a project-level <strong>revenue preset</strong> and copied onto this vendor. Select an existing <strong>Live</strong> preset — there's no free-style split editing here, and presets aren't created from this step.</p>
-            <div><label class="flabel">Revenue preset</label><select class="input" style="max-width:340px"><option selected>Standard Claim · Default</option><option>Founders Split</option><option>Charity Drop</option></select></div>
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Claim revenue preset</h3><span class="tag tag--red">required</span><span class="tag">Primary · claims</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">How <strong>claim</strong> proceeds are split.</p>
+            <div><label class="flabel">Claim preset</label><select class="input" style="max-width:340px"><option selected>Standard Claim · Default</option><option>Founders Split</option><option>Charity Drop</option></select></div>
             <div class="splitbar" style="margin-top:var(--s-5)">
               <i style="width:83.5%;background:var(--text-primary)"></i>
               <i style="width:14%;background:#6366F1"></i>
@@ -959,14 +959,32 @@
             <div class="kv"><span>Community Treasury</span><span class="v">8% · forever</span></div>
             <div class="kv"><span>Ocean Cleanup <span class="tiny">charity</span></span><span class="v">6% · taper to 0 · 90 days</span></div>
             <div class="kv"><span>Royalties total</span><span class="v">14% / 20% max</span></div>
-            <p class="hint" style="margin-top:.5rem">Copied from <strong>Standard Claim</strong> (the project <strong>default</strong>, pre-selected) when the vendor is created; locks on Live. To change fees or royalties, edit the preset in <strong>Project · Revenue presets</strong> — not here.</p>
+            <p class="hint" style="margin-top:.5rem">To change fees or royalties, edit the preset in <strong>Project · Revenue presets</strong>.</p>
+          </div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Sale revenue preset</h3><span class="tag tag--red">required</span><span class="tag">Secondary · resales</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin:0 0 var(--s-4)">How <strong>resale</strong> proceeds are split. Fixed onto each copy at claim — it can't be changed for that copy afterwards.</p>
+            <div><label class="flabel">Sale preset</label><select class="input" style="max-width:340px"><option selected>Standard Sale · Default</option><option>Creator 3%</option><option>Royalty-free resale · 0%</option></select></div>
+            <div class="splitbar" style="margin-top:var(--s-5)">
+              <i style="width:97%;background:var(--text-primary)"></i>
+              <i style="width:3%;background:#6366F1"></i>
+            </div>
+            <div class="splitlegend">
+              <span><i style="background:var(--text-primary)"></i>Seller · 97%</span>
+              <span><i style="background:#6366F1"></i>Royalties · 3%</span>
+            </div>
+            <div class="row" style="justify-content:space-between;margin-top:var(--s-5);padding-bottom:var(--s-2);border-bottom:1px solid var(--border-soft)"><span class="flabel" style="margin:0">From the preset <span class="tag tag--indigo">Read-only</span></span><span class="lockpill lockpill--lock">Locks on Live</span></div>
+            <div class="kv"><span>Aviary Labs <span class="tiny">creator</span></span><span class="v">2% · forever</span></div>
+            <div class="kv"><span>Community Treasury</span><span class="v">1% · taper to 0 · 12 months</span></div>
+            <div class="kv"><span>Royalties total</span><span class="v">3% / 3% max</span></div>
+            <p class="hint" style="margin-top:.5rem">To change these royalties, edit the preset in <strong>Project · Revenue presets</strong>.</p>
           </div>
           <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary">Continue · Summary</button></span></div>
         </div>
       </div>
 
-      <!-- 08 · Revenue — no beneficiaries (default) -->
-      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">08 ·</span><span class="t">Revenue — no preset selected (required)</span><span class="d">A vendor must use a revenue preset. Until one is selected the split is empty and <strong>Continue is disabled</strong>. You select an existing <strong>Live</strong> preset — presets are created in <strong>Project · Revenue presets</strong> (and must be Live before they appear here), not from this step.</span></div>
+      <!-- 08 · Revenue — no presets selected (required) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">08 ·</span><span class="t">Revenue — presets not selected (required)</span><span class="d">A vendor must use <strong>both</strong> a Claim preset and a Sale preset. Until each is selected its split is empty and <strong>Continue is disabled</strong> — the blocking reason sits on the card that owns it, matching the inventory step (no helper text in the footer). You select existing <strong>Live</strong> presets — presets are created in <strong>Project · Revenue presets</strong> (Claim · Sale tabs) and must be Live before they appear here, not from this step. Shown here with <strong>neither</strong> chosen; the same treatment applies when only one is missing. There is deliberately <strong>no implicit fallback</strong> for a vendored copy — the platform standing default (1% to the project treasury) covers never-vendored copies only, so royalty-free resale has to be chosen explicitly via a 0% preset.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><span class="here">New vendor</span></div></div>
         <div class="section">
@@ -981,15 +999,24 @@
             <span class="step"><span class="n">7</span><span class="lbl">Summary</span></span>
           </div>
           <div class="card">
-            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Revenue preset</h3><span class="tag tag--red">required</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Claim revenue preset</h3><span class="tag tag--red">required</span><span class="tag">Primary · claims</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
             <div class="empty-state">
-              <strong>Select a revenue preset</strong>
-              <p>Revenue is defined by a project-level preset and copied onto this vendor. Choose a Live preset to continue.</p>
-              <div class="row" style="justify-content:center;gap:var(--s-3)"><select class="input" style="max-width:320px"><option selected>— Choose a Live preset —</option><option>Standard Claim</option><option>Founders Split</option></select></div>
+              <strong>Select a Claim preset</strong>
+              <p>How claim proceeds are split. Defined by a project-level preset and copied onto this vendor. Choose a Live Claim preset to continue.</p>
+              <div class="row" style="justify-content:center;gap:var(--s-3)"><select class="input" style="max-width:320px"><option selected>— Choose a Live Claim preset —</option><option>Standard Claim</option><option>Founders Split</option></select></div>
             </div>
-            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A revenue preset is required.</strong> The vendor can't continue until one is selected. No Live presets yet? Create one in <strong>Project · Revenue presets</strong> — it must reach Live before it appears here.</div></div>
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A Claim preset is required.</strong> The vendor can't continue until one is selected. No Live Claim presets yet? Create one in <strong>Project · Revenue presets</strong> — it must reach Live before it appears here.</div></div>
           </div>
-          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3);align-items:center"><span class="tiny">Select a revenue preset to continue</span><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary" disabled>Continue · Summary</button></span></div>
+          <div class="card">
+            <div class="card__head"><div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap"><h3>Sale revenue preset</h3><span class="tag tag--red">required</span><span class="tag">Secondary · resales</span></div><a class="tiny" style="color:var(--info);font-weight:700">Manage presets in Project Studio ↗</a></div>
+            <div class="empty-state">
+              <strong>Select a Sale preset</strong>
+              <p>The resale split frozen onto every copy claimed from this vendor. Royalties only, ≤ 3% total. Choose a Live Sale preset to continue.</p>
+              <div class="row" style="justify-content:center;gap:var(--s-3)"><select class="input" style="max-width:320px"><option selected>— Choose a Live Sale preset —</option><option>Standard Sale</option><option>Royalty-free resale · 0%</option></select></div>
+            </div>
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">A Sale preset is required.</strong> The vendor can't continue until one is selected — for royalty-free resales, select a <strong>0%</strong> Sale preset. No Live Sale presets yet? Create one on the <strong>Sale</strong> tab of <strong>Project · Revenue presets</strong> — it must reach Live before it appears here.</div></div>
+          </div>
+          <div class="step-actions"><button class="btn btn--ghost">Back</button><span style="display:flex;gap:var(--s-3)"><button class="btn btn--ghost">Save as draft</button><button class="btn btn--primary" disabled>Continue · Summary</button></span></div>
         </div>
       </div>
 
@@ -1022,7 +1049,8 @@
             <div class="kv"><span>Inventory policy</span><span class="v">Additive · locks on Live</span></div>
             <div class="kv"><span>Inventory</span><span class="v">420 copies · 3 collections</span></div>
             <div class="kv"><span>Costs &amp; rules</span><span class="v">Set per collection (3)</span></div>
-            <div class="kv"><span>Revenue</span><span class="v">Preset · Standard Claim</span></div>
+            <div class="kv"><span>Revenue · claim</span><span class="v">Preset · Standard Claim</span></div>
+            <div class="kv"><span>Revenue · sale</span><span class="v">Preset · Standard Sale · 3% royalties</span></div>
             <div class="info-note ok-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span><div>All required fields valid. <strong>Submit to Review</strong> to lock the config for a final check — you then Set Live from the Review stage (Draft → Review → Live; you can return to Draft to edit). Inventory <strong>policy</strong> locks on Live; the inventory <strong>quantity</strong> can still change afterwards (additive allows top-ups).</div></div>
           </div>
           <div class="step-actions"><button class="btn btn--ghost">Save as Draft</button><button class="btn btn--primary">Submit to Review</button></div>
@@ -1052,7 +1080,7 @@
               <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Lifecycle — earliest-stop date is in the past</div><div class="vd">Admin-controlled vendors need an earliest-stop date in the future.</div></div><a class="vfix">Fix in Lifecycle</a></div>
               <div class="vcheck"><span class="vi err"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span><div><div class="vt">Inventory — no tokens staged</div><div class="vd">A vendor can't go Live with nothing to sell. Stage minted tokens first.</div></div><a class="vfix">Fix in Inventory</a></div>
               <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Costs &amp; rules — valid</div><div class="vd">Costs &amp; rules can't fail here — a cost is required to save each tier (pre-filled from collection defaults), and custom ledgers/SNS canisters are validated on entry, so an unresolved one can't be added.</div></div></div>
-              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Revenue — valid</div><div class="vd">A <strong>Live revenue preset</strong> is selected and copied onto the vendor (no free-style edits). A vendor can't be submitted to Review without a preset.</div></div></div>
+              <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Revenue — valid</div><div class="vd">A <strong>Live Claim preset</strong> and a <strong>Live Sale preset</strong> are both selected and copied onto the vendor (no free-style edits). A vendor can't be submitted to Review while either is missing — the Sale preset is what each claimed copy is stamped with as its resale split.</div></div></div>
               <div class="vcheck"><span class="vi ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><div><div class="vt">Type &amp; storefront media — valid</div><div class="vd">Market type set; thumbnail and banner present.</div></div></div>
             </div>
           </div>
@@ -1082,7 +1110,8 @@
             <div class="kv"><span>Inventory policy</span><span class="v">Additive</span></div>
             <div class="kv"><span>Inventory</span><span class="v">420 copies · 3 collections</span></div>
             <div class="kv"><span>Costs &amp; rules</span><span class="v">Set per collection (3)</span></div>
-            <div class="kv"><span>Revenue</span><span class="v">Preset · Standard Claim · 14% royalties</span></div>
+            <div class="kv"><span>Revenue · claim</span><span class="v">Preset · Standard Claim · 14% royalties</span></div>
+            <div class="kv"><span>Revenue · sale</span><span class="v">Preset · Standard Sale · 3% royalties</span></div>
           </div>
           <div class="card">
             <div class="card__head"><h3>Stage</h3></div>
