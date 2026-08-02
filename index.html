@@ -52,6 +52,19 @@
   .sg-feature .sg-cta{font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.04em; text-transform:uppercase; color:var(--text-inverse); border:1.5px solid rgba(255,255,255,.4); border-radius:var(--r-pill); padding:.7rem 1.2rem; white-space:nowrap; flex:none;}
   .sg-feature:hover .sg-cta{border-color:var(--brand-cyan); color:var(--brand-cyan);}
   @media (max-width:680px){ .sg-feature{flex-direction:column; align-items:flex-start; gap:var(--s-4);} }
+  /* Phase tab bar — sits on the grey, above the panels */
+  .phasebar{position:sticky; top:0; z-index:20; margin:var(--s-10) 0 0; padding:var(--s-4) 0 var(--s-3); background:var(--surface-page);}
+  .tablist{display:flex; gap:var(--s-2); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.3rem; overflow-x:auto; scrollbar-width:none;}
+  .tablist::-webkit-scrollbar{display:none;}
+  .tab{appearance:none; border:0; background:transparent; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:.5rem; padding:.65rem 1.15rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.04em; text-transform:uppercase; color:var(--text-secondary); transition:background .12s, color .12s;}
+  .tab:hover{color:var(--text-primary); background:var(--surface-canvas-deep);}
+  .tab .n{font-size:var(--text-2xs); letter-spacing:.06em; border-radius:var(--r-pill); padding:1px 7px; background:var(--surface-canvas-deep); color:var(--text-secondary);}
+  .tab[aria-selected="true"]{background:var(--text-primary); color:var(--text-inverse);}
+  .tab[aria-selected="true"] .n{background:rgba(255,255,255,.18); color:var(--text-inverse);}
+  .tab:focus-visible{outline:2px solid var(--info); outline-offset:2px;}
+  .phasenote{margin:var(--s-3) 0 0; color:var(--text-secondary); font-size:var(--text-sm); max-width:74ch;}
+  .tabpanel[hidden]{display:none;}
+  @media (max-width:680px){ .phasebar{position:static;} .tab{padding:.6rem .9rem;} }
 </style>
 </head>
 <body>
@@ -60,7 +73,7 @@
     <div class="lead">
       <div class="eyebrow">Toko · web app</div>
       <h1>Design mockups.</h1>
-      <p>Clickable visual prototypes of the Toko web app. The <strong>style guide</strong> is the source of truth for everything below — browse the screens by area beneath it.</p>
+      <p>Clickable visual prototypes of the Toko web app. The <strong>style guide</strong> is the source of truth for everything below and sits outside the phases. Use the <strong>phase tabs</strong> to switch build iteration, then browse the screens by area.</p>
       <div class="howto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
         <div><strong>How to use:</strong> click any card to open that mockup in your browser, then use the browser's <strong>Back</strong> button to return here. These are design prototypes with sample data — not the live product, and nothing you click changes real data.</div>
@@ -76,6 +89,19 @@
       </div>
       <span class="sg-cta">Open style guide →</span>
     </a>
+
+    <!-- Phase tabs -->
+    <div class="phasebar">
+      <div class="tablist" role="tablist" aria-label="Build phase">
+        <button class="tab" role="tab" id="tab-phase1" aria-controls="panel-phase1" aria-selected="true">Phase 1 <span class="n">47</span></button>
+        <button class="tab" role="tab" id="tab-phase2" aria-controls="panel-phase2" aria-selected="false" tabindex="-1">Phase 2 <span class="n">11</span></button>
+        <button class="tab" role="tab" id="tab-phase3" aria-controls="panel-phase3" aria-selected="false" tabindex="-1">Phase 3 <span class="n">3</span></button>
+      </div>
+    </div>
+
+    <!-- ============ PHASE 1 ============ -->
+    <div class="tabpanel" id="panel-phase1" role="tabpanel" aria-labelledby="tab-phase1" tabindex="0">
+      <p class="phasenote"><strong>Core.</strong> Everything the platform needs to function — the public site, the collector surfaces, and the whole creator studio.</p>
 
         <!-- Public site & navigation -->
     <section class="group">
@@ -213,17 +239,15 @@
         <a class="card" href="html-mockups/privacy.html"><div class="ct"><h3>Privacy Policy</h3><span class="new">New</span></div><p>How Toko handles data (draft for review).</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
     </section>
+    </div><!-- /panel-phase1 -->
 
-        
+    <!-- ============ PHASE 2 ============ -->
+    <div class="tabpanel" id="panel-phase2" role="tabpanel" aria-labelledby="tab-phase2" tabindex="0" hidden>
+      <p class="phasenote"><strong>Core additional features.</strong> Scheduled after the V1 launch — marketplace extras, notifications, the Mastery back end and the asset spec. Mocks live in <span style="font-family:ui-monospace,monospace">html-mockups/phase2</span>.</p>
 
-         
-
-         
-
-        <!-- Phase 2 -->
     <section class="group">
-      <h2>Phase 2</h2>
-      <div class="gdesc">Features scheduled after the V1 launch — mocks live in <span style="font-family:ui-monospace,monospace">html-mockups/phase2</span>.</div>
+      <h2>Phase 2 mockups</h2>
+      <div class="gdesc">Everything scheduled for the second build iteration.</div>
       <div class="grid">
         <a class="card" href="html-mockups/phase2/studio-access-request-2026-07-17.html"><div class="ct"><h3>Studio access request</h3><span class="new">New</span></div><p>The public request form — creators tell us what they want to launch during the beta onboarding waves.</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
         <a class="card" href="html-mockups/phase2/admin-studio-access-states-gallery-2026-06-30.html"><div class="ct"><h3>Studio access admin</h3></div><p>Toko-internal: grant an account studio access — principal, name, what they're building — and manage who has access.</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
@@ -238,19 +262,62 @@
         <a class="card" href="html-mockups/faq.html"><div class="ct"><h3>FAQ</h3></div><p>Answers to the questions people ask most about Toko.</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
     </section>
+    </div><!-- /panel-phase2 -->
 
-        <!-- Phase 3 -->
+    <!-- ============ PHASE 3 ============ -->
+    <div class="tabpanel" id="panel-phase3" role="tabpanel" aria-labelledby="tab-phase3" tabindex="0" hidden>
+      <p class="phasenote"><strong>Resilience checks.</strong> Deferred to a later iteration — mocks live in <span style="font-family:ui-monospace,monospace">html-mockups/phase3</span>.</p>
+
     <section class="group">
-      <h2>Phase 3</h2>
-      <div class="gdesc">Deferred to later — mocks live in <span style="font-family:ui-monospace,monospace">html-mockups/phase3</span>.</div>
+      <h2>Phase 3 mockups</h2>
+      <div class="gdesc">Deferred to a later build iteration.</div>
       <div class="grid">
         <a class="card" href="html-mockups/phase3/project-mastery-states-gallery-2026-06-30.html"><div class="ct"><h3>Project Mastery</h3></div><p>Spend the project's Toko Reputation to unlock skills, plus repeatable boosts like a Launchpad hero slot.</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
         <a class="card" href="html-mockups/phase3/project-burn-reputation-states-gallery-2026-06-30.html"><div class="ct"><h3>Burn &amp; Reputation</h3></div><p>The project's Toko Reputation — $TOKO burned (earned from claims vs bought), per vendor and over time.</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
         <a class="card" href="html-mockups/phase3/friends-list-states-gallery-2026-07-20.html"><div class="ct"><h3>Friends list</h3><span class="new">New</span></div><p>A private, mutual friends list keyed by User ID — requests, the transfer picker, and privacy rules.</p><span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
     </section>
+    </div><!-- /panel-phase3 -->
 
   </div>
   <footer>Toko design mockups · sample data, not the live product. Open a card to view; use Back to return.</footer>
+<script>
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  if (!tabs.length) return;
+
+  function select(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+    var id = tab.id.replace('tab-', '');
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { select(tab, false); });
+    tab.addEventListener('keydown', function (e) {
+      var i = tabs.indexOf(tab), next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      else if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if (e.key === 'Home') next = tabs[0];
+      else if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); select(next, true); }
+    });
+  });
+
+  // Deep link: index.html#phase2 opens that tab directly.
+  function fromHash() {
+    var t = document.getElementById('tab-' + (location.hash || '').replace('#', ''));
+    if (t) select(t, false);
+  }
+  fromHash();
+  window.addEventListener('hashchange', fromHash);
+}());
+</script>
 </body>
 </html>
