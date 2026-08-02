@@ -186,6 +186,12 @@
   .tk-card.sel { border-color:var(--text-primary); box-shadow:0 0 0 1px var(--text-primary); }
   .tk-card.sel .pick-box { background:var(--text-primary); border-color:var(--text-primary); }
   .tk-card.sel .pick-box svg { opacity:1; }
+  /* per-card remove control (paused + flexible inventory only) — sits in the art's bottom-right, clear of the pick box (top-left) and the stack badge (top-right) */
+  .tk-card .art { position:relative; }
+  .tk-card .rm { position:absolute; right:6px; bottom:6px; width:22px; height:22px; border-radius:50%; border:2px solid #fff; background:rgba(10,10,10,.55); display:inline-flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); cursor:pointer; }
+  .tk-card .rm svg { width:12px; height:12px; }
+  .tk-card .rm:hover { background:var(--notify-error); border-color:var(--notify-error); }
+  .tk-card .rm[disabled] { opacity:.35; cursor:not-allowed; }
   .cbx { width:18px; height:18px; border-radius:5px; border:2px solid var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; color:#fff; }
   .cbx svg { width:12px; height:12px; opacity:0; }
   .cbx.on { background:var(--text-primary); border-color:var(--text-primary); }
@@ -837,7 +843,7 @@
 
     <!-- 09 · Inventory — must pause to edit (running) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">09</span><span class="t">Inventory — running (must pause to edit)</span><span class="d">A live vendor's inventory, opened while it's Running. The tokens are shown read-only and the add/remove controls are disabled — you must pause claims before altering inventory, so a collector can't buy a token mid-edit. Additive &amp; Flexible vendors only; a Locked-inventory vendor has no edit affordances at all.</span></div>
+      <div class="frame-cap"><span class="num">09</span><span class="t">Inventory — running (must pause to edit)</span><span class="d">A live vendor's inventory, opened while it's Running. The tokens are shown read-only and every add/remove control is disabled — including the per-card <strong>✕</strong>, which stays visible but greyed rather than disappearing, so the affordance doesn't look like it's gone missing. You must pause claims before altering inventory, so a collector can't buy a token mid-edit. Additive &amp; Flexible vendors only; a Locked-inventory vendor has no edit affordances at all.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Inventory</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -857,12 +863,12 @@
             </div>
           </div>
           <div class="tk-grid">
-            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><div class="meta"><div class="nm">Spring Fox #014</div><div class="rn">Common · Spring Foxes</div></div></div>
-            <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🏮</div><div class="meta"><div class="nm">Night Lantern #221</div><div class="rn">Uncommon · Night Market</div></div></div>
-            <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🦊</div><div class="meta"><div class="nm">Spring Fox #112</div><div class="rn">Rare · Spring Foxes</div></div></div>
-            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">❄️</div><div class="meta"><div class="nm">Winter Tale #006</div><div class="rn">Common · Winter Tales</div></div></div>
-            <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic · Night Market</div></div></div>
-            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><span class="stackn">×4</span><div class="meta"><div class="nm">Spring Fox #051</div><div class="rn">Common · stack</div></div></div>
+            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊<button class="rm" disabled aria-label="Remove — pause the vendor first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Spring Fox #014</div><div class="rn">Common · Spring Foxes</div></div></div>
+            <div class="tk-card rar-uncommon"><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🏮<button class="rm" disabled aria-label="Remove — pause the vendor first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Night Lantern #221</div><div class="rn">Uncommon · Night Market</div></div></div>
+            <div class="tk-card rar-rare"><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🦊<button class="rm" disabled aria-label="Remove — pause the vendor first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Spring Fox #112</div><div class="rn">Rare · Spring Foxes</div></div></div>
+            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">❄️<button class="rm" disabled aria-label="Remove — pause the vendor first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Winter Tale #006</div><div class="rn">Common · Winter Tales</div></div></div>
+            <div class="tk-card rar-epic"><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆<button class="rm" disabled aria-label="Remove — pause the vendor first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic · Night Market</div></div></div>
+            <div class="tk-card rar-common"><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊<button class="rm" disabled aria-label="Remove — pause the vendor first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><span class="stackn">×4</span><div class="meta"><div class="nm">Spring Fox #051</div><div class="rn">Common · stack</div></div></div>
           </div>
           <div class="listbar">
             <span class="results-count">Showing <strong>1–48</strong> of <strong>158</strong> staged</span>
@@ -875,7 +881,7 @@
 
     <!-- 10 · Inventory — paused & populated (flexible: select + remove) -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">10</span><span class="t">Inventory — paused &amp; populated (flexible)</span><span class="d">Paused, so editable. Filter by collection and rarity tier; the grid mirrors the Minted-token management cards. <strong>Flexible</strong> inventory can also remove tokens — Select turns on per-card checkboxes and the bulk bar, and removing returns those tokens to their collections. (An <strong>Additive</strong> vendor shows Add only, no Select/Remove.)</span></div>
+      <div class="frame-cap"><span class="num">10</span><span class="t">Inventory — paused &amp; populated (flexible)</span><span class="d">Paused, so editable. Filter by collection and rarity tier; the grid mirrors the Minted-token management cards. <strong>Flexible</strong> inventory can also remove tokens, by either route: the per-card <strong>✕</strong> removes that one token, and Select turns on per-card checkboxes and the bulk bar for several at once. Both return the tokens to their collections and <strong>both go through a confirm</strong> (frames 12 and 12 ·) — neither ever removes on the click itself. (An <strong>Additive</strong> vendor shows Add only: no Select, no bulk bar, and <strong>no per-card ✕</strong>. A <strong>Locked</strong> vendor has no edit affordances at all, and while the vendor is <strong>Running</strong> every remove control is disabled — see frame 09.)</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><a>Vendors</a><span class="sep">/</span><a>Spring Launch</a><span class="sep">/</span><span class="here">Inventory</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -897,12 +903,12 @@
           </div>
           <div class="bulkbar"><span class="bl"><span class="cbx some"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><line x1="6" y1="12" x2="18" y2="12"/></svg></span><span class="b-count">3 selected</span></span><span class="b-actions"><button class="bb bb--danger">Remove from vendor</button><button class="bb bb--clear">Clear selection</button></span></div>
           <div class="tk-grid">
-            <div class="tk-card pick sel rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><div class="meta"><div class="nm">Spring Fox #014</div><div class="rn">Common · Spring Foxes</div></div></div>
-            <div class="tk-card pick rar-uncommon"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🏮</div><div class="meta"><div class="nm">Night Lantern #221</div><div class="rn">Uncommon · Night Market</div></div></div>
-            <div class="tk-card pick sel rar-rare"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🦊</div><div class="meta"><div class="nm">Spring Fox #112</div><div class="rn">Rare · Spring Foxes</div></div></div>
-            <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">❄️</div><div class="meta"><div class="nm">Winter Tale #006</div><div class="rn">Common · Winter Tales</div></div></div>
-            <div class="tk-card pick sel rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆</div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic · Night Market</div></div></div>
-            <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊</div><span class="stackn">×4</span><div class="meta"><div class="nm">Spring Fox #051</div><div class="rn">Common · stack</div></div></div>
+            <div class="tk-card pick sel rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊<button class="rm" aria-label="Remove Spring Fox #014 from vendor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Spring Fox #014</div><div class="rn">Common · Spring Foxes</div></div></div>
+            <div class="tk-card pick rar-uncommon"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#6ee7b7,#065f46)">🏮<button class="rm" aria-label="Remove Night Lantern #221 from vendor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Night Lantern #221</div><div class="rn">Uncommon · Night Market</div></div></div>
+            <div class="tk-card pick sel rar-rare"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#f472b6,#831843)">🦊<button class="rm" aria-label="Remove Spring Fox #112 from vendor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Spring Fox #112</div><div class="rn">Rare · Spring Foxes</div></div></div>
+            <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#fde68a,#b45309)">❄️<button class="rm" aria-label="Remove Winter Tale #006 from vendor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Winter Tale #006</div><div class="rn">Common · Winter Tales</div></div></div>
+            <div class="tk-card pick sel rar-epic"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#c084fc,#5b21b6)">🎆<button class="rm" aria-label="Remove Sky Firework #016 from vendor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="meta"><div class="nm">Sky Firework #016</div><div class="rn">Epic · Night Market</div></div></div>
+            <div class="tk-card pick rar-common"><span class="pick-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="art" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🦊<button class="rm" aria-label="Remove Spring Fox #051 stack from vendor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><span class="stackn">×4</span><div class="meta"><div class="nm">Spring Fox #051</div><div class="rn">Common · stack</div></div></div>
           </div>
           <div class="listbar">
             <span class="results-count">Showing <strong>1–48</strong> of <strong>158</strong> staged</span>
@@ -965,6 +971,36 @@
             <div class="kv"><span>Night Market</span><span class="v">1 → returned to collection</span></div>
           </div>
           <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove 3 tokens</button></div>
+        </div>
+      </div>
+
+      <!-- 12 · Remove a single token — confirm (per-card ✕) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">12 ·</span><span class="t">Remove one token — confirm (per-card ✕)</span><span class="d">The single-token counterpart, opened by the <strong>✕</strong> on a token card. Same component and same rules as the bulk confirm above, named for the one token so there's no doubt which card was hit — a mis-click on a dense grid is exactly the risk this guards. <strong>Cancel</strong> closes with nothing changed; <strong>Remove token</strong> returns that copy to its collection's held inventory. Removal is never immediate on the ✕ itself. Same gating as the bulk path: Flexible policy only, vendor paused; disabled while Running, absent on Additive and Locked.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:480px">
+          <header><h4>Remove Spring Fox #014 from Spring Launch?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">This token leaves the vendor.</strong> It returns to its collection's held inventory and can't be claimed here until you add it again. The vendor is paused, so no claim is in flight.</div></div>
+            <div class="kv"><span>Token</span><span class="v">Spring Fox #014 · Common</span></div>
+            <div class="kv"><span>Spring Foxes</span><span class="v">1 → returned to collection</span></div>
+            <div class="kv"><span>Vendor inventory after</span><span class="v">158 → 157 staged</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove token</button></div>
+        </div>
+      </div>
+
+      <!-- 12 · Remove a stack — confirm (whole stack leaves) -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">12 ·</span><span class="t">Remove one token — confirm (stack)</span><span class="d">The same confirm when the card is a <strong>stack</strong>. The ✕ removes the <strong>whole stack</strong>, not one copy from it, so the modal states the copy count plainly — this is the case most likely to be misread on the grid, where the card looks like a single item with a small ×4 badge.</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:480px">
+          <header><h4>Remove Spring Fox #051 from Spring Launch?</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="info-note warn-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong style="color:var(--text-primary)">This is a stack of 4 copies — all 4 leave the vendor.</strong> They return to their collection's held inventory and can't be claimed here until you add them again. The vendor is paused, so no claim is in flight.</div></div>
+            <div class="kv"><span>Token</span><span class="v">Spring Fox #051 · Common · stack ×4</span></div>
+            <div class="kv"><span>Spring Foxes</span><span class="v">4 → returned to collection</span></div>
+            <div class="kv"><span>Vendor inventory after</span><span class="v">158 → 154 staged</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Remove 4 copies</button></div>
         </div>
       </div>
     </section>
