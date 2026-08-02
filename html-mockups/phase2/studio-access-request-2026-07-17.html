@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script src="../../site-nav.js"></script>
-<title>Toko — Request studio access</title>
+<title>Toko — Apply for studio access</title>
 <style>
   @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
   @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
@@ -12,31 +12,43 @@
     --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA;
     --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
     --border-soft:#E5E5E5; --brand-cyan:#06B0E6;
-    --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --notify-error:#C6303B; --notify-error-bg:#FDF2F2; --notify-ok:#15803D; --notify-ok-bg:#F1FAF3;
+    --notify-warn:#B45309; --notify-warn-bg:#FDF7EC; --info-bg:#F2F8FD; --info:#1D6FB8;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
     --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
-    --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem;
     --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
   }
   * { box-sizing:border-box; }
   html, body { margin:0; }
   body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-page); -webkit-font-smoothing:antialiased; }
-  h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
-  .wrap { max-width:640px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  h2, h3, h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  h2 { font-size:var(--text-2xl); }
+  .wrap { max-width:760px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+
+  /* page header — annotation on grey */
+  .ghead { margin-bottom:var(--s-8); }
+  .ghead .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+  .ghead h2 { margin:var(--s-2) 0 var(--s-3); }
+  .ghead p { margin:0; color:var(--text-secondary); font-size:var(--text-sm); max-width:70ch; }
+  .ghead .navlinks { margin-top:var(--s-4); font-size:var(--text-xs); color:var(--text-secondary); }
 
   /* gallery caption — annotation on grey, not product UI */
-  .frame-cap { display:flex; align-items:baseline; gap:var(--s-4); margin-bottom:var(--s-5); }
+  .frame { margin-bottom:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-4); margin-bottom:var(--s-5); flex-wrap:wrap; }
   .frame-cap .num { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; color:var(--text-muted); }
   .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); letter-spacing:.02em; }
-  .frame-cap .d { font-size:var(--text-xs); color:var(--text-secondary); max-width:60ch; }
+  .frame-cap .d { font-size:var(--text-xs); color:var(--text-secondary); max-width:70ch; }
 
   /* canonical modal — Simple Modal Base */
   .stage { display:flex; justify-content:center; padding:var(--s-6) 0; }
   .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
-  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
   .modal-card header h4 { font-size:var(--text-xl); }
   .modal-card header .x { width:28px; height:28px; border-radius:50%; border:0; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; color:var(--text-primary); flex:none; cursor:pointer; }
   .modal-card .mbody { padding:var(--s-5); }
   .modal-card .footer-row { display:flex; justify-content:space-between; align-items:center; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .modal-card .footer-row.single { justify-content:flex-end; }
   .lede-small { margin:0 0 var(--s-5); color:var(--text-secondary); font-size:var(--text-sm); }
 
   .m-field { margin-bottom:var(--s-5); }
@@ -45,62 +57,301 @@
   .flabel .opt { color:var(--text-muted); text-transform:none; letter-spacing:0; font-weight:400; }
   .m-field input, .m-field textarea { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.75rem .875rem; font-family:var(--font-body); font-size:var(--text-base); color:var(--text-primary); }
   .m-field textarea { min-height:110px; resize:vertical; }
+  .m-field input.err, .m-field textarea.err { border-color:var(--notify-error); background:var(--notify-error-bg); }
+  .m-field input:disabled, .m-field textarea:disabled { color:var(--text-muted); background:var(--surface-page); }
   .fhint { color:var(--text-secondary); font-size:var(--text-xs); margin:.4rem 0 0; }
+  .ferr { display:flex; align-items:flex-start; gap:.4rem; color:var(--notify-error); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); margin:.4rem 0 0; }
+  .ferr svg { width:14px; height:14px; flex:none; margin-top:1px; }
 
-  .btn { display:inline-flex; align-items:center; justify-content:center; padding:12px 22px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; cursor:pointer; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:12px 22px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; cursor:pointer; }
   .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--lg { padding:14px 26px; font-size:var(--text-base); }
+  .btn[disabled] { opacity:.5; cursor:not-allowed; }
+  .spinner { width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; display:inline-block; }
+
+  /* notes */
+  .note { display:flex; gap:var(--s-3); align-items:flex-start; border-radius:var(--r-3); padding:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .note .ic { flex:none; width:18px; height:18px; }
+  .note .ic svg { width:18px; height:18px; }
+  .note strong { color:var(--text-primary); }
+  .note--info { background:var(--info-bg); color:var(--text-secondary); }
+  .note--info .ic { color:var(--info); }
+  .note--ok { background:var(--notify-ok-bg); }
+  .note--ok .ic { color:var(--notify-ok); }
+  .note--err { background:var(--notify-error-bg); }
+  .note--err .ic { color:var(--notify-error); }
+  .note--warn { background:var(--notify-warn-bg); }
+  .note--warn .ic { color:var(--notify-warn); }
+
+  /* grey showcase — for documenting a component, never dressed as a screen */
+  .showcase { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-6); }
+  .showcase .sclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .ctatable { display:grid; grid-template-columns:minmax(140px,auto) 1fr; gap:var(--s-4) var(--s-5); align-items:center; }
+  .ctatable .cs { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); }
+  .ctatable .cw { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .ctatable .cnote { grid-column:1 / -1; font-size:var(--text-xs); color:var(--text-secondary); margin:0; padding-bottom:var(--s-4); border-bottom:1px solid #d8d8d8; }
+  .ctatable .cnote:last-child { border-bottom:0; padding-bottom:0; }
+  .pill { display:inline-flex; align-items:center; gap:.35rem; border-radius:var(--r-pill); padding:.3rem .7rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas); border:1px solid var(--border-soft); color:var(--text-secondary); }
+  .pill .dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+  .pill--pending { color:var(--notify-warn); border-color:#f0dcc0; background:var(--notify-warn-bg); }
+  .pill--ok { color:var(--notify-ok); border-color:#cfe9d6; background:var(--notify-ok-bg); }
+
+  .kvrow { display:flex; justify-content:space-between; gap:var(--s-4); padding:.6rem 0; border-bottom:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kvrow:last-child { border-bottom:0; }
+  .kvrow .k { color:var(--text-secondary); }
+  .kvrow .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
 
   .spec { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-6); margin-top:var(--s-6); }
   .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-3); }
   .spec p { margin:0 0 var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); }
   .spec p:last-child { margin-bottom:0; }
   .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  @media (max-width:520px) {
+    .wrap { padding:var(--s-6) var(--s-4) 60px; }
+    .ctatable { grid-template-columns:1fr; gap:var(--s-2) 0; }
+    .ctatable .cs { margin-top:var(--s-3); }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="frame-cap"><span class="num">01</span><span class="t">Request studio access — modal</span><span class="d">Opens from the "Become a creator" CTA. Canonical Simple Modal Base: Anton title + close ✕ in the header, lede and fields in the body, footer row with ghost Cancel + primary action. Nothing else renders around it — the grey is just the page behind the overlay.</span></div>
 
-  <div class="stage">
-    <div class="modal-card">
-      <header><h4>Request studio access</h4><button class="x" aria-label="Close">✕</button></header>
-      <form class="mbody">
-        <p class="lede-small">Toko is onboarding creators in waves during beta. Tell us a little about what you want to launch and we&rsquo;ll be in touch &mdash; approved creators get the studio unlocked on their existing Toko account.</p>
-        <div class="m-field">
-          <label class="flabel">Your name</label>
-          <input type="text" placeholder="Jane Doe" />
-        </div>
-        <div class="m-field">
-          <label class="flabel">Email</label>
-          <input type="email" placeholder="you@example.com" />
-          <p class="fhint">Only used to reply about this request.</p>
-        </div>
-        <div class="m-field">
-          <label class="flabel">Project or studio name</label>
-          <input type="text" placeholder="Lumen Studio" />
-        </div>
-        <div class="m-field">
-          <label class="flabel">Portfolio or social links</label>
-          <input type="text" placeholder="https://&hellip;  &middot;  @handle" />
-          <p class="fhint">Anywhere we can see your work &mdash; a site, X, Instagram, a past collection.</p>
-        </div>
-        <div class="m-field">
-          <label class="flabel">What do you plan to launch?</label>
-          <textarea placeholder="A short description — the art, the collection size, editions or one-of-ones, any timeline in mind."></textarea>
-        </div>
-        <div class="m-field">
-          <label class="flabel">Toko User ID <span class="opt">&middot; optional, if you already have an account</span></label>
-          <input type="text" class="mono" placeholder="usr_&hellip;" />
-          <p class="fhint">Studio access is granted to an existing Toko account &mdash; if you don&rsquo;t have one yet, we&rsquo;ll walk you through it.</p>
-        </div>
-      </form>
-      <div class="footer-row"><button type="button" class="btn btn--ghost">Cancel</button><button type="button" class="btn">Send request</button></div>
+  <header class="ghead">
+    <div class="eyebrow">Phase 2 · States gallery</div>
+    <h2>Apply for studio access.</h2>
+    <p>The public side of the beta studio gate: the entry CTA and every state of the request modal it opens. Studio access is a platform-level flag Toko admins grant to an <strong>existing</strong> account — no account is ever created from this form, and account creation itself is never gated (R58). The admin side lives in <span class="mono">admin-studio-access-states-gallery-2026-06-30.html</span>.</p>
+    <div class="navlinks">Spec: <span class="mono">Design Documentation/Phase2/studio-access-design.md</span> · Shell &amp; components: <span class="mono">build-mocks/style-guide/page-shell.md</span> · Ruling: R58 in <span class="mono">design-doc-review-2026-07-02.md</span>. Renamed 2026-07-21: this capability was "creator access"; <strong>Creator</strong> now means only the per-project role.</div>
+  </header>
+
+  <!-- 01 · entry CTA -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Entry CTA — by account state</span><span class="d">The button that opens the modal, in each state an account can be in. The label is <strong>Apply for studio access</strong> — never "become a creator", because Creator now means the per-project role and nothing else. A pending or granted account never sees the apply CTA again, so nobody can file a second request by accident.</span></div>
+    <div class="showcase">
+      <span class="sclabel">CTA states — reference, not a screen</span>
+      <div class="ctatable">
+        <span class="cs">Signed out</span>
+        <span class="cw"><button class="btn btn--lg">Apply for studio access</button></span>
+        <p class="cnote">Opens the modal straight away. Signing in isn't required to apply — the form collects a Toko User ID only if the person already has one.</p>
+
+        <span class="cs">Signed in · no access</span>
+        <span class="cw"><button class="btn btn--lg">Apply for studio access</button></span>
+        <p class="cnote">Same CTA. The modal pre-fills the signed-in account's User ID and hides the "if you don't have an account" hint.</p>
+
+        <span class="cs">Request pending</span>
+        <span class="cw"><button class="btn btn--lg btn--ghost" disabled>Application received</button><span class="pill pill--pending"><span class="dot"></span>In review</span></span>
+        <p class="cnote">The CTA is replaced, not just disabled-looking — a second application adds nothing and the team reviews in waves. Hover/focus explains that we'll reply by email.</p>
+
+        <span class="cs">Has studio access</span>
+        <span class="cw"><button class="btn btn--lg">Open Studio</button><span class="pill pill--ok"><span class="dot"></span>Studio access</span></span>
+        <p class="cnote">The gate is passed, so the CTA becomes the destination. This is the only state where the apply modal is unreachable.</p>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- 02 · modal, first open -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Modal — first open (empty)</span><span class="d">Canonical Simple Modal Base: Anton title + close ✕ in a bordered header, lede and fields in the body, footer row with ghost Cancel + primary action. Nothing else renders around it — the grey is just the page behind the overlay. Every field is empty; no validation has run yet, so nothing is marked red on open.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Apply for studio access</h4><button class="x" aria-label="Close">✕</button></header>
+        <form class="mbody">
+          <p class="lede-small">Toko is onboarding creators in waves during beta. Tell us a little about what you want to launch and we&rsquo;ll be in touch &mdash; approved applicants get the studio unlocked on their existing Toko account.</p>
+          <div class="m-field">
+            <label class="flabel">Your name</label>
+            <input type="text" placeholder="Jane Doe" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Email</label>
+            <input type="email" placeholder="you@example.com" />
+            <p class="fhint">Only used to reply about this application.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Project or studio name</label>
+            <input type="text" placeholder="Lumen Studio" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Portfolio or social links</label>
+            <input type="text" placeholder="https://&hellip;  &middot;  @handle" />
+            <p class="fhint">Anywhere we can see your work &mdash; a site, X, Instagram, a past collection.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">What do you plan to launch?</label>
+            <textarea placeholder="A short description — the art, the collection size, editions or one-of-ones, any timeline in mind."></textarea>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Toko User ID <span class="opt">&middot; optional, if you already have an account</span></label>
+            <input type="text" class="mono" placeholder="usr_&hellip;" />
+            <p class="fhint">Studio access is granted to an existing Toko account &mdash; if you don&rsquo;t have one yet, we&rsquo;ll walk you through it.</p>
+          </div>
+        </form>
+        <div class="footer-row"><button type="button" class="btn btn--ghost">Cancel</button><button type="button" class="btn">Send application</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · modal, filled -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Modal — filled and ready</span><span class="d">The same modal completed by a signed-in applicant. The User ID is pre-filled from the session and the "if you don't have one" hint is replaced by confirmation of which account access would land on — the single most common support question, answered before it's asked.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Apply for studio access</h4><button class="x" aria-label="Close">✕</button></header>
+        <form class="mbody">
+          <p class="lede-small">Toko is onboarding creators in waves during beta. Tell us a little about what you want to launch and we&rsquo;ll be in touch &mdash; approved applicants get the studio unlocked on their existing Toko account.</p>
+          <div class="m-field">
+            <label class="flabel">Your name</label>
+            <input type="text" value="Mara Okafor" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Email</label>
+            <input type="email" value="mara@crystalbirds.xyz" />
+            <p class="fhint">Only used to reply about this application.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Project or studio name</label>
+            <input type="text" value="Crystal Birds" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Portfolio or social links</label>
+            <input type="text" value="crystalbirds.xyz · @crystalbirds" />
+            <p class="fhint">Anywhere we can see your work &mdash; a site, X, Instagram, a past collection.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">What do you plan to launch?</label>
+            <textarea>Mineral songbird collections — around 500 generated pieces across five rarity tiers, with a small run of one-of-ones. Aiming for late autumn.</textarea>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Toko User ID <span class="opt">&middot; from your signed-in account</span></label>
+            <input type="text" class="mono" value="usr_01H8R2K4FM9C" />
+            <p class="fhint">If approved, studio access is added to this account &mdash; you won&rsquo;t need a new one.</p>
+          </div>
+        </form>
+        <div class="footer-row"><button type="button" class="btn btn--ghost">Cancel</button><button type="button" class="btn">Send application</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · validation -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Modal — validation on send</span><span class="d">Validation runs on <strong>Send</strong>, not while typing, so the form never scolds someone mid-sentence. Errors sit on the field they belong to — never in a banner — and focus jumps to the first one. Required: name, email, and what you plan to launch. The User ID is optional, but a malformed one is caught here rather than failing silently in review.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Apply for studio access</h4><button class="x" aria-label="Close">✕</button></header>
+        <form class="mbody">
+          <p class="lede-small">Toko is onboarding creators in waves during beta. Tell us a little about what you want to launch and we&rsquo;ll be in touch &mdash; approved applicants get the studio unlocked on their existing Toko account.</p>
+          <div class="m-field">
+            <label class="flabel">Your name</label>
+            <input type="text" class="err" placeholder="Jane Doe" />
+            <p class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Tell us your name so we know who we&rsquo;re replying to.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Email</label>
+            <input type="email" class="err" value="mara@crystalbirds" />
+            <p class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>That doesn&rsquo;t look like a complete email address.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Project or studio name</label>
+            <input type="text" value="Crystal Birds" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Portfolio or social links</label>
+            <input type="text" placeholder="https://&hellip;  &middot;  @handle" />
+            <p class="fhint">Anywhere we can see your work &mdash; a site, X, Instagram, a past collection.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">What do you plan to launch?</label>
+            <textarea class="err" placeholder="A short description — the art, the collection size, editions or one-of-ones, any timeline in mind."></textarea>
+            <p class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>A sentence or two is enough &mdash; this is the part the team reviews.</p>
+          </div>
+          <div class="m-field">
+            <label class="flabel">Toko User ID <span class="opt">&middot; optional, if you already have an account</span></label>
+            <input type="text" class="mono err" value="mara.okafor" />
+            <p class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>That isn&rsquo;t a Toko User ID. It looks like <span class="mono">usr_01H8R2K4FM9C</span> &mdash; or leave it blank.</p>
+          </div>
+        </form>
+        <div class="footer-row"><button type="button" class="btn btn--ghost">Cancel</button><button type="button" class="btn">Send application</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · sending -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Modal — sending</span><span class="d">While the request is in flight the fields lock and the primary button becomes a spinner, so nobody double-submits into two rows of the review sheet. <strong>Cancel</strong> stays live — it abandons the send and closes; the ✕ is removed for the duration so a stray click can't leave the person unsure whether it went.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Apply for studio access</h4></header>
+        <form class="mbody">
+          <p class="lede-small">Sending your application&hellip;</p>
+          <div class="m-field">
+            <label class="flabel">Your name</label>
+            <input type="text" value="Mara Okafor" disabled />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Email</label>
+            <input type="email" value="mara@crystalbirds.xyz" disabled />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Project or studio name</label>
+            <input type="text" value="Crystal Birds" disabled />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Toko User ID</label>
+            <input type="text" class="mono" value="usr_01H8R2K4FM9C" disabled />
+          </div>
+        </form>
+        <div class="footer-row"><button type="button" class="btn btn--ghost">Cancel</button><button type="button" class="btn" disabled><span class="spinner"></span>Sending&hellip;</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · sent -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Modal — application sent</span><span class="d">The confirmation replaces the form in the same modal rather than opening a second one. One action only — <strong>Done</strong> (or ✕) — matching the admin tool's grant-success modal; there is no "apply again". It sets expectations plainly: reviewed in waves, reply by email, and access lands on the existing account rather than arriving as a new login.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Application sent</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="note note--ok" style="margin-bottom:var(--s-5)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>Thanks &mdash; we&rsquo;ve got it.</strong> We review applications in waves and reply to every one by email.</div></div>
+          <div class="kvrow"><span class="k">Replying to</span><span class="v">mara@crystalbirds.xyz</span></div>
+          <div class="kvrow"><span class="k">Account</span><span class="v mono">usr_01H8R2K4FM9C</span></div>
+          <div class="kvrow"><span class="k">If approved</span><span class="v">Studio unlocks on that account</span></div>
+          <p class="fhint" style="margin-top:var(--s-4)">Nothing changes on your account in the meantime &mdash; you can keep claiming, trading and using your wallet exactly as before.</p>
+        </div>
+        <div class="footer-row single"><button type="button" class="btn">Done</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · send failed -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Modal — couldn&rsquo;t send</span><span class="d">The send failed in transit. Everything typed is kept and re-editable — losing a long answer to a dropped connection is the worst outcome this form has. The primary action becomes <strong>Try again</strong>, with a plain-text fallback address so a determined applicant is never fully blocked by our own outage.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Apply for studio access</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="note note--err" style="margin-bottom:var(--s-5)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>We couldn&rsquo;t send your application.</strong> Nothing was lost &mdash; your answers are still here. Check your connection and try again, or email them to <strong>studio@toko.app</strong>.</div></div>
+          <div class="m-field">
+            <label class="flabel">Your name</label>
+            <input type="text" value="Mara Okafor" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">Email</label>
+            <input type="email" value="mara@crystalbirds.xyz" />
+          </div>
+          <div class="m-field">
+            <label class="flabel">What do you plan to launch?</label>
+            <textarea>Mineral songbird collections — around 500 generated pieces across five rarity tiers, with a small run of one-of-ones. Aiming for late autumn.</textarea>
+          </div>
+        </div>
+        <div class="footer-row"><button type="button" class="btn btn--ghost">Cancel</button><button type="button" class="btn">Try again</button></div>
+      </div>
+    </div>
+  </section>
 
   <div class="spec">
     <span class="speclabel">Implementation note — not part of the page</span>
-    <p>V1 backing: this form can POST straight to a <strong>Google Form</strong> (each field maps to a Forms question via its <span class="mono">entry.NNN</span> id), so responses land in a Sheet for the team with zero backend work. The same fields translate 1:1 if we later swap to a native endpoint.</p>
+    <p>V1 backing: this form can POST straight to a <strong>Google Form</strong> (each field maps to a Forms question via its <span class="mono">entry.NNN</span> id), so responses land in a Sheet for the team with zero backend work. The same fields translate 1:1 if we later swap to a native endpoint. A cross-origin Forms POST gives no readable response, so frame 06 fires on request completion and frame 07 covers a genuine network failure only.</p>
+    <p>The <strong>pending</strong> and <strong>has access</strong> CTA states in 01 need the account's studio-access flag on the client. Until that flag is exposed, ship the signed-out CTA everywhere — an extra duplicate application is a cheaper failure than a wrongly hidden one.</p>
     <p>Review flow: the team checks responses, then grants studio access to the applicant&rsquo;s existing account via the internal admin tool (account lookup by User ID / principal &mdash; see <span class="mono">admin-studio-access-states-gallery-2026-06-30.html</span>). No accounts are created from this form.</p>
   </div>
 </div>
