@@ -353,7 +353,7 @@
 
     <!-- 01 · Manage vendors — list -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">01</span><span class="t">Manage vendors — list</span><span class="d">Every vendor for the project. Each card shows the two independent state axes — Stage and Runtime — plus inventory and claimed progress. The blurred "status" of the old flow is replaced by these explicit signals, because every lifecycle control depends on a combination of them.</span></div>
+      <div class="frame-cap"><span class="num">01</span><span class="t">Manage vendors — list</span><span class="d">Every vendor for the project. Each card shows the two independent state axes — Stage and Runtime — plus inventory and claimed progress. The blurred "status" of the old flow is replaced by these explicit signals, because every lifecycle control depends on a combination of them. <strong>The card's second button is the one action that state needs</strong>, so a vendor is never a dead end that has to be opened to find out what to do next: <strong>Live · Setup → Start</strong> (the only primary-styled one, because a published vendor that isn't taking claims is the one state a creator wants to leave), <strong>Live · Running → Pause</strong>, <strong>Live · Paused → Resume</strong>, <strong>Live · Empty → Add inventory</strong>. Draft and Review have no runtime action yet, so they show setup only.</span></div>
       <div class="screen">
         <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Vault One</a><span class="sep">/</span><span class="here">Vendors</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="badge">3</span></button></div></div>
         <div class="section">
@@ -383,6 +383,12 @@
               <div class="vstate"><span class="sb sb--indigo"><span class="dot"></span>Review</span><span class="sb sb--grey">Setup</span></div>
               <div class="info-note" style="padding:var(--s-3) var(--s-4)"><div>Reviewed, stocked and priced — set Live to publish to Launchpad.</div></div>
               <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button></div>
+            </div>
+            <div class="vendor-card">
+              <div class="vhead"><span class="vthumb g"></span><div><div class="vname">Autumn Drop</div><div class="vsub">Market · ICP claim</div></div></div>
+              <div class="vstate"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey">Setup</span></div>
+              <div class="info-note" style="padding:var(--s-3) var(--s-4)"><div>Published but not open — press <strong>Start</strong> to begin taking claims.</div></div>
+              <div class="vfoot"><button class="btn btn--ghost btn--sm">Manage</button><button class="btn btn--primary btn--sm">Start</button></div>
             </div>
             <div class="vendor-card">
               <div class="vhead"><span class="vthumb"></span><div><div class="vname">Summer Teaser</div><div class="vsub">Market · ICP claim</div></div></div>
@@ -472,6 +478,65 @@
             </div>
             <p class="tiny" style="margin-top:var(--s-3)">Delete isn't available on a Live vendor — only an <strong>ended &amp; empty</strong> vendor can be deleted (see the Ended state).</p>
           </div>
+        </div>
+      </div>
+
+      <!-- 03 · Lifecycle controls — every runtime state -->
+      <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">03 ·</span><span class="t">Lifecycle controls — the full button matrix</span><span class="d">The same card in every runtime state a <strong>Live</strong> vendor can be in, so the enabled/disabled pattern is documented once rather than inferred from whichever page frame happens to show it. Exactly <strong>one</strong> action is primary per state — the move the creator almost certainly came to make. Disabled buttons stay visible with a reason on hover rather than disappearing, so the set never changes shape under you. <strong>Live · Setup</strong> is the state Start exists for: the vendor is published to Launchpad but taking no claims until it's started.</span></div>
+      <div class="showcase">
+        <div class="card" style="margin-bottom:var(--s-4)">
+          <div class="card__head"><h3>Live · Setup</h3><span class="row" style="gap:var(--s-2)"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey">Setup</span></span></div>
+          <div class="controls">
+            <button class="btn btn--primary">Start</button>
+            <button class="btn btn--ghost" disabled title="Not running yet">Pause</button>
+            <button class="btn btn--ghost" disabled title="Not paused">Resume</button>
+            <button class="btn btn--ghost" disabled title="Only from an empty vendor">Restart</button>
+            <button class="btn btn--danger">End</button>
+          </div>
+          <p class="tiny" style="margin-top:var(--s-3)">Published but closed. Start opens claiming; a scheduled vendor must be started to arm it, or it will not auto-open at its set time.</p>
+        </div>
+        <div class="card" style="margin-bottom:var(--s-4)">
+          <div class="card__head"><h3>Live · Running</h3><span class="row" style="gap:var(--s-2)"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--green"><span class="dot"></span>Running</span></span></div>
+          <div class="controls">
+            <button class="btn btn--ghost" disabled title="Already running">Start</button>
+            <button class="btn btn--primary">Pause</button>
+            <button class="btn btn--ghost" disabled title="Not paused">Resume</button>
+            <button class="btn btn--ghost" disabled title="Only from an empty vendor">Restart</button>
+            <button class="btn btn--danger">End</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:var(--s-4)">
+          <div class="card__head"><h3>Live · Paused</h3><span class="row" style="gap:var(--s-2)"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--amber"><span class="dot"></span>Paused</span></span></div>
+          <div class="controls">
+            <button class="btn btn--ghost" disabled title="Live — use Resume">Start</button>
+            <button class="btn btn--ghost" disabled title="Already paused">Pause</button>
+            <button class="btn btn--primary">Resume</button>
+            <button class="btn btn--ghost" disabled title="Only from an empty vendor">Restart</button>
+            <button class="btn btn--danger">End</button>
+          </div>
+          <p class="tiny" style="margin-top:var(--s-3)">Inventory is editable while paused — this is the only window in which tokens can be added or removed on a Live vendor.</p>
+        </div>
+        <div class="card" style="margin-bottom:var(--s-4)">
+          <div class="card__head"><h3>Live · Empty</h3><span class="row" style="gap:var(--s-2)"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey"><span class="dot"></span>Empty</span></span></div>
+          <div class="controls">
+            <button class="btn btn--ghost" disabled title="Nothing left to claim">Start</button>
+            <button class="btn btn--ghost" disabled title="Nothing left to claim">Pause</button>
+            <button class="btn btn--ghost" disabled title="Not paused">Resume</button>
+            <button class="btn btn--primary" disabled title="Add at least one token first">Restart</button>
+            <button class="btn btn--danger">End</button>
+          </div>
+          <p class="tiny" style="margin-top:var(--s-3)">Restart is the primary but stays disabled until stock exists — a Locked-inventory vendor can never satisfy it, so for that policy the only remaining move is End.</p>
+        </div>
+        <div class="card">
+          <div class="card__head"><h3>Live · Ended</h3><span class="row" style="gap:var(--s-2)"><span class="sb sb--green"><span class="dot"></span>Live</span><span class="sb sb--grey"><span class="dot"></span>Ended</span></span></div>
+          <div class="controls">
+            <button class="btn btn--ghost" disabled title="Ended — terminal">Start</button>
+            <button class="btn btn--ghost" disabled title="Ended — terminal">Pause</button>
+            <button class="btn btn--ghost" disabled title="Ended — terminal">Resume</button>
+            <button class="btn btn--ghost" disabled title="Ended — terminal">Restart</button>
+            <button class="btn btn--ghost" disabled title="Ended — terminal">End</button>
+          </div>
+          <p class="tiny" style="margin-top:var(--s-3)">Terminal, and no action is primary. The page renders a read-only record instead of this card — shown here only to complete the matrix. A Live-stage vendor can't be deleted.</p>
         </div>
       </div>
     </section>

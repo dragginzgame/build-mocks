@@ -450,7 +450,7 @@
 
     <!-- 06 · Claim result -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">06</span><span class="t">Claim result — success &amp; sold-out-during-claim</span><span class="d">On success the token lands in the wallet with a direct link to view it. If inventory ran out between page load and confirm (a race the spec calls out), the claim fails safely with nothing charged and a route to the marketplace — never a silent failure or a double-charge.</span></div>
+      <div class="frame-cap"><span class="num">06</span><span class="t">Claim result — success &amp; sold-out-during-claim</span><span class="d">On success the token lands in the wallet with a direct link to view it. If inventory ran out between page load and confirm (a race the spec calls out), the claim fails safely with nothing charged and a route to the marketplace — never a silent failure or a double-charge. <strong>Destinations are fixed, not decorative:</strong> "View in My Tokens" goes to <span class="mono">/my-tokens</span>, the wallet list route named in <span class="mono">Design Documentation/Phase1/wallet.md</span> — the same route the sidebar's My Tokens item uses. "Find it on the marketplace" opens the marketplace filtered to that token.</span></div>
       <div class="stage">
         <div class="modal-grid">
           <div class="modal-card">
@@ -459,7 +459,7 @@
               <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>It's yours.</strong> Little Leaf #014 has been claimed and is now in your wallet.</div></div>
               <div class="mini-asset"><span class="mart"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></span><span><div class="mn">Little Leaf #014</div><div class="ms">Little Leaf Guardians · Rare</div></span></div>
             </div>
-            <div class="footer-row"><button class="btn btn--ghost">Keep browsing</button><button class="btn btn--primary">View in My Tokens</button></div>
+            <div class="footer-row"><button class="btn btn--ghost">Keep browsing</button><a class="btn btn--primary" href="my-tokens-states-gallery-2026-06-22.html" title="/my-tokens">View in My Tokens</a></div>
           </div>
           <div class="modal-card">
             <header><h4>Just missed it</h4><span class="x">✕</span></header>

@@ -97,6 +97,15 @@
   .req.met .ri { background:rgba(16,185,129,.16); color:var(--stage-live); } .req.unmet .ri { background:rgba(239,68,68,.13); color:var(--notify-error); }
   .req .rt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); } .req .rd { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.1rem; }
   .cta-wrap { margin-top:var(--s-5); display:flex; flex-direction:column; gap:var(--s-2); }
+  /* "Next up" — names the exact copy the panel's Claim button will take, so nobody claims blind */
+  .nextup { margin-top:var(--s-5); padding-top:var(--s-4); border-top:1px solid var(--border-soft); }
+  .nextup .nu-lbl { font-size:var(--text-xs); color:var(--text-secondary); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .nextup .nu-row { display:flex; align-items:center; gap:var(--s-3); margin-top:var(--s-3); }
+  .nextup .nu-art { width:44px; height:44px; border-radius:var(--r-2); overflow:hidden; flex:none; background:var(--surface-canvas-deep); display:grid; place-items:center; }
+  .nextup .nu-art img { width:100%; height:100%; object-fit:cover; }
+  .nextup .nu-nm { font-family:var(--font-display); font-size:var(--text-lg); letter-spacing:.02em; text-transform:uppercase; line-height:1.1; }
+  .nextup .nu-sub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:1px; }
+  .nextup .nu-hint { font-size:var(--text-xs); color:var(--text-secondary); margin:var(--s-3) 0 0; }
 
   /* approved token card (rarity frame + tok-card) */
   .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:var(--s-3); }
@@ -154,7 +163,7 @@
   <header>
     <span class="eyebrow">Launchpad</span>
     <h1>Vendor detail — states gallery</h1>
-    <p>A vendor's launchpad storefront: identity, a claim summary panel, and the claimable inventory. Inventory is shown with the <strong>approved token card</strong> — artwork inside its rarity frame, with a price/status foot. Selecting a token opens the <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">claim view</a>. Uses the shared page chrome (context-bar toolbar at the top; no site top bar or footer here — those are their own components). Source: <span class="mono">Design Documentation/launchpad.md</span>.</p>
+    <p>A vendor's launchpad storefront: identity, a claim summary panel, and the claimable inventory. Inventory is shown with the <strong>approved token card</strong> — artwork inside its rarity frame, with a price/status foot. Selecting a token opens the <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">claim view</a>. <strong>Two routes to a claim, and the panel is never vague about which copy it takes:</strong> tap a card in the grid to claim that specific copy, or use the panel's Claim button, which takes the <strong>first available copy</strong> — named on the button and shown in the <strong>You'll claim</strong> block above it, so the choice is visible before the click rather than disclosed in the confirm modal. Uses the shared page chrome (context-bar toolbar at the top; no site top bar or footer here — those are their own components). Source: <span class="mono">Design Documentation/launchpad.md</span>.</p>
     <div class="navlinks">Reached from <a href="launchpad-states-gallery-2026-06-28.html">Launchpad</a>. Related: <a href="vendor-claim-token-view-states-gallery-2026-06-22.html">Claim view</a> · <a href="marketplace-states-gallery-2026-06-28.html">Marketplace</a></div>
   </header>
 
@@ -190,7 +199,15 @@
             <div class="avail"><div class="row"><span>Claimed</span><span><strong>880</strong> of 1,000</span></div><div class="bar"><span class="fill" style="width:88%"></span></div><div class="row" style="margin-top:.35rem"><span>120 left</span><span>88%</span></div></div>
             <div class="countdown"><div class="cd"><div class="v">01</div><div class="k">Hrs</div></div><div class="cd"><div class="v">42</div><div class="k">Min</div></div><div class="cd"><div class="v">10</div><div class="k">Sec</div></div></div>
             <div class="reqs"><div class="req met"><span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span><div class="rt">Open to everyone</div><div class="rd">This drop has no claim requirements.</div></span></div></div>
-            <div class="cta-wrap"><button class="btn btn--lg">Claim now · 12 ICP</button><a class="btn btn--secondary btn--block" href="#">View collection hub →</a></div>
+            <div class="nextup">
+              <div class="nu-lbl">You'll claim</div>
+              <div class="nu-row">
+                <span class="nu-art"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></span>
+                <span><div class="nu-nm">Fox Mask <span style="color:var(--text-secondary)">#002</span></div><div class="nu-sub">Rare · next available copy</div></span>
+              </div>
+              <p class="nu-hint">The first available copy in the grid. Pick a different one by tapping its card.</p>
+            </div>
+            <div class="cta-wrap"><button class="btn btn--lg">Claim Fox Mask #002 · 12 ICP</button><a class="btn btn--secondary btn--block" href="#">View collection hub →</a></div>
           </aside>
         </div>
       </div>
@@ -199,9 +216,9 @@
 
   <!-- 02 · lifecycle states -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Lifecycle states — header &amp; panel</span><span class="d">The launchpad derives a user-facing label from vendor state. The header badge + claim panel change together: <strong>Live</strong>, <strong>Ending soon</strong> (≤2h, countdown), <strong>Sold out</strong> (disabled), and <strong>Coming soon</strong> (scheduled — countdown to open, claim replaced by a disabled "Opens in").</span></div>
+    <div class="frame-cap"><span class="num">02</span><span class="t">Lifecycle states — header &amp; panel</span><span class="d">The launchpad derives a user-facing label from vendor state. The header badge + claim panel change together: <strong>Live</strong>, <strong>Ending soon</strong> (≤2h, countdown), <strong>Sold out</strong> (disabled), and <strong>Coming soon</strong> (scheduled — countdown to open, claim replaced by a disabled "Opens in"). The <strong>You'll claim</strong> block appears in every claimable state and is absent from the two that can't be claimed — there is nothing to name when a drop is sold out or hasn't opened.</span></div>
     <div class="showcase">
-      <div class="claim-panel"><span class="lbadge lbadge--live"><span class="dot"></span>Live</span><div class="lbl" style="margin-top:var(--s-4)">Claim price</div><div class="price">8 <span class="u">ICP</span></div><div class="avail"><div class="row"><span>Claimed</span><span><strong>234</strong> of 500</span></div><div class="bar"><span class="fill" style="width:47%"></span></div></div><div class="cta-wrap"><button class="btn btn--lg">Claim now · 8 ICP</button></div></div>
+      <div class="claim-panel"><span class="lbadge lbadge--live"><span class="dot"></span>Live</span><div class="lbl" style="margin-top:var(--s-4)">Claim price</div><div class="price">8 <span class="u">ICP</span></div><div class="avail"><div class="row"><span>Claimed</span><span><strong>234</strong> of 500</span></div><div class="bar"><span class="fill" style="width:47%"></span></div></div><div class="nextup"><div class="nu-lbl">You'll claim</div><div class="nu-row"><span class="nu-art"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></span><span><div class="nu-nm">Wind Bell <span style="color:var(--text-secondary)">#235</span></div><div class="nu-sub">Common · next available copy</div></span></div></div><div class="cta-wrap"><button class="btn btn--lg">Claim Wind Bell #235 · 8 ICP</button></div></div>
       <div class="claim-panel"><span class="lbadge lbadge--sold"><span class="dot"></span>Sold out</span><div class="lbl" style="margin-top:var(--s-4)">Claim price</div><div class="price" style="color:var(--text-secondary)">10 <span class="u">ICP</span></div><div class="avail"><div class="row"><span>Claimed</span><span><strong>750</strong> of 750</span></div><div class="bar"><span class="fill" style="width:100%"></span></div></div><div class="cta-wrap"><button class="btn btn--lg" disabled>Sold out</button><a class="btn btn--secondary btn--block" href="marketplace-states-gallery-2026-06-28.html">Find it on the market</a></div></div>
       <div class="claim-panel"><span class="lbadge lbadge--soon"><span class="dot"></span>Coming soon</span><div class="lbl" style="margin-top:var(--s-4)">Opens in</div><div class="countdown" style="margin-top:.4rem"><div class="cd"><div class="v">2</div><div class="k">Days</div></div><div class="cd"><div class="v">06</div><div class="k">Hrs</div></div><div class="cd"><div class="v">30</div><div class="k">Min</div></div></div><div class="cta-wrap"><button class="btn btn--lg" disabled>Opens 14 Jul, 18:00</button></div></div>
     </div>

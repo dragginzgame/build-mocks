@@ -235,6 +235,9 @@ h1 {
       <li><b>Connected:</b> brand · Launchpad / Marketplace · Studio · divider · notifications bell · theme · cyan wallet pill.</li>
       <li><b>Not connected:</b> the same skeleton, but no bell, and the wallet becomes a white Connect button.</li>
       <li><b>Below 768px</b> the nav, the Studio link and the theme toggle fold into the hamburger drawer; the bell and the wallet stay in the bar.</li>
+      <li><b>Shape is fixed.</b> Full-width, square, 56px, always dark, flush to the top edge above all other chrome — no radius, no inset, no floating variant. It is a <b>locked component</b>; see the style guide.</li>
+      <li><b>One active item, derived from the section — not the page.</b> <b>Launchpad</b> stays highlighted across the launchpad, a vendor detail page and a claim view, because they are all the launchpad section. Same for <b>Marketplace</b> across its list, listing and purchase pages, and <b>Studio</b> across every studio surface. Wallet pages (<span class="mono">/my-tokens</span>, Offers, Activity) highlight <b>nothing in the top bar</b> — the wallet is the right-hand control, not a nav item.</li>
+      <li><b>Never two.</b> Highlighting a sidebar item and a top-bar item at once, or a wallet item while browsing the launchpad, is a bug — active state is one value derived from the current section, not a flag set per rail.</li>
     </ul>
     <div class="note"><b>Light + dark</b> &nbsp;The bar is always dark and renders identically in light and dark themes — it never recolours. The light/dark control itself lives on the bar at desktop and moves into the drawer on mobile.</div>
   </section>
