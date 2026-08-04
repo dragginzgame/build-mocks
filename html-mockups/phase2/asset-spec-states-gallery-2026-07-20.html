@@ -40,6 +40,7 @@
   .tag--amber { background:rgba(245,158,11,.14); color:#B45309; }
   .tag--green { background:rgba(16,185,129,.12); color:var(--stage-live); }
   .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
   .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
   .gallery > header h1 { font-size:2.75rem; }
   .gallery > header p { color:var(--text-secondary); max-width:70ch; margin-top:var(--s-3); }
@@ -84,6 +85,32 @@
   .slotbox.filled { border-style:solid; background:linear-gradient(160deg,#0f172a,#334155); color:#cbd5e1; }
   .slotbox.missing { border-color:var(--notify-error); color:var(--notify-error); }
   .grey-note { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.6; max-width:100ch; }
+  .modal-card.wide { max-width:640px; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:4px; flex-wrap:wrap; }
+  .seg button { border:0; background:transparent; padding:.4rem .85rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .slotcard { width:130px; }
+  .slotcard .cta { display:block; width:100%; margin-top:.5rem; }
+  .n-note { display:flex; gap:.6rem; align-items:flex-start; background:var(--surface-canvas-alt); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  .kind-chip-row { display:flex; gap:.5rem; flex-wrap:wrap; }
+  .kind-chip { display:inline-flex; align-items:center; gap:6px; padding:.5rem .9rem; border-radius:var(--r-2); border:1.5px solid var(--border-soft); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); }
+  .kind-chip.active { border-color:var(--text-primary); background:var(--text-primary); color:#fff; }
+  .ft-chip { display:inline-flex; align-items:center; gap:5px; padding:.3rem .7rem; border-radius:var(--r-pill); background:var(--surface-canvas-alt); border:1px solid var(--border-soft); font-size:var(--text-xs); color:var(--text-secondary); }
+  .ft-chip input { accent-color:var(--text-primary); }
+  .tt-tabs { display:flex; flex-wrap:wrap; gap:var(--s-2); border-bottom:1px solid var(--border-soft); padding-bottom:var(--s-4); margin-bottom:var(--s-4); }
+  .tt-tabs button { padding:.5rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); border:1px solid var(--border-soft); background:var(--surface-canvas); white-space:nowrap; }
+  .tt-tabs button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .status-block h3 { font-size:var(--text-2xl); }
+  .status-block .lede { color:var(--text-secondary); font-size:var(--text-sm); margin:.375rem 0 var(--s-5); }
+  .status-list { display:flex; flex-direction:column; gap:var(--s-3); }
+  .status-item { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; align-items:center; gap:var(--s-4); }
+  .status-item .si-ic { width:38px; height:38px; border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .status-item .si-main { flex:1; min-width:0; }
+  .status-item .si-ttl { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); display:inline-flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .status-item .si-sub { color:var(--text-secondary); font-size:var(--text-xs); margin-top:.25rem; }
+  .status-item .si-val { font-family:var(--font-display); font-size:var(--text-lg); text-align:right; flex:none; }
+  .status-item .si-arrow { color:var(--text-muted); flex:none; }
 </style>
 </head>
 <body>
@@ -91,12 +118,12 @@
     <header>
       <div class="eyebrow">Toko · Phase 2 · Consistency reference</div>
       <h1>Asset spec — states gallery.</h1>
-      <p>First-pass mock for <strong>asset specs</strong> — named templates of required media slots, per <span class="mono">Design Documentation/Phase2/asset-spec-design.md</span>. A spec is applied to <strong>token types</strong> and <strong>gates go-Live</strong>: a token can't go Live until every required slot has a file. It verifies <strong>existence only, never content</strong> — human review stays the content check. First consumer: the graded-slabs programme (front + back photos required per slab). Snapshot-on-apply, versioned — editing the template never mutates tokens that already carry a copy.</p>
+      <p>First-pass mock for <strong>asset specs</strong> — named templates of required media slots, per <span class="mono">Design Documentation/Phase2/asset-spec-design.md</span>. A spec is authored once at the <strong>project level</strong> (alongside things like revenue presets), then <strong>applied to token types</strong> in any collection in that project, and <strong>gates go-Live</strong>: a token can't go Live until every required slot has a file. It verifies <strong>existence only, never content</strong> — human review stays the content check. First consumer: the graded-slabs programme (front + back photos required per slab). Snapshot-on-apply, versioned — editing the template never mutates tokens that already carry a copy. Replacing a slot's file is a plain overwrite — <strong>no version history is kept</strong>, and only <strong>project admins</strong> can do it.</p>
     </header>
 
     <!-- 01 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">01</span><span class="t">Project · Asset specs list</span><span class="d">A project-level template list — same card grammar as revenue presets. Each spec shows its slots, version, and where it's applied.</span></div>
+      <div class="frame-cap"><span class="num">01</span><span class="t">Project · Asset specs list</span><span class="d">Lives at the <strong>project level</strong>, not inside any one collection — same shelf as revenue presets. A spec authored here is reusable across every collection in the project; it only takes effect on a given collection once applied to one of that collection's token types (frames 04–05). Each spec shows its slots, version, and where it's currently applied.</span></div>
       <div class="screen">
         <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Toko Studios (internal)</span><span class="sep">/</span><span>Asset specs</span></div>
         <div class="section">
@@ -112,17 +139,21 @@
 
     <!-- 02 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">02</span><span class="t">Spec editor</span><span class="d">A spec is an ordered list of slots (fields ruled 2026-07-21): <span class="mono">key</span> (slug, unique, <strong>immutable after creation</strong> — renaming is a label change only, so files never orphan) · display label (unique in the spec) · optional <strong>description</strong> written for whoever fills the slot · explicit sort order (drag handle, never creation order) · kind (V1 image-only) + allowed filetypes and optional max size (per the RWA archetype ruling). One slot may carry the <strong>primary-asset flag</strong> (★) — its file automatically becomes the token's card image, so nobody uploads a duplicate front view for art. Dev note: <span class="mono">max_files</span> exists in the schema (default 1) but the V1 editor doesn't expose it. Saving bumps the version; applied token types keep their snapshot until re-applied pre-Live.</span></div>
+      <div class="frame-cap"><span class="num">02</span><span class="t">Spec editor</span><span class="d">A spec is an ordered list of slots (fields ruled 2026-07-21): <span class="mono">key</span> (slug, unique, <strong>immutable after creation</strong> — renaming is a label change only, so files never orphan) · display label (unique in the spec) · optional <strong>description</strong> written for whoever fills the slot · explicit sort order (drag handle, never creation order) · kind (Image · Video · Audio · Document) + allowed filetypes and optional max size (per the RWA archetype ruling) — set per slot in the "+ Add slot" form, frame 03. One slot may carry the <strong>primary-asset flag</strong> (★, image slots only) — its file automatically becomes the token's card image, so nobody uploads a duplicate front view for art. Every slot shown here is required — for a spec applied directly to a token type (no composition in front of it), requirement isn't a per-slot toggle, it's simply always on; optionality only exists once a composition references this spec (`template-composition-design.md` §4.3). Dev note: <span class="mono">max_files</span> exists in the schema (default 1) but the V1 editor doesn't expose it. Saving bumps the version; applied token types keep their snapshot until re-applied pre-Live.</span></div>
       <div class="stage">
         <div class="modal-card">
           <header><h4>Asset spec · Graded slab</h4><button class="x" aria-label="Close">✕</button></header>
           <div class="mbody">
             <div style="margin-bottom:var(--s-5)"><label class="flabel">Spec name</label><input class="input" style="width:100%" value="Graded slab"></div>
             <label class="flabel">Required slots</label>
-            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">front</span><span class="lbl">Front photo <span title="Primary asset — this file becomes the token's card image">★</span></span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">front</span><span class="lbl">Front photo <span title="Primary asset — this file becomes the token's card image">★</span></span><span class="tag">Image · JPG, PNG, WEBP</span><span class="tag tag--amber">Required</span></div>
             <p class="tiny" style="margin:.25rem 0 var(--s-2) 1.5rem">Full slab, certification number visible, high resolution.</p>
-            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">back</span><span class="lbl">Back photo</span><span class="tag">Image</span><span class="tag tag--amber">Required</span></div>
+            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">back</span><span class="lbl">Back photo</span><span class="tag">Image · JPG, PNG, WEBP</span><span class="tag tag--amber">Required</span></div>
             <p class="tiny" style="margin:.25rem 0 var(--s-2) 1.5rem">Entire reverse of the slab; barcode must be visible.</p>
+            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">dig_report</span><span class="lbl">DIG report</span><span class="tag">Document · PDF</span><span class="tag tag--amber">Required</span></div>
+            <p class="tiny" style="margin:.25rem 0 var(--s-2) 1.5rem">TAG's Document Imaging &amp; Grading report, where the grader supplies one.</p>
+            <div class="slot-row"><span style="color:var(--text-muted);cursor:grab">⠿</span><span class="key">unboxing</span><span class="lbl">Unboxing video</span><span class="tag">Video · MP4, MOV · max 200 MB</span><span class="tag tag--amber">Required</span></div>
+            <p class="tiny" style="margin:.25rem 0 var(--s-2) 1.5rem">Vault intake unboxing, filmed unbroken start to finish.</p>
             <div style="margin-top:var(--s-3)"><button class="add-chip">+ Add slot</button></div>
             <p class="tiny" style="margin-top:var(--s-4)">Currently version 2. Saving changes creates version 3 — token types that already carry version 2 are not changed until you re-apply.</p>
           </div>
@@ -133,7 +164,65 @@
 
     <!-- 03 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">03</span><span class="t">Batch apply · pick token types</span><span class="d">The established batch-select pattern (token-state policy attach, bulk listing): pick a spec → select token types → apply. A collection with one token type is effectively a whole-collection application. <strong>Live tokens are skipped</strong> (locked).</span></div>
+      <div class="frame-cap"><span class="num">03</span><span class="t">Add a slot — kind, filetypes, size</span><span class="d">Opened from "+ Add slot" above. <strong>Kind</strong> picks the media family; the allowed-filetype checklist and default max size below it change to match (Image → JPG/PNG/WEBP; Video → MP4/MOV; Audio → MP3/WAV/M4A; Document → PDF). <strong>Image</strong> and <strong>document</strong> already have a shipped consumer (slab photos; the DIG report); <strong>video</strong> and <strong>audio</strong> are equally selectable, just without a consumer pinning their conventions down yet — filetypes/size are set per slot either way. The <strong>primary-asset flag</strong> only appears for Image, and only one slot in a spec may carry it. <span class="mono">key</span> is generated from the label and locked once saved.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Add slot</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="grid2">
+              <div><label class="flabel">Label</label><input class="input" style="width:100%" value="Unboxing video"></div>
+              <div><label class="flabel">Key <span class="tiny" style="text-transform:none;font-weight:400;letter-spacing:0">(locked after saving)</span></label><input class="input" style="width:100%" value="unboxing" disabled></div>
+            </div>
+            <div style="margin-top:var(--s-4)">
+              <label class="flabel">Kind</label>
+              <div class="kind-chip-row">
+                <span class="kind-chip">Image</span><span class="kind-chip active">Video</span><span class="kind-chip">Audio</span><span class="kind-chip">Document</span>
+              </div>
+            </div>
+            <div style="margin-top:var(--s-4)">
+              <label class="flabel">Allowed filetypes</label>
+              <div class="kind-chip-row">
+                <span class="ft-chip"><input type="checkbox" checked> MP4</span><span class="ft-chip"><input type="checkbox" checked> MOV</span><span class="ft-chip"><input type="checkbox"> WEBM</span>
+              </div>
+            </div>
+            <div class="grid2" style="margin-top:var(--s-4)">
+              <div><label class="flabel">Max file size</label><input class="input" style="width:100%" value="200 MB"></div>
+              <div><label class="flabel">Primary asset (★)</label><div class="tiny" style="padding-top:.5rem">Not available for Video — only an Image slot can become the token's card image.</div></div>
+            </div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Description <span class="tiny" style="text-transform:none;font-weight:400;letter-spacing:0">(shown to whoever fills this slot)</span></label><textarea class="input" style="width:100%;min-height:60px">Vault intake unboxing, filmed unbroken start to finish.</textarea></div>
+            <p class="tiny" style="margin-top:var(--s-4)">Required — a spec applied directly to a token type has no optional slots; optionality is set later, only if a composition references this spec.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Add slot</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">Collection · where a spec gets applied</span><span class="d">Applying a spec to a token type reuses the existing per-type settings surface — the same <strong>Attributes → Token types panel</strong> a creator already visits to set each type's attribute requirements (`attribute-system-design.md`, `token-type-attribute-assignment.md`). Pick a type's tab, and a <strong>Required media</strong> section sits alongside its attribute assignments, showing the spec currently applied (or none) with an action to apply, change, or remove one. This opens the apply modal (frame 05) pre-filtered to the type whose tab is active.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Toko Studios</span><span class="sep">/</span><span>Vaulted Slabs — Series 1</span><span class="sep">/</span><span>Attributes</span></div>
+        <div class="section">
+          <div class="card">
+            <div class="head"><h3>Token types</h3><span class="tag tag--green">2 types</span></div>
+            <div class="tt-tabs"><button class="active">Slab</button><button>Poster</button></div>
+            <div class="row" style="justify-content:space-between;align-items:flex-start">
+              <div><div class="nm" style="font-family:var(--font-emphasis);font-weight:700">Slab <span class="tiny">60 tokens</span></div></div>
+            </div>
+            <div style="border-top:1px solid var(--surface-canvas-deep);margin-top:var(--s-4);padding-top:var(--s-4)">
+              <div class="row" style="justify-content:space-between">
+                <div><div class="lbl" style="font-family:var(--font-emphasis);font-weight:700">Required media</div><div class="ds tiny">Graded slab <span class="tag" style="margin-left:.25rem">v2</span> · Front photo, Back photo, DIG report, Unboxing video</div></div>
+                <button class="btn btn--ghost btn--sm">Change spec</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Apply · pick token types</span><span class="d">Reached either from a token type's "Change spec" (frame 04, pre-filtered to that one type) or from the project-level spec list (frame 01, for applying across several collections at once) — same modal either way, the established batch-select pattern (token-state policy attach, bulk listing). A collection with one token type is effectively a whole-collection application. <strong>Live tokens are skipped</strong> (locked).</span></div>
       <div class="stage">
         <div class="modal-card">
           <header><h4>Apply · Graded slab v2</h4><button class="x" aria-label="Close">✕</button></header>
@@ -149,33 +238,52 @@
       </div>
     </section>
 
-    <!-- 04 -->
+    <!-- 06 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">04</span><span class="t">The gate · token slots + status checklist</span><span class="d">Existence check only, on effective state, via one shared function (the R34/R61 pattern; mirrors the default-variant R50 gate). The token editor shows the slots; the collection status checklist names exactly which tokens are missing which slots. Slot files come from the project media library (or direct upload into the slot, which lands in the library) — for slabs, the vault partner's intake photos.</span></div>
-      <div class="screen">
-        <div class="context-bar"><span>Toko Studios</span><span class="sep">/</span><span>Vaulted Slabs — Series 1</span><span class="sep">/</span><span>Manage</span></div>
-        <div class="section">
-          <div class="card" style="margin-bottom:var(--s-6)">
-            <div class="head"><h3>#042 · Required media</h3><span class="tag">Graded slab v2</span></div>
-            <div class="row" style="gap:var(--s-4)">
-              <div class="slotbox filled">Front photo<br>✓ on file</div>
-              <div class="slotbox missing">Back photo<br>missing — required</div>
+      <div class="frame-cap"><span class="num">06</span><span class="t">Edit token · Details tab</span><span class="d">Required media lives on <strong>Details</strong>, not on the token's <strong>Assets</strong> tab — Assets already means something specific (the main display asset and any freeform additional images); required-media slots are a different thing, a fixed set of certification/compliance files a spec demands, so they sit with the rest of the token's core facts instead. Once a spec is applied to this token's type, its slots show up right here — not only on the collection's Overview status checklist (frame 07). A filled slot shows its thumbnail; a missing required slot is called out plainly, with an upload action in place. Uploading or replacing a slot's file is a <strong>project-admin</strong> action — the ordinary media-edit right isn't enough.</span></div>
+      <div class="stage">
+        <div class="modal-card wide">
+          <header><h4>Edit token · #042</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="seg" style="margin-bottom:var(--s-5)"><button class="active">Details</button><button>Token supply</button><button>Attributes</button><button>Rarity</button><button>Assets</button></div>
+            <div><label class="flabel">Token name</label><input class="input" style="width:100%" value="Slab #042"></div>
+            <div style="border-top:1px solid var(--border-soft);margin-top:var(--s-5);padding-top:var(--s-5)">
+              <label class="flabel">Required media <span class="tag" style="margin-left:.375rem;text-transform:none;letter-spacing:0;font-weight:400">Graded slab v2</span></label>
+              <div class="row" style="gap:var(--s-4);align-items:flex-start">
+                <div class="slotcard"><div class="slotbox filled">Front photo<br>✓ Present</div><button class="btn btn--ghost btn--sm cta">Replace</button></div>
+                <div class="slotcard"><div class="slotbox missing">Back photo<br>Missing — required</div><button class="btn btn--primary btn--sm cta">Upload</button></div>
+              </div>
+              <p class="tiny" style="margin-top:var(--s-3)">Required by this token's type (Graded slab v2) — configured at the project level, under Asset specs, not here.</p>
+              <div class="n-note" style="margin-top:var(--s-4)">Only project admins can upload or replace a slot's file. Replacing overwrites it directly — there's no version history to restore from.</div>
             </div>
           </div>
-          <div class="card">
-            <div class="head"><h3>Collection status</h3></div>
-            <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Required media — Series 1 (40 of 42)</div><div class="ds">40 tokens have every required slot filled.</div></div></div>
-            <div class="check-row fail"><span class="ic">✕</span><div><div class="nm">2 tokens missing required media</div><div class="ds">#042 — missing: back · #051 — missing: front, back. These can't go Live until their slots are filled.</div></div></div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Collection · Overview status checklist</span><span class="d">This is a <strong>Manage → Overview</strong> row, not a separate page — required media joins the same "Collection status" block every other setup item already lives in (collection type, tokens added, attributes, supply, rarity, guards…), existence check only, via one shared function (the R34/R61 pattern; mirrors the default-variant R50 gate). It names which tokens are missing which slots collection-wide; the per-token detail (frame 06) is where a creator actually goes to fix one.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Vaulted Slabs — Series 1</span><span class="sep">/</span><span class="here">Overview</span></div>
+        <div class="section">
+          <div class="status-block">
+            <h3>Collection status</h3>
+            <div class="status-list">
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><div class="si-main"><div class="si-ttl">Token types <span class="tag tag--green">2 types</span></div><div class="si-sub">Slab · Poster — each carries its own attribute schema and, optionally, an asset spec.</div></div><span class="si-arrow">↗</span></div>
+              <div class="status-item"><span class="si-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></span><div class="si-main"><div class="si-ttl">Required media <span class="tag tag--amber">2 tokens missing</span></div><div class="si-sub">#042 — missing: back · #051 — missing: front, back. These can't go Live until their slots are filled.</div></div><div class="si-val" style="font-size:var(--text-sm);font-family:var(--font-emphasis);color:var(--text-secondary)">40 of 42 complete</div><span class="si-arrow">↗</span></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 05 -->
+    <!-- 08 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">05</span><span class="t">Slot states · atomic replace · version history</span><span class="d">Ruled 2026-07-21. Slot states are derived, never stored: Missing · Uploading · Present · Failed — <strong>the gate counts only Present</strong> (a completed file reference); an in-flight upload is pending, not present. The existing asset uploader already owns the in-progress/failed mechanics — no new machinery. <strong>Replace is atomic</strong>: the current file stays active until the new upload completes, then swaps — the slot never transiently empties, so the go-Live checklist never flickers. <strong>Replaced files are retained</strong> (latest active, priors recoverable, actor + date logged) — dispute evidence for RWA. Ref-vs-blob drift is caught by the periodic invariant audit; a dangling reference fails the gate closed.</span></div>
+      <div class="frame-cap"><span class="num">08</span><span class="t">Slot states · atomic replace · no history</span><span class="d">Slot states are derived, never stored: Missing · Uploading · Present · Failed — <strong>the gate counts only Present</strong> (a completed file reference); an in-flight upload is pending, not present. The existing asset uploader already owns the in-progress/failed mechanics — no new machinery. <strong>Replace is atomic</strong>: the current file stays active until the new upload completes, then swaps — the slot never transiently empties, so the go-Live checklist never flickers. <strong>Amended 2026-08-03: replaced files are not retained</strong> — this is a required-media gate, not a custody vault, and there's no version history to browse or restore from; a replace is a plain overwrite. Only project admins can upload or replace a slot. Ref-vs-blob drift is caught by the periodic invariant audit; a dangling reference fails the gate closed.</span></div>
       <div class="screen"><div class="section">
-        <div class="card" style="margin-bottom:var(--s-6)">
+        <div class="card">
           <div class="head"><h3>#042 · Required media</h3><span class="tag">Graded slab v2</span></div>
           <div class="row" style="gap:var(--s-4);flex-wrap:wrap">
             <div class="slotbox filled">Front photo<br>✓ Present</div>
@@ -183,19 +291,14 @@
             <div class="slotbox missing">Label detail<br>Missing — required</div>
             <div class="slotbox missing" style="border-color:var(--notify-error);color:var(--notify-error)">Cert scan<br>✕ Upload failed — retry</div>
           </div>
-        </div>
-        <div class="card">
-          <div class="head"><h3>Front photo · history</h3><span class="tag tag--green">Present</span></div>
-          <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Version 3 · active</div><div class="ds">front_v3.jpg · replaced 21 Jul 2026 by vault · Geneva Vault SA</div></div></div>
-          <div class="check-row" style="opacity:.65"><span class="ic">·</span><div><div class="nm">Version 2</div><div class="ds">front_v2.jpg · replaced 18 Jul 2026 — retained, recoverable</div></div></div>
-          <div class="check-row" style="opacity:.65"><span class="ic">·</span><div><div class="nm">Version 1</div><div class="ds">front.jpg · uploaded 14 Jul 2026 at intake</div></div></div>
+          <div class="n-note" style="margin-top:var(--s-4)">Replacing "Front photo" overwrites it immediately — the file it replaces is not kept, and only a project admin can do this.</div>
         </div>
       </div></div>
     </section>
 
-    <!-- 06 -->
+    <!-- 09 -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">06</span><span class="t">After Live · vault-added photos &amp; visibility</span><span class="d">Ruled 2026-07-21. The spec and its slot list lock on Live (keys never removed or renamed on a Live snapshot); slot files follow standard media permissions. The vault may add <strong>additional photos after Live</strong> (extra angles, re-shoots) — supplementary media, <strong>not public by default</strong>. The creator enables public visibility <strong>per token</strong>, with batch visibility controls on the minted bulk-select pattern so enabling a whole series isn't tedious. These are token media — distinct from the custody vault-images (insurance/dispute evidence, never token assets).</span></div>
+      <div class="frame-cap"><span class="num">09</span><span class="t">After Live · vault-added photos &amp; visibility</span><span class="d">Ruled 2026-07-21. The spec and its slot list lock on Live (keys never removed or renamed on a Live snapshot); slot files follow standard media permissions. The vault may add <strong>additional photos after Live</strong> (extra angles, re-shoots) — supplementary media, <strong>not public by default</strong>. The creator enables public visibility <strong>per token</strong>, with batch visibility controls on the minted bulk-select pattern so enabling a whole series isn't tedious. These are token media — distinct from the custody vault-images (insurance/dispute evidence, never token assets).</span></div>
       <div class="screen"><div class="section">
         <div class="card">
           <div class="head"><h3>#042 · Additional photos <span class="tiny" style="font-family:var(--font-body);text-transform:none;letter-spacing:0">added by Geneva Vault SA</span></h3><span class="tag">3 photos</span></div>
@@ -209,7 +312,7 @@
 
     <div class="frame">
       <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Note (not UI) — open questions</span></div>
-      <p class="grey-note">From <span class="mono">asset-spec-design.md</span> (post-ruling 2026-07-21): still open — per-variant slots (deferred; variants never apply to RWA); the creator-facing name ("Asset spec" vs "Media requirements", glossary once ruled); and <strong>blob lifecycle</strong> (deferred to dev — replaced-file retention 30d ordinary / indefinite RWA proposed; does Canic offer object versioning? @gabriel). Ruled: one spec per token type in V1 with <strong>inheritance/composition noted as the future expansion</strong>; per-slot Review approval rejected (R50 — Review is stage-only; the gate stays existence-only); filetype set + max size ship (RWA archetype ruling); the entity is deliberately <strong>not NFT-specific</strong> — applies_to is a typed reference, tokens are just the first consumer. Generator-produced art is still not a spec slot — specs cover <em>additional</em> required media.</p>
+      <p class="grey-note">From <span class="mono">asset-spec-design.md</span> (post-ruling 2026-07-21, amended 2026-08-03): still open — per-variant slots (deferred; variants never apply to RWA); the creator-facing name ("Asset spec" vs "Media requirements", glossary once ruled). Ruled: one spec per token type, with composition (<span class="mono">template-composition-design.md</span>) as the mix-and-match layer on top rather than spec nesting — checked against its own non-slab worked example (a Generated Art collection), which simply omits the asset-spec axis; per-slot Review approval rejected (R50 — Review is stage-only; the gate stays existence-only); filetype set + max size ship (RWA archetype ruling); no version history is retained, and only project admins can upload or replace a slot (amended 2026-08-03 — this closes the blob-lifecycle question, since nothing is retained); the entity is deliberately <strong>not NFT-specific</strong> — applies_to is a typed reference, tokens are just the first consumer. Generator-produced art is still not a spec slot — specs cover <em>additional</em> required media.</p>
     </div>
 
   </div>

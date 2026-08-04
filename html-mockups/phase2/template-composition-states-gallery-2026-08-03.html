@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Template composition (Phase 2) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --notify-warn:#D97706;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981; --brand-cyan:#06B0E6;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,monospace; font-size:.85em; }
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .sep { color:var(--text-muted); }
+  .section { padding:var(--s-8); }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .input { border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.375rem .75rem; font-size:var(--text-xs); }
+  .tag { display:inline-flex; align-items:center; gap:6px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.14); color:#B45309; }
+  .tag--green { background:rgba(16,185,129,.12); color:var(--stage-live); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:78ch; margin-top:var(--s-3); }
+  .draftflag { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; text-transform:uppercase; background:rgba(245,158,11,.14); color:#92580b; margin-top:var(--s-4); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-5) var(--s-6); }
+  .card .head { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-4); flex-wrap:wrap; }
+  .card .head h3 { font-size:var(--text-xl); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.5rem; }
+  .add-chip { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); padding:.5rem 1rem; color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .add-chip:hover { color:var(--text-primary); border-color:var(--text-primary); }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:640px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-5); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .check-row { display:flex; align-items:flex-start; gap:.75rem; padding:.75rem 0; border-bottom:1px solid var(--surface-canvas-deep); }
+  .check-row:last-child { border-bottom:0; }
+  .check-row .ic { flex:none; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; }
+  .check-row.ok .ic { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .check-row.fail .ic { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .check-row.waived .ic { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .check-row .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .check-row .ds { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.125rem; }
+  .grey-note { color:var(--text-secondary); font-size:var(--text-sm); line-height:1.6; max-width:100ch; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  .compgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:var(--s-4); }
+  .compcard { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); display:flex; flex-direction:column; gap:.6rem; }
+  .compcard .cc-head { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-3); }
+  .compcard .cc-nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .compcard .cc-sub { font-size:var(--text-xs); color:var(--text-secondary); }
+  .axis-chips { display:flex; flex-wrap:wrap; gap:.35rem; }
+  .axis-chip { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-size:var(--text-3xs); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.05em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .axis-chip.absent { color:var(--text-muted); background:transparent; border:1px dashed var(--border-soft); }
+  .axis-row { display:flex; align-items:center; gap:var(--s-4); padding:var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); }
+  .axis-row .ax-ic { width:40px; height:40px; border-radius:var(--r-2); background:var(--surface-canvas-alt); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .axis-row .ax-main { flex:1; min-width:0; }
+  .axis-row .ax-nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .axis-row .ax-sub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:2px; }
+  .axis-row.absent { opacity:.6; }
+  .axis-row.absent .ax-ic { border:1.5px dashed var(--border-soft); background:transparent; }
+  .delta-table { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .delta-table th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); padding:0 var(--s-3) var(--s-3); border-bottom:1px solid var(--border-soft); }
+  .delta-table td { padding:var(--s-3); border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .delta-table tr:last-child td { border-bottom:0; }
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:3px; }
+  .seg button { border:0; background:transparent; padding:.35rem .8rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .lib-tabs { display:flex; flex-wrap:wrap; gap:var(--s-2); border-bottom:1px solid var(--border-soft); padding-bottom:var(--s-4); margin-bottom:var(--s-4); }
+  .lib-tabs button { padding:.5rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); border:1px solid var(--border-soft); background:var(--surface-canvas); white-space:nowrap; }
+  .lib-tabs button.active { background:var(--text-primary); color:#fff; border-color:transparent; }
+  .profgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:var(--s-4); }
+  .profcard { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); background:var(--surface-canvas); display:flex; flex-direction:column; gap:.4rem; }
+  .profcard .pc-nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .profcard .pc-sub { font-size:var(--text-xs); color:var(--text-secondary); }
+  .info-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { flex:none; margin-top:1px; } .info-note svg { width:18px; height:18px; }
+  .n-info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .n-info .ic { color:var(--stage-review); }
+  .n-warn { background:rgba(245,158,11,.12); color:#7a5310; } .n-warn .ic { color:var(--stage-draft); }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Phase 2 · Consistency reference</div>
+      <h1>Template composition — states gallery.</h1>
+      <p>First-pass mock for the <strong>template composition system</strong> — the project-level area where a creator combines a <strong>token type</strong> (attribute schema), a <strong>source</strong>, an <strong>asset spec</strong>, a set of <strong>capabilities</strong>, and a <strong>variant profile</strong> into one reusable, versioned <strong>composition</strong>, per <span class="mono">Design Documentation/Phase2/template-composition-design.md</span>. Each axis is a small, independent, reusable <strong>profile</strong> — most are optional, and an axis a composition doesn't need is simply absent, never stubbed. A token is <strong>assigned</strong> a composition explicitly at creation and pins its exact version forever; nothing is re-evaluated later.</p>
+      <div class="draftflag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Draft — the underlying design is an unratified proposal; this mock will move once it is</div>
+    </header>
+
+    <!-- 01 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Project · Compositions</span><span class="d">Lives at the <strong>project level</strong> — same shelf as Asset specs and Revenue presets — not inside any one collection. Each card is one composition: which profile backs each axis (chips; a dashed chip means that axis is absent, not "none configured"), its version, and which collections currently assign it. Locks once any token has been assigned it and gone Live (frame 02).</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Toko Studios (internal)</span><span class="sep">/</span><span>Compositions</span></div>
+        <div class="section">
+          <div class="card">
+            <div class="head"><h3>Compositions</h3><span class="tag tag--green">3</span></div>
+            <div class="compgrid">
+              <div class="compcard">
+                <div class="cc-head"><div><div class="cc-nm">Graded Slab — TAG <span class="tag" style="margin-left:.3rem">v1</span></div><div class="cc-sub">Vaulted Slabs — Series 1 · 42 tokens</div></div><span class="tag tag--green">Live · locked</span></div>
+                <div class="axis-chips">
+                  <span class="axis-chip">Token type</span><span class="axis-chip">Source · TAG</span><span class="axis-chip">Asset spec</span><span class="axis-chip">Capability</span><span class="axis-chip absent">Variant — absent</span>
+                </div>
+              </div>
+              <div class="compcard">
+                <div class="cc-head"><div><div class="cc-nm">Graded Slab — Beckett <span class="tag" style="margin-left:.3rem">v1</span></div><div class="cc-sub">Vaulted Slabs — Series 2 · 18 tokens</div></div><span class="tag tag--amber">Draft</span></div>
+                <div class="axis-chips">
+                  <span class="axis-chip">Token type</span><span class="axis-chip">Source · Beckett</span><span class="axis-chip">Asset spec</span><span class="axis-chip">Capability</span><span class="axis-chip absent">Variant — absent</span>
+                </div>
+              </div>
+              <div class="compcard">
+                <div class="cc-head"><div><div class="cc-nm">Little Leaf Guardians — base <span class="tag" style="margin-left:.3rem">v1</span></div><div class="cc-sub">Little Leaf Guardians · 1,000 tokens</div></div><span class="tag tag--green">Live · locked</span></div>
+                <div class="axis-chips">
+                  <span class="axis-chip">Token type</span><span class="axis-chip absent">Source — absent</span><span class="axis-chip absent">Asset spec — absent</span><span class="axis-chip absent">Capability — absent</span><span class="axis-chip">Variant</span>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:var(--s-4)"><button class="add-chip">+ New composition</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Composition editor — wiring the axes</span><span class="d">One profile version per axis, pinned — never a live/re-resolved reference. <strong>Token type</strong> is the only axis every composition needs; the rest are optional and simply omitted, not set to a "none" placeholder. Each axis row picks an existing profile from the library (frame 03) or a collection-local one — it doesn't author the profile itself here.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Composition · Graded Slab — TAG <span class="tag" style="margin-left:.4rem">v1</span></h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div><label class="flabel">Composition name</label><input class="input" style="width:100%" value="Graded Slab — TAG"></div>
+
+            <div class="axis-row">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Token type <span class="tag">Required</span></div><div class="ax-sub">Canonical Grading Core <span class="mono">v4</span> · studio library — the shared attribute schema every graded slab carries.</div></div>
+              <button class="btn btn--ghost btn--sm">Change</button>
+            </div>
+
+            <div class="axis-row">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Source</div><div class="ax-sub">TAG grader profile <span class="mono">v2</span> · platform-owned — assisted-manual prefill, maps TAG's fields into the canonical core.</div></div>
+              <button class="btn btn--ghost btn--sm">Change</button>
+            </div>
+
+            <div class="axis-row">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Asset spec</div><div class="ax-sub">Graded slab <span class="mono">v2</span> · studio library — front photo, back photo, DIG report, unboxing video. Requirement levels for this composition below.</div></div>
+              <button class="btn btn--ghost btn--sm">Change</button>
+            </div>
+
+            <div class="axis-row">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Capability</div><div class="ax-sub">Vault custody + redemption <span class="mono">v1</span> · studio library.</div></div>
+              <button class="btn btn--ghost btn--sm">Change</button>
+            </div>
+
+            <div class="axis-row absent">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Variant <span class="tag">Absent</span></div><div class="ax-sub">Slabs don't evolve or change primary asset — this axis is simply not wired in, not set to a "none" template.</div></div>
+              <button class="btn btn--ghost btn--sm">Add axis</button>
+            </div>
+
+            <div style="border-top:1px solid var(--border-soft);padding-top:var(--s-5)">
+              <label class="flabel">Asset spec — requirement overrides for this composition</label>
+              <p class="tiny" style="margin:-.25rem 0 var(--s-3)">Requirement levels live on the composition, not the spec — the same "Graded slab" spec serves TAG and Beckett differently.</p>
+              <table class="delta-table">
+                <thead><tr><th>Slot</th><th>Requirement</th></tr></thead>
+                <tbody>
+                  <tr><td>Front photo</td><td><div class="seg"><button class="active">Required</button><button>Optional</button></div></td></tr>
+                  <tr><td>DIG report</td><td><div class="seg"><button class="active">Required</button><button>Optional</button></div></td></tr>
+                  <tr><td>Unboxing video</td><td><div class="seg"><button>Required</button><button class="active">Optional</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="info-note n-info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Saving here creates <strong>version 2</strong> of this composition. Tokens already assigned v1 keep it — nothing re-resolves; migrating them to v2 is a separate, explicit, validated step.</div></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save composition</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Profile library</span><span class="d">Where the axis profiles themselves are authored — separately from any one composition, so they can be reused across many. Tabbed by axis. Each profile is tagged by where it lives: <strong>studio library</strong> (shared across this studio's collections), <strong>platform-owned</strong> (available to every studio — the six grader source profiles are the first set), or <strong>collection-local</strong> (scoped to one collection, e.g. a generator's own layer-stack schema — first-class, never forced up to studio level). Promoting a collection-local profile to the studio library is an opt-in copy-up.</span></div>
+      <div class="screen">
+        <div class="context-bar"><span>Studio</span><span class="sep">/</span><span>Toko Studios (internal)</span><span class="sep">/</span><span>Compositions</span><span class="sep">/</span><span>Profile library</span></div>
+        <div class="section">
+          <div class="card">
+            <div class="lib-tabs"><button>Token type</button><button>Source</button><button class="active">Asset spec</button><button>Capability</button><button>Variant</button></div>
+            <div class="profgrid">
+              <div class="profcard"><div class="pc-nm">Graded slab <span class="tag" style="margin-left:.3rem">v2</span></div><div class="pc-sub">4 slots · used by 2 compositions</div><span class="tag tag--indigo">Studio library</span></div>
+              <div class="profcard"><div class="pc-nm">Signed print <span class="tag" style="margin-left:.3rem">v1</span></div><div class="pc-sub">1 slot · used by 0 compositions</div><span class="tag tag--indigo">Studio library</span></div>
+            </div>
+            <p class="tiny" style="margin-top:var(--s-4)">Asset spec profiles are authored on the Asset specs page — this library view is the same records, surfaced here as one of the five composable axes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">04</span><span class="t">A composition with most axes absent</span><span class="d">Not a slab — a Generated Art collection, to show the axes are genuinely independent. Source, asset spec and capability are all absent (the generator export is the primary asset; no external data; no custody). Token type and variant are the only two wired in. Migration for a collection like this is a no-op — its existing per-collection setup already <strong>is</strong> a collection-local token-type profile.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Composition · Little Leaf Guardians — base <span class="tag" style="margin-left:.4rem">v1</span></h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="axis-row">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Token type <span class="tag">Required</span></div><div class="ax-sub">Collection-local <span class="mono">v3</span> · traits generated from this collection's own layer stack.</div></div>
+            </div>
+            <div class="axis-row absent"><span class="ax-ic">—</span><div class="ax-main"><div class="ax-nm">Source <span class="tag">Absent</span></div><div class="ax-sub">No external data source.</div></div></div>
+            <div class="axis-row absent"><span class="ax-ic">—</span><div class="ax-main"><div class="ax-nm">Asset spec <span class="tag">Absent</span></div><div class="ax-sub">The generator export is the primary asset — no additional required media.</div></div></div>
+            <div class="axis-row absent"><span class="ax-ic">—</span><div class="ax-main"><div class="ax-nm">Capability <span class="tag">Absent</span></div><div class="ax-sub">No custody, no redemption.</div></div></div>
+            <div class="axis-row">
+              <span class="ax-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg></span>
+              <div class="ax-main"><div class="ax-nm">Variant</div><div class="ax-sub">Collection-local <span class="mono">v1</span> · seasonal reskins.</div></div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">05</span><span class="t">Assignment — an explicit choice at creation</span><span class="d">A token is assigned a composition once, at creation or import, and permanently pins that exact version — never re-evaluated, never inferred from attribute values. When a token type has more than one composition, adding tokens asks which one applies; a predicate or explicit list can pre-select the answer for a batch, but only as an authoring shortcut in this moment, not a standing rule.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Add tokens · Vaulted Slabs — Series 1 &amp; 2</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <label class="flabel">Which composition applies?</label>
+            <div class="axis-row"><span class="ax-ic">1</span><div class="ax-main"><div class="ax-nm">Graded Slab — TAG</div><div class="ax-sub">42 incoming tokens have a TAG cert number.</div></div><button class="btn btn--ghost btn--sm">Select these</button></div>
+            <div class="axis-row"><span class="ax-ic">2</span><div class="ax-main"><div class="ax-nm">Graded Slab — Beckett</div><div class="ax-sub">18 incoming tokens have a Beckett cert number.</div></div><button class="btn btn--ghost btn--sm">Select these</button></div>
+            <p class="tiny">Splitting by grader here is a one-time authoring shortcut — once assigned, each token's composition is fixed regardless of any later edit to its grader field.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Assign &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">06</span><span class="t">Per-token exception — pre-Live only</span><span class="d">Before a token goes Live, an authorised creator/studio admin may waive a required attribute or slot on that one token (with a reason), or add an extra requirement unique to it (e.g. one item carries a signature). Local to the token, audited, and frozen at Live like everything else — never a schema change for the composition itself.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Token exceptions · #051</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="check-row waived"><span class="ic">!</span><div><div class="nm">Unboxing video <span class="tag tag--amber">Waived</span></div><div class="ds">"No unboxing footage exists for this intake — pre-composition item." — Donna, 2 Aug 2026</div></div></div>
+            <div class="check-row"><span class="ic">+</span><div><div class="nm">Signature photo <span class="tag">Added</span></div><div class="ds">This copy carries the grader's signature — an extra slot added for #051 alone.</div></div></div>
+            <div style="margin-top:var(--s-2)"><button class="add-chip">+ Waive or add a requirement</button></div>
+            <p class="tiny" style="margin-top:var(--s-3)">Pre-Live only — exceptions freeze at Live along with everything else. Local to this token; no other token in this composition is affected.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">07</span><span class="t">Go-Live — typed requirements checklist</span><span class="d">No single "valid" flag — every requirement a composition compiles into (attributes, asset slots, source verification if the composition's policy demands it, capability/custody configuration, waived exceptions) gets its own pass/fail row, so the checklist shows exactly what's blocking and why.</span></div>
+      <div class="screen"><div class="section">
+        <div class="card">
+          <div class="head"><h3>#051 · Go-Live checklist</h3><span class="tag">Graded Slab — TAG v1</span></div>
+          <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Required attributes complete</div><div class="ds">Grade, cert number, population — all set.</div></div></div>
+          <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Required asset slots present</div><div class="ds">Front photo, back photo, DIG report all on file.</div></div></div>
+          <div class="check-row waived"><span class="ic">!</span><div><div class="nm">Unboxing video</div><div class="ds">Waived: "No unboxing footage exists for this intake — pre-composition item."</div></div></div>
+          <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Source verification</div><div class="ds">Not required by this composition's policy — manually entered data isn't blocked for lacking an API.</div></div></div>
+          <div class="check-row ok"><span class="ic">✓</span><div><div class="nm">Capability configuration valid</div><div class="ds">Vault custody confirmed; redemption terms set.</div></div></div>
+        </div>
+      </div></div>
+    </section>
+
+    <div class="frame">
+      <div class="frame-cap"><span class="t" style="color:var(--text-primary)">Note (not UI) — status</span></div>
+      <p class="grey-note">From <span class="mono">template-composition-design.md</span>: this whole system is still a <strong>proposal, not yet ratified</strong> — ratification is the only remaining gate on the Phase 2 build. Page name ("Compositions") is not yet ruled on; nothing elsewhere in the design docs or existing mocks names this surface, so it's free to change at review. Once ratified: profile/composition/assignment are the three object kinds (§2); the five axes are token type, source, asset spec, capability, and variant, of which only token type is mandatory (§4); profiles may be studio-library, platform-owned, or collection-local, and collection-local stays first-class rather than forced upward (§9); data migration is moot because all project data is wiped before onboarding, so nothing persisted needs converting (§9.1).</p>
+    </div>
+
+  </div>
+</body>
+</html>
