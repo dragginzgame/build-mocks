@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Physical redemption (RWA) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); }
+  .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,var(--brand-cyan),#1e3a8a); flex:none; }
+  .section { padding:var(--s-8); }
+
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; border-color:transparent; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--amber { background:rgba(245,158,11,.16); color:#92600a; }
+
+  .detail-grid { display:grid; grid-template-columns:300px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:760px){ .detail-grid { grid-template-columns:1fr; } }
+  .asset-main { aspect-ratio:1/1; border-radius:var(--r-3); border:6px solid #E6E6E6; background:linear-gradient(135deg,#d6356d,#831843); overflow:hidden; }
+  .asset-main img { width:100%; height:100%; object-fit:cover; display:block; }
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dhead { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--s-4); margin-bottom:var(--s-4); }
+  .dhead h3 { font-size:var(--text-2xl); }
+  .dhead .sub { font-size:var(--text-sm); color:var(--text-secondary); margin-top:.25rem; display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.6rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv .k { color:var(--text-secondary); } .kv .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
+  .dsec { margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .dsec > .eyebrow { display:block; margin-bottom:var(--s-3); }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:1px; }
+  .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--ok { background:rgba(16,185,129,.1); color:#0a6b4f; } .note--ok .ic { color:var(--stage-live); }
+  .note strong { color:var(--text-primary); }
+
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; color:var(--text-primary); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.4rem; }
+  .addr { display:flex; align-items:center; gap:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); background:var(--surface-canvas-alt); }
+  .addr.sel { border-color:var(--border-strong); }
+  .addr .rd { width:16px; height:16px; border-radius:50%; border:2px solid var(--border-strong); flex:none; display:grid; place-items:center; }
+  .addr.sel .rd::after { content:""; width:8px; height:8px; border-radius:50%; background:var(--text-primary); }
+  .addr .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .addr .ln { font-size:var(--text-xs); color:var(--text-secondary); }
+  .quote { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); }
+  .quote .row { display:flex; justify-content:space-between; font-size:var(--text-sm); padding:.3rem 0; }
+  .quote .row .v { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .quote .row.total { border-top:1px solid var(--border-soft); margin-top:.4rem; padding-top:.6rem; }
+  .mini-asset { display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas-alt); }
+  .mini-asset .mart { width:46px; height:46px; border-radius:var(--r-2); flex:none; background:linear-gradient(135deg,#d6356d,#831843); overflow:hidden; position:relative; }
+  .mini-asset .mart img { width:100%; height:100%; object-fit:cover; display:block; }
+  .mini-asset .mn { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); }
+  .mini-asset .ms { font-size:var(--text-xs); color:var(--text-secondary); }
+  .modal-actions { display:flex; gap:var(--s-2); flex-wrap:wrap; }
+  .screen { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:86ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .gallery > header .navlinks a { color:var(--info); font-weight:700; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <header>
+      <div class="eyebrow">Toko · Phase 2 · Consistency reference</div>
+      <h1>Physical redemption.</h1>
+      <p>How an owner exchanges a vaulted token for its physical item — <strong>RWA collections only</strong> (every redeemable token is a 1-of-1 backed by an item in vault custody; no other archetype ever shows a Redeem action). Split out of the my-tokens gallery 2026-07-21: redemption is a later-phase feature, and the V1 wallet gallery no longer shows it. Ruled 2026-07-21: the holding <strong>locks the moment Redeem is pressed</strong> — no sale, transfer, burn or listing while a redemption is open; the owner <strong>pays shipping (directly to the vault) or cancels</strong>; an unpaid request <strong>auto-cancels after 30 days</strong>; payment makes it a binding fulfilment; the token becomes <span class="mono">Redeemed</span> (terminal) at tracking entry. All consumer copy — never backend state names.</p>
+      <div class="navlinks">Source: <span class="mono">Design Documentation/Phase2/vault-provider-system-design.md</span> §7 · <span class="mono">graded-slabs-design.md</span> §5. Related: <a href="../my-tokens-states-gallery-2026-06-22.html">My Tokens</a> (canonical detail anatomy) · <a href="vault-management-states-gallery-2026-07-18.html">Vault management</a> (the vault's side) · <a href="rwa-archetype-states-gallery-2026-07-20.html">RWA archetype</a>.</div>
+    </header>
+
+    <!-- 01 · redeem request -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">01</span><span class="t">Redeem — request &amp; quote</span><span class="d">Opened from the Redeem action on a vaulted token's detail page. One modal: pick an address from the profile address book, see the instant quote (the vault's rate card: shipping + transit insurance, <strong>paid directly to the vault — never through Toko</strong>), and confirm. The <strong>combine hint</strong> (ruled 2026-07-21) appears when the owner holds other items at the same vault. The customs line is required copy (ruled 2026-07-21: all customs and import charges are the redeemer's responsibility). Confirming reserves the token immediately — frame 02.</span></div>
+      <div class="stage">
+        <div class="modal-card">
+          <header><h4>Redeem · Eelektross · Grade 10</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"><img src="../../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></span><span><div class="mn">Eelektross · Grade 10</div><div class="ms">Catcha Slabs · 1 of 1 · Stored in France</div></span></div>
+            <div>
+              <label class="flabel">Ship to</label>
+              <div class="addr sel" style="margin-bottom:var(--s-2)"><span class="rd"></span><span><div class="nm">Home</div><div class="ln">12 Rue des Lilas, 06000 Nice, France</div></span></div>
+              <div class="addr"><span class="rd"></span><span><div class="nm">Office</div><div class="ln">4 Quai Antoine 1er, 98000 Monaco</div></span></div>
+            </div>
+            <div class="quote">
+              <div class="row"><span>Shipping (France → France)</span><span class="v">12.90 ICP</span></div>
+              <div class="row"><span>Transit insurance</span><span class="v">1.30 ICP</span></div>
+              <div class="row total"><span><strong>Paid to the vault</strong></span><span class="v">14.20 ICP</span></div>
+            </div>
+            <div class="note note--info"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>2 more of your items are stored at this vault.</strong> Add them to this shipment and save on shipping.</div></div>
+            <p class="tiny" style="margin:0">Any customs or import charges at delivery are your responsibility. Your token is reserved as soon as you continue — pay shipping to get it moving, or cancel any time before paying.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Request redemption</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · token detail while redemption requested -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">02</span><span class="t">Token detail — redemption requested (reserved)</span><span class="d">Viewing a token with an open redemption: the canonical wallet detail page (my-tokens frame 07 anatomy, unchanged) with the reserved state layered on — a status tag in the header, one clear info note with the countdown, a Redemption section carrying the quote and the two ways out, and the standard actions disabled with a plain reason. Nothing about the page is rearranged; the lock is a state of the same design, not a new screen.</span></div>
+      <div class="screen">
+        <div class="context-bar"><div class="crumb"><a>My Tokens</a><span class="sep">/</span><span class="here">Eelektross · Grade 10</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+        <div class="section">
+          <div class="detail-grid">
+            <div>
+              <div class="asset-main"><img src="../../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></div>
+            </div>
+            <div class="dcard">
+              <div class="dhead">
+                <div>
+                  <h3>Eelektross · Grade 10</h3>
+                  <div class="sub">Catcha Slabs <span class="tag tag--green">Verified cert</span></div>
+                </div>
+                <span class="tag tag--amber">Redemption requested</span>
+              </div>
+              <div class="kv"><span class="k">Token ID</span><span class="v mono">slab-0413</span></div>
+              <div class="kv"><span class="k">Certificate</span><span class="v mono">TAG 88014521</span></div>
+              <div class="kv"><span class="k">Stored at</span><span class="v">Vault · France</span></div>
+              <div class="kv"><span class="k">Acquired</span><span class="v">2 Jul 2026 · purchase</span></div>
+              <div class="note note--info" style="margin-top:var(--s-5)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div><strong>This card is reserved while your redemption is open.</strong> Pay shipping to get it on its way, or cancel to keep using the token. If nothing happens, the request cancels itself in <strong>27 days</strong>.</div></div>
+              <div class="dsec">
+                <span class="eyebrow">Redemption</span>
+                <div class="kv" style="border-top:0;padding-top:0"><span class="k">Ship to</span><span class="v">Home · Nice, France</span></div>
+                <div class="kv"><span class="k">Shipping + transit insurance</span><span class="v">14.20 ICP · paid to the vault</span></div>
+                <div class="modal-actions" style="margin-top:var(--s-4)"><button class="btn btn--primary">Pay shipping · 14.20 ICP</button><button class="btn btn--ghost">Cancel redemption</button></div>
+              </div>
+              <div class="dactions">
+                <button class="btn btn--ghost" disabled title="Reserved while your redemption is open">List for sale</button>
+                <button class="btn btn--ghost" disabled title="Reserved while your redemption is open">Transfer</button>
+                <button class="btn btn--ghost" disabled title="Reserved while your redemption is open">Burn</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · paid — binding, in fulfilment -->
+    <section class="frame">
+      <div class="frame-cap"><span class="num">03</span><span class="t">Token detail — shipping paid (binding)</span><span class="d">After payment the redemption is <strong>binding</strong> (ruled 2026-07-21): Cancel disappears, the address is locked (quotes are destination-priced), and the token stays reserved until the vault ships it. When the vault enters tracking, the token completes as a permanent redemption record and the parcel's journey continues on the token page (shipped → delivered, with the vault's photos as the evidence trail).</span></div>
+      <div class="stage">
+        <div class="modal-card" style="max-width:560px">
+          <header><h4>Eelektross · Grade 10</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mini-asset"><span class="mart"><img src="../../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></span><span><div class="mn">Eelektross · Grade 10</div><div class="ms">Catcha Slabs · 1 of 1</div></span></div>
+            <div class="note note--ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span><div><strong>Shipping paid — your card is being prepared at the vault.</strong> It ships to Home · Nice, France. We'll let you know the moment it's on its way, with tracking here on the token page.</div></div>
+            <p class="tiny" style="margin:0">The address can no longer be changed for this shipment. Customs or import charges at delivery, if any, are your responsibility.</p>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
