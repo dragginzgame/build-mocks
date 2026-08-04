@@ -97,6 +97,17 @@
   .selrare, .minmax input { border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.45rem .55rem; background:var(--surface-canvas-alt); font:inherit; width:100%; }
   .minmax { display:flex; gap:.5rem; } .ftip { font-size:var(--text-2xs); color:var(--text-muted); margin-top:.4rem; }
 
+  /* currency-first price filter: pick a currency to unlock a range in its own units — no USD, no oracle, no cross-currency estimate */
+  .curpicker { display:flex; flex-direction:column; gap:.3rem; }
+  .radiochip { display:flex; align-items:center; gap:.5rem; font-size:var(--text-sm); color:var(--text-secondary); padding:.25rem 0; cursor:pointer; }
+  .radiochip input { accent-color:var(--text-primary); }
+  .radiochip .n { margin-left:auto; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+  .fgroup--locked .minmax input { background:var(--surface-page); color:var(--text-muted); cursor:not-allowed; }
+  .fgroup--locked h4 { color:var(--text-muted); }
+  .fgroup--unit h4 .unit { font-family:var(--font-body); font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-secondary); }
+  /* grey showcase — documents a component in isolation, on the grey page background */
+  .showcase { display:flex; flex-wrap:wrap; gap:var(--s-6); align-items:flex-start; }
+
   /* approved token card */
   .tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:var(--s-3); }
   .rarity-frame { display:block; position:relative; padding:8px; border-radius:14px; background:var(--border-soft); text-align:left; }
@@ -131,6 +142,46 @@
   .ctabs { display:flex; gap:var(--s-5); border-bottom:1px solid var(--border-soft); }
   .ctabs button { border:0; background:0; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); color:var(--text-secondary); padding:.5rem 0; border-bottom:3px solid transparent; }
   .ctabs button.active { color:var(--text-primary); border-color:var(--text-primary); }
+
+  /* ---- marketplace landing: compact platform stats strip (on grey, not a white card) ---- */
+  .pstats { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--s-5); padding:var(--s-4) 0 var(--s-5); border-bottom:1px solid #d8d8d8; }
+  .pstats .p { display:flex; flex-direction:column; gap:2px; }
+  .pstats .k { font-size:var(--text-2xs); text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .pstats .v { font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+  .pstats .sub { font-size:var(--text-2xs); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  @media (max-width:860px){ .pstats { grid-template-columns:repeat(3,1fr); row-gap:var(--s-4); } }
+  @media (max-width:520px){ .pstats { grid-template-columns:repeat(2,1fr); } }
+
+  /* ---- collections ranking table ---- */
+  .rankbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; margin:var(--s-5) 0 var(--s-4); }
+  .rangesel { display:inline-flex; gap:2px; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:3px; }
+  .rangesel button { border:0; background:transparent; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); padding:.4rem .7rem; border-radius:var(--r-pill); cursor:pointer; }
+  .rangesel button.active { background:var(--text-primary); color:#fff; }
+  .cur-toggle { display:inline-flex; align-items:center; gap:var(--s-2); font-size:var(--text-xs); color:var(--text-secondary); }
+  .cur-toggle select { height:34px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); font:inherit; padding:0 .5rem; }
+
+  .ctable-wrap { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .ctable-scroll { overflow-x:auto; }
+  .ctable { width:100%; border-collapse:collapse; font-size:var(--text-sm); min-width:900px; }
+  .ctable th { text-align:right; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.7rem .8rem; border-bottom:1px solid var(--border-soft); white-space:nowrap; position:sticky; top:0; background:var(--surface-canvas); }
+  .ctable th.l, .ctable td.l { text-align:left; }
+  .ctable th.sorted { color:var(--text-primary); }
+  .ctable td { padding:.7rem .8rem; border-bottom:1px solid var(--border-soft); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .ctable tbody tr:last-child td { border-bottom:0; }
+  .ctable tbody tr:hover { background:var(--surface-canvas-alt); }
+  .ctable .rk { color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; width:2.5rem; }
+  .cname-cell { display:flex; align-items:center; gap:var(--s-3); }
+  .cname-cell .cav { width:34px; height:34px; border-radius:var(--r-2); overflow:hidden; flex:none; background:var(--surface-canvas-deep); }
+  .cname-cell .cav img { width:100%; height:100%; object-fit:cover; }
+  .cname-cell .cn { font-family:var(--font-emphasis); font-weight:700; }
+  .cname-cell .cmeta { font-size:var(--text-3xs); color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
+  .chg { font-family:var(--font-emphasis); font-weight:700; }
+  .chg--up { color:#0a6b4f; } .chg--dn { color:#8a2020; } .chg--flat { color:var(--text-muted); }
+  /* "—" means no data, never zero: an unlisted collection has no floor, it does not have a floor of 0 */
+  .nodata { color:var(--text-muted); }
+  .newtag { display:inline-flex; align-items:center; border-radius:var(--r-pill); padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:rgba(6,176,230,.14); color:#0a6a86; }
+  .unlisted-tag { display:inline-flex; align-items:center; border-radius:var(--r-pill); padding:1px 7px; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  @media (max-width:760px){ .ctable .hide2 { display:none; } .ctable { min-width:640px; } }
 
   /* activity table */
   .activity { width:100%; border-collapse:collapse; font-size:var(--text-sm); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
@@ -196,13 +247,186 @@
   <header>
     <span class="eyebrow">Marketplace</span>
     <h1>Marketplace — states gallery</h1>
-    <p>The Marketplace: fixed-price browse across all collections. Selecting a collection doesn't change the UI — it just filters the grid to that collection's tokens. Every token uses the <strong>approved token card</strong> with its rarity border. v1 is Buy&nbsp;Now only — no auctions, no offers. Shared page chrome (context-bar toolbar; the site top bar and footer are their own components). Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
+    <p>The Marketplace. The <strong>landing page is the ranked collections table</strong> (01) — an aggregate of every collection, including ones that have never traded; browsing individual listings across all collections is the second surface (02). Selecting a collection doesn't change the browse UI — it just filters the grid to that collection's tokens and unlocks the collection-scoped filters. <strong>Price filtering and sorting require a single currency to be chosen first</strong> (v1 accepts eight payment ledgers, and there is no cross-currency conversion anywhere in the product) — the Price range is disabled until then, and the "Lowest/Highest price" sort options stay disabled until then too, since ranking by price across different ledgers is exactly the comparison the currency requirement removes. Every token uses the <strong>approved token card</strong> with its rarity border. v1 is Buy&nbsp;Now only — no auctions, no offers. Shared page chrome (context-bar toolbar; the site top bar and footer are their own components). Source: <span class="mono">Design Documentation/secondary-marketplace-design.md</span>.</p>
     <div class="navlinks">Related: <a href="marketplace-token-states-gallery-2026-06-28.html">Token detail (buy)</a> · <a href="marketplace-list-states-gallery-2026-06-28.html">List for sale</a> · <a href="launchpad-states-gallery-2026-06-28.html">Launchpad</a></div>
   </header>
 
-  <!-- 01 · global browse -->
+  <!-- 01 · marketplace landing — collections ranking table -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">01</span><span class="t">Global browse — all collections</span><span class="d">A top-listings carousel highlights promoted listings up top (the same hero carousel used on the Launchpad and landing page). The grid's <strong>default order is by referral fee, highest first</strong> — sellers set a 1–10% referral fee when they list, and a higher fee buys higher placement (and feeds the front-page spotlight). There is no separate "Featured" tier. A filter rail (collection, price, issue range, attributes — the rarity-tier filter appears only when a single weighted-rarity collection is selected) sits beside the approved-token-card grid; the white list bar paginates at the bottom. Each card shows collection, name, price + Buy. v1 is fixed-price (Buy&nbsp;Now) only — auctions and offers are deferred.</span></div>
+    <div class="frame-cap"><span class="num">01</span><span class="t">Marketplace landing — all collections, ranked</span><span class="d">The marketplace root is an <strong>aggregate view of every collection</strong>, not a wall of individual tokens — the same job Magic&nbsp;Eden, OpenSea, Rarible and Blur put on their front page, because "what's trading and what's new" is the question a visitor actually arrives with. The <strong>featured carousel sits at the top</strong>, above the stats strip and table. A compact stats strip on the grey gives platform context without costing vertical space. <strong>Every collection is listed, including those with no listings yet</strong> — the row is how someone finds a collection and reaches its public hub, and once offers ship it's how they bid on one that has never traded. Rows with no market yet show <strong>—</strong>, never <strong>0</strong>: an unlisted collection has no floor, it does not have a floor of zero. <strong>The table ranks within one currency at a time — there is no USD, no oracle, no cross-currency conversion anywhere on this page.</strong> ICP is the default; switching currency re-ranks the table in that currency's own units. A collection that settles in a different ledger (Deep Blue in ckBTC, Oracle Stones in $TOKO) shows <strong>—</strong> for the currency-specific columns while you're viewing ICP, with a small tag naming what it actually lists in — never a converted guess.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
+      <div class="section">
+        <div class="carousel" aria-roledescription="carousel" aria-label="Featured on the marketplace">
+          <div class="track"></div>
+          <button class="nav-arrow prev" aria-label="Previous slide">&#8249;</button>
+          <button class="nav-arrow next" aria-label="Next slide">&#8250;</button>
+          <div class="dots"></div>
+          <div class="progress"><span></span></div>
+        </div>
+        <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Collections.</h2><div class="lede">Every collection on Toko — what's trading, what's new, and what hasn't come to market yet. Ranked in one currency at a time; every listing settles in its own currency.</div></div></div>
+
+        <div class="pstats">
+          <div class="p"><span class="k">24h volume · ICP</span><span class="v">12,480 ICP</span><span class="sub chg chg--up">▲ 12.4%</span></div>
+          <div class="p"><span class="k">24h sales</span><span class="v">1,204</span><span class="sub chg chg--dn">▼ 3.1%</span></div>
+          <div class="p"><span class="k">Active listings</span><span class="v">8,912</span><span class="sub">across 41 collections</span></div>
+          <div class="p"><span class="k">Collections</span><span class="v">126</span><span class="sub">41 with a live market</span></div>
+          <div class="p"><span class="k">Unique traders</span><span class="v">742</span><span class="sub">24h</span></div>
+        </div>
+
+        <div class="rankbar">
+          <div class="ctabs" style="border-bottom:0">
+            <button class="active">Trending</button>
+            <button>Top</button>
+            <button>New</button>
+            <button>Watchlist</button>
+          </div>
+          <div class="row" style="display:flex;gap:var(--s-3);align-items:center;flex-wrap:wrap">
+            <span class="cur-toggle">Rank in <select><option selected>ICP</option><option>ckUSDC</option><option>ckBTC</option><option>ckETH</option><option>$TOKO</option><option>$DKP</option></select></span>
+            <div class="rangesel"><button>1h</button><button class="active">24h</button><button>7d</button><button>30d</button><button>All</button></div>
+          </div>
+        </div>
+        <div class="ctable-wrap">
+          <div class="ctable-scroll">
+            <table class="ctable">
+              <thead>
+                <tr>
+                  <th class="l">#</th>
+                  <th class="l">Collection</th>
+                  <th>Floor · ICP</th>
+                  <th>24h vol · ICP <span style="color:var(--text-primary)">↓</span></th>
+                  <th>24h %</th>
+                  <th class="hide2">Sales</th>
+                  <th class="hide2">Last sale · ICP</th>
+                  <th class="hide2">Top offer</th>
+                  <th class="hide2">Listed</th>
+                  <th class="hide2">Owners</th>
+                  <th class="hide2">Supply</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="l rk">1</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></span><span><div class="cn">Crystal Birds</div><div class="cmeta">Generated · Aviary Labs</div></span></div></td>
+                  <td>4.10 ICP</td>
+                  <td>3,180 ICP</td>
+                  <td class="chg chg--up">▲ 18.6%</td>
+                  <td class="hide2">312</td>
+                  <td class="hide2">4.75 ICP</td>
+                  <td class="hide2">3.60 ICP</td>
+                  <td class="hide2">312 · 6.2%</td>
+                  <td class="hide2">1,840</td>
+                  <td class="hide2">5,000</td>
+                </tr>
+                <tr>
+                  <td class="l rk">2</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></span><span><div class="cn">Night Market</div><div class="cmeta">Curated · Night Market Studio</div></span></div></td>
+                  <td>1.24 ICP</td>
+                  <td>2,090 ICP</td>
+                  <td class="chg chg--dn">▼ 6.2%</td>
+                  <td class="hide2">204</td>
+                  <td class="hide2">1.19 ICP</td>
+                  <td class="hide2">1.00 ICP</td>
+                  <td class="hide2">204 · 9.1%</td>
+                  <td class="hide2">960</td>
+                  <td class="hide2">2,240</td>
+                </tr>
+                <tr>
+                  <td class="l rk">3</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></span><span><div class="cn">Deep Blue <span class="unlisted-tag">Lists in ckBTC</span></div><div class="cmeta">Generated · Deep Blue Collective</div></span></div></td>
+                  <td class="nodata">—</td>
+                  <td class="nodata">—</td>
+                  <td class="chg chg--flat">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2">98 · 12.2%</td>
+                  <td class="hide2">410</td>
+                  <td class="hide2">800</td>
+                </tr>
+                <tr>
+                  <td class="l rk">4</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></span><span><div class="cn">Oracle Stones <span class="unlisted-tag">Lists in $TOKO</span></div><div class="cmeta">Editioned · Solara Works</div></span></div></td>
+                  <td class="nodata">—</td>
+                  <td class="nodata">—</td>
+                  <td class="chg chg--flat">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2">64 · 3.2%</td>
+                  <td class="hide2">288</td>
+                  <td class="hide2">2,000</td>
+                </tr>
+                <tr>
+                  <td class="l rk">5</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></span><span><div class="cn">Verdant <span class="newtag">New</span></div><div class="cmeta">Generated · Leaf Drop</div></span></div></td>
+                  <td>5.40 ICP</td>
+                  <td>193 ICP</td>
+                  <td class="chg chg--up">▲ 44.0%</td>
+                  <td class="hide2">12</td>
+                  <td class="hide2">5.40 ICP</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2">40 · 8.0%</td>
+                  <td class="hide2">96</td>
+                  <td class="hide2">500</td>
+                </tr>
+                <tr>
+                  <td class="l rk">6</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></span><span><div class="cn">Autumn Hedge <span class="unlisted-tag">No listings</span></div><div class="cmeta">Curated · Hedgerow</div></span></div></td>
+                  <td class="nodata">—</td>
+                  <td class="nodata">—</td>
+                  <td class="chg chg--flat">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2">0 · 0%</td>
+                  <td class="hide2">120</td>
+                  <td class="hide2">300</td>
+                </tr>
+                <tr>
+                  <td class="l rk">7</td>
+                  <td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></span><span><div class="cn">Sun Sprites <span class="unlisted-tag">No listings</span></div><div class="cmeta">Editioned · Solara Works</div></span></div></td>
+                  <td class="nodata">—</td>
+                  <td class="nodata">—</td>
+                  <td class="chg chg--flat">—</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2">1.60 ICP</td>
+                  <td class="hide2 nodata">—</td>
+                  <td class="hide2">0 · 0%</td>
+                  <td class="hide2">64</td>
+                  <td class="hide2">150</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="listbar" style="border:0;border-top:1px solid var(--border-soft);border-radius:0"><span class="results-count">Showing <strong>1–25</strong> of <strong>126</strong> collections</span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button>2</button><button>3</button><span class="gap">…</span><button>6</button><button>›</button></div><label class="perpage">Per page <select><option>25</option><option>50</option><option>100</option></select></label></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 01 · row anatomy -->
+    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">01 ·</span><span class="t">Row anatomy — three market states</span><span class="d">The three states a row can be in, side by side, because the difference matters more than it looks. A collection <strong>with a market</strong> carries every figure, in the ranking currency. One that has <strong>traded but has nothing listed now</strong> keeps its last sale and its owner count but has no floor — a floor is a property of live listings, not of history. One that has <strong>never traded</strong> has supply and owners from minting and nothing else. Supply and owners are always known, for every collection, because they come from the registry rather than the market — which is exactly why an empty collection is still a useful row rather than a blank one. A fourth state, <strong>settles elsewhere</strong>, is covered in frame 01 (Deep Blue, Oracle Stones) rather than repeated here.</span></div>
+    <div class="showcase">
+      <div class="ctable-wrap">
+        <div class="ctable-scroll">
+          <table class="ctable">
+            <thead><tr><th class="l">Collection</th><th>Floor · ICP</th><th>24h vol · ICP</th><th>24h %</th><th>Last sale · ICP</th><th>Listed</th><th>Owners</th><th>Supply</th></tr></thead>
+            <tbody>
+              <tr><td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example1.png" alt="" onerror="this.remove()"></span><span><div class="cn">Live market</div><div class="cmeta">listings + recent sales</div></span></div></td><td>4.10 ICP</td><td>3,180 ICP</td><td class="chg chg--up">▲ 18.6%</td><td>4.75 ICP</td><td>312 · 6.2%</td><td>1,840</td><td>5,000</td></tr>
+              <tr><td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example2.png" alt="" onerror="this.remove()"></span><span><div class="cn">Traded, nothing listed <span class="unlisted-tag">No listings</span></div><div class="cmeta">history but no live floor</div></span></div></td><td class="nodata">—</td><td class="nodata">—</td><td class="chg chg--flat">—</td><td>1.60 ICP</td><td>0 · 0%</td><td>64</td><td>150</td></tr>
+              <tr><td class="l"><div class="cname-cell"><span class="cav"><img src="../style-guide/images/token_example3.png" alt="" onerror="this.remove()"></span><span><div class="cn">Never traded <span class="unlisted-tag">No market yet</span></div><div class="cmeta">minted, not yet sold</div></span></div></td><td class="nodata">—</td><td class="nodata">—</td><td class="chg chg--flat">—</td><td class="nodata">—</td><td>0 · 0%</td><td>120</td><td>300</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="ftip" style="margin-top:var(--s-4);font-size:var(--text-xs)">Sorting by floor or volume puts no-market rows <strong>last</strong> in either direction — an absent floor is not the lowest floor, and letting "—" win an ascending sort would bury every collection that actually trades.</p>
+    </div>
+  </section>
+
+  <!-- 02 · global browse -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Global browse — all collections</span><span class="d">The all-collections listing feed, reached from the landing table. The featured carousel sits at the top. The grid's <strong>default order is by referral fee, highest first</strong> — sellers set a 1–10% referral fee when they list, and a higher fee buys higher placement (and feeds the carousel above). There is no separate "Featured" tier. The <strong>global rail is deliberately shallow</strong>: collection, price and currency, and nothing that only makes sense inside one collection. <strong>Attributes are gone from this view</strong> — they come from a collection's own schema, so an all-collections rail would either list every attribute on the platform (thousands, mostly meaningless side by side) or an arbitrary handful. <strong>Issue number goes with them</strong>: "#1–100" across unrelated numbering sequences isn't a query anyone means. Both reappear the moment a single collection is selected (03), along with the rarity-tier filter for weighted collections. The white list bar paginates at the bottom. Each card shows collection, name, price + Buy. v1 is fixed-price (Buy&nbsp;Now) only — auctions and offers are deferred.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
@@ -216,14 +440,24 @@
         <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
         <div class="controls">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
-          <select class="sortsel"><option>Highest referral fee</option><option>Most recently listed</option><option>Oldest</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
+          <select class="sortsel"><option>Highest referral fee</option><option>Most recently listed</option><option>Oldest</option><option disabled title="Choose a single currency in the rail to sort by price">Lowest price · choose a currency</option><option disabled title="Choose a single currency in the rail to sort by price">Highest price · choose a currency</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
         </div>
         <div class="browse">
           <aside class="frail">
             <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox" checked> All collections</label><label class="chk"><input type="checkbox"> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
-            <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
-            <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
-            <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
+            <div class="fgroup"><h4>Currency</h4>
+              <div class="curpicker">
+                <label class="radiochip"><input type="radio" name="cur-01" checked> Any <span class="n">1,284</span></label>
+                <label class="radiochip"><input type="radio" name="cur-01"> ICP <span class="n">902</span></label>
+                <label class="radiochip"><input type="radio" name="cur-01"> ckUSDC <span class="n">211</span></label>
+                <label class="radiochip"><input type="radio" name="cur-01"> ckBTC <span class="n">94</span></label>
+                <label class="radiochip"><input type="radio" name="cur-01"> $TOKO <span class="n">77</span></label>
+              </div>
+            </div>
+            <div class="fgroup fgroup--locked"><h4>Price</h4>
+              <div class="minmax"><input placeholder="Min" disabled><input placeholder="Max" disabled></div>
+              <p class="ftip">Choose a currency to filter by price.</p>
+            </div>
           </aside>
           <div>
             <div class="tk-grid">
@@ -241,24 +475,65 @@
         </div>
       </div>
     </div>
+
+    <!-- 02 · price filter unlocked after choosing a currency -->
+    <div class="frame-cap" style="margin-top:var(--s-8)"><span class="num">02 ·</span><span class="t">Price filter — locked, then unlocked</span><span class="d">The two states side by side. <strong>No currency chosen:</strong> Price is visibly disabled with the reason stated inline — this isn't a normal empty field, so it can't look like one. <strong>ICP chosen:</strong> Price unlocks in ICP's own units, the field label repeats the unit so there's no ambiguity about what "12" means, and switching currency clears and re-locks the range rather than silently reinterpreting the old numbers in a new unit. There is <strong>no "Any" + price</strong> combination — Any and a price range are mutually exclusive, on purpose.</span></div>
+    <div style="display:flex;gap:var(--s-6);flex-wrap:wrap">
+      <div class="frail" style="width:260px;flex:none">
+        <div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:var(--s-3)">No currency chosen</div>
+        <div class="fgroup" style="border-top:0;padding-top:0"><h4>Currency</h4>
+          <div class="curpicker">
+            <label class="radiochip"><input type="radio" name="cur-showcase-a" checked> Any <span class="n">1,284</span></label>
+            <label class="radiochip"><input type="radio" name="cur-showcase-a"> ICP <span class="n">902</span></label>
+            <label class="radiochip"><input type="radio" name="cur-showcase-a"> ckUSDC <span class="n">211</span></label>
+          </div>
+        </div>
+        <div class="fgroup fgroup--locked"><h4>Price</h4>
+          <div class="minmax"><input placeholder="Min" disabled><input placeholder="Max" disabled></div>
+          <p class="ftip">Choose a currency above to filter by price.</p>
+        </div>
+      </div>
+      <div class="frail" style="width:260px;flex:none">
+        <div style="font-family:var(--font-emphasis);font-weight:700;font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:var(--s-3)">ICP chosen</div>
+        <div class="fgroup" style="border-top:0;padding-top:0"><h4>Currency</h4>
+          <div class="curpicker">
+            <label class="radiochip"><input type="radio" name="cur-showcase-b"> Any <span class="n">1,284</span></label>
+            <label class="radiochip"><input type="radio" name="cur-showcase-b" checked> ICP <span class="n">902</span></label>
+            <label class="radiochip"><input type="radio" name="cur-showcase-b"> ckUSDC <span class="n">211</span></label>
+          </div>
+        </div>
+        <div class="fgroup fgroup--unit"><h4>Price <span class="unit">· ICP</span></h4>
+          <div class="minmax"><input placeholder="Min ICP"><input placeholder="Max ICP" value="20"></div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- 02 · collection selected -->
+  <!-- 03 · collection selected -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">02</span><span class="t">Collection selected — same UI, grid filtered</span><span class="d">Selecting a collection doesn't change the marketplace UI — the same search, controls and filter rail stay put; only the grid narrows to that collection's tokens. The active scope shows in the breadcrumb and as the checked collection in the rail. Because Crystal Birds uses <strong>weighted rarity</strong>, the <strong>Rarity tier</strong> filter now appears in the rail (it's hidden in the all-collections view and for non-weighted collections). Per-collection stats and history live on the <strong>Collection hub</strong>, not here.</span></div>
+    <div class="frame-cap"><span class="num">03</span><span class="t">Collection selected — same UI, grid filtered</span><span class="d">Selecting a collection doesn't change the marketplace UI — the same search, controls and filter rail stay put; only the grid narrows to that collection's tokens. The active scope shows in the breadcrumb and as the checked collection in the rail. Because Crystal Birds uses <strong>weighted rarity</strong>, the <strong>Rarity tier</strong> filter now appears in the rail (it's hidden in the all-collections view and for non-weighted collections). <strong>Attributes and Issue number appear here and only here</strong> — this is the scope where a collection's attribute schema and its issue numbering exist, so this is the only place they can be offered honestly. Per-collection stats and history live on the <strong>Collection hub</strong>, not here.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><span class="here">Crystal Birds</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
         <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Buy &amp; sell.</h2><div class="lede">Fixed-price listings from collectors. Buy now in the listing's own currency.</div></div></div>
         <div class="controls">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search tokens, #issue, attributes, or collections…"></div>
-          <select class="sortsel"><option>Highest referral fee</option><option>Most recently listed</option><option>Oldest</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
+          <select class="sortsel"><option>Highest referral fee</option><option>Most recently listed</option><option>Oldest</option><option disabled title="Choose a single currency in the rail to sort by price">Lowest price · choose a currency</option><option disabled title="Choose a single currency in the rail to sort by price">Highest price · choose a currency</option><option>Rarity</option><option>Recently sold</option><option>Ending soon</option></select>
         </div>
         <div class="browse">
           <aside class="frail">
             <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox"> All collections</label><label class="chk"><input type="checkbox" checked> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
-            <div class="fgroup"><h4>Rarity tier</h4><select class="selrare"><option>Any tier</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select><p class="ftip">Crystal Birds uses weighted rarity, so its fixed tiers can be filtered. Hidden for non-weighted collections.</p></div>
-            <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
+            <div class="fgroup"><h4>Rarity tier</h4><select class="selrare"><option>Any tier</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></div>
+            <div class="fgroup"><h4>Currency</h4>
+              <div class="curpicker">
+                <label class="radiochip"><input type="radio" name="cur-03" checked> Any <span class="n">312</span></label>
+                <label class="radiochip"><input type="radio" name="cur-03"> ICP <span class="n">312</span></label>
+              </div>
+            </div>
+            <div class="fgroup fgroup--locked"><h4>Price</h4>
+              <div class="minmax"><input placeholder="Min" disabled><input placeholder="Max" disabled></div>
+              <p class="ftip">Choose a currency to filter by price.</p>
+            </div>
             <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
             <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
           </aside>
@@ -280,7 +555,7 @@
 
   <!-- 03 · no results -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">03</span><span class="t">No results</span><span class="d">When filters or search return nothing, only the <strong>grid</strong> yields to a character moment — the marketplace chrome (search, controls, filter rail) stays in place so the person can adjust or clear filters. Reset to page 1 whenever search, filters, or per-page change.</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">No results</span><span class="d">When filters or search return nothing, only the <strong>grid</strong> yields to a character moment — the marketplace chrome (search, controls, filter rail) stays in place so the person can adjust or clear filters. Shown here with <strong>ckUSDC</strong> chosen and a range nothing currently matches — the ordinary shape of "no results," now that price is currency-scoped rather than a reason on its own. Reset to page 1 whenever search, filters, or per-page change.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
@@ -292,9 +567,18 @@
         <div class="browse">
           <aside class="frail">
             <div class="fgroup"><h4>Collection</h4><label class="chk"><input type="checkbox" checked> All collections</label><label class="chk"><input type="checkbox"> Crystal Birds <span class="n">312</span></label><label class="chk"><input type="checkbox"> Night Market <span class="n">204</span></label><label class="chk"><input type="checkbox"> Deep Blue <span class="n">98</span></label></div>
-            <div class="fgroup"><h4>Price</h4><div class="minmax"><input placeholder="Min"><input placeholder="Max"></div></div>
-            <div class="fgroup"><h4>Issue number</h4><div class="minmax"><input placeholder="From"><input placeholder="To"></div></div>
-            <div class="fgroup"><h4>Attributes</h4><label class="chk"><input type="checkbox"> Background · Aurora</label><label class="chk"><input type="checkbox"> Wings · Crystalline</label></div>
+            <div class="fgroup"><h4>Currency</h4>
+              <div class="curpicker">
+                <label class="radiochip"><input type="radio" name="cur-04"> Any <span class="n">1,284</span></label>
+                <label class="radiochip"><input type="radio" name="cur-04"> ICP <span class="n">902</span></label>
+                <label class="radiochip"><input type="radio" name="cur-04" checked> ckUSDC <span class="n">211</span></label>
+                <label class="radiochip"><input type="radio" name="cur-04"> ckBTC <span class="n">94</span></label>
+                <label class="radiochip"><input type="radio" name="cur-04"> $TOKO <span class="n">77</span></label>
+              </div>
+            </div>
+            <div class="fgroup fgroup--unit"><h4>Price <span class="unit">· ckUSDC</span></h4>
+              <div class="minmax"><input placeholder="Min ckUSDC" value="500"><input placeholder="Max ckUSDC" value="1000"></div>
+            </div>
           </aside>
           <div>
             <div class="empty"><img src="../style-guide/bot-images/sorry_raise_hand.png" alt="" onerror="this.style.display='none'"><h3>Nothing listed for that</h3><p>No listings match your filters right now. Clear them to see everything for sale.</p><button class="btn btn--secondary">Clear filters</button></div>
@@ -306,7 +590,7 @@
 
   <!-- 04 · empty marketplace -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">Empty marketplace — how trading works</span><span class="d">At launch, or for a brand-new collection, there are no listings yet — distinct from a filtered no-results (03). The hero carousel <strong>stays at the top</strong>; below it the empty grid becomes an <strong>infographic that teaches the model</strong> — peer-to-peer, seller-in-control, one price for the buyer, transparent split, cancel any time. All claims per <span class="mono">secondary-marketplace-design.md</span>: fees come <strong>out of</strong> the price (never added on top), split order is royalties (≤3%) → marketplace fee (1–10%, set by the seller) → seller. Search and filters are omitted — there is nothing to filter yet. Canonical version of this infographic (merged 2026-07-22 from the split-heroes mock).</span></div>
+    <div class="frame-cap"><span class="num">05</span><span class="t">Empty marketplace — how trading works</span><span class="d">At launch, or for a brand-new collection, there are no listings yet — distinct from a filtered no-results (03). The hero carousel <strong>stays at the top</strong>; below it the empty grid becomes an <strong>infographic that teaches the model</strong> — peer-to-peer, seller-in-control, one price for the buyer, transparent split, cancel any time. All claims per <span class="mono">secondary-marketplace-design.md</span>: fees come <strong>out of</strong> the price (never added on top), split order is royalties (≤3%) → marketplace fee (1–10%, set by the seller) → seller. Search and filters are omitted — there is nothing to filter yet. Canonical version of this infographic (merged 2026-07-22 from the split-heroes mock).</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><span class="here">Marketplace</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
@@ -345,14 +629,14 @@
 
   <!-- 05 · featured view -->
   <section class="frame" id="feat">
-    <div class="frame-cap"><span class="num">05</span><span class="t">Default order — highest referral first</span><span class="d">The default marketplace order: listings sorted by <strong>referral fee, highest first</strong>. Sellers set a 1–10% fee when they list; the higher it is, the nearer the top they sit (and the more likely to feed the front-page spotlight). There is no separate "Featured" tier — the referral fee is the single visibility lever.</span></div>
+    <div class="frame-cap"><span class="num">06</span><span class="t">Default order — highest referral first</span><span class="d">The default marketplace order: listings sorted by <strong>referral fee, highest first</strong>. Sellers set a 1–10% fee when they list; the higher it is, the nearer the top they sit (and the more likely to feed the front-page spotlight). There is no separate "Featured" tier — the referral fee is the single visibility lever.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><span class="here">Featured</span></div><div class="actions"><button class="notif-bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge">3</span></button><span class="princ"><span class="av"></span><span class="id">k1m9…7uvw</span></span></div></div>
       <div class="section">
         <div class="section-head"><div><div class="eyebrow">Marketplace</div><h2>Top listings.</h2><div class="lede">Sorted by referral fee — the highest-paying listings sit at the top. The fee is charged only on a sale.</div></div></div>
         <div class="controls">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search featured listings…"></div>
-          <select class="sortsel"><option>Highest referral fee</option><option>Most recently listed</option><option>Oldest</option><option>Lowest price</option><option>Highest price</option><option>Rarity</option><option>Ending soon</option></select>
+          <select class="sortsel"><option>Highest referral fee</option><option>Most recently listed</option><option>Oldest</option><option disabled title="No currency filter on this reduced page — price sort needs one">Lowest price · choose a currency</option><option disabled title="No currency filter on this reduced page — price sort needs one">Highest price · choose a currency</option><option>Rarity</option><option>Ending soon</option></select>
         </div>
         <div class="tk-grid">
           <a class="rarity-frame rarity-frame--rare"><div class="tok-card"><div class="art"><img src="../style-guide/images/token_example1.png" onerror="this.remove()"></div><div class="meta"><div class="col">Crystal Birds</div><div class="top"><h3 class="name">Aurora Finch</h3><span class="issue">#12</span></div></div><div class="foot"><span class="pr">8.5 ICP</span><span class="buy">Buy</span></div></div></a>
