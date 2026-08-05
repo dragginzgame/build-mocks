@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Toko — Claim rule · Requirements as checkboxes (states gallery)</title>
+<style>
+  @font-face { font-family:"Anton"; src:url("../fonts/Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Mona Sans"; src:url("../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --notify-error:#EF4444; --info:#2563EB;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:#DCDCDC; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--surface-canvas-deep); padding:1px 6px; border-radius:var(--r-1); color:var(--text-secondary); }
+
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .gallery > header h1 { font-size:2.75rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:82ch; margin-top:var(--s-3); }
+  .modelbar { display:flex; gap:var(--s-4); flex-wrap:wrap; margin-top:var(--s-5); }
+  .modelbar .mb { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); flex:1; min-width:220px; }
+  .modelbar .mb .k { font-family:var(--font-display); text-transform:uppercase; font-size:var(--text-lg); }
+  .modelbar .mb .v { font-size:var(--text-xs); color:var(--text-secondary); margin-top:2px; }
+  .part-divider { margin-top:var(--s-12); padding-top:var(--s-6); border-top:2px solid var(--border-strong); }
+  .part-divider .pd-k { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .part-divider .pd-h { font-size:var(--text-3xl); margin-top:.25rem; }
+  .part-divider .pd-d { color:var(--text-secondary); font-size:var(--text-sm); margin-top:var(--s-2); max-width:84ch; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); flex:1; min-width:280px; }
+  .stage { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .stage--tight { padding:var(--s-8) var(--s-6); }
+
+  /* controls */
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:var(--text-inverse); }
+  .btn--ghost { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4rem .8rem; font-size:var(--text-xs); }
+  .btn[disabled] { opacity:.45; cursor:not-allowed; }
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--amber { background:rgba(245,158,11,.16); color:var(--stage-draft); }
+  .tag--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+  .tag--indigo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  .tag--red { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); }
+  .input[disabled] { background:var(--surface-canvas-deep); color:var(--text-muted); cursor:not-allowed; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--s-4); }
+  @media (max-width:680px){ .grid2,.grid3 { grid-template-columns:1fr; } }
+  .info-note { background:rgba(99,102,241,.07); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { color:var(--stage-review); flex:none; margin-top:1px; }
+  .warn-note { background:rgba(245,158,11,.1); } .warn-note .ic { color:var(--stage-draft); }
+  .ok-note { background:rgba(16,185,129,.08); } .ok-note .ic { color:var(--stage-live); }
+  .err-note { background:rgba(239,68,68,.08); } .err-note .ic { color:var(--notify-error); }
+
+  .cbx { width:18px; height:18px; border-radius:5px; border:2px solid var(--text-muted); display:inline-flex; align-items:center; justify-content:center; flex:none; color:#fff; }
+  .cbx svg { width:12px; height:12px; opacity:0; }
+  .cbx.on { background:var(--text-primary); border-color:var(--text-primary); } .cbx.on svg { opacity:1; }
+  .cbx.dis { opacity:.35; }
+  .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-muted); flex:none; position:relative; }
+  .radio.on { border-color:var(--text-primary); } .radio.on::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-primary); }
+  .radio.dis { opacity:.35; }
+  .switch { width:38px; height:22px; border-radius:var(--r-pill); background:#D4D4D4; position:relative; flex:none; }
+  .switch::after { content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; }
+  .switch.on { background:var(--text-primary); } .switch.on::after { left:19px; }
+
+  /* option rows */
+  .opt { display:flex; align-items:flex-start; gap:var(--s-3); padding:var(--s-4) var(--s-5); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); }
+  .opt + .opt { margin-top:var(--s-3); }
+  .opt.on { border-color:var(--text-primary); box-shadow:inset 0 0 0 1px var(--text-primary); }
+  .opt.disabled { opacity:.5; }
+  .opt .opt-main { flex:1; min-width:0; }
+  .opt .opt-ttl { font-family:var(--font-emphasis); font-weight:700; display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap; }
+  .opt .opt-d { font-size:var(--text-xs); color:var(--text-secondary); }
+  .opt-body { margin-top:var(--s-4); padding-top:var(--s-4); border-top:1px solid var(--border-soft); }
+  .subgroup { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:var(--s-3) var(--s-4); }
+  .wl-row { display:flex; align-items:center; gap:var(--s-3); padding:.55rem 0; border-top:1px solid var(--border-soft); }
+  .wl-row:first-child { border-top:0; }
+  .wl-row .wl-n { font-family:var(--font-emphasis); font-weight:700; flex:1; min-width:0; }
+  .sb { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .sb .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .sb--green { background:rgba(16,185,129,.14); color:var(--stage-live); }
+
+  /* summary strip */
+  .summary { background:var(--surface-canvas-deep); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; font-size:var(--text-sm); }
+  .summary .sk { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); margin-right:.25rem; }
+  .andmark { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; color:var(--text-muted); padding:0 2px; }
+
+  /* modal */
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:660px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.narrow { max-width:480px; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .grouplabel { display:flex; align-items:baseline; gap:var(--s-3); flex-wrap:wrap; }
+
+  /* spec showcase */
+  .spec-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-5); width:100%; }
+  @media (max-width:900px){ .spec-grid { grid-template-columns:1fr; } }
+  .spec-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); }
+  .spec-card h4 { font-size:var(--text-lg); }
+  .spec-card .sd { font-size:var(--text-xs); color:var(--text-secondary); margin-top:var(--s-2); }
+  .spec-card .sample { margin-top:var(--s-4); display:flex; flex-direction:column; gap:var(--s-2); }
+  .spec-card .sample .l { display:flex; align-items:center; gap:var(--s-2); font-size:var(--text-sm); }
+  .verdict { margin-top:var(--s-4); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; }
+  .verdict.yes { color:var(--stage-live); } .verdict.no { color:var(--notify-error); }
+
+  /* phone */
+  .phone { width:375px; max-width:100%; background:var(--surface-canvas); border:1px solid #cfcfcf; border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .phone .mbody { padding:var(--s-4); gap:var(--s-3); }
+  .phone .modal-card { border:0; border-radius:0; box-shadow:none; max-width:none; }
+  .phone .footer-row { padding:var(--s-4); }
+  .phone .footer-row .btn { flex:1; justify-content:center; }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <div class="eyebrow">Toko · Vendor · Claim rule</div>
+    <h1>Claim rule — requirements as checkboxes.</h1>
+    <p>Response to the dev note on the <strong>Claim rule</strong> modal. Today both groups use radios, which reads as "pick exactly one" — wrong for <strong>Requirements</strong>, which are optional, multiple, and AND-combined. Per the style guide: <em>checkboxes for multi-select, radios for one-of-many, switches for binary settings.</em> So <strong>Claim cost stays radios</strong> (Free vs Priced is genuinely exclusive) and <strong>Requirements become checkboxes</strong>, each expanding its own config block when checked. One hard constraint carries over from the vendor design doc: the claim payload supports <strong>one NNS neuron id and one SNS neuron id</strong>, so "Has a stake" stays a single instance and unsupported combinations must be rejected at save / start / claim time (fail-closed).</p>
+    <div class="modelbar">
+      <div class="mb"><div class="k">Cost — radios</div><div class="v">Free or Priced. Exactly one, always required.</div></div>
+      <div class="mb"><div class="k">Requirements — checkboxes</div><div class="v">Zero or more, AND-combined. None checked = anyone can claim.</div></div>
+      <div class="mb"><div class="k">Not switches</div><div class="v">Switches are for binary settings that apply immediately — not for composing a rule set inside a modal.</div></div>
+      <div class="mb"><div class="k">Payload limit</div><div class="v">One NNS + one SNS neuron proof. No second SNS stake requirement until the payload shape expands.</div></div>
+    </div>
+  </header>
+
+  <!-- ============ PART A — THE MODAL ============ -->
+  <div class="part-divider">
+    <div class="pd-k">Part A</div>
+    <h2 class="pd-h">The claim rule modal.</h2>
+    <p class="pd-d">Same modal, same content, corrected control semantics. A requirement's config fields only exist while its checkbox is checked — unchecked rows collapse to title + one-line description, which keeps the modal short when nothing is gated.</p>
+  </div>
+
+  <!-- A1 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A1</span><span class="t">No requirements — anyone can claim</span><span class="d">Default state. All requirement checkboxes empty, all config collapsed. The summary strip reads the rule back in one line so you never have to infer it from the controls. This is the state most vendors ship with.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Claim rule · All tokens</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="grouplabel"><label class="flabel" style="margin:0">Claim cost</label><span class="tag">Required — free, or an accepted currency</span></div>
+          <div>
+            <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Free</div><div class="opt-d">Anyone eligible can claim at no cost.</div></div></div>
+            <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in one of Toko's accepted currencies.</div></div></div>
+          </div>
+
+          <div class="grouplabel" style="margin-top:var(--s-2)"><label class="flabel" style="margin:0">Requirements</label><span class="tag">Optional · choose any · combined with AND</span></div>
+          <div>
+            <div class="opt"><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
+            <div class="opt disabled"><span class="cbx dis"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least a set number of tokens from a chosen collection.</div><div class="opt-d" style="font-style:italic; margin-top:.2rem">Coming soon — not yet available.</div></div></div>
+            <div class="opt"><span class="cbx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active NNS / SNS stake.</div></div></div>
+          </div>
+          <div class="summary"><span class="sk">Rule</span><span class="tag tag--green">Free</span><span class="andmark">+</span><span class="tag">Open · no gates</span><span class="tiny" style="margin-left:auto">Anyone can claim.</span></div>
+          <p class="hint">Requirements narrow who can claim, combined with AND — leave them all unchecked for an open claim. Changes here never affect existing vendors.</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A2 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A2</span><span class="t">Two requirements checked — whitelist AND stake</span><span class="d">The state that radios made impossible to express. Each checked requirement expands its own config block below its description; unchecked and disabled rows stay collapsed. The summary strip shows the AND chain, and the hint counts qualifying collectors down rather than up.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Claim rule · All tokens</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="grouplabel"><label class="flabel" style="margin:0">Claim cost</label><span class="tag">Required — free, or an accepted currency</span></div>
+          <div>
+            <div class="opt on"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Free</div><div class="opt-d">Anyone eligible can claim at no cost.</div></div></div>
+            <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in one of Toko's accepted currencies.</div></div></div>
+          </div>
+
+          <div class="grouplabel" style="margin-top:var(--s-2)"><label class="flabel" style="margin:0">Requirements</label><span class="tag">Optional · choose any · combined with AND</span><span class="tag tag--indigo">2 selected</span></div>
+          <div>
+            <div class="opt on">
+              <span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div class="opt-main">
+                <div class="opt-ttl">On a whitelist <span class="tag tag--indigo">1 of 2 selected</span></div>
+                <div class="opt-d">Only principals on a Live whitelist may claim.</div>
+                <div class="opt-body">
+                  <div class="subgroup">
+                    <div class="wl-row"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span><span class="wl-n">Court Founders</span><span class="tiny">210 addresses</span><span class="sb sb--green"><span class="dot"></span>Live</span></div>
+                    <div class="wl-row"><span class="cbx"></span><span class="wl-n">Allowlist A</span><span class="tiny">900 addresses</span><span class="sb sb--green"><span class="dot"></span>Live</span></div>
+                  </div>
+                  <p class="hint">Only the project's Live whitelists appear here. Selecting several whitelists is an OR within this requirement — a collector needs to be on any one of them.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="opt disabled"><span class="cbx dis"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least a set number of tokens from a chosen collection.</div><div class="opt-d" style="font-style:italic; margin-top:.2rem">Coming soon — not yet available.</div></div></div>
+
+            <div class="opt on">
+              <span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div class="opt-main">
+                <div class="opt-ttl">Has a stake <span class="tag">Single instance</span></div>
+                <div class="opt-d">Must have an active NNS / SNS stake.</div>
+                <div class="opt-body">
+                  <div class="grid3">
+                    <div><label class="flabel">Source</label><select class="input"><option>NNS</option><option selected>SNS</option></select></div>
+                    <div><label class="flabel">SNS</label><select class="input"><option selected>ACME</option><option>Dragginz</option><option>OpenChat</option></select></div>
+                    <div><label class="flabel">Minimum stake</label><input class="input" value="1"></div>
+                  </div>
+                  <div class="grid3" style="margin-top:var(--s-3)">
+                    <div><label class="flabel">Minimum dissolve delay</label><select class="input"><option selected>Any dissolve delay</option><option>3 months</option><option>6 months</option></select></div>
+                    <div><label class="flabel">Minimum neuron age</label><select class="input"><option selected>Any age</option><option>1 month</option><option>6 months</option></select></div>
+                    <div><label class="flabel">Max claims / neuron</label><input class="input" value="1"></div>
+                  </div>
+                  <p class="hint">Minimum stake, dissolve delay and neuron age are optional — leave them empty for "any active stake". Max claims per neuron defaults to <strong>1</strong>, counted per vendor whichever hotkeyed address claims.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary"><span class="sk">Rule</span><span class="tag tag--green">Free</span><span class="andmark">+</span><span class="tag tag--indigo">Whitelist · Court Founders</span><span class="andmark">AND</span><span class="tag tag--indigo">SNS stake · ACME ≥ 1</span></div>
+          <p class="hint">Requirements narrow who can claim, combined with AND — the more you check, the fewer collectors qualify. Changes here never affect existing vendors.</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A3 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A3</span><span class="t">Priced cost — cost group stays radios</span><span class="d">Choosing Priced expands the amount + currency fields. This group keeps radios on purpose: a claim has exactly one cost, and it is always required. Same modal, requirement group untouched.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Claim rule · All tokens</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="grouplabel"><label class="flabel" style="margin:0">Claim cost</label><span class="tag">Required — free, or an accepted currency</span></div>
+          <div>
+            <div class="opt"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Free</div><div class="opt-d">Anyone eligible can claim at no cost.</div></div></div>
+            <div class="opt on">
+              <span class="radio on"></span>
+              <div class="opt-main">
+                <div class="opt-ttl">Priced</div>
+                <div class="opt-d">An amount in one of Toko's accepted currencies.</div>
+                <div class="opt-body">
+                  <div class="grid2">
+                    <div><label class="flabel">Amount</label><input class="input" value="5"></div>
+                    <div><label class="flabel">Currency</label><select class="input"><option selected>ICP</option><option>ckUSDC</option><option>ckBTC</option></select></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grouplabel" style="margin-top:var(--s-2)"><label class="flabel" style="margin:0">Requirements</label><span class="tag">Optional · choose any · combined with AND</span></div>
+          <div>
+            <div class="opt"><span class="cbx"></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
+            <div class="opt disabled"><span class="cbx dis"></span><div class="opt-main"><div class="opt-ttl">Holds tokens from a collection</div><div class="opt-d">Must hold at least a set number of tokens from a chosen collection.</div><div class="opt-d" style="font-style:italic; margin-top:.2rem">Coming soon — not yet available.</div></div></div>
+            <div class="opt"><span class="cbx"></span><div class="opt-main"><div class="opt-ttl">Has a stake</div><div class="opt-d">Must have an active NNS / SNS stake.</div></div></div>
+          </div>
+          <div class="summary"><span class="sk">Rule</span><span class="tag tag--amber">5 ICP</span><span class="andmark">+</span><span class="tag">Open · no gates</span></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A4 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A4</span><span class="t">Fail-closed — unsupported combination</span><span class="d">Because requirements can now be multi-selected, the UI has to say what the runtime can't do. The claim payload carries one NNS neuron id and one SNS neuron id, so a second independent SNS stake proof is rejected at save / start / claim time rather than silently accepted. Error note on the field, Save disabled.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Claim rule · All tokens</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note err-note"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.01"/></svg></span><div><strong style="color:var(--text-primary)">This rule can't be saved.</strong> A claim proves at most one NNS neuron and one SNS neuron. Remove one of the two SNS stake requirements, or gate the second condition with a whitelist instead.</div></div>
+          <div class="grouplabel"><label class="flabel" style="margin:0">Requirements</label><span class="tag tag--red">Unsupported combination</span></div>
+          <div>
+            <div class="opt on">
+              <span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <div class="opt-main">
+                <div class="opt-ttl">Has a stake <span class="tag tag--red">2 SNS proofs</span></div>
+                <div class="opt-d">Must have an active NNS / SNS stake.</div>
+                <div class="opt-body">
+                  <div class="subgroup" style="border-color:var(--notify-error)">
+                    <div class="wl-row"><span class="wl-n">SNS · ACME ≥ 1</span><button class="btn btn--ghost btn--sm">Remove</button></div>
+                    <div class="wl-row"><span class="wl-n" style="color:var(--notify-error)">SNS · Dragginz ≥ 5</span><button class="btn btn--ghost btn--sm">Remove</button></div>
+                  </div>
+                  <p class="hint" style="color:var(--notify-error)">Only one SNS stake proof is supported. One NNS + one SNS is fine.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="hint">Validation runs at save, at vendor start, and again at claim time — an unsupported variant is never silently accepted.</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary" disabled>Save rule</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A5 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">A5</span><span class="t">Mobile — 375px</span><span class="d">Parity check. Requirement rows stack, config grids collapse to one column, footer buttons go full-width. The checkbox stays top-left aligned with the title so a long description doesn't push the control off-centre.</span></div>
+    <div class="stage stage--tight">
+      <div class="phone">
+        <div class="modal-card">
+          <header><h4 style="font-size:var(--text-lg)">Claim rule · All tokens</h4><button class="x" aria-label="Close">✕</button></header>
+          <div class="mbody">
+            <div class="grouplabel"><label class="flabel" style="margin:0">Claim cost</label></div>
+            <div>
+              <div class="opt on" style="padding:var(--s-3) var(--s-4)"><span class="radio on"></span><div class="opt-main"><div class="opt-ttl">Free</div><div class="opt-d">Anyone eligible can claim at no cost.</div></div></div>
+              <div class="opt" style="padding:var(--s-3) var(--s-4)"><span class="radio"></span><div class="opt-main"><div class="opt-ttl">Priced</div><div class="opt-d">An amount in an accepted currency.</div></div></div>
+            </div>
+            <div class="grouplabel"><label class="flabel" style="margin:0">Requirements</label><span class="tag tag--indigo">1 selected</span></div>
+            <div>
+              <div class="opt" style="padding:var(--s-3) var(--s-4)"><span class="cbx"></span><div class="opt-main"><div class="opt-ttl">On a whitelist</div><div class="opt-d">Only principals on a Live whitelist may claim.</div></div></div>
+              <div class="opt disabled" style="padding:var(--s-3) var(--s-4)"><span class="cbx dis"></span><div class="opt-main"><div class="opt-ttl">Holds tokens</div><div class="opt-d" style="font-style:italic">Coming soon.</div></div></div>
+              <div class="opt on" style="padding:var(--s-3) var(--s-4)">
+                <span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>
+                <div class="opt-main">
+                  <div class="opt-ttl">Has a stake</div>
+                  <div class="opt-d">Must have an active NNS / SNS stake.</div>
+                  <div class="opt-body">
+                    <div style="display:flex;flex-direction:column;gap:var(--s-3)">
+                      <div><label class="flabel">Source</label><select class="input"><option selected>SNS</option><option>NNS</option></select></div>
+                      <div><label class="flabel">SNS</label><select class="input"><option selected>ACME</option></select></div>
+                      <div><label class="flabel">Minimum stake</label><input class="input" value="1"></div>
+                      <div><label class="flabel">Max claims / neuron</label><input class="input" value="1"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="summary"><span class="sk">Rule</span><span class="tag tag--green">Free</span><span class="andmark">+</span><span class="tag tag--indigo">SNS stake · ACME</span></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--primary">Save rule</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PART B — CONTROL SPEC ============ -->
+  <div class="part-divider">
+    <div class="pd-k">Part B</div>
+    <h2 class="pd-h">Which control, and why.</h2>
+    <p class="pd-d">The style guide already settles this: "Checkboxes for multi-select, radios for one-of-many, switches for binary settings." Showcase on grey — these are documentation samples, not product UI.</p>
+  </div>
+
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B1</span><span class="t">Control semantics</span><span class="d">Why the requirement group is checkboxes and not switches. Switches imply an immediate, self-contained setting; requirements are composed into a rule that is saved as a unit, so they need the checkbox's "part of a set" reading and the disabled state for the not-yet-available option.</span></div>
+    <div class="stage stage--tight">
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h4>Radio</h4>
+          <div class="sd">One-of-many, mutually exclusive, always resolved to a value.</div>
+          <div class="sample"><div class="l"><span class="radio on"></span>Free</div><div class="l"><span class="radio"></span>Priced</div></div>
+          <div class="verdict yes">Use for Claim cost</div>
+        </div>
+        <div class="spec-card">
+          <h4>Checkbox</h4>
+          <div class="sd">Zero or more from a set, independent of each other, saved together. Supports a disabled member for "coming soon".</div>
+          <div class="sample"><div class="l"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>On a whitelist</div><div class="l"><span class="cbx dis"></span>Holds tokens <span class="tiny">(soon)</span></div><div class="l"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>Has a stake</div></div>
+          <div class="verdict yes">Use for Requirements</div>
+        </div>
+        <div class="spec-card">
+          <h4>Switch</h4>
+          <div class="sd">A binary setting that takes effect on its own, immediately — e.g. a guard on a Live surface.</div>
+          <div class="sample"><div class="l"><span class="switch on"></span>Duplicates allowed</div><div class="l"><span class="switch"></span>Destruction allowed</div></div>
+          <div class="verdict no">Not for a saved rule set</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="frame">
+    <div class="frame-cap"><span class="num">B2</span><span class="t">Rule read-back — the tier row</span><span class="d">Downstream effect of the change: with multiple requirements now expressible, the tier rows on Claim defaults and the vendor summary render the AND chain as tag + <span class="mono">AND</span> + tag. Restrictions (how much) stay visually separate from requirements (who).</span></div>
+    <div class="stage stage--tight">
+      <div style="width:100%; max-width:760px; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5)">
+        <div class="wl-row"><span class="wl-n">All tokens</span><span class="row" style="gap:.35rem"><span class="tag tag--green">Free</span><span class="andmark">+</span><span class="tag">Open · no gates</span></span></div>
+        <div class="wl-row"><span class="wl-n">Common</span><span class="row" style="gap:.35rem"><span class="tag tag--amber">1 ICP</span><span class="andmark">+</span><span class="tag tag--indigo">Whitelist</span></span></div>
+        <div class="wl-row"><span class="wl-n">Legendary</span><span class="row" style="gap:.35rem"><span class="tag tag--amber">25 ckUSDC</span><span class="andmark">+</span><span class="tag tag--indigo">Whitelist</span><span class="andmark">AND</span><span class="tag tag--indigo">NNS stake</span><span class="andmark">AND</span><span class="tag tag--indigo">SNS stake · ACME</span><span class="tag tag--amber" style="margin-left:.35rem">Max 1 / wallet</span></span></div>
+        <p class="hint">Requirements gate <em>who</em> can claim (indigo, AND-chained). Restrictions limit <em>how much</em> (amber, set apart at the end).</p>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
