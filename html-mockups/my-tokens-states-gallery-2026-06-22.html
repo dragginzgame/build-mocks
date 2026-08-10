@@ -227,6 +227,19 @@
   .attr .v { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
   .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
 
+  /* ---- market history (same component as the public marketplace token page — one implementation) ---- */
+  .hist { display:flex; flex-direction:column; }
+  .hrow { display:flex; align-items:center; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .hrow:first-child { border-top:0; }
+  .hrow .ev { display:inline-flex; align-items:center; gap:.4rem; font-weight:700; font-family:var(--font-emphasis); min-width:78px; }
+  .hrow .ev .d { width:8px; height:8px; border-radius:50%; }
+  .ev.sale .d{background:var(--stage-live);} .ev.list .d{background:var(--brand-cyan);} .ev.mint .d{background:#8F3DFF;} .ev.expired .d{background:var(--text-muted);} .ev.cancel .d{background:var(--stage-draft);}
+  .hrow .pr { font-family:var(--font-emphasis); font-weight:700; font-variant-numeric:tabular-nums; }
+  .hrow .who { color:var(--text-secondary); font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); margin-left:auto; }
+  .hrow .tm { color:var(--text-muted); font-size:var(--text-xs); min-width:48px; text-align:right; }
+  .hist-empty { padding:.6rem 0; font-size:var(--text-sm); color:var(--text-secondary); }
+  .hist-link { display:inline-block; margin-top:var(--s-3); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); color:var(--brand-cyan); text-decoration:none; }
+
   /* ---- notes ---- */
   .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
   .note .ic { flex:none; margin-top:1px; }
@@ -577,7 +590,7 @@
 
     <!-- 07 · Token detail — single -->
     <section class="frame">
-      <div class="frame-cap"><span class="num">07</span><span class="t">Token detail — single holding (owned)</span><span class="d">The minted-token viewer: this is the same read-only component as the creator-side "Single minted copy" view (manage-minted gallery, frame 03) and the Live definition view — reused here with the wallet's owner actions. Media gallery with clickable thumbnails (asset shown large, read-only), identity (collection, token id, ledger), rarity/score, attributes, and claim provenance. Footer actions are the two shipped owner actions — Transfer and Burn. Detail must resolve against the active principal's holdings; a link to a token you don't own lands on the guard in frame 11.</span></div>
+      <div class="frame-cap"><span class="num">07</span><span class="t">Token detail — single holding (owned)</span><span class="d">The minted-token viewer: this is the same read-only component as the creator-side "Single minted copy" view (manage-minted gallery, frame 03) and the Live definition view — reused here with the wallet's owner actions. Media gallery with clickable thumbnails (asset shown large, read-only), identity (collection, token id, ledger), rarity/score, attributes, and claim provenance. A <strong>Market history</strong> snippet follows Provenance — the same per-token <code>activity[]</code> feed the public marketplace token page already renders (one implementation, not a second feed), showing the last few events in the wallet's normalized vocabulary (Listed, Sold, Claimed, and now <strong>Expired</strong>/<strong>Cancelled</strong> for a listing that lapsed or was pulled rather than sold). It's a compact snippet, not the full history — "View full history" links out to the public token page, which stays the one place the complete feed renders. Footer actions are the two shipped owner actions — Transfer and Burn. Detail must resolve against the active principal's holdings; a link to a token you don't own lands on the guard in frame 11.</span></div>
       <div class="screen">
         <div class="context-bar">
           <div class="crumb"><a>My Tokens</a><span class="sep">/</span><span class="here">Little Leaf #014</span></div>
@@ -624,6 +637,15 @@
                 <span class="eyebrow">Provenance</span>
                 <div class="kv" style="border-top:0;padding-top:0"><span class="k">Claimed from</span><span class="v">Leaf Drop · vendor</span></div>
                 <div class="kv"><span class="k">Original mint</span><span class="v mono">tx 0x9f…3a</span></div>
+              </div>
+              <div class="dsec">
+                <span class="eyebrow">Market history</span>
+                <div class="hist">
+                  <div class="hrow"><span class="ev list"><span class="d"></span>Listing</span><span class="pr">16.0 ICP</span><span class="who">k1m9…7uvw</span><span class="tm">3h</span></div>
+                  <div class="hrow"><span class="ev expired"><span class="d"></span>Expired</span><span class="pr">14.0 ICP</span><span class="who">k1m9…7uvw</span><span class="tm">6d</span></div>
+                  <div class="hrow"><span class="ev sale"><span class="d"></span>Claimed</span><span class="pr">9.0 ICP</span><span class="who">k1m9…7uvw</span><span class="tm">22d</span></div>
+                </div>
+                <a class="hist-link" href="marketplace-token-states-gallery-2026-06-28.html">View full history →</a>
               </div>
               <div class="dactions">
                 <a class="btn btn--primary" href="marketplace-list-states-gallery-2026-06-28.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg> List for sale</a>
