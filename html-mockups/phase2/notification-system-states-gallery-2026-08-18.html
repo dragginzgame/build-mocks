@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Notification system · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF; --text-inverse-2:#B5B5B5;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --border-frame:#CFCFCF;
+    --notify-success:#10B981; --notify-error:#EF4444; --notify-warn:#F59E0B; --notify-critical:#B91C1C;
+    --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --surface-gallery:#DCDCDC; --surface-topbar:#0A0A0A;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020; --on-brand:#001318;
+    --art-principal:linear-gradient(135deg,#06B0E6,#1E3A8A);
+    /* Notification levels (§3) — five, not four. These are the platform
+       --notify-* tokens; the level vocabulary does not get its own palette. */
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem; --s-20:5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-gallery); -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.625rem 1.125rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4375rem .875rem; font-size:var(--text-xs); }
+  .btn--xs { padding:.3125rem var(--s-3); font-size:var(--text-2xs); letter-spacing:.06em; }
+
+  .tag { display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--count { background:var(--tint-info); color:var(--on-info); }
+  .tag--cat { background:transparent; border:1px solid var(--border-soft); color:var(--text-muted); letter-spacing:.06em; }
+  .tag--persist { background:var(--tint-warn); color:var(--on-warn); }
+  .tag--capped { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .crumb .sep { color:var(--text-muted); } .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:var(--art-principal); flex:none; }
+
+  /* global top bar (mirrors top-bar-revisit-2026-06-13) */
+  .topbar { display:flex; align-items:center; gap:.5rem; width:100%; height:56px; padding:0 1.25rem; background:var(--surface-topbar); color:#fff; }
+  .tb-brand { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.06em; text-transform:uppercase; margin-right:1rem; }
+  .tb-link { display:inline-flex; align-items:center; white-space:nowrap; color:var(--text-inverse-2); font-size:var(--text-base); font-weight:500; padding:.4375rem .8125rem; border-radius:var(--r-pill); }
+  .tb-link.is-active { background:rgba(255,255,255,.10); color:#fff; }
+  .tb-spacer { flex:1; }
+  .tb-div { width:1px; height:22px; background:rgba(255,255,255,.12); flex:none; margin:0 .125rem; }
+  .tb-icon { width:36px; height:36px; flex:none; border-radius:var(--r-pill); background:rgba(255,255,255,.06); color:#fff; display:inline-flex; align-items:center; justify-content:center; position:relative; }
+  .tb-icon svg { width:18px; height:18px; }
+  .tb-badge { position:absolute; top:.0625rem; right:.0625rem; min-width:15px; height:15px; padding:0 .1875rem; background:var(--notify-error); color:#fff; border:2px solid var(--surface-topbar); border-radius:var(--r-pill); font-size:var(--text-3xs); font-weight:700; line-height:11px; text-align:center; }
+  .tb-wallet { display:inline-flex; align-items:center; gap:.4375rem; background:var(--brand-cyan); color:var(--on-brand); padding:.5rem .875rem; border-radius:var(--r-pill); font-weight:700; font-size:var(--text-sm); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .tb-connect { display:inline-flex; align-items:center; background:#fff; color:var(--surface-topbar); padding:.5rem 1rem; border-radius:var(--r-pill); font-weight:700; font-size:var(--text-sm); white-space:nowrap; }
+
+  /* notification panel */
+  .npanel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:420px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .npanel .nhead { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-4) var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .npanel .nhead h4 { font-size:var(--text-lg); }
+  .npanel .nhead .markall { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); }
+  .npanel .nhead .markall:hover { color:var(--text-primary); }
+  .nfilter { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.125rem; margin:var(--s-3) var(--s-5) 0; }
+  .nfilter button { padding:.3rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; color:var(--text-secondary); }
+  .nfilter button[aria-pressed="true"] { background:var(--text-primary); color:#fff; }
+  .nlist { padding:var(--s-2) 0 0; }
+  .nrow { display:flex; gap:var(--s-3); padding:var(--s-3) var(--s-5); border-bottom:1px solid var(--border-soft); align-items:flex-start; position:relative; }
+  .nrow:last-of-type { border-bottom:0; }
+  .nrow .nic { width:32px; height:32px; flex:none; border-radius:50%; background:var(--surface-canvas-deep); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .nrow .nic svg { width:16px; height:16px; }
+  .nrow .nic--info { background:var(--tint-info); color:var(--on-info); }
+  .nrow .nic--success { background:var(--tint-live); color:var(--on-live); }
+  .nrow .nic--warning { background:var(--tint-warn); color:var(--on-warn); }
+  .nrow .nic--error { background:rgba(239,68,68,.12); color:var(--notify-error); }
+  .nrow .nic--critical { background:var(--notify-critical); color:#fff; }
+  .nrow .nc { min-width:0; }
+  .nrow .nt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
+  .nrow .nb { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.0625rem; }
+  .nrow .nm2 { font-size:var(--text-2xs); color:var(--text-muted); margin-top:.1875rem; display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+  .nrow .ndot { width:7px; height:7px; border-radius:50%; background:var(--info); flex:none; }
+  .nrow .ncta { margin-top:var(--s-2); }
+  .nrow .nx { margin-left:auto; flex:none; width:24px; height:24px; border-radius:50%; color:var(--text-muted); display:inline-flex; align-items:center; justify-content:center; font-size:var(--text-sm); }
+  .nrow .nx:hover { background:var(--surface-canvas-deep); color:var(--text-primary); }
+  .nrow--read { background:var(--surface-canvas); }
+  .nrow--read .nt { font-weight:500; color:var(--text-secondary); }
+  .nrow--read .nic { opacity:.65; }
+  .nrow--resolved { background:var(--surface-canvas-alt); }
+  .nrow--resolved .nt { font-weight:500; color:var(--text-muted); text-decoration:line-through; text-decoration-color:var(--text-muted); }
+  .nrow--resolved .nic { opacity:.45; }
+  .nfoot { padding:var(--s-3) var(--s-5) var(--s-4); border-top:1px solid var(--border-soft); display:flex; flex-direction:column; gap:var(--s-2); align-items:center; }
+  .nempty { padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); text-align:center; }
+  .nempty img { width:96px; height:auto; }
+  .nempty .nt { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-xl); }
+
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .panel > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .twocol { grid-template-columns:1fr; } }
+  .kv { display:flex; align-items:baseline; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; border-top:1px solid var(--border-soft); font-size:var(--text-sm); }
+  .kv:first-of-type { border-top:0; } .kv .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
+  .flow { display:flex; align-items:stretch; gap:var(--s-2); flex-wrap:wrap; }
+  .flow .n { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); flex:1 1 150px; min-width:150px; }
+  .flow .n .t { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-lg); }
+  .flow .n .d { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.3rem; }
+  .flow .arr { align-self:center; color:var(--text-muted); flex:none; font-size:var(--text-lg); }
+
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-3); }
+  .stage { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+
+  /* spec / developer-reference frame — grey, deliberately not product chrome */
+  .spec { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-8); }
+  .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .spec .flow .n { background:transparent; border:1px dashed var(--border-frame); border-radius:var(--r-3); }
+  .spec .flow .n .t { font-family:var(--font-emphasis); font-weight:700; text-transform:none; letter-spacing:0; font-size:var(--text-sm); }
+  .specref { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); margin-top:var(--s-8); }
+  @media (max-width:860px){ .specref { grid-template-columns:1fr; } }
+  .specref .rk { border-top:1px dashed var(--border-frame); display:flex; align-items:baseline; justify-content:space-between; gap:var(--s-3); padding:.5rem 0; font-size:var(--text-sm); }
+  .specref .rk:first-of-type { border-top:0; } .specref .rk .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; color:var(--text-secondary); }
+  .spec pre { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); line-height:1.6; background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-4); overflow-x:auto; margin:0; color:var(--text-primary); }
+  .spec pre .cm { color:var(--text-muted); }
+  .spec pre .kw { color:var(--on-info); }
+
+  /* small data table */
+  .tbl { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .tbl th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); padding:0 var(--s-3) var(--s-2) 0; border-bottom:1px solid var(--border-soft); }
+  .tbl td { padding:var(--s-3) var(--s-3) var(--s-3) 0; border-bottom:1px solid var(--border-soft); vertical-align:top; }
+  .tbl tr:last-child td { border-bottom:0; }
+  .lvlchip { display:inline-flex; align-items:center; gap:.4rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+  .lvlchip .sw { width:10px; height:10px; border-radius:50%; flex:none; }
+
+  .callout { border-left:3px solid var(--text-primary); background:var(--surface-canvas-alt); border-radius:0 var(--r-3) var(--r-3) 0; padding:var(--s-4) var(--s-5); font-size:var(--text-sm); }
+  .callout--must { border-left-color:var(--notify-error); background:rgba(239,68,68,.05); }
+  .callout--open { border-left-color:var(--stage-draft); background:rgba(245,158,11,.06); }
+  .callout .ct { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-size:var(--text-2xs); display:block; margin-bottom:var(--s-2); color:var(--text-secondary); }
+
+  .catgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:var(--s-3); }
+  .catcell { border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-3) var(--s-4); background:var(--surface-canvas); }
+  .catcell .cn { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-sm); font-weight:700; }
+  .catcell .cd { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.25rem; }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:80ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks .mono { font-size:.85em; }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .ref { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.06em; color:var(--text-muted); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:.125rem var(--s-2); white-space:nowrap; }
+  .screen { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Platform · Notifications</span>
+    <h1>Notification system · states gallery</h1>
+    <p>Mock for the <strong>durable, pull-based notification queue</strong>. A notification is a durable message addressed to a principal: a producer appends a record to that principal's queue in stable storage, and the <strong>bell in the global top bar</strong> shows the unread count and opens the panel. No push, no sockets — the client polls, and the server-side queue is authoritative. Covers V1 only: levels and categories, the pending queue, aggregation and flood control, conditions vs. events, retention, revision-keyed polling and the producer outbox. <strong>Deferred:</strong> real-time push, out-of-band delivery (email / mobile / SMS), per-category preferences and muting, multi-action rows, cross-kind digests.</p>
+    <div class="navlinks">Aligned to <span class="mono">notification-system-design.md</span> (supersedes <span class="mono">notification-system-spec.md</span> and the earlier Canic notification service note). Section refs below are that document's. Related: <a href="../top-bar-revisit-2026-06-13.html">Top bar</a> · <a href="../project-cycles-states-gallery-2026-06-30.html">Project cycles / Billing</a> · <a href="../navigation-states-gallery-2026-06-19.html">Navigation</a>.</div>
+    <div class="callout callout--must" style="margin-top:var(--s-5);max-width:92ch">
+      <span class="ct">Two correctness issues — not design preferences</span>
+      <strong>Replay-safe ingestion (§18).</strong> A producer retry must not duplicate a notification or double-increment an aggregation count — see frame 11.<br />
+      <strong>Polling keyed on a per-user revision, never the newest notification ID (§22).</strong> Grouping, reading and resolving all change a notification without producing a new ID, so an ID cursor silently misses them — see frame 10.
+    </div>
+  </header>
+
+  <!-- 01 · placement -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Placement · the app-wide top bar</span><span class="ref">§9</span><span class="d">The bell lives in the persistent global top bar on every surface — studio, launchpad, marketplace, landing — whenever a user is logged in. Notifications are global and per-user: someone browsing the marketplace must still see "your vendor is empty". The white context bar below keeps only its breadcrumb and current-principal chip; it stops carrying the bell, ending the drift where each surface copies its own. Anonymous visitors see no bell at all — there is nothing to show — just a sign-in affordance.</span></div>
+    <div class="twocol">
+      <div>
+        <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Logged in · bell present</span>
+        <div class="screen">
+          <div class="topbar">
+            <span class="tb-brand">Toko</span>
+            <a class="tb-link">Launchpad</a><a class="tb-link is-active">Marketplace</a>
+            <span class="tb-spacer"></span>
+            <a class="tb-link">Studio</a>
+            <span class="tb-div"></span>
+            <button class="tb-icon" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="tb-badge">4</span></button>
+            <span class="tb-wallet">◈ 128.40 ICP</span>
+          </div>
+          <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Neon District</a><span class="sep">/</span><span class="here">Collections</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono" style="font-size:var(--text-xs)">k1m9…7uvw</span></span></div></div>
+        </div>
+        <p class="tiny" style="margin-top:var(--s-3)">Bell with its unread badge sits between the divider and the wallet pill. The context bar below carries only the breadcrumb + principal chip.</p>
+      </div>
+      <div>
+        <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Anonymous · no bell</span>
+        <div class="screen">
+          <div class="topbar">
+            <span class="tb-brand">Toko</span>
+            <a class="tb-link">Launchpad</a><a class="tb-link is-active">Marketplace</a>
+            <span class="tb-spacer"></span>
+            <span class="tb-connect">Connect</span>
+          </div>
+          <div class="context-bar"><div class="crumb"><a>Marketplace</a><span class="sep">/</span><span class="here">Browse</span></div></div>
+        </div>
+        <p class="tiny" style="margin-top:var(--s-3)">Same bar skeleton, but the bell is gone and the wallet pill becomes a white Connect button. No principal chip. The anonymous principal is rejected by the service outright (Part VI).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · bell states -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Bell · badge states</span><span class="ref">§9 · §22</span><span class="d">The badge renders the <span class="mono">unread_count</span> that <strong>arrives with the poll response</strong> — there is deliberately <strong>no separate unread-count query</strong>. Every <span class="mono">Poll</span> reply, changed or unchanged, carries the current count, so the badge is always as fresh as the last poll and costs nothing extra. No unread → no badge (never a grey zero). Display caps at <strong>9+</strong>; the true count lives in the panel. Clicking toggles the panel anchored under the bell.</span></div>
+    <div class="showcase">
+      <div class="dcard"><span class="eyebrow">All read · no badge</span><div style="display:flex;justify-content:center;padding:var(--s-4);background:var(--surface-topbar);border-radius:var(--r-3)"><button class="tb-icon" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button></div></div>
+      <div class="dcard"><span class="eyebrow">Unread · exact</span><div style="display:flex;justify-content:center;padding:var(--s-4);background:var(--surface-topbar);border-radius:var(--r-3)"><button class="tb-icon" aria-label="Notifications, 3 unread"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="tb-badge">3</span></button></div></div>
+      <div class="dcard"><span class="eyebrow">Capped display</span><div style="display:flex;justify-content:center;padding:var(--s-4);background:var(--surface-topbar);border-radius:var(--r-3)"><button class="tb-icon" aria-label="Notifications, more than 9 unread"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="tb-badge">9+</span></button></div></div>
+    </div>
+    <p class="tiny" style="margin-top:var(--s-3)">Left to right: no badge at zero (never a grey “0”) · exact count up to 9 · ten or more renders <strong>9+</strong>. The header badge, the panel, the Projects page and the Billing page all read the same client-side state — <strong>one poller per application</strong> (§11), never one per consumer.</p>
+  </section>
+
+  <!-- 03 · panel open -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Panel · the pending queue, newest first</span><span class="ref">§9 · §10 · §24</span><span class="d">Each row: an icon tinted by <strong>level</strong> · a title · a one-line body · relative time · optionally <strong>one</strong> action button (§10). Ordering is by <span class="mono">last_event_at</span>, the most recent contributing event — <em>not</em> <span class="mono">created_at</span>, which keeps meaning first creation and is never mutated. Unread rows carry a blue dot and stronger title weight; read rows are muted. Clicking a row follows its deep link and marks that row read. Header: Mark all read. Filter: All / Unread. Footer: paginated Load more — the panel never fetches the whole queue in one response (§23). The ×12 tally is coalescing (frame 05), not a digest.</span></div>
+    <div class="stage">
+      <div class="npanel">
+        <div class="nhead"><h4>Notifications</h4><button class="markall">Mark all read</button></div>
+        <div class="nfilter"><button aria-pressed="true">All</button><button aria-pressed="false">Unread · 4</button></div>
+        <div class="nlist">
+          <div class="nrow"><span class="nic nic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Cycle runway · 14 days <span class="ndot"></span></div><div class="nb">Neon District is projected to run dry around 30 Jul.</div><div class="nm2"><span class="tag tag--cat">projects</span><span>2h ago</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">Add cycles</button></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+          <div class="nrow"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 21h16"/></svg></span><div class="nc"><div class="nt">12 claims received <span class="tag tag--count">×12</span> <span class="ndot"></span></div><div class="nb">Paper Trail · Corner Shop — 12 claims since you last checked.</div><div class="nm2"><span class="tag tag--cat">marketplace</span><span>3h ago · first at 09:14</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">View vendor</button></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+          <div class="nrow"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18l-2 13H5z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg></span><div class="nc"><div class="nt">Vendor empty <span class="ndot"></span></div><div class="nb">Corner Shop sold out — every staged copy has been claimed.</div><div class="nm2"><span class="tag tag--cat">marketplace</span><span>5h ago</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">View vendor</button></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+          <div class="nrow"><span class="nic nic--success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg></span><div class="nc"><div class="nt">Export complete <span class="ndot"></span></div><div class="nb">Generator Vaulties · batch #7 (500 outputs) is ready to download.</div><div class="nm2"><span class="tag tag--cat">studio</span><span>Yesterday</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">Download</button></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+          <div class="nrow nrow--read"><span class="nic nic--success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span><div class="nc"><div class="nt">You were paid</div><div class="nb">Royalty payout · 12.40 ICP from a Paper Trail sale.</div><div class="nm2"><span class="tag tag--cat">billing</span><span>2d ago</span></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+          <div class="nrow nrow--read"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18l-2 13H5z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg></span><div class="nc"><div class="nt">Vendor started</div><div class="nb">Corner Shop went live on the Launchpad.</div><div class="nm2"><span class="tag tag--cat">marketplace</span><span>3d ago</span></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+          <div class="nrow nrow--read"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-4 0m4 0l0 4"/></svg></span><div class="nc"><div class="nt">Studio access granted</div><div class="nb">Your account can now create projects and collections.</div><div class="nm2"><span class="tag tag--cat">access_security</span><span>6d ago</span></div></div><button class="nx" aria-label="Dismiss">✕</button></div>
+        </div>
+        <div class="nfoot"><button class="btn btn--ghost btn--sm">Load more</button></div>
+      </div>
+    </div>
+    <p class="tiny" style="margin-top:var(--s-3)">The category chip is shown here so the mapping is legible during design review; whether it ships as a visible chip or only as an icon-and-grouping signal is a UI call. Categories drive filtering, visual grouping and navigation, and preferences (V2) will key on <strong>categories, never on kind strings</strong> (§4). Retention never surfaces in the panel — it is housekeeping (frame 09).</p>
+    <div class="callout callout--open" style="margin-top:var(--s-4);max-width:92ch"><span class="ct">Open — flagged during this alignment pass</span>§9 specifies a <strong>per-row dismiss</strong> control (the ✕ above), but <span class="mono">NotificationCommand</span> in §21 has only <span class="mono">ApplyProducerBatch</span>, <span class="mono">MarkRead</span> and <span class="mono">MarkReadThrough</span> — there is no <span class="mono">Dismiss</span> variant. Either the panel loses per-row dismiss for V1, or §21 gains a fourth command. The mock shows the ✕ because §9 asks for it; the protocol frame (12) does not invent the command.</div>
+  </section>
+
+  <!-- 04 · levels & categories -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Levels and categories · two independent axes</span><span class="ref">§3 · §4</span><span class="d">Every notification has exactly one <strong>level</strong> and exactly one <strong>category</strong>. Level drives visual presentation, retention, producer urgency and eventual out-of-band routing; it does <em>not</em> define a processing queue or replace domain state. Category drives filtering, grouping, navigation and future preferences. The two are independent — <span class="mono">projects + warning</span> means something entirely different from <span class="mono">projects + success</span>. The category vocabulary is <strong>closed</strong>: a producer cannot invent one, and adding one is a design change. <em>Naming:</em> this field was called <span class="mono">severity</span> in an earlier draft and in the previous version of this gallery — it is <span class="mono">level</span>.</span></div>
+    <div class="twocol">
+      <div class="panel">
+        <span class="eyebrow">Five levels · retention follows meaning</span>
+        <table class="tbl">
+          <thead><tr><th>Level</th><th>Meaning</th><th>Retention</th></tr></thead>
+          <tbody>
+            <tr><td><span class="lvlchip"><span class="sw" style="background:var(--info)"></span>info</span></td><td>Something happened; no action normally required</td><td><span class="tag tag--capped">Capped</span></td></tr>
+            <tr><td><span class="lvlchip"><span class="sw" style="background:var(--notify-success)"></span>success</span></td><td>Something the user or platform started completed</td><td><span class="tag tag--capped">Capped</span></td></tr>
+            <tr><td><span class="lvlchip"><span class="sw" style="background:var(--notify-warn)"></span>warning</span></td><td>Needs attention but is not yet failing</td><td><span class="tag tag--persist">Persistent</span></td></tr>
+            <tr><td><span class="lvlchip"><span class="sw" style="background:var(--notify-error)"></span>error</span></td><td>Something failed</td><td><span class="tag tag--persist">Persistent</span></td></tr>
+            <tr><td><span class="lvlchip"><span class="sw" style="background:var(--notify-critical)"></span>critical</span></td><td>Failing or approaching failure, where ignoring it may cause interruption or loss</td><td><span class="tag tag--persist">Persistent</span> + eligible for out-of-band delivery later</td></tr>
+          </tbody>
+        </table>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Row tints in frame 03 are this field. <span class="mono">critical</span> is the only level rendered as a solid fill rather than a tint — it is the one level that may later trigger email / push / SMS, so it must be visually unmistakable.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Six categories · closed vocabulary</span>
+        <div class="catgrid">
+          <div class="catcell"><div class="cn">marketplace</div><div class="cd">Vendors, claims, sales, listings.</div></div>
+          <div class="catcell"><div class="cn">studio</div><div class="cd">Uploads, generation, exports, review outcomes.</div></div>
+          <div class="catcell"><div class="cn">billing</div><div class="cd">Payouts, treasury, cycles, top-ups.</div></div>
+          <div class="catcell"><div class="cn">projects</div><div class="cd">Project lifecycle and runway.</div></div>
+          <div class="catcell"><div class="cn">access_security</div><div class="cd">Role changes, ownership transfer, custody review, continuity, authenticity flags.</div></div>
+          <div class="catcell"><div class="cn">vault</div><div class="cd">Custody arrangements, vaulties, insurance review.</div></div>
+        </div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">These names are <strong>product vocabulary, not Canic vocabulary</strong>, and must not leak into <span class="mono">canic-core</span> — Canic knows about Fleets, Components, canisters and identity; it does not know what a marketplace or a vault is.</p>
+        <p class="tiny" style="margin:var(--s-3) 0 0">Login, device and passkey events belong to Internet Identity and are invisible to Toko. <span class="mono">access_security</span> covers platform-native events only.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · aggregation & flood control -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Aggregation and flood control</span><span class="ref">§6 · §25</span><span class="d">One noisy vendor must not bury everything else in a user's bell. Volume is controlled <strong>at the source</strong>, before eviction is ever considered — aggregation is the first line of defence, retention the second. <strong>Coalescing:</strong> if an event fires and the recipient already holds a <strong>pending</strong> notification in the same group, do not append — increment <span class="mono">count</span>, update <span class="mono">last_event_at</span> (so the row re-sorts to the top) and let the title render the tally. <strong>Per-source cap:</strong> a single source may hold at most <strong>N pending notifications</strong> per recipient across all groups (proposed N = 5); beyond that, new events coalesce into that source's newest row. This is not the V2 digest feature — no cross-kind summaries, no cross-source rollups. It is queue protection.</span></div>
+    <div class="twocol">
+      <div class="panel">
+        <span class="eyebrow">Coalescing · same group, still pending</span>
+        <div class="spec" style="padding:var(--s-4);background:var(--surface-canvas-alt);border-style:dashed;margin-bottom:var(--s-4)">
+<pre>Token #1 is live
+Token #2 is live      becomes      3 tokens are now live
+Token #3 is live                   (count 3)</pre>
+        </div>
+        <div class="nrow" style="padding-left:0;padding-right:0"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 21h16"/></svg></span><div class="nc"><div class="nt">12 claims received <span class="tag tag--count">×12</span> <span class="ndot"></span></div><div class="nb">Paper Trail · Corner Shop — 12 claims since you last checked.</div><div class="nm2"><span class="mono">created_at 09:14</span> · <span class="mono">last_event_at 12:41</span></div></div></div>
+        <div class="kv"><span>Claim #13 arrives, row still pending</span><span class="v">count → ×13 · <span class="mono">last_event_at</span> updated · re-sorts to top</span></div>
+        <div class="kv"><span>Row has been <strong>read</strong>, claim #14 arrives</span><span class="v">new pending row appended</span></div>
+        <div class="kv"><span><span class="mono">created_at</span></span><span class="v">never mutated — stays 09:14</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Only <strong>pending</strong> rows coalesce. Once a user has <em>read</em> a grouped notification a later event starts a new one, rather than silently modifying something already consumed. Timer sweeps are deduped separately, producer-side, per subject per threshold (§5) — not by this service-side grouping rule.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Group identity · scope, not a bare key</span>
+        <p class="tiny" style="margin:0 0 var(--s-3)">A producer's raw <span class="mono">group_key</span> is not globally unique. The effective grouping scope is:</p>
+        <div class="spec" style="padding:var(--s-4);background:var(--surface-canvas-alt);border-style:dashed;margin-bottom:var(--s-4)">
+<pre>recipient + producer + category + group_key
+
+Billing  / alice / billing  / low-cycles/project-123
+Projects / alice / projects / low-cycles/project-123   <span class="cm">← cannot collide</span></pre>
+        </div>
+        <p class="tiny" style="margin:0 0 var(--s-4)">Grouping additionally requires <strong>compatible level semantics</strong>. Different levels never merge — which is exactly what makes escalation work (frame 06). Grouping never combines across users, producers, categories, incompatible levels, or unrelated semantic groups.</p>
+        <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Per-source cap · proposed N = 5 pending per source</span>
+        <div class="kv"><span>Alice's pending <span class="mono">Marketplace</span> rows</span><span class="v">5, across every vendor and every group</span></div>
+        <div class="kv"><span>6th Marketplace event · any group</span><span class="v">coalesces into Marketplace's newest row</span></div>
+        <div class="kv"><span>Billing, Projects, Studio rows</span><span class="v">untouched — the cap is per producer</span></div>
+        <div class="kv"><span>Batch operations</span><span class="v">one summary row per batch — never per item</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">“Generation complete — 250,000 tokens”, not 250,000 rows. Future batch features inherit this rule. Schema impact of both mechanisms: <span class="mono">count</span> plus <span class="mono">last_event_at</span>.</p>
+        <div class="callout callout--open" style="margin-top:var(--s-4)"><span class="ct">Open — flagged during this alignment pass</span>§6 motivates this cap with “one noisy vendor must not bury everything else”, which reads as a <em>per-vendor</em> limit. But <span class="mono">source</span> is <span class="mono">ProducerIdentity</span>, derived from <span class="mono">caller()</span> (§19, §24) and keyed as <span class="mono">producer</span> in the group index (§26) — so N = 5 caps <strong>all Marketplace rows for that recipient</strong>, not five per vendor. That is materially stricter than the prose suggests: two busy vendors would compete for the same five slots. Either N is a per-producer value and needs to be larger, or the cap needs a finer key than <span class="mono">source</span>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · conditions vs events / resolve -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Conditions and events are different · resolve</span><span class="ref">§7</span><span class="d">Some notifications describe an <strong>event</strong> — <em>your upload completed</em>. Others describe a <strong>condition</strong> — <em>Project Alpha is low on cycles</em>. A condition can stop being true without the user doing anything, so a producer may <strong>resolve</strong> a condition notification. <strong>Read and resolved are different facts</strong> and are recorded separately: <span class="mono">read_at</span> means the user saw it; <span class="mono">resolved_at</span> means the underlying condition stopped being true. Both remove a row from the pending view. Keeping them distinct keeps the audit trail truthful — which matters most for billing and security — because a producer resolving something is not evidence the user ever saw it.</span></div>
+    <div class="twocol">
+      <div class="panel">
+        <span class="eyebrow">A condition that solves itself</span>
+        <div class="spec" style="padding:var(--s-4);background:var(--surface-canvas-alt);border-style:dashed;margin-bottom:var(--s-4)">
+<pre>10:00   Project Alpha is low on cycles
+10:05   automatic refill succeeds
+10:05   producer resolves the notification
+11:00   user opens the app and is <strong>not</strong> warned
+        about a solved problem</pre>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--s-2)">
+          <div class="nrow" style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Project Alpha is low on cycles <span class="ndot"></span></div><div class="nb">Balance fell below the refill floor.</div><div class="nm2"><span class="mono">10:00 · pending</span></div></div></div>
+          <div class="nrow nrow--resolved" style="border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Project Alpha is low on cycles</div><div class="nb">Resolved by the producer — automatic refill succeeded.</div><div class="nm2"><span class="mono">resolved_at 10:05 · read_at null</span></div></div></div>
+        </div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Struck-through, muted treatment is the design-review rendering of a resolved row. In the shipping panel a resolved row simply leaves the pending view; it lives on in bounded history with <span class="mono">read_at</span> still <span class="mono">null</span>, which is the truthful record.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Escalation · resolve, then publish</span>
+        <p class="tiny" style="margin:0 0 var(--s-4)">Resolution is also what makes escalation safe. A producer does <strong>not</strong> mutate the level of a notification the user may already have read. It resolves its <span class="mono">warning</span> and publishes a <span class="mono">critical</span> — a new row, a new record. Level is not part of the §25 grouping tuple, but grouping additionally requires <strong>compatible level semantics</strong>, so the two never merge.</p>
+        <div style="display:flex;flex-direction:column;gap:var(--s-2)">
+          <div class="nrow nrow--resolved" style="border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Cycle runway · 14 days</div><div class="nb">Superseded — runway kept falling.</div><div class="nm2"><span class="mono">warning · resolved_at 13 Jul</span></div></div></div>
+          <div style="text-align:center;color:var(--text-muted)">↓</div>
+          <div class="nrow" style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--critical"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Cycle runway · 3 days <span class="ndot"></span></div><div class="nb">Neon District runs dry this week. Top up immediately.</div><div class="nm2"><span class="mono">critical · pending</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">Add cycles</button></div></div></div>
+        </div>
+        <div class="kv" style="margin-top:var(--s-4)"><span><span class="mono">read_at</span></span><span class="v">the user saw it</span></div>
+        <div class="kv"><span><span class="mono">resolved_at</span></span><span class="v">the condition stopped being true</span></div>
+        <div class="kv"><span>Both set</span><span class="v">legal — they answer different questions</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Rendered <span class="mono">title</span> and <span class="mono">body</span> never re-render after copy changes. A notification is a historical record of what the user was told (§24).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · timer events -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Timer events · sweeps, thresholds and re-arming</span><span class="ref">§5</span><span class="d">Event-driven rows fire when an action completes; timer-based rows are produced by a scheduled sweep — exactly the case where nothing is happening and nobody would otherwise look. The <strong>cycle-runway watchdog</strong> monitors every project's runway and warns the project's admins at <strong>30 / 14 / 3 days</strong>: one notification per project per threshold crossing, re-armed once runway recovers above that threshold, deep-linking to the project's Billing tab. It is distinct from the event-driven low-balance row — that fires on treasury activity, the watchdog fires on the passage of time. <strong>The level shown against each threshold below is a design proposal, not doc text</strong> — §5 specifies the thresholds but assigns no level to any of them, and §5 assigns no levels to the event-driven catalog either.</span></div>
+    <div class="stage" style="padding:var(--s-8)">
+      <div style="display:flex;flex-direction:column;gap:var(--s-3);width:100%;max-width:600px">
+        <div class="nrow" style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Cycle runway · 30 days</div><div class="nb">Neon District has about a month of cycles left at current burn.</div><div class="nm2"><span class="tag tag--cat">projects</span><span class="mono">info</span><span>16 Jun</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">Add cycles</button></div></div></div>
+        <div class="nrow" style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Cycle runway · 14 days</div><div class="nb">Two weeks left. Top up now to keep Neon District's canisters running.</div><div class="nm2"><span class="tag tag--cat">projects</span><span class="mono">warning</span><span>2 Jul</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">Add cycles</button></div></div></div>
+        <div class="nrow" style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3)"><span class="nic nic--critical"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><div class="nc"><div class="nt">Cycle runway · 3 days</div><div class="nb">Neon District runs dry this week. Top up immediately.</div><div class="nm2"><span class="tag tag--cat">projects</span><span class="mono">critical</span><span>13 Jul</span></div><div class="ncta"><button class="btn btn--ghost btn--xs">Add cycles</button></div></div></div>
+      </div>
+    </div>
+    <div class="twocol" style="margin-top:var(--s-5)">
+      <div class="panel">
+        <span class="eyebrow">The rest of the timer set</span>
+        <div class="kv"><span>Vendor about to end</span><span class="v">24h / 1h before scheduled end</span></div>
+        <div class="kv"><span>Listing about to expire</span><span class="v">§5 gives no dedup scope — to be specified</span></div>
+        <div class="kv"><span>Redemption expiry</span><span class="v">7d and 1d before the 30-day auto-cancel, deduped per request per threshold. No re-arm specified</span></div>
+        <div class="kv"><span>Insurance review required</span><span class="v">oracle suggestion exceeds insured amount past the drift threshold, per item, re-armed on re-insure</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Dedup and re-arm rules are specified <strong>per row type</strong>, not globally: only cycle runway and insurance review define re-arming. Vendor-end and listing-expiry dedup scopes are still open.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Fan-out · project notifications are user-scoped</span>
+        <p class="tiny" style="margin:0 0 var(--s-4)">A project does <strong>not</strong> own a shared inbox. If a project has three admins the Projects producer emits to all three principals; the service sees three recipients and does not know what a project is or why those principals were chosen. A shared project queue would immediately infect the service with membership and domain authorization semantics.</p>
+        <div class="kv"><span>Admin set</span><span class="v">resolved at event time</span></div>
+        <div class="kv"><span>Future events</span><span class="v">go to the new set</span></div>
+        <div class="kv"><span>Existing rows</span><span class="v">stay with whoever received them — rows are records</span></div>
+        <div class="kv"><span>Eight admins</span><span class="v">one producer update, eight recipient queue mutations</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Not eight inter-canister calls (§17). Recipient vectors stay bounded.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · empty states -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Empty states</span><span class="ref">§9</span><span class="d">“You're all caught up” is a personality moment — the Toko character belongs here (empty and success moments, never destructive ones). The panel-scale version stays calm and small; this is not the full-page empty-hero. With the Unread filter active and nothing unread, a one-line variant keeps the read history visible below.</span></div>
+    <div class="twocol">
+      <div class="stage" style="padding:var(--s-8)">
+        <div class="npanel">
+          <div class="nhead"><h4>Notifications</h4><button class="markall" disabled style="opacity:.4">Mark all read</button></div>
+          <div class="nempty">
+            <img src="../../style-guide/bot-images/cheerful_wave.png" alt="" onerror="this.style.display='none'">
+            <div class="nt">You’re all caught up</div>
+            <p class="tiny" style="margin:0;max-width:34ch">Nothing waiting. We’ll keep anything that happens here until you’ve seen it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stage" style="padding:var(--s-8)">
+        <div class="npanel">
+          <div class="nhead"><h4>Notifications</h4><button class="markall" disabled style="opacity:.4">Mark all read</button></div>
+          <div class="nfilter"><button aria-pressed="false">All</button><button aria-pressed="true">Unread · 0</button></div>
+          <div class="nempty" style="padding:var(--s-6)"><p class="tiny" style="margin:0">No unread notifications.</p></div>
+          <div class="nlist" style="opacity:.6">
+            <div class="nrow nrow--read"><span class="nic nic--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18l-2 13H5z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg></span><div class="nc"><div class="nt">Vendor started</div><div class="nb">Corner Shop went live on the Launchpad.</div><div class="nm2"><span class="tag tag--cat">marketplace</span><span>3d ago</span></div></div></div>
+          </div>
+          <div class="nfoot"><span class="tiny">Switch to All to see read items</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="tiny" style="margin-top:var(--s-3)">The guarantee this empty state is quietly asserting: a user can close the browser, stay away for days, return, and still retrieve every notification that remains pending (§2). Correctness never depends on a websocket, an open tab, or client-side history.</p>
+  </section>
+
+  <!-- 09 · retention -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Retention · the cap and the drop ladder</span><span class="ref">§8 · §27</span><span class="d">Retention follows meaning. <strong>Informational</strong> (<span class="mono">info</span>, <span class="mono">success</span>) are bounded — a working cap of <strong>50 pending per user</strong>, configurable until measurement says otherwise. <strong>Persistent</strong> (<span class="mono">warning</span>, <span class="mono">error</span>, <span class="mono">critical</span>) are never evicted merely because informational notifications arrived; they remain pending until read, or resolved by the producer. “Persistent” means <em>don't silently discard an active warning because 50 success messages arrived</em> — it does not mean infinite storage. Retention work happens <strong>during existing mutations</strong>: capped insertion at write time, group-index cleanup on read/resolve/replace, bounded opportunistic history cleanup. V1 adds no periodic GC and no scheduler.</span></div>
+    <div class="spec">
+      <span class="speclabel">Drop ladder at the cap · in order</span>
+      <div class="flow">
+        <div class="n"><div class="t">1 · Oldest read</div><div class="d">Already consumed. Cheapest thing to lose.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">2 · Expired informational</div><div class="d">Informational rows past their useful life.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">3 · Coalesce harder</div><div class="d">Apply the per-source cap more aggressively before deleting anything new.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">4 · Oldest informational pending</div><div class="d">Unseen, but only <span class="mono">info</span> / <span class="mono">success</span>.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">5 · Persistent pending</div><div class="d"><strong>Last resort only</strong>, oldest first. A <span class="mono">warning</span> / <span class="mono">error</span> / <span class="mono">critical</span> is never dropped while any rung above it still has something to give.</div></div>
+      </div>
+      <div class="specref">
+        <div>
+          <span class="speclabel">Pending queue vs. history</span>
+          <div class="rk"><span>Pending queue</span><span class="v">the V1 guarantee — fully retrievable</span></div>
+          <div class="rk"><span>History (read + resolved)</span><span class="v">bounded recent convenience, separately capped</span></div>
+          <div class="rk"><span>Informational cap</span><span class="v">50 pending per user (working value)</span></div>
+          <div class="rk"><span>Per-source cap</span><span class="v">5 pending per source per recipient (proposed)</span></div>
+          <p class="tiny" style="margin:var(--s-2) 0 0">Prefer a simple <strong>count cap</strong> over a timer-driven TTL subsystem. Pending queue and history are different concepts and are bounded separately.</p>
+        </div>
+        <div>
+          <span class="speclabel">When retention runs</span>
+          <div class="rk"><span>Capped informational retention</span><span class="v">at insertion</span></div>
+          <div class="rk"><span>Group-index cleanup</span><span class="v">on read, resolve or replacement</span></div>
+          <div class="rk"><span>History cleanup</span><span class="v">bounded opportunistic work during existing updates</span></div>
+          <div class="rk"><span>Periodic maintenance task</span><span class="v">only if measurement demands it</span></div>
+          <p class="tiny" style="margin:var(--s-2) 0 0">And if it is ever needed, consume Canic's canonical timer ownership rather than adding a scheduler.</p>
+        </div>
+      </div>
+      <div class="callout callout--open" style="margin-top:var(--s-6)"><span class="ct">Open — flagged during this alignment pass</span><strong>Rung 2 has no defined input.</strong> The ladder says “expired informational”, but the document defines no expiry mechanism anywhere — no <span class="mono">expires_at</span>, no TTL, no age field in the record (§24) or the indexes (§26). §8's count-cap preference is scoped to <em>history</em>, not to pending rows, so it does not settle this either way. Expiry could be evaluated lazily at insertion without any scheduler — §27 defers periodic maintenance rather than forbidding it — but the input itself still needs defining, or rung 2 should be dropped. <em>The previous gallery invented a 90-day <span class="mono">expires_at</span> to fill this gap; that value appears nowhere in the design and has been removed rather than carried forward.</em></div>
+      <div class="callout callout--open" style="margin-top:var(--s-4)"><span class="ct">Open — flagged during this alignment pass</span><strong>Rung 5 contradicts the persistence guarantee.</strong> §8 states persistent rows “are never evicted merely because informational notifications arrived”, and acceptance criterion 19 restates it. But the ladder is triggered <em>at the cap</em> — i.e. by informational pressure — and its last rung drops “persistent pending … oldest first”. Both statements are in §8. The ladder is presumably meant as a genuine last resort after the queue is entirely persistent rows, but as written the two sentences conflict. Worth an explicit rule: either persistent rows are exempt from the cap and bounded separately, or the guarantee needs qualifying.</div>
+    </div>
+  </section>
+
+  <!-- 10 · delivery & revision polling -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Delivery to the client · why the cursor is a revision</span><span class="ref">§11 · §22 · §23</span><span class="d">This is one of the two non-negotiable correctness items. <strong>Polling must not key on the newest notification ID.</strong> Grouping, reading and resolving all change a notification <em>without producing a new ID</em>, so an ID cursor silently misses them — and the same failure occurs on resolve, on read from another device, and on regrouping. Each user therefore carries a <strong>monotonically increasing revision</strong>, incremented by any mutation affecting their visible notification state.</span></div>
+    <div class="twocol">
+      <div class="panel">
+        <span class="eyebrow">The failure an ID cursor produces</span>
+        <div class="spec" style="padding:var(--s-4);background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.3);border-style:dashed;margin-bottom:var(--s-4)">
+<pre>10:00   N17 "Tokens are live", count 1
+        client receives N17
+
+10:10   another token goes live
+        service updates N17 → count 2
+
+        <span class="cm">no newer ID exists, so</span>
+        poll(since = N17) → nothing
+        <span class="cm">the client never sees the update</span></pre>
+        </div>
+        <div class="spec" style="padding:var(--s-4);background:var(--surface-canvas-alt);border-style:dashed">
+<pre><span class="kw">NotificationQuery::Poll</span> {
+    known_revision: Option&lt;UserNotificationRevision&gt;,
+    cursor:         Option&lt;NotificationCursor&gt;,
+    limit:          u16,
+}
+
+<span class="kw">Unchanged</span>    { revision, unread_count }
+<span class="kw">SnapshotPage</span> { revision, unread_count,
+               notifications, next_cursor }</pre>
+        </div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">An unchanged poll is tiny. A changed poll returns the current bounded snapshot. Simpler than maintaining a delta stream, and it needs no client-visible tombstones for read, resolved or regrouped records. <strong>The badge count rides along</strong> — there is no separate unread-count query.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">One poller per application · adaptive cadence</span>
+        <div class="kv"><span>Login, or tab becomes visible</span><span class="v">poll immediately</span></div>
+        <div class="kv"><span>Active session</span><span class="v">poll frequently — 60s starting value</span></div>
+        <div class="kv"><span>Repeated unchanged results</span><span class="v">back off gradually</span></div>
+        <div class="kv"><span>Idle or background tab</span><span class="v">poll slowly or pause</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">Exact timings are UX and load tuning, not part of the data contract. Polling is acceptable for V1 because notification reads are <strong>query calls</strong>, which are free — there is no cycle argument against it.</p>
+        <p class="tiny" style="margin:var(--s-3) 0 0">The header badge, the panel, the Projects page and the Billing page all consume the same client-side state. <strong>They do not each poll.</strong></p>
+        <span class="eyebrow" style="display:block;margin:var(--s-6) 0 var(--s-3)">Pagination · every page belongs to one revision</span>
+        <div class="spec" style="padding:var(--s-4);background:var(--surface-canvas-alt);border-style:dashed">
+<pre>Poll { known_revision: null, cursor: null, limit: 50 }
+  → revision 431, first 50 items, next_cursor</pre>
+        </div>
+        <p class="tiny" style="margin:var(--s-3) 0 0">If the user's revision changes mid-pagination, the client <strong>restarts from the new revision</strong>. This avoids snapshot-locking and historical versions. On login the complete pending set must be <em>retrievable</em>; it does not have to arrive in one response.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · producer side -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">11</span><span class="t">Producer side · outbox, batching, replay safety</span><span class="ref">§16–§19 · §28</span><span class="d">The governing principle is <strong>persist locally, coalesce locally, batch remotely</strong>. Every notification-producing domain keeps a small <strong>durable local outbox</strong>. When a domain operation reaches the durable point at which a notification is warranted, the producer records the intent locally — and the domain operation does <em>not</em> need the service call to succeed synchronously. This avoids making domain state and notification state one distributed transaction.</span></div>
+    <div class="spec">
+      <span class="speclabel">Commit path · the notification is a best-effort side effect</span>
+      <div class="flow">
+        <div class="n"><div class="t">Domain op commits</div><div class="d">Marketplace transaction commits. Marketplace state committed <em>and</em> notification intent committed to the outbox.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">Coalesce in the outbox</div><div class="d">Four “token live” events become one item — <em>4 tokens are now live</em> — before anything crosses a canister boundary.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">Conditions may cancel</div><div class="d">Low-cycle at 12:00, refilled at 12:01 → collapses to nothing at the 12:03 flush. Zero records, zero calls.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">Bounded batch out</div><div class="d">One update, many mutations, many recipients. <span class="mono">critical</span> may flush the current batch immediately — urgency is a flush policy, not a protocol difference.</div></div>
+        <span class="arr">→</span>
+        <div class="n"><div class="t">Frontier accepted</div><div class="d">Service advances <span class="mono">next_expected_seq</span>. Until the producer can prove acceptance, the same pending batch stays authoritative.</div></div>
+      </div>
+      <div class="specref">
+        <div>
+          <span class="speclabel">Replay safety · sequence frontier, not event IDs</span>
+          <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-4);margin-bottom:var(--s-4)">
+<pre style="border:0;padding:0">producer sends   first_seq = 101, mutations 101..104
+service commits  next_expected_seq = 105
+<span class="cm">a retried batch is recognised as already applied</span></pre>
+          </div>
+          <p class="tiny" style="margin:0 0 var(--s-3)">An inter-canister call can commit successfully even when the producer fails to observe the response. With grouping, a duplicate is <em>worse</em> than a repeated row, because it silently inflates a count: <span class="mono">"Your token is live"</span> submitted twice → <span class="mono">"2 tokens are live"</span>, which is simply wrong.</p>
+          <p class="tiny" style="margin:0 0 var(--s-3)"><strong>Retries are exact.</strong> A producer never mints a fresh sequence identity because a call timed out, a transport failed, or a response was lost.</p>
+          <p class="tiny" style="margin:0"><strong>Why not <span class="mono">(source, event_id)</span>?</strong> Both achieve replay safety, but a frontier needs one integer per producer whereas event-ID dedup needs a retained set of seen IDs — and avoiding an unbounded global event-ID table was an explicit goal (§31). <em>The tradeoff:</em> a frontier requires a producer's batches to be <strong>ordered</strong>. Since each producer owns its outbox and submits sequentially, ordering is free — but a producer needing concurrent unordered submission is the assumption that breaks. <em>The previous gallery specified idempotency on <span class="mono">event_id</span>; that is the rejected option.</em></p>
+        </div>
+        <div>
+          <span class="speclabel">Call topology · one direction, no lookups</span>
+          <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-4);margin-bottom:var(--s-4)">
+<pre style="border:0;padding:0">Producer ──bounded update batch──▶ Notification Service</pre>
+          </div>
+          <div class="rk"><span>Calls to producers at notification time</span><span class="v">none</span></div>
+          <div class="rk"><span>Root / Coordinator / Wasm Store / Directory</span><span class="v">none at ingestion</span></div>
+          <div class="rk"><span>Producer identity</span><span class="v">derived from <span class="mono">caller()</span> + local Canic authority state</span></div>
+          <div class="rk"><span><span class="mono">source</span> in the payload</span><span class="v">deliberately absent</span></div>
+          <p class="tiny" style="margin:var(--s-2) 0 0"><strong>Invariant: notification ingestion performs no inter-canister authorization or discovery lookup.</strong> A producer cannot claim <span class="mono">source = billing</span> while actually being Marketplace — <span class="mono">source</span> is trusted service metadata, not caller-supplied. Do not route through Root; Root is not a notification router.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><strong>Notifications never break the domain operation.</strong> “Marketplace sale commits” must never become “Marketplace sale fails because the Notification Service was briefly unavailable.” On the IC there is no rollback across canisters, so the notification is written as its own operation <em>after</em> the triggering action commits.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><em>The previous gallery said “retries 3× on a timer then drops with a log line — no full outbox in V1.” The design requires a durable outbox; the intent is retained and retried until accepted, not dropped.</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · protocol & record -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">12</span><span class="t">Protocol and the record</span><span class="ref">§20–§21 · §24 · §26</span><span class="d">Developer reference — not a screen. The application exposes exactly <strong>two methods</strong>: <span class="mono">notification_command</span> (update) and <span class="mono">notification_query</span> (query). These are the Notification application's own protocol, separate from Canic management endpoints such as <span class="mono">canic_command</span> and <span class="mono">canic_status</span>. <strong>Different callers do not require different methods</strong> — authority belongs to the variant, not the method name. Producers gain a <em>client</em>, not endpoints: no <span class="mono">canic_notifications</span>, no <span class="mono">notification_status</span>, no <span class="mono">notify_user</span>.</span></div>
+    <div class="spec">
+      <div class="twocol">
+        <div>
+          <span class="speclabel">Commands and queries</span>
+          <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-4)">
+<pre style="border:0;padding:0"><span class="kw">enum</span> NotificationCommand {
+    ApplyProducerBatch {
+        first_seq: u64,
+        mutations: Vec&lt;NotificationMutation&gt;,
+    },
+    MarkRead {
+        ids: Vec&lt;NotificationId&gt;,
+    },
+    MarkReadThrough {
+        revision: UserNotificationRevision,
+        category: Option&lt;NotificationCategory&gt;,
+    },
+}
+
+<span class="kw">enum</span> NotificationMutation {
+    Publish(PublishNotification),
+    Resolve(ResolveNotification),
+}
+
+<span class="kw">struct</span> PublishNotification {
+    recipients: Vec&lt;Principal&gt;,
+    level:      NotificationLevel,
+    category:   NotificationCategory,
+    title:      String,
+    body:       String,
+    cta:        Option&lt;NotificationCta&gt;,
+    group_key:  Option&lt;GroupKey&gt;,
+}
+<span class="cm">// source is absent by design (§19)</span></pre>
+          </div>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><strong><span class="mono">MarkReadThrough</span> is revision-aware</strong> so a notification arriving <em>after</em> the user viewed the panel is not accidentally marked read — which a naive mark-all-read would do. That is why it replaces the reviewed <span class="mono">MarkAllRead { category }</span> (§32).</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><strong>Read state updates are batched.</strong> The client collects read IDs and sends one <span class="mono">MarkRead</span> after a short debounce, when the panel closes, or at another suitable boundary — never one update per row.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><em>The previous gallery listed <span class="mono">list_notifications</span>, <span class="mono">unread_count</span>, <span class="mono">mark_read</span>, <span class="mono">mark_all_read</span>, <span class="mono">dismiss</span> and <span class="mono">clear_read</span> as thin wrappers over IcyDB. That endpoint family does not exist in this design.</em></p>
+        </div>
+        <div>
+          <span class="speclabel">The record</span>
+          <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-4)">
+<pre style="border:0;padding:0"><span class="kw">struct</span> Notification {
+    id:            NotificationId,
+    recipient:     Principal,
+
+    level:         NotificationLevel,
+    category:      NotificationCategory,
+
+    title:         String,
+    body:          String,
+    cta:           Option&lt;NotificationCta&gt;,
+
+    created_at:    Timestamp,   <span class="cm">// never mutated</span>
+    last_event_at: Timestamp,   <span class="cm">// the sort key</span>
+    count:         u32,
+
+    read_at:       Option&lt;Timestamp&gt;,
+    resolved_at:   Option&lt;Timestamp&gt;,
+
+    group_key:     Option&lt;GroupKey&gt;,
+    source:        ProducerIdentity,
+}</pre>
+          </div>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><strong>Append-oriented, not strictly immutable.</strong> Only aggregation state (<span class="mono">count</span>, <span class="mono">last_event_at</span>), read state and resolution state may change. A grouped notification reads <span class="mono">created_at 10:00</span>, <span class="mono">last_event_at 10:37</span>, <span class="mono">count 5</span> — and the feed orders on <span class="mono">last_event_at</span>. <em>The previous gallery used <span class="mono">occurred_at</span>; the field is <span class="mono">last_event_at</span>.</em></p>
+          <p class="tiny" style="margin:var(--s-3) 0 0">There is <strong>no dead <span class="mono">actions: []</span> field in V1</strong> — multi-action rows (Accept / Reject / Retry) are future scope, and the record anticipates an additive optional field when they arrive. An action carries navigation information, never executable instructions.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0">All strings and vectors carry explicit maximum encoded sizes. <strong>No collection is unbounded.</strong></p>
+        </div>
+      </div>
+      <div class="specref" style="margin-top:var(--s-8)">
+        <div>
+          <span class="speclabel">Indexes · a few stable maps, no broker</span>
+          <div class="rk"><span class="mono">User metadata</span><span class="v">Principal → revision, next_notification_id, unread_count, capped_pending_count</span></div>
+          <div class="rk"><span class="mono">Notifications</span><span class="v">(recipient, notification_id) → Notification</span></div>
+          <div class="rk"><span class="mono">Group index</span><span class="v">(recipient, producer, category, group_key) → notification_id</span></div>
+          <div class="rk"><span class="mono">Producer frontier</span><span class="v">producer → next_expected_sequence</span></div>
+          <p class="tiny" style="margin:var(--s-2) 0 0">Only currently groupable records need a group entry; once read or resolved it can be removed. The producer frontier is compact — there is no table of every historical producer event. Use the application's existing stable-storage patterns rather than creating another persistence framework.</p>
+        </div>
+        <div>
+          <span class="speclabel">V1 event catalog</span>
+          <p class="tiny" style="margin:0"><strong>Event-driven:</strong> generator upload complete · batch generate complete · export complete · vendor started / empty (sold out) / ended · claim received on your vendor · sale completed on your listing · you were paid (royalty or beneficiary payout) · cycles low balance / top-up performed · studio access granted · content review outcome · vault and custody (arrangement proposed or amended, continuity events, authenticity challenged or revoked, role changes, project ownership transferred).</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><strong>Timer-based:</strong> vendor about to end (24h / 1h) · <strong>cycle runway watchdog 30 / 14 / 3 days</strong> · listing about to expire · redemption expiry (7d / 1d) · insurance review required.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0"><strong>Deferred to their own features:</strong> auction ended / outbid / won / closing soon (auctions ship after marketplace v1) · buyback offer received and accepted (Phase 2, collectable-cards launch) · dormancy and at-risk warnings.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0">Each event maps to a level, a category, a title, a body, and a deep link. Internal workflow phases do not become user notifications: prepare / allocate / upload / verify / commit / activate / publish is one line to the user — <em>“Your collection is now live.”</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · service architecture -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">13</span><span class="t">Place in Canic · one managed service, sharded by recipient</span><span class="ref">§13 · §14 · §30</span><span class="d">The Notification Service is <strong>one managed application service inside a Fleet</strong>. It is not part of <span class="mono">canic-core</span>, not a new Fleet infrastructure role, not a Root or Coordinator responsibility, and not a new endpoint family emitted by every producer.</span></div>
+    <div class="spec">
+      <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-3);padding:var(--s-5);margin-bottom:var(--s-6)">
+<pre style="border:0;padding:0">                    Fleet Coordinator
+                           │  places
+                           ▼
+                    Fleet Subnet Root
+                           │  provisions / installs / activates
+                           ▼
+                  Notification Service
+               managed application canister
+                           │
+        ┌──────────────────┼──────────────────┐
+   Marketplace          Billing           Projects
+        └──────── notification batches ───────┘
+                           │
+                           ▼
+                         users</pre>
+      </div>
+      <div class="specref" style="margin-top:0">
+        <div>
+          <span class="speclabel">Canic owns</span>
+          <p class="tiny" style="margin:0 0 var(--s-4)">Provisioning · Wasm admission · placement · canister lifecycle · Fleet and Component identity · trusted caller binding · Directory publication · cycles · backup/restore · framework diagnostics.</p>
+          <span class="speclabel">The Notification Service owns</span>
+          <p class="tiny" style="margin:0">The notification record · levels · categories · grouping · retention · recipient queues · read state · resolution · poll revision · producer replay state · its application API.</p>
+          <div class="callout" style="margin-top:var(--s-5)"><span class="ct">Durable state</span>“Managed by Canic” does <strong>not</strong> mean “safe to reinstall without preserving the queue.” This service exists specifically to preserve information across a user's absence. Ordinary upgrades preserve state; any future release requiring destructive replacement must first provide explicit application-state migration, backup/restore, or an accepted reset policy.</div>
+        </div>
+        <div>
+          <span class="speclabel">If it ever shards · by recipient principal</span>
+          <p class="tiny" style="margin:0 0 var(--s-3)"><strong>V1 is one Notification Service per Fleet.</strong> If it needs to scale, shard by <strong>recipient principal — never by subnet, and never by producer</strong>. This is not a preference. The per-user revision counter requires exactly <strong>one authority per user</strong>. Sharding by subnet or producer would scatter one user's notifications across services, and then:</p>
+          <div class="rk"><span>Per-user revision</span><span class="v">no single service could maintain it — polling breaks</span></div>
+          <div class="rk"><span>Unread count</span><span class="v">would need fan-in across shards on every poll</span></div>
+          <div class="rk"><span>Grouping</span><span class="v">could not see a user's existing pending rows</span></div>
+          <div class="rk"><span>Drop ladder</span><span class="v">could not reason about the queue as a whole</span></div>
+          <p class="tiny" style="margin:var(--s-3) 0 0">Per-user sharding keeps all four intact, because one shard owns one user's entire queue. The platform already has this pattern — the <strong>user hub</strong> creates per-user shards — so notifications follow it rather than inventing a second sharding axis. It also answers the push question: a single source of truth <em>per user</em> is what push needs, and push would target the user's shard.</p>
+          <p class="tiny" style="margin:var(--s-3) 0 0">If reliable push ever arrives it becomes an <strong>additional delivery path over the same authoritative queue</strong> — never a second notification store.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · dead target & security -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">14</span><span class="t">Dead target and security</span><span class="ref">§9 · Part VI</span><span class="d">The deep link resolves <strong>at click time</strong> through one shared resolve-or-fallback helper, never per surface. A deleted or absent target — a removed draft, a pre-Live object that's gone — lands on this calm dead end, never an error page. Rare by construction, since Live vendors end into read-only records and collections delete only pre-Live; but drafts do get deleted. <strong>Authorization happens at the destination, never at read time:</strong> a notification is a record, not a permission, so the deep-link target enforces access like any other route and a removed admin simply cannot open the page.</span></div>
+    <div style="background:var(--surface-page);border:1px solid var(--border-frame);border-radius:var(--r-4);padding:var(--s-10) var(--s-8);display:flex;justify-content:center">
+      <div style="background:var(--surface-canvas);border:1px solid var(--border-soft);border-radius:var(--r-4);max-width:480px;width:100%;padding:var(--s-10) var(--s-8);text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--s-3)">
+        <span style="width:44px;height:44px;border-radius:50%;background:var(--surface-canvas-deep);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span>
+        <h3 style="font-size:var(--text-2xl)">This item is no longer available</h3>
+        <p class="tiny" style="max-width:40ch;margin:0;font-size:var(--text-base);color:var(--text-secondary)">The thing this notification pointed to has since been removed. Nothing is wrong with your account — the notification stays in your feed as a record.</p>
+        <button class="btn" style="margin-top:var(--s-2)">Back to notifications</button>
+      </div>
+    </div>
+    <div class="twocol" style="margin-top:var(--s-5)">
+      <div class="panel">
+        <span class="eyebrow">Authorization</span>
+        <div class="kv"><span><span class="mono">ApplyProducerBatch</span></span><span class="v">admitted producers only, verified against locally held Canic authority state</span></div>
+        <div class="kv"><span><span class="mono">Poll</span> / <span class="mono">MarkRead</span> / <span class="mono">MarkReadThrough</span></span><span class="v">operate only on the authenticated caller's queue</span></div>
+        <div class="kv"><span>Recipient as a read parameter</span><span class="v">does not exist</span></div>
+        <div class="kv"><span>Anonymous principal</span><span class="v">rejected</span></div>
+        <p class="tiny" style="margin:var(--s-4) 0 0">The recipient is not a parameter on read operations, which makes <span class="mono">Bob → list_pending(Alice)</span> <strong>structurally inexpressible</strong> rather than merely forbidden. Do not invent a separate notification authentication framework — reuse the protected identity and Directory authority other inter-canister protocols use.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Identity and edge cases</span>
+        <p class="tiny" style="margin:0 0 var(--s-4)">The queue is keyed by the user's <strong>stable application principal</strong> — the Internet Identity principal, or a wallet principal such as Oisy. <strong>Delegation principals are not used anywhere on this platform.</strong> A queue keyed by a transient session identity would strand a user's notifications the moment their session changed, which is the exact failure this system exists to prevent. Server-side ownership also means read state follows the user across devices.</p>
+        <div class="kv"><span>User deleted</span><span class="v">principals are not deleted on the IC; rows age out via retention</span></div>
+        <div class="kv"><span>Principal rotated</span><span class="v">no migration — notifications address the principal, full stop</span></div>
+        <div class="kv"><span>User blocked</span><span class="v">friends-list blocks are social-layer only; platform notifications unaffected</span></div>
+        <div class="kv"><span>Two devices</span><span class="v">serialized per canister; mark-read races are idempotent no-ops</span></div>
+        <div class="kv"><span>Maintenance window</span><span class="v">the producer outbox retains the intent and retries</span></div>
+        <div class="kv"><span>Ordering</span><span class="v">guaranteed within one producer's stream; no global total order. Clock skew affects sort only, never correctness</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · boundaries & open decisions -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">15</span><span class="t">Boundaries and what is still open</span><span class="ref">Part VII · Part IX</span><span class="d">What the service understands, what it deliberately does not, and the values still to be confirmed before build.</span></div>
+    <div class="twocol">
+      <div class="panel">
+        <span class="eyebrow">Understands</span>
+        <p class="tiny mono" style="margin:0 0 var(--s-5);font-size:var(--text-sm);color:var(--text-primary)">recipient · level · category · title · body · action · grouping · producer · time · read state · resolution state</p>
+        <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Does not</span>
+        <p class="tiny mono" style="margin:0 0 var(--s-5);font-size:var(--text-sm)">Token · Collection · Project · Studio · Invoice · Vault · Marketplace listing · Cycle refill policy</p>
+        <p class="tiny" style="margin:0 0 var(--s-4)">Those concepts stay with the applications that own them. The service stores and delivers the message it is given, and never queries a producer later to reconstruct one.</p>
+        <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Explicit non-goals for V1</span>
+        <p class="tiny" style="margin:0">A distributed event bus · pub/sub infrastructure · Kafka-like topics · websockets · cross-canister streaming · producer fan-out queries · one notification canister per producer · a project queue · permanent audit history · generic telemetry · notification-derived domain policy · arbitrary HTML bodies · centrally stored notification templates · cross-Fleet routing · generic scheduler infrastructure · a new Canic infrastructure role.</p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">Open decisions</span>
+        <div class="kv"><span>1 · Informational cap</span><span class="v">50 pending <span class="mono">info</span>/<span class="mono">success</span> per user — confirm after representative testing</span></div>
+        <div class="kv"><span>2 · History cap</span><span class="v">bounded recent-history policy; prefer a count cap before TTLs</span></div>
+        <div class="kv"><span>3 · Poll timings</span><span class="v">active interval, backoff, hidden-tab behaviour — configuration, not protocol. 60s starting value</span></div>
+        <div class="kv"><span>4 · Payload limits</span><span class="v">maxima for title, body, CTA label, CTA route, group key, recipients per publish, mutations per batch, notifications per page, read IDs per ack</span></div>
+        <div class="kv"><span>5 · Producer batching policy</span><span class="v">flush threshold, max batching delay, warning batching, critical immediate flush</span></div>
+        <div class="kv"><span>6 · Per-source cap value</span><span class="v">proposed N = 5 pending rows per source per recipient</span></div>
+        <div class="callout callout--open" style="margin-top:var(--s-5)"><span class="ct">Added by this gallery</span><strong>7 · Per-row dismiss.</strong> §9 specifies the control; §21 has no command for it (frame 03).<br /><strong>8 · “Expired informational”.</strong> Rung 2 of the drop ladder has no defined expiry input anywhere in the document (frame 09).<br /><strong>9 · Persistence vs. the ladder.</strong> §8 says persistent rows are never evicted under informational pressure; the same section's ladder drops them at the cap. Both cannot hold as written (frame 09).<br /><strong>10 · What the per-source cap counts.</strong> §6 reads as per-vendor; <span class="mono">source</span> is per-producer. N = 5 is very different under each (frame 05).<br /><strong>11 · Level per event.</strong> §5 lists the catalog but assigns no level to any row. The mappings drawn in frames 03 and 07 are proposals.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · changelog -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">16</span><span class="t">What changed from the 2026-07-16 gallery</span><span class="ref">alignment pass</span><span class="d">Recorded so the previous version's claims are not accidentally reintroduced from memory or from the archived file.</span></div>
+    <div class="spec">
+      <table class="tbl">
+        <thead><tr><th style="width:26%">Area</th><th style="width:37%">2026-07-16 gallery said</th><th style="width:37%">Design document says</th></tr></thead>
+        <tbody>
+          <tr><td>Level field</td><td>named <span class="mono">severity</span>; all five values named in prose but only three tints drawn (<span class="mono">ok</span> / <span class="mono">warn</span> / <span class="mono">err</span>)</td><td>the field is <span class="mono">level</span> (§3). Five values are now drawn distinctly, <span class="mono">critical</span> as a solid fill</td></tr>
+          <tr><td>Categories</td><td>absent</td><td>six, closed vocabulary, one per notification (§4)</td></tr>
+          <tr><td>Sort key</td><td><span class="mono">occurred_at</span></td><td><span class="mono">last_event_at</span>; <span class="mono">created_at</span> never mutated (§24)</td></tr>
+          <tr><td>Coalescing trigger</td><td>existing <strong>unread</strong> row, same kind + <span class="mono">subject_ref</span></td><td>existing <strong>pending</strong> row in the same group: recipient + producer + category + <span class="mono">group_key</span>, compatible levels (§6, §25)</td></tr>
+          <tr><td>Replay safety</td><td>idempotent creation on <span class="mono">event_id</span></td><td>monotonic producer sequence + accepted frontier; event IDs explicitly rejected (§18, §31)</td></tr>
+          <tr><td>Producer failure</td><td>retry 3× on a timer, then drop with a log line — “no full outbox in V1”</td><td>durable local outbox; intent retained and retried until accepted (§17, §28)</td></tr>
+          <tr><td>Endpoints</td><td><span class="mono">list_notifications</span>, <span class="mono">unread_count</span>, <span class="mono">mark_read</span>, <span class="mono">mark_all_read</span>, <span class="mono">dismiss</span>, <span class="mono">clear_read</span> — thin wrappers over IcyDB</td><td>two methods: <span class="mono">notification_command</span>, <span class="mono">notification_query</span> (§20–§21)</td></tr>
+          <tr><td>Badge source</td><td>dedicated <span class="mono">unread_count()</span> endpoint</td><td>rides along with every <span class="mono">Poll</span> response; no separate query (§22)</td></tr>
+          <tr><td>Poll cursor</td><td>not specified; feed keyed on rows</td><td>per-user <strong>revision</strong> — never the newest notification ID (§22, correctness issue)</td></tr>
+          <tr><td>Mark all read</td><td>plain <span class="mono">mark_all_read()</span></td><td><span class="mono">MarkReadThrough { revision, category }</span> (§21, §32)</td></tr>
+          <tr><td>Retention</td><td>read rows purge after 7 days; informational expire at ~90 days via <span class="mono">expires_at</span></td><td>count caps; a TTL subsystem is disfavoured but not ruled out, and the history cap is an open decision. Retention runs during existing mutations (§8, §27, Part IX·2)</td></tr>
+          <tr><td>Resolution</td><td>absent</td><td><span class="mono">resolved_at</span> distinct from <span class="mono">read_at</span>; escalation by resolve-then-publish (§7)</td></tr>
+          <tr><td>Actions</td><td>no CTA on rows</td><td>one optional action — label + navigation target (§10)</td></tr>
+          <tr><td>Architecture</td><td>“IcyDB entity, stable memory”</td><td>managed application service in a Fleet; shard by recipient principal if ever needed (§13, §14)</td></tr>
+          <tr><td>References</td><td>“Decision 2/4/5/6”, “ruled 2026-07-21”, R34 / R47 / R54</td><td>section numbers in <span class="mono">notification-system-design.md</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+</body>
+</html>

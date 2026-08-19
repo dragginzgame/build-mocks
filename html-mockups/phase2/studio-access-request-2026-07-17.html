@@ -11,20 +11,21 @@
   :root {
     --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA;
     --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0;
-    --border-soft:#E5E5E5; --brand-cyan:#06B0E6;
-    --notify-error:#C6303B; --notify-error-bg:#FDF2F2; --notify-ok:#15803D; --notify-ok-bg:#F1FAF3;
-    --notify-warn:#B45309; --notify-warn-bg:#FDF7EC; --info-bg:#F2F8FD; --info:#1D6FB8;
-    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem;
+    --border-soft:#E5E5E5; --border-frame:#CFCFCF; --brand-cyan:#06B0E6;
+    --notify-error:#EF4444; --notify-success:#10B981; --notify-warn:#F59E0B; --info:#2563EB;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020;
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-16:4rem; --s-20:5rem;
     --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
     --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem;
-    --font-display:"Anton",system-ui,sans-serif; --font-emphasis:"Mona Sans",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,sans-serif;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   }
   * { box-sizing:border-box; }
   html, body { margin:0; }
   body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-page); -webkit-font-smoothing:antialiased; }
   h2, h3, h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
   h2 { font-size:var(--text-2xl); }
-  .wrap { max-width:760px; margin:0 auto; padding:var(--s-10) var(--s-6) 80px; }
+  .wrap { max-width:760px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); }
 
   /* page header — annotation on grey */
   .ghead { margin-bottom:var(--s-8); }
@@ -57,15 +58,15 @@
   .flabel .opt { color:var(--text-muted); text-transform:none; letter-spacing:0; font-weight:400; }
   .m-field input, .m-field textarea { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.75rem .875rem; font-family:var(--font-body); font-size:var(--text-base); color:var(--text-primary); }
   .m-field textarea { min-height:110px; resize:vertical; }
-  .m-field input.err, .m-field textarea.err { border-color:var(--notify-error); background:var(--notify-error-bg); }
+  .m-field input.err, .m-field textarea.err { border-color:var(--notify-error); background:var(--tint-error); }
   .m-field input:disabled, .m-field textarea:disabled { color:var(--text-muted); background:var(--surface-page); }
   .fhint { color:var(--text-secondary); font-size:var(--text-xs); margin:.4rem 0 0; }
   .ferr { display:flex; align-items:flex-start; gap:.4rem; color:var(--notify-error); font-size:var(--text-xs); font-weight:700; font-family:var(--font-emphasis); margin:.4rem 0 0; }
-  .ferr svg { width:14px; height:14px; flex:none; margin-top:1px; }
+  .ferr svg { width:14px; height:14px; flex:none; margin-top:.0625rem; }
 
-  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:12px 22px; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; cursor:pointer; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.75rem 1.375rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; cursor:pointer; }
   .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
-  .btn--lg { padding:14px 26px; font-size:var(--text-base); }
+  .btn--lg { padding:.875rem 1.625rem; font-size:var(--text-base); }
   .btn[disabled] { opacity:.5; cursor:not-allowed; }
   .spinner { width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; display:inline-block; }
 
@@ -74,41 +75,41 @@
   .note .ic { flex:none; width:18px; height:18px; }
   .note .ic svg { width:18px; height:18px; }
   .note strong { color:var(--text-primary); }
-  .note--info { background:var(--info-bg); color:var(--text-secondary); }
-  .note--info .ic { color:var(--info); }
-  .note--ok { background:var(--notify-ok-bg); }
-  .note--ok .ic { color:var(--notify-ok); }
-  .note--err { background:var(--notify-error-bg); }
+  .note--info { background:var(--tint-info); color:var(--text-secondary); }
+  .note--info .ic { color:var(--on-info); }
+  .note--ok { background:var(--tint-live); color:var(--on-live); }
+  .note--ok .ic { color:var(--notify-success); }
+  .note--err { background:var(--tint-error); color:var(--on-error); }
   .note--err .ic { color:var(--notify-error); }
-  .note--warn { background:var(--notify-warn-bg); }
+  .note--warn { background:var(--tint-warn); color:var(--on-warn); }
   .note--warn .ic { color:var(--notify-warn); }
 
   /* grey showcase — for documenting a component, never dressed as a screen */
-  .showcase { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-6); }
+  .showcase { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-6); }
   .showcase .sclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
   .ctatable { display:grid; grid-template-columns:minmax(140px,auto) 1fr; gap:var(--s-4) var(--s-5); align-items:center; }
   .ctatable .cs { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); }
   .ctatable .cw { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
-  .ctatable .cnote { grid-column:1 / -1; font-size:var(--text-xs); color:var(--text-secondary); margin:0; padding-bottom:var(--s-4); border-bottom:1px solid #d8d8d8; }
+  .ctatable .cnote { grid-column:1 / -1; font-size:var(--text-xs); color:var(--text-secondary); margin:0; padding-bottom:var(--s-4); border-bottom:1px solid var(--border-frame); }
   .ctatable .cnote:last-child { border-bottom:0; padding-bottom:0; }
   .pill { display:inline-flex; align-items:center; gap:.35rem; border-radius:var(--r-pill); padding:.3rem .7rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas); border:1px solid var(--border-soft); color:var(--text-secondary); }
   .pill .dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
-  .pill--pending { color:var(--notify-warn); border-color:#f0dcc0; background:var(--notify-warn-bg); }
-  .pill--ok { color:var(--notify-ok); border-color:#cfe9d6; background:var(--notify-ok-bg); }
+  .pill--pending { color:var(--on-warn); border-color:transparent; background:var(--tint-warn); }
+  .pill--ok { color:var(--on-live); border-color:transparent; background:var(--tint-live); }
 
   .kvrow { display:flex; justify-content:space-between; gap:var(--s-4); padding:.6rem 0; border-bottom:1px solid var(--border-soft); font-size:var(--text-sm); }
   .kvrow:last-child { border-bottom:0; }
   .kvrow .k { color:var(--text-secondary); }
   .kvrow .v { font-family:var(--font-emphasis); font-weight:700; text-align:right; }
 
-  .spec { background:var(--surface-page); border:1px solid #cfcfcf; border-radius:var(--r-4); padding:var(--s-6); margin-top:var(--s-6); }
+  .spec { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-6); margin-top:var(--s-6); }
   .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-3); }
   .spec p { margin:0 0 var(--s-3); font-size:var(--text-sm); color:var(--text-secondary); }
   .spec p:last-child { margin-bottom:0; }
   .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
 
   @media (max-width:520px) {
-    .wrap { padding:var(--s-6) var(--s-4) 60px; }
+    .wrap { padding:var(--s-6) var(--s-4) var(--s-16); }
     .ctatable { grid-template-columns:1fr; gap:var(--s-2) 0; }
     .ctatable .cs { margin-top:var(--s-3); }
   }
@@ -139,8 +140,8 @@
         <p class="cnote">Same CTA. The modal pre-fills the signed-in account's User ID and hides the "if you don't have an account" hint.</p>
 
         <span class="cs">Request pending</span>
-        <span class="cw"><button class="btn btn--lg btn--ghost" disabled>Application received</button><span class="pill pill--pending"><span class="dot"></span>In review</span></span>
-        <p class="cnote">The CTA is replaced, not just disabled-looking — a second application adds nothing and the team reviews in waves. Hover/focus explains that we'll reply by email.</p>
+        <span class="cw"><span class="pill pill--pending"><span class="dot"></span>Not a V1 state</span></span>
+        <p class="cnote">There is no pending state in V1. The intake is a Google Form whose responses land in a Sheet outside the backend, so the platform cannot know an application exists — backend states are <span class="mono">NeverGranted</span>, <span class="mono">Active</span> and <span class="mono">Revoked</span> only. Signed-in-no-access shows the ordinary Apply CTA, and a duplicate application is a cheaper failure than a wrongly hidden one. A real pending state needs native intake or an explicit admin import.</p>
 
         <span class="cs">Has studio access</span>
         <span class="cw"><button class="btn btn--lg">Open Studio</button><span class="pill pill--ok"><span class="dot"></span>Studio access</span></span>
@@ -351,7 +352,7 @@
   <div class="spec">
     <span class="speclabel">Implementation note — not part of the page</span>
     <p>V1 backing: this form can POST straight to a <strong>Google Form</strong> (each field maps to a Forms question via its <span class="mono">entry.NNN</span> id), so responses land in a Sheet for the team with zero backend work. The same fields translate 1:1 if we later swap to a native endpoint. A cross-origin Forms POST gives no readable response, so frame 06 fires on request completion and frame 07 covers a genuine network failure only.</p>
-    <p>The <strong>pending</strong> and <strong>has access</strong> CTA states in 01 need the account's studio-access flag on the client. Until that flag is exposed, ship the signed-out CTA everywhere — an extra duplicate application is a cheaper failure than a wrongly hidden one.</p>
+    <p>The <strong>has access</strong> CTA state in 01 reads the account's entitlement, so it is derivable; until that value is exposed to the client, ship the signed-out CTA everywhere — an extra duplicate application is a cheaper failure than a wrongly hidden one. <strong>Pending is not derivable and is not a V1 state at all</strong> (see 01). Note also that platform Super Admins and Admins bypass the gate without a grant record, so a staff account lands in <em>has access</em> without ever appearing in the access list.</p>
     <p>Review flow: the team checks responses, then grants studio access to the applicant&rsquo;s existing account via the internal admin tool (account lookup by User ID / principal &mdash; see <span class="mono">admin-studio-access-states-gallery-2026-06-30.html</span>). No accounts are created from this form.</p>
   </div>
 </div>
