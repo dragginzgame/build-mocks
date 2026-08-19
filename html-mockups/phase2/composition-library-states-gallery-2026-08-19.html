@@ -285,7 +285,43 @@
 
   <!-- 04 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">04</span><span class="t">Token type template · the assignment matrix</span><span class="d">The object that closes the biggest gap. An attribute template carries definitions only, and assignment is a mandatory step of every apply — so without this a creator re-authors the type and re-assigns every attribute in every collection. Referenced attribute templates are pinned to a version; anything left unassigned lands <span class="mono">unassigned</span>, which is a valid state meaning "not allowed on this type".</span></div>
+    <div class="frame-cap"><span class="num">04</span><span class="t">Attribute template library · definitions only</span><span class="d">A template holds <strong>definitions only</strong> — key, label, kind, arity, constraints. It carries <strong>no requirement levels</strong>: <span class="mono">required</span> versus <span class="mono">optional</span> belongs to the <span class="mono">(token_type, attribute)</span> pair, which is why the token type template exists and why assignment is mandatory on every apply. The list shows which collections applied each version, so a change can be reasoned about before it is made.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Neon District</a><span class="sep">/</span><a>Templates</a><span class="sep">/</span><span class="here">Attribute templates</span></div><div class="actions"><button class="btn btn--sm">+ New template</button></div></div>
+      <div class="section">
+        <div class="section-head row">
+          <div><div class="eyebrow">Project · Attribute templates</div><h2>Attribute templates.</h2><p class="lede">Sets of attribute definitions, applied into a collection's master schema.</p></div>
+          <div class="search"><input placeholder="Search templates…" /></div>
+        </div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Template</th><th>Version</th><th class="hide">Attributes</th><th>Applied by</th><th>State</th></tr></thead>
+            <tbody>
+              <tr><td><div class="ttl">Trading card core</div></td><td><span class="tag tag--v">v3</span></td><td class="hide tiny">set_name · card_number · year · foil</td><td>Paper Trail · Corner Shop</td><td><span class="tag tag--pinned">2 Live</span></td></tr>
+              <tr><td><div class="ttl">Trading card core</div></td><td><span class="tag">v2</span></td><td class="hide tiny">set_name · card_number · year</td><td>Vaulties</td><td><span class="tag tag--pinned">1 Live</span></td></tr>
+              <tr><td><div class="ttl">Print run</div></td><td><span class="tag tag--v">v1</span></td><td class="hide tiny">print_run · printer</td><td>Paper Trail</td><td><span class="tag">Draft only</span></td></tr>
+              <tr><td><div class="ttl">Slab grading</div></td><td><span class="tag tag--v">v1</span></td><td class="hide tiny">grader · grade · cert_no</td><td><span class="tiny" style="color:var(--text-muted)">Not applied yet</span></td><td><span class="tag">Editable</span></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>4</strong> of <strong>6</strong> versions</span><span class="tiny">A version applied by a Live collection cannot be deleted</span></div>
+        </div>
+        <div class="dcard">
+          <span class="eyebrow">Trading card core · v3</span>
+          <div class="tierlist">
+            <div class="tierrow"><span class="ord">1</span><span class="nm mono">set_name</span><span class="hexv">Category · single-select · 12 allowed values</span></div>
+            <div class="tierrow"><span class="ord">2</span><span class="nm mono">card_number</span><span class="hexv">Text · max 16 chars</span></div>
+            <div class="tierrow"><span class="ord">3</span><span class="nm mono">year</span><span class="hexv">Number · 1900–2100</span></div>
+            <div class="tierrow"><span class="ord">4</span><span class="nm mono">foil</span><span class="hexv">Boolean</span></div>
+          </div>
+          <div style="margin-top:var(--s-4)"><button class="add-chip">+ Add an attribute</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Token type template · the assignment matrix</span><span class="d">The object that closes the biggest gap. An attribute template carries definitions only, and assignment is a mandatory step of every apply — so without this a creator re-authors the type and re-assigns every attribute in every collection. Referenced attribute templates are pinned to a version; anything left unassigned lands <span class="mono">unassigned</span>, which is a valid state meaning "not allowed on this type".</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Neon District</a><span class="sep">/</span><a>Templates</a><span class="sep">/</span><span class="here">Token type · Trading card</span></div><div class="actions"><span class="tag tag--v">v2 · draft</span></div></div>
       <div class="section">
@@ -326,7 +362,7 @@
 
   <!-- 03 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">05</span><span class="t">Tier set template · Tiered rarity only, with reserved-name validation</span><span class="d">Offered only for <span class="mono">Tiered</span>. Names and colours must not reuse the reserved <span class="mono">Weighted</span> official set or its palette — validated at <strong>save</strong> time in the library, so a template can never be stored in a state that would fail on apply. Nothing supply-dependent is carried: quotas and budgets compute against each collection's own Max Supply.</span></div>
+    <div class="frame-cap"><span class="num">06</span><span class="t">Tier set template · Tiered rarity only, with reserved-name validation</span><span class="d">Offered only for <span class="mono">Tiered</span>. Names and colours must not reuse the reserved <span class="mono">Weighted</span> official set or its palette — validated at <strong>save</strong> time in the library, so a template can never be stored in a state that would fail on apply. Nothing supply-dependent is carried: quotas and budgets compute against each collection's own Max Supply.</span></div>
     <div class="showcase">
       <div class="dcard">
         <span class="eyebrow">Valid · saved</span>
@@ -354,7 +390,7 @@
 
   <!-- 04 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">06</span><span class="t">Variant profile · the set, never the topology</span><span class="d">Seeds a token definition's variant list — keys, names, an optional pinned asset each. Which variant reaches which stays declared per token, because <span class="mono">from_variant</span> indexes that token's own list. A profile is what a hundred tokens sharing two variants needed: authored once instead of two hundred by hand.</span></div>
+    <div class="frame-cap"><span class="num">07</span><span class="t">Variant profile · the set, never the topology</span><span class="d">Seeds a token definition's variant list — keys, names, an optional pinned asset each. Which variant reaches which stays declared per token, because <span class="mono">from_variant</span> indexes that token's own list. A profile is what a hundred tokens sharing two variants needed: authored once instead of two hundred by hand.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Templates</a><span class="sep">/</span><span class="here">Variant profile · Seasonal reskin</span></div><div class="actions"><span class="tag tag--v">v1</span></div></div>
       <div class="section">
@@ -373,7 +409,7 @@
 
   <!-- 05 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">07</span><span class="t">Composition · one pinned reference per axis</span><span class="d">The bundle. Every axis is optional and an absent axis is <strong>absent</strong> — no "none" placeholder object. Applying a composition is exactly equivalent to applying each referenced template in turn, then compiling: it is a macro, not an authority.</span></div>
+    <div class="frame-cap"><span class="num">08</span><span class="t">Composition · one pinned reference per axis</span><span class="d">The bundle. Every axis is optional and an absent axis is <strong>absent</strong> — no "none" placeholder object. Applying a composition is exactly equivalent to applying each referenced template in turn, then compiling: it is a macro, not an authority.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Templates</a><span class="sep">/</span><span class="here">Composition · Graded card — TAG</span></div><div class="actions"><span class="tag tag--v">v4</span><button class="btn btn--sm">Apply to a collection</button></div></div>
       <div class="section">
@@ -402,7 +438,7 @@
 
   <!-- 06 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">08</span><span class="t">Version pinning · what freezes and what stays editable</span><span class="d">A variant binds an exact template version. When a token goes <span class="mono">Live</span>, the versions it pinned become immutable — the template itself stays editable, and each edit makes a new version future tokens may pin. Editing never reaches a Live token. This is deliberately narrower than freezing a whole template, which would reach across every collection in the project.</span></div>
+    <div class="frame-cap"><span class="num">09</span><span class="t">Version pinning · what freezes and what stays editable</span><span class="d">A variant binds an exact template version. When a token goes <span class="mono">Live</span>, the versions it pinned become immutable — the template itself stays editable, and each edit makes a new version future tokens may pin. Editing never reaches a Live token. This is deliberately narrower than freezing a whole template, which would reach across every collection in the project.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Templates</a><span class="sep">/</span><span class="here">Action template · Open</span></div></div>
       <div class="section">
@@ -425,7 +461,7 @@
 
   <!-- 07 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">09</span><span class="t">Delete · the confirm names the affected collections</span><span class="d">Deleting a template that variants on <span class="mono">Draft</span>/<span class="mono">Review</span> tokens still bind clears those triggers. Because the library is project-scoped, the confirm must name the <strong>collections</strong>, not just a token count — someone deleting from the project library may not have the dependent collection in mind. Canonical red destructive confirm, left-aligned.</span></div>
+    <div class="frame-cap"><span class="num">10</span><span class="t">Delete · the confirm names the affected collections</span><span class="d">Deleting a template that variants on <span class="mono">Draft</span>/<span class="mono">Review</span> tokens still bind clears those triggers. Because the library is project-scoped, the confirm must name the <strong>collections</strong>, not just a token count — someone deleting from the project library may not have the dependent collection in mind. Canonical red destructive confirm, left-aligned.</span></div>
     <div class="stage">
       <div class="modal-card">
         <header><h4>Delete template · Open v3?</h4><span class="x">✕</span></header>
@@ -443,7 +479,7 @@
 
   <!-- 08 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">10</span><span class="t">Ownership reference</span><span class="d">Not a screen — the reference a developer needs beside the build. A grey reference table placed next to the feature it documents, per the style guide's notes-and-alerts rule.</span></div>
+    <div class="frame-cap"><span class="num">11</span><span class="t">Ownership reference</span><span class="d">Not a screen — the reference a developer needs beside the build. A grey reference table placed next to the feature it documents, per the style guide's notes-and-alerts rule.</span></div>
     <div class="spec">
       <span class="speclabel">Who owns what · from token-contract-system-spec.md §2.1</span>
       <table class="reftable">
@@ -472,7 +508,7 @@
 
   <!-- 11 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">11</span><span class="t">Project navigation · where Templates lands</span><span class="d">A destination list, not a drawn sidebar — the style guide keeps the sidebar out of mocks so one redesign doesn't touch every file. The library is an eighth project destination.</span></div>
+    <div class="frame-cap"><span class="num">12</span><span class="t">Project navigation · where Templates lands</span><span class="d">A destination list, not a drawn sidebar — the style guide keeps the sidebar out of mocks so one redesign doesn't touch every file. The library is an eighth project destination.</span></div>
     <div class="spec">
       <span class="speclabel">Project shell destinations · the addition marked</span>
       <div class="navcols">

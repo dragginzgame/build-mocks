@@ -324,7 +324,96 @@
 
   <!-- 07 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">07</span><span class="t">Go-Live checklist · named failures</span><span class="d">Every gate reports a named reason, never a generic invalid flag. The three that come from this system are the asset gate, the policy seam, and the variant topology rules.</span></div>
+    <div class="frame-cap"><span class="num">07</span><span class="t">Contract builder · compile and publish a version</span><span class="d">Where the resolved setup is reviewed and requirement levels are set. <strong>Requirement level is not a slot or attribute field</strong> — a template declares what exists, and <span class="mono">required</span> versus <span class="mono">optional</span> is decided here, at compile. Publishing makes the version immutable and available to pin; a published contract never changes silently.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Paper Trail</a><span class="sep">/</span><a>Contracts</a><span class="sep">/</span><span class="here">Build graded_card_v2</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Collection · Contract builder</div><h2>Compile a contract.</h2><p class="lede">Trading card · compiled against collection schema revision 14.</p></div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Requirement</th><th class="hide">From</th><th>Level</th></tr></thead>
+            <tbody>
+              <tr><td><span class="k">set_name</span></td><td class="hide tiny">Trading card v2 matrix</td><td><span class="lvlseg"><button class="on">Required</button><button>Optional</button></span></td></tr>
+              <tr><td><span class="k">card_number</span></td><td class="hide tiny">Trading card v2 matrix</td><td><span class="lvlseg"><button class="on">Required</button><button>Optional</button></span></td></tr>
+              <tr><td><span class="k">year</span></td><td class="hide tiny">Trading card v2 matrix</td><td><span class="lvlseg"><button>Required</button><button class="on">Optional</button></span></td></tr>
+              <tr><td><span class="k">slot · front</span></td><td class="hide tiny">Graded slab v2</td><td><span class="lvlseg"><button class="on">Required</button><button>Optional</button></span></td></tr>
+              <tr><td><span class="k">slot · back</span></td><td class="hide tiny">Graded slab v2</td><td><span class="lvlseg"><button class="on">Required</button><button>Optional</button></span></td></tr>
+              <tr><td><span class="k">slot · dig_report</span></td><td class="hide tiny">Graded slab v2 · delta applied</td><td><span class="lvlseg"><button>Required</button><button class="on">Optional</button></span></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>6</strong> of <strong>6</strong> requirements</span><span class="tiny">3 attributes · 3 slots · 1 composition delta</span></div>
+        </div>
+        <div class="showcase">
+          <div class="dcard">
+            <span class="eyebrow">Compiled from</span>
+            <div class="axes">
+              <div class="axis"><span class="an">Composition</span><span class="av">Graded card — TAG v4</span><span class="rt"><span class="tag tag--v">pinned</span></span></div>
+              <div class="axis"><span class="an">Token type</span><span class="av">Trading card v2</span><span class="rt"><span class="tag tag--v">pinned</span></span></div>
+              <div class="axis"><span class="an">Asset spec</span><span class="av">Graded slab v2</span><span class="rt"><span class="tag tag--v">pinned</span></span></div>
+              <div class="axis"><span class="an">Schema revision</span><span class="av">14</span><span class="rt"><span class="tag">local</span></span></div>
+            </div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Publish</span>
+            <div class="note note--warn"><span class="ic">!</span><div><strong>Publishing is final.</strong> This version becomes immutable and available for tokens to pin. To change it afterwards, compile a new version and migrate.</div></div>
+            <div class="dactions"><button class="btn">Publish graded_card_v2</button><button class="btn btn--ghost">Save draft</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Contract assignment · at token creation and import</span><span class="d">Every token pins exactly one contract version, chosen explicitly at creation. <strong>Invisible where a default exists</strong> — with one token type and one published contract there is nothing to ask, so the field does not appear. It surfaces the moment there is a genuine choice.</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">One contract · nothing to ask</span>
+        <div class="axes">
+          <div class="axis"><span class="an">Token type</span><span class="av">Promo card</span><span class="rt"></span></div>
+          <div class="axis absent"><span class="an">Contract</span><span class="av">promo_card_v1 — assigned automatically</span><span class="rt"><span class="tag tag--skip">hidden</span></span></div>
+        </div>
+        <p class="hint">No picker is shown. The default is the only published contract for this type.</p>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Two contracts · an explicit choice</span>
+        <div class="axes">
+          <div class="axis"><span class="an">Token type</span><span class="av">Trading card</span><span class="rt"></span></div>
+          <div class="axis"><span class="an">Contract</span><span class="av">graded_card_v1 · 412 tokens</span><span class="rt"><span class="tag tag--v">selected</span></span></div>
+          <div class="axis"><span class="an"></span><span class="av">graded_card_v2 · dig_report optional</span><span class="rt"><button class="btn btn--sm btn--ghost">Use this</button></span></div>
+        </div>
+        <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic">i</span><div>Importing 240 tokens? Assign in bulk here, or per row in the import preview.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Migration · the only way a token changes contract</span><span class="d">A published contract never changes, so moving a token between versions is an <strong>explicit, validated migration</strong> — never an edit. Every requirement is checked per token <em>before</em> anything is applied, and tokens that would fail are reported rather than silently skipped or half-migrated.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Paper Trail</a><span class="sep">/</span><a>Contracts</a><span class="sep">/</span><span class="here">Migrate</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Collection · Migration</div><h2>Migrate tokens.</h2><p class="lede"><span class="mono">graded_card_v1</span> → <span class="mono">graded_card_v2</span> · 412 tokens selected</p></div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Token</th><th class="hide">Checked</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td><span class="k">#001 – #398</span></td><td class="hide tiny">All 6 requirements satisfied</td><td><span class="tag tag--new">398 will migrate</span></td></tr>
+              <tr><td><span class="k">#399, #401, #402</span></td><td class="hide tiny">Missing <span class="mono">card_number</span> — required in both versions</td><td><span class="tag tag--clash">3 blocked</span></td></tr>
+              <tr><td><span class="k">#403 – #413</span></td><td class="hide tiny">Missing slot <span class="mono">back</span> — required in v2</td><td><span class="tag tag--clash">11 blocked</span></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count"><strong>398</strong> ready · <strong>14</strong> blocked of <strong>412</strong></span><span class="tiny">Validation runs before anything is applied</span></div>
+        </div>
+        <div class="note note--err"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div><strong>14 tokens cannot migrate yet.</strong> Fix their missing values and run again, or migrate the 398 that are ready and leave the rest on v1 — a collection may hold tokens on several contract versions.</div></div>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap"><button class="btn">Migrate 398</button><button class="btn btn--ghost">Export the 14 blocked</button><button class="btn btn--ghost">Cancel</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Go-Live checklist · named failures</span><span class="d">Every gate reports a named reason, never a generic invalid flag. The three that come from this system are the asset gate, the policy seam, and the variant topology rules.</span></div>
     <div class="dcard">
       <span class="eyebrow">Collection · Go-Live readiness</span>
       <div class="checkrow ok"><span class="ic">✓</span><div><span class="nm">Contract published</span><div class="ds"><span class="mono">graded_card_v1</span> · every token pins a version</div></div></div>
@@ -338,7 +427,7 @@
 
   <!-- 08 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">08</span><span class="t">Live · everything from this system is read-only</span><span class="d">At collection <span class="mono">Live</span> the master schema, token types and rarity freeze. At token <span class="mono">Live</span> the variant set, topology and attached policy snapshot freeze. Apply and re-apply are gone — the surfaces stay reachable so an author can read what shipped.</span></div>
+    <div class="frame-cap"><span class="num">11</span><span class="t">Live · everything from this system is read-only</span><span class="d">At collection <span class="mono">Live</span> the master schema, token types and rarity freeze. At token <span class="mono">Live</span> the variant set, topology and attached policy snapshot freeze. Apply and re-apply are gone — the surfaces stay reachable so an author can read what shipped.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Paper Trail</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><span class="stage-badge live"><span class="dot"></span>Live</span><button class="btn btn--sm btn--ghost">View public page</button></div></div>
       <div class="section">
@@ -361,7 +450,7 @@
 
   <!-- 09 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">09</span><span class="t">Where the apply actions live · almost no new navigation</span><span class="d">An apply action hangs off the sub-page that already owns the thing being configured, so a creator applies a template exactly where they would otherwise author it by hand. <strong>The four Attributes tabs stay fixed</strong> — applying is an action <em>within</em> a tab, never a fifth tab.</span></div>
+    <div class="frame-cap"><span class="num">12</span><span class="t">Where the apply actions live · almost no new navigation</span><span class="d">An apply action hangs off the sub-page that already owns the thing being configured, so a creator applies a template exactly where they would otherwise author it by hand. <strong>The four Attributes tabs stay fixed</strong> — applying is an action <em>within</em> a tab, never a fifth tab.</span></div>
     <div class="screen">
       <div class="context-bar"><div class="crumb"><a>Neon District</a><span class="sep">/</span><a>Paper Trail</a><span class="sep">/</span><span class="here">Attributes</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
       <div class="section">
@@ -399,7 +488,7 @@
 
   <!-- 10 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">10</span><span class="t">Promote · saving a collection setup back to the library</span><span class="d">The inverse of apply, and what makes the library populate itself — the first collection is always built by hand, because no templates exist yet. Promotion <strong>snapshots in the opposite direction and creates no link</strong>: later collection edits never reach the template, exactly as template edits never reach the collection.</span></div>
+    <div class="frame-cap"><span class="num">13</span><span class="t">Promote · saving a collection setup back to the library</span><span class="d">The inverse of apply, and what makes the library populate itself — the first collection is always built by hand, because no templates exist yet. Promotion <strong>snapshots in the opposite direction and creates no link</strong>: later collection edits never reach the template, exactly as template edits never reach the collection.</span></div>
     <div class="stage">
       <div class="modal-card">
         <header><h4>Save as template</h4><span class="x">✕</span></header>
@@ -427,7 +516,7 @@
 
   <!-- 11 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">11</span><span class="t">Where each axis lands</span><span class="d">Not a screen — the reference for the apply implementation. A composition applies at the point a token type is set up, and its axes land at three different levels.</span></div>
+    <div class="frame-cap"><span class="num">14</span><span class="t">Where each axis lands</span><span class="d">Not a screen — the reference for the apply implementation. A composition applies at the point a token type is set up, and its axes land at three different levels.</span></div>
     <div class="spec">
       <span class="speclabel">Per-axis landing · from token-contract-system-spec.md §4C.2</span>
       <table class="reftable">
@@ -447,7 +536,7 @@
 
   <!-- 12 -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">12</span><span class="t">Collection navigation · where Contracts lands</span><span class="d">A destination list, not a drawn sidebar. <strong>Contracts</strong> is the only new collection destination the system introduces — everything else applies from the sub-page that already owns the thing.</span></div>
+    <div class="frame-cap"><span class="num">15</span><span class="t">Collection navigation · where Contracts lands</span><span class="d">A destination list, not a drawn sidebar. <strong>Contracts</strong> is the only new collection destination the system introduces — everything else applies from the sub-page that already owns the thing.</span></div>
     <div class="spec">
       <span class="speclabel">Collection sub-pages · the addition marked</span>
       <div class="navcols">
