@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Project template library · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --border-frame:#CFCFCF;
+    --notify-error:#EF4444; --notify-warn:#F59E0B; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --surface-gallery:#DCDCDC;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020;
+    --art-amber:linear-gradient(135deg,#FBBF24,#B45309);
+    --art-blue:linear-gradient(135deg,#60A5FA,#1E3A8A);
+    --art-green:linear-gradient(135deg,#34D399,#065F46);
+    --art-violet:linear-gradient(135deg,#A78BFA,#5B21B6);
+    --art-grey:linear-gradient(135deg,#9CA3AF,#374151);
+    --art-principal:linear-gradient(135deg,#06B0E6,#1E3A8A);
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem; --s-20:5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-gallery); -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  /* the one card/panel title rule — page-shell.md "Casing". Anton never below --text-lg. */
+  .ttl { font-family:var(--font-display); font-weight:400; font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; line-height:1.1; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.625rem 1.125rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4375rem .875rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+  .btn svg { width:15px; height:15px; }
+
+  .tag { display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--v { background:var(--tint-info); color:var(--on-info); }
+  .tag--pinned { background:var(--tint-live); color:var(--on-live); }
+  .tag--absent { background:var(--surface-canvas-deep); color:var(--text-muted); }
+  .req { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--on-warn); background:var(--tint-warn); padding:.0625rem .4375rem; border-radius:var(--r-pill); }
+  .optt { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); background:var(--surface-canvas-deep); padding:.0625rem .4375rem; border-radius:var(--r-pill); }
+  .unas { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); padding:.0625rem .4375rem; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+
+  .search { position:relative; min-width:220px; }
+  .search input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.55rem .875rem; font:inherit; font-size:var(--text-base); }
+  .segmented { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:var(--s-1); flex-wrap:wrap; width:max-content; }
+  .segmented button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); white-space:nowrap; }
+  .segmented button.active { background:var(--text-primary); color:#fff; }
+
+  /* library home */
+  .lib-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:var(--s-4); }
+  .libcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-2); }
+  .libcard .cnt { font-family:var(--font-display); font-size:var(--text-3xl); line-height:1; }
+  .libcard .sub { font-size:var(--text-xs); color:var(--text-secondary); }
+  .libcard .foot { margin-top:auto; padding-top:var(--s-3); border-top:1px solid var(--border-soft); font-size:var(--text-xs); color:var(--text-muted); }
+
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .field { margin-bottom:var(--s-5); }
+  .field:last-child { margin-bottom:0; }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.7rem .875rem; font:inherit; font-size:var(--text-base); color:var(--text-primary); }
+  .input.err { border-color:var(--notify-error); }
+  .hint { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.4rem; }
+  .field-err { color:var(--notify-error); font-size:var(--text-xs); margin-top:.4rem; display:flex; align-items:center; gap:.35rem; }
+  .field-err svg { width:13px; height:13px; flex:none; }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .form-grid { display:grid; grid-template-columns:1fr 300px; gap:var(--s-6); align-items:start; }
+  @media (max-width:860px){ .form-grid { grid-template-columns:1fr; } }
+
+  /* assignment matrix */
+  .matrix { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .matrix th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); background:var(--surface-canvas-alt); }
+  .matrix td { padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .matrix tr:last-child td { border-bottom:0; }
+  .matrix .k { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); }
+  .lvlseg { display:inline-flex; border:1px solid var(--border-soft); border-radius:var(--r-pill); overflow:hidden; }
+  .lvlseg button { padding:.25rem .6rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .lvlseg button.on { background:var(--text-primary); color:#fff; }
+  .tablewrap { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+
+  /* tier rows */
+  .tierlist { display:flex; flex-direction:column; gap:var(--s-2); }
+  .tierrow { display:flex; align-items:center; gap:var(--s-3); padding:.6rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); }
+  .tierrow .ord { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-muted); min-width:1.25rem; }
+  .tierrow .sw { width:20px; height:20px; border-radius:var(--r-1); flex:none; border:1px solid var(--border-soft); }
+  .tierrow .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .tierrow .hexv { margin-left:auto; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); color:var(--text-secondary); }
+  .add-chip { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); padding:.5rem 1rem; color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+
+  /* composition axes */
+  .axes { display:flex; flex-direction:column; gap:var(--s-2); }
+  .axis { display:flex; align-items:center; gap:var(--s-3); padding:.75rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); flex-wrap:wrap; }
+  .axis .an { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); min-width:11rem; }
+  .axis .av { font-size:var(--text-sm); color:var(--text-secondary); }
+  .axis .rt { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .axis.absent { background:var(--surface-canvas); }
+  .axis.absent .av { color:var(--text-muted); font-style:italic; }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:.0625rem; } .note svg { width:18px; height:18px; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--ok { background:var(--tint-live); color:var(--on-live); } .note--ok .ic { color:var(--stage-live); }
+  .note--warn { background:var(--tint-warn); color:var(--on-warn); } .note--warn .ic { color:var(--stage-draft); }
+  .note strong { color:inherit; }
+
+  .usedlist { display:flex; flex-direction:column; gap:var(--s-2); }
+  .usedrow { display:flex; align-items:center; gap:var(--s-3); padding:.6rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); font-size:var(--text-sm); }
+  .usedrow .cn { font-family:var(--font-emphasis); font-weight:700; }
+  .usedrow .rt { margin-left:auto; }
+
+  .icon-btn { width:32px; height:32px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .icon-btn svg { width:15px; height:15px; }
+  .icon-btn--danger:hover { color:var(--notify-error); border-color:var(--notify-error); }
+  .row-acts { display:flex; gap:.3rem; justify-content:flex-end; }
+
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; } .results-count strong { color:var(--text-primary); }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:40px; height:40px; padding:0 .5rem; border-radius:var(--r-2); font:inherit; font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; }
+  .pg button:disabled { color:var(--text-muted); opacity:.45; }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); font-size:var(--text-xs); color:var(--text-secondary); }
+  .perpage select { height:36px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas); font:inherit; font-size:var(--text-xs); }
+  @media (max-width:620px){ .results-count, .perpage { display:none; } }
+
+  /* modal stage */
+  .stage { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .mwarn { display:flex; gap:var(--s-3); align-items:flex-start; font-size:var(--text-sm); line-height:1.55; color:var(--text-secondary); text-align:left; }
+  .mwarn .ic { flex:none; margin-top:.0625rem; color:var(--notify-error); }
+  .mwarn svg { width:20px; height:20px; }
+  .mwarn strong { color:var(--text-primary); }
+
+  /* grey reference table — documentation, never dressed as product UI */
+  .spec { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-8); }
+  .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .reftable { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .reftable th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.6rem .75rem; border-bottom:1px solid var(--border-frame); }
+  .reftable td { padding:.6rem .75rem; border-bottom:1px solid var(--border-frame); vertical-align:top; }
+  .reftable tr:last-child td { border-bottom:0; }
+  .reftable .obj { font-family:var(--font-emphasis); font-weight:700; }
+  .yes { color:var(--on-live); font-weight:700; } .no { color:var(--text-muted); }
+  @media (max-width:760px){ .reftable .hide { display:none; } }
+
+  /* navigation reference — a destination list on grey, never a drawn sidebar.
+     page-shell.md: mocks deliberately omit the sidebar so one redesign doesn't touch every file. */
+  .navlist { display:flex; flex-direction:column; gap:var(--s-1); max-width:26rem; }
+  .navitem { display:flex; align-items:center; gap:var(--s-3); padding:.5rem .875rem; border-radius:var(--r-2); font-size:var(--text-sm); color:var(--text-secondary); border:1px solid transparent; }
+  .navitem .ord { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); color:var(--text-muted); min-width:1.25rem; }
+  .navitem.new { background:var(--surface-canvas); border-color:var(--border-frame); color:var(--text-primary); font-family:var(--font-emphasis); font-weight:700; }
+  .navitem .rt { margin-left:auto; }
+  .navcols { display:grid; grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); gap:var(--s-6); }
+
+  /* gallery chrome */
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:82ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Project · Template library</span>
+    <h1>Project template library — states gallery</h1>
+    <p>The <strong>project-level</strong> half of the composition template system: the seven reusable objects a creator authors once and applies to many collections. Every object here is <strong>versioned, immutable once published, and never read at runtime</strong> — they exist to help an author construct a collection-local artefact, which is the only thing the runtime trusts.</p>
+    <p>The companion gallery covers the collection side — applying these, resolving conflicts, compiling contracts: <span class="mono">composition-apply-states-gallery-2026-08-19.html</span>.</p>
+    <div class="navlinks">Specs: <span class="mono">Phase2/Composition Template System/token-contract-system-spec.md</span> §2–§4D · <span class="mono">state-policy-design.md</span> · <span class="mono">token-variant-actions-spec.md</span>. Chrome follows <span class="mono">build-mocks/style-guide/page-shell.md</span>.</div>
+  </header>
+
+  <!-- 01 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Library home · seven object types</span><span class="d">Reached from the project shell. Each card routes to that type's list. Counts are per project. The <strong>composition</strong> card is visually last because it references the others — it is the bundle, not a peer.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Project: Neon District</a><span class="sep">/</span><span class="here">Templates</span></div><div class="actions"><button class="btn btn--sm">+ New template</button></div></div>
+      <div class="section">
+        <div class="section-head row">
+          <div><div class="eyebrow">Project · Templates</div><h2>Templates.</h2><p class="lede">Author once, apply to any collection in this project. Editing a template never changes a collection that already applied it.</p></div>
+          <div class="search"><input placeholder="Search templates…" /></div>
+        </div>
+        <div class="lib-grid">
+          <div class="libcard"><span class="eyebrow">Attribute template</span><span class="cnt">6</span><span class="sub">Sets of attribute definitions. No requirement levels — those live on the token type.</span><span class="foot">Latest · Trading card core v3</span></div>
+          <div class="libcard"><span class="eyebrow">Token type template</span><span class="cnt">4</span><span class="sub">A token type plus its full attribute assignment matrix.</span><span class="foot">Latest · Trading card v2</span></div>
+          <div class="libcard"><span class="eyebrow">Asset spec</span><span class="cnt">3</span><span class="sub">Required media slots that gate go-Live. Existence only, never content.</span><span class="foot">Latest · Graded slab v2</span></div>
+          <div class="libcard"><span class="eyebrow">Tier set template</span><span class="cnt">2</span><span class="sub">Custom rarity tiers. <strong>Tiered mode only</strong> — Uniform has nothing to configure and Weighted's tiers are platform-fixed.</span><span class="foot">Latest · Military ranks v1</span></div>
+          <div class="libcard"><span class="eyebrow">Variant profile</span><span class="cnt">3</span><span class="sub">A variant set — keys, names, optional assets. Never the topology.</span><span class="foot">Latest · Seasonal reskin v1</span></div>
+          <div class="libcard"><span class="eyebrow">State policy</span><span class="cnt">2</span><span class="sub">What may change after claim, who may change it, under what limits.</span><span class="foot">Latest · Garden pet v1</span></div>
+          <div class="libcard"><span class="eyebrow">Action template</span><span class="cnt">5</span><span class="sub">Trigger presentation — button wording and warning text.</span><span class="foot">Latest · Open v2</span></div>
+          <div class="libcard" style="background:var(--surface-canvas-alt)"><span class="eyebrow">Composition</span><span class="cnt">3</span><span class="sub">One pinned reference per axis, applied in a single action. <strong>Authoring only</strong> — nothing pins it, runtime never reads it.</span><span class="foot">Latest · Graded card — TAG v4</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Create a template · two entry points here, one in the collection</span><span class="d">The library creates from <strong>blank</strong> or by <strong>duplicating</strong> a version. <strong>Promotion is not a library action</strong> — you save what you built from the collection you built it in, because that is where the object is and where you can see it. The library's job is to make sure you know promotion exists (see the empty state below). All three paths produce a <span class="mono">Draft</span> head.<br><br><strong>Why promotion isn't a library action:</strong> starting here would mean a picker that reaches into a collection to find an object you can already see on screen. It is a "save what I built" action, so it belongs on the thing being saved — the same reason Save As lives in the document, not the template gallery. <strong>It is the exact inverse of apply:</strong> apply snapshot-copies project → collection, promote snapshot-copies collection → project, and neither creates a link.</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">+ New template · in the library</span>
+        <div class="axes">
+          <div class="axis"><span class="an">Blank</span><span class="av">Start from nothing</span><span class="rt"><button class="btn btn--sm">Choose</button></span></div>
+          <div class="axis"><span class="an">Duplicate a version</span><span class="av">Vary a working setup, or diverge for one collection</span><span class="rt"><button class="btn btn--sm btn--ghost">Choose</button></span></div>
+          <div class="axis absent"><span class="an">Promote from a collection</span><span class="av">not here — done from the collection</span><span class="rt"><span class="tag tag--absent">collection</span></span></div>
+        </div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Blank · new token type template</span>
+        <div class="field"><label class="flabel">Key</label><input class="input mono" placeholder="trading_card" /><p class="hint">Immutable after creation. Renaming later changes the label only.</p></div>
+        <div class="field"><label class="flabel">Label</label><input class="input" placeholder="Trading card" /></div>
+        <div class="field"><label class="flabel">Reference attribute templates</label><button class="add-chip">+ Reference an attribute template</button><p class="hint">You can publish with none, then add them later — each edit opens a new Draft.</p></div>
+        <div class="dactions"><button class="btn" disabled>Publish v1</button><button class="btn btn--ghost">Save draft</button></div>
+      </div>
+    </div>
+    <div class="spec" style="margin-top:var(--s-5)">
+      <span class="speclabel">Empty library · where discovery has to happen</span>
+      <div class="dcard" style="max-width:46rem">
+        <span class="eyebrow">Project · Templates</span>
+        <h3 class="ttl" style="margin-bottom:var(--s-2)">No templates yet.</h3>
+        <p class="tiny" style="margin:0 0 var(--s-4)">Templates let you set something up once and apply it to any collection in this project. Start from scratch — or, if you have already built a collection you are happy with, <strong>save that setup as a template from the collection itself</strong>.</p>
+        <div style="display:flex;gap:var(--s-3);flex-wrap:wrap"><button class="btn">+ New template</button><button class="btn btn--ghost">Go to collections</button></div>
+      </div>
+      <p class="hint" style="margin-top:var(--s-4)">This is the one place the library must mention promotion. A creator with an empty library has no templates <em>because</em> they have not built anything yet — or because they have, by hand, and do not know they can keep it. The second sentence and the second button exist for that person.</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Draft and Published · two states, no Review</span><span class="d">Templates never go <span class="mono">Live</span> and have no <span class="mono">Review</span> stage. The three-stage model exists because collection and token go-live is public, irreversible and involves money — none of which applies to an object that is never public and never read at runtime. What the split does buy is the thing that matters: <strong>a half-authored template cannot be applied</strong>.<br><br>Editing a published version opens a <strong>new Draft head</strong> — it never mutates the version. One Draft head per object at a time. A Draft can always be discarded; a published version can be deleted only while nothing <span class="mono">Live</span> derives from it.</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">Draft · the working head</span>
+        <div class="axes">
+          <div class="axis"><span class="an">Trading card</span><span class="av">3 of 6 attributes assigned</span><span class="rt"><span class="tag">Draft</span></span></div>
+        </div>
+        <div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic">!</span><div><strong>Not appliable yet.</strong> Publish this to make it available to collections.</div></div>
+        <div class="dactions"><button class="btn">Publish v3</button><button class="btn btn--ghost">Discard draft</button></div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Published · immutable, appliable</span>
+        <div class="axes">
+          <div class="axis"><span class="an">Trading card v2</span><span class="av">Applied by 4 collections</span><span class="rt"><span class="tag tag--v">Published</span></span></div>
+          <div class="axis"><span class="an">Trading card v1</span><span class="av">Pinned by 2 Live collections</span><span class="rt"><span class="tag tag--pinned">Undeletable</span></span></div>
+        </div>
+        <div class="dactions"><button class="btn btn--ghost">Edit → new draft</button><button class="btn btn--ghost">Duplicate</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Token type template · the assignment matrix</span><span class="d">The object that closes the biggest gap. An attribute template carries definitions only, and assignment is a mandatory step of every apply — so without this a creator re-authors the type and re-assigns every attribute in every collection. Referenced attribute templates are pinned to a version; anything left unassigned lands <span class="mono">unassigned</span>, which is a valid state meaning "not allowed on this type".</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Neon District</a><span class="sep">/</span><a>Templates</a><span class="sep">/</span><span class="here">Token type · Trading card</span></div><div class="actions"><span class="tag tag--v">v2 · draft</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Project · Token type template</div><h2>Trading card.</h2><p class="lede">Applied to a collection, this creates the token type and writes the matrix below, so the mandatory assignment step is already satisfied.</p></div>
+        <div class="form-grid">
+          <div class="dcard">
+            <span class="eyebrow">Attribute templates referenced</span>
+            <div class="axes">
+              <div class="axis"><span class="an">Trading card core</span><span class="av">set_name · card_number · year · foil</span><span class="rt"><span class="tag tag--v">v3 pinned</span><button class="icon-btn" aria-label="Change version">⌃</button></span></div>
+              <div class="axis"><span class="an">Print run</span><span class="av">print_run · printer</span><span class="rt"><span class="tag tag--v">v1 pinned</span><button class="icon-btn" aria-label="Change version">⌃</button></span></div>
+            </div>
+            <div style="margin-top:var(--s-4)"><button class="add-chip">+ Reference another attribute template</button></div>
+            <div class="dactions"><button class="btn">Save version</button><button class="btn btn--ghost">Discard</button></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Template</span>
+            <div class="field"><label class="flabel">Key</label><input class="input mono" value="trading_card" readonly /><p class="hint">Immutable after creation. Renaming changes the label only.</p></div>
+            <div class="field"><label class="flabel">Label</label><input class="input" value="Trading card" /></div>
+          </div>
+        </div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Attribute</th><th class="hide">From</th><th>Kind</th><th>Level on this type</th></tr></thead>
+            <tbody>
+              <tr><td><span class="k">set_name</span></td><td class="hide tiny">Trading card core v3</td><td class="tiny">Category</td><td><span class="lvlseg"><button class="on">Required</button><button>Optional</button><button>Unassigned</button></span></td></tr>
+              <tr><td><span class="k">card_number</span></td><td class="hide tiny">Trading card core v3</td><td class="tiny">Text</td><td><span class="lvlseg"><button class="on">Required</button><button>Optional</button><button>Unassigned</button></span></td></tr>
+              <tr><td><span class="k">year</span></td><td class="hide tiny">Trading card core v3</td><td class="tiny">Number</td><td><span class="lvlseg"><button>Required</button><button class="on">Optional</button><button>Unassigned</button></span></td></tr>
+              <tr><td><span class="k">foil</span></td><td class="hide tiny">Trading card core v3</td><td class="tiny">Boolean</td><td><span class="lvlseg"><button>Required</button><button class="on">Optional</button><button>Unassigned</button></span></td></tr>
+              <tr><td><span class="k">print_run</span></td><td class="hide tiny">Print run v1</td><td class="tiny">Number</td><td><span class="lvlseg"><button>Required</button><button class="on">Optional</button><button>Unassigned</button></span></td></tr>
+              <tr><td><span class="k">printer</span></td><td class="hide tiny">Print run v1</td><td class="tiny">Text</td><td><span class="lvlseg"><button>Required</button><button>Optional</button><button class="on">Unassigned</button></span></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>6</strong> of <strong>6</strong> attributes</span><span class="tiny">Every attribute has a level — <span class="mono">unassigned</span> is one of them</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Tier set template · Tiered rarity only, with reserved-name validation</span><span class="d">Offered only for <span class="mono">Tiered</span>. Names and colours must not reuse the reserved <span class="mono">Weighted</span> official set or its palette — validated at <strong>save</strong> time in the library, so a template can never be stored in a state that would fail on apply. Nothing supply-dependent is carried: quotas and budgets compute against each collection's own Max Supply.</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">Valid · saved</span>
+        <div class="tierlist">
+          <div class="tierrow"><span class="ord">1</span><span class="sw" style="background:var(--on-warn)"></span><span class="nm">General</span><span class="hexv">#92580B</span></div>
+          <div class="tierrow"><span class="ord">2</span><span class="sw" style="background:#6366F1"></span><span class="nm">Colonel</span><span class="hexv">#6366F1</span></div>
+          <div class="tierrow"><span class="ord">3</span><span class="sw" style="background:#10B981"></span><span class="nm">Sergeant</span><span class="hexv">#10B981</span></div>
+          <div class="tierrow"><span class="ord">4</span><span class="sw" style="background:#6B6B6B"></span><span class="nm">Private</span><span class="hexv">#6B6B6B</span></div>
+        </div>
+        <div style="margin-top:var(--s-4)"><button class="add-chip">+ Add a tier</button></div>
+        <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic">i</span><div>Order is identity — rarest first. Reordering a saved template produces a new version.</div></div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Rejected · reserved name</span>
+        <div class="tierlist">
+          <div class="tierrow"><span class="ord">1</span><span class="sw" style="background:var(--on-warn)"></span><span class="nm">Legendary</span><span class="hexv">#92580B</span></div>
+          <div class="tierrow"><span class="ord">2</span><span class="sw" style="background:#6366F1"></span><span class="nm">Colonel</span><span class="hexv">#6366F1</span></div>
+        </div>
+        <div class="field-err" style="margin-top:var(--s-4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span><strong>Legendary</strong> is reserved for the Weighted official tier set. Choose a different name.</span></div>
+        <div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic">!</span><div>Reserved names: Inconceivable · Mythical · Legendary · Epic · Rare · Uncommon · Common. Reserved palette: amber · violet · blue · green · slate.</div></div>
+        <div class="dactions"><button class="btn" disabled>Save version</button><button class="btn btn--ghost">Cancel</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Variant profile · the set, never the topology</span><span class="d">Seeds a token definition's variant list — keys, names, an optional pinned asset each. Which variant reaches which stays declared per token, because <span class="mono">from_variant</span> indexes that token's own list. A profile is what a hundred tokens sharing two variants needed: authored once instead of two hundred by hand.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Templates</a><span class="sep">/</span><span class="here">Variant profile · Seasonal reskin</span></div><div class="actions"><span class="tag tag--v">v1</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Project · Variant profile</div><h2>Seasonal reskin.</h2><p class="lede">Two variants, no outcome payload — a pure reskin, so a transitioned copy stays stackable into its new variant class.</p></div>
+        <div class="dcard">
+          <div class="tierlist">
+            <div class="tierrow"><span class="ord">1</span><span class="sw" style="background:var(--art-grey)"></span><span class="nm">standard</span><span class="hexv">asset · none → falls back to primary</span></div>
+            <div class="tierrow"><span class="ord">2</span><span class="sw" style="background:var(--art-amber)"></span><span class="nm">holiday</span><span class="hexv">asset · media/holiday-frame</span></div>
+          </div>
+          <div style="margin-top:var(--s-4)"><button class="add-chip">+ Add a variant</button></div>
+          <div class="note note--info" style="margin-top:var(--s-5)"><span class="ic">i</span><div><strong>Topology is not here.</strong> After applying this profile, declare <span class="mono">Reached from</span> on each variant in the token's Variants tab. Bulk "set reached-from" tooling exists for applying the same shape across many tokens.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Composition · one pinned reference per axis</span><span class="d">The bundle. Every axis is optional and an absent axis is <strong>absent</strong> — no "none" placeholder object. Applying a composition is exactly equivalent to applying each referenced template in turn, then compiling: it is a macro, not an authority.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Templates</a><span class="sep">/</span><span class="here">Composition · Graded card — TAG</span></div><div class="actions"><span class="tag tag--v">v4</span><button class="btn btn--sm">Apply to a collection</button></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Project · Composition</div><h2>Graded card — TAG.</h2><p class="lede">Applied at the point a token type is set up in a collection — the one moment every axis has somewhere to land.</p></div>
+        <div class="dcard">
+          <span class="eyebrow">Axes</span>
+          <div class="axes">
+            <div class="axis"><span class="an">Token type profile</span><span class="av">Trading card</span><span class="rt"><span class="tag tag--v">v2 pinned</span></span></div>
+            <div class="axis"><span class="an">Asset spec</span><span class="av">Graded slab</span><span class="rt"><span class="tag tag--v">v2 pinned</span></span></div>
+            <div class="axis absent"><span class="an">Tier set template</span><span class="av">absent — Weighted uses the official tier set</span><span class="rt"><span class="tag tag--absent">absent</span></span></div>
+            <div class="axis absent"><span class="an">Variant profile</span><span class="av">absent</span><span class="rt"><span class="tag tag--absent">absent</span></span></div>
+            <div class="axis absent"><span class="an">State policy</span><span class="av">absent</span><span class="rt"><span class="tag tag--absent">absent</span></span></div>
+          </div>
+          <div style="margin-top:var(--s-5)">
+            <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Deltas · the closed set</span>
+            <div class="axes">
+              <div class="axis"><span class="an mono" style="font-family:ui-monospace,Menlo,Consolas,monospace">slot_requirement</span><span class="av"><span class="mono">dig_report</span> → optional</span><span class="rt"><button class="icon-btn icon-btn--danger" aria-label="Remove">✕</button></span></div>
+            </div>
+            <div style="margin-top:var(--s-3)"><button class="add-chip">+ Add a delta</button></div>
+            <p class="hint">Only two overrides exist: <span class="mono">attribute_requirement</span> and <span class="mono">slot_requirement</span> — requirement-level flips. Anything structural is a second profile version, never a delta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Version pinning · what freezes and what stays editable</span><span class="d">A variant binds an exact template version. When a token goes <span class="mono">Live</span>, the versions it pinned become immutable — the template itself stays editable, and each edit makes a new version future tokens may pin. Editing never reaches a Live token. This is deliberately narrower than freezing a whole template, which would reach across every collection in the project.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Templates</a><span class="sep">/</span><span class="here">Action template · Open</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Project · Action template</div><h2>Open.</h2><p class="lede">Versions, their pins, and what each one can still do.</p></div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Version</th><th>Button wording</th><th class="hide">Pinned by</th><th>State</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><span class="k">v1</span></td><td>Open it</td><td class="hide tiny">4 Live tokens · Corner Shop, Paper Trail</td><td><span class="tag tag--pinned">Frozen</span></td><td class="row-acts"><button class="icon-btn" aria-label="View">↗</button></td></tr>
+              <tr><td><span class="k">v2</span></td><td>Open</td><td class="hide tiny">2 Live tokens · Vaulties</td><td><span class="tag tag--pinned">Frozen</span></td><td class="row-acts"><button class="icon-btn" aria-label="View">↗</button></td></tr>
+              <tr><td><span class="k">v3</span></td><td>Open wallet</td><td class="hide tiny">No pins yet</td><td><span class="tag">Editable</span></td><td class="row-acts"><button class="icon-btn" aria-label="Edit">✎</button><button class="icon-btn icon-btn--danger" aria-label="Delete">🗑</button></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>3</strong> of <strong>3</strong> versions</span><span class="tiny">A version with a Live pin cannot be deleted. An unpinned version can.</span></div>
+        </div>
+        <div class="note note--ok"><span class="ic">✓</span><div><strong>Editing this template is safe.</strong> It produces v4; v1 and v2 keep serving their Live tokens exactly as they were pinned.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Delete · the confirm names the affected collections</span><span class="d">Deleting a template that variants on <span class="mono">Draft</span>/<span class="mono">Review</span> tokens still bind clears those triggers. Because the library is project-scoped, the confirm must name the <strong>collections</strong>, not just a token count — someone deleting from the project library may not have the dependent collection in mind. Canonical red destructive confirm, left-aligned.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Delete template · Open v3?</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="mwarn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div>This clears the trigger on <strong>3 variants</strong> across <strong>2 collections</strong> — they will have no action button until a new trigger is set. <strong>This can't be undone.</strong> Live tokens are unaffected: they pinned v1 and v2.</div></div>
+          <div class="usedlist">
+            <div class="usedrow"><span class="cn">Corner Shop</span><span class="tiny">2 variants · Draft</span><span class="rt"><span class="tag">Draft</span></span></div>
+            <div class="usedrow"><span class="cn">Vaulties</span><span class="tiny">1 variant · Review</span><span class="rt"><span class="tag">Review</span></span></div>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Delete template</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Ownership reference</span><span class="d">Not a screen — the reference a developer needs beside the build. A grey reference table placed next to the feature it documents, per the style guide's notes-and-alerts rule.</span></div>
+    <div class="spec">
+      <span class="speclabel">Who owns what · from token-contract-system-spec.md §2.1</span>
+      <table class="reftable">
+        <thead><tr><th>Object</th><th>Lives in</th><th class="hide">Editable while</th><th class="hide">Frozen by</th><th>Runtime reads it?</th></tr></thead>
+        <tbody>
+          <tr><td class="obj">Attribute template</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No</td></tr>
+          <tr><td class="obj">Token type template</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No</td></tr>
+          <tr><td class="obj">Asset spec</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No</td></tr>
+          <tr><td class="obj">Tier set template</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No</td></tr>
+          <tr><td class="obj">Variant profile</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No</td></tr>
+          <tr><td class="obj">State policy</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No</td></tr>
+          <tr><td class="obj">Action template</td><td>Project library</td><td class="hide">Always</td><td class="hide">Pinned versions freeze at token Live</td><td class="no">No</td></tr>
+          <tr><td class="obj">Composition</td><td>Project library</td><td class="hide">Always</td><td class="hide">Never — new versions</td><td class="no">No — authoring only</td></tr>
+          <tr><td class="obj">Master attribute schema</td><td>Collection</td><td class="hide">Draft · Review</td><td class="hide">Collection Live</td><td class="tiny">Via the contract</td></tr>
+          <tr><td class="obj">Token type</td><td>Collection</td><td class="hide">Draft · Review</td><td class="hide">Collection Live</td><td class="tiny">Via the contract</td></tr>
+          <tr><td class="obj">Collection rarity + tiers</td><td>Collection</td><td class="hide">Draft · Review</td><td class="hide">Collection Live</td><td class="yes">Yes</td></tr>
+          <tr><td class="obj">Token contract</td><td>Collection</td><td class="hide">Never — immutable</td><td class="hide">Published</td><td class="yes">Yes — sole authority</td></tr>
+          <tr><td class="obj">Variant set + topology</td><td>Token definition</td><td class="hide">Token Draft</td><td class="hide">Token Live</td><td class="yes">Yes</td></tr>
+          <tr><td class="obj">Attached policy snapshot</td><td>Token definition</td><td class="hide">Token Draft · Review</td><td class="hide">Token Live</td><td class="yes">Yes</td></tr>
+          <tr><td class="obj">State values</td><td>Holding</td><td class="hide">Per the policy's write rules</td><td class="hide">Never — living memory</td><td class="yes">Yes</td></tr>
+        </tbody>
+      </table>
+      <p class="hint" style="margin-top:var(--s-4)"><strong>Three rules fall out of it.</strong> A project object is never authority — it is a source you copy from. A collection or token object is always authority, and always local. Runtime reads exactly two things: the compiled contract, and the token's own state.</p>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">11</span><span class="t">Project navigation · where Templates lands</span><span class="d">A destination list, not a drawn sidebar — the style guide keeps the sidebar out of mocks so one redesign doesn't touch every file. The library is an eighth project destination.</span></div>
+    <div class="spec">
+      <span class="speclabel">Project shell destinations · the addition marked</span>
+      <div class="navcols">
+        <div>
+          <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Recommended</span>
+          <div class="navlist">
+            <div class="navitem"><span class="ord">1</span>Project overview</div>
+            <div class="navitem"><span class="ord">2</span>Collections</div>
+            <div class="navitem"><span class="ord">3</span>Generators</div>
+            <div class="navitem new"><span class="ord">4</span>Templates<span class="rt"><span class="tag tag--v">new</span></span></div>
+            <div class="navitem"><span class="ord">5</span>Media library</div>
+            <div class="navitem"><span class="ord">6</span>Access</div>
+            <div class="navitem"><span class="ord">7</span>Whitelist</div>
+            <div class="navitem"><span class="ord">8</span>Beneficiaries</div>
+          </div>
+        </div>
+        <div>
+          <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">Why there</span>
+          <p class="tiny" style="margin:0 0 var(--s-3)">After <strong>generators</strong> because the library is authoring infrastructure rather than a shared asset pool, and before <strong>media library</strong> so the three "things you build with" sit together.</p>
+          <p class="tiny" style="margin:0 0 var(--s-3)"><strong>Alternative considered:</strong> a tab under project overview, beside Burn / Reputation and Billing. Rejected — overview is presentation and metadata, and the library is neither.</p>
+          <p class="tiny" style="margin:0">All seven object types live inside this one destination as lists, rather than each becoming a destination. Eight top-level project entries is already the ceiling.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

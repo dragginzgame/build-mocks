@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Platform authority (Toko admin area) · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --border-frame:#CFCFCF;
+    --notify-error:#EF4444; --notify-warn:#F59E0B; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --surface-gallery:#DCDCDC; --surface-topbar:#0A0A0A;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020;
+    --art-amber:linear-gradient(135deg,#FBBF24,#B45309);
+    --art-blue:linear-gradient(135deg,#60A5FA,#1E3A8A);
+    --art-green:linear-gradient(135deg,#34D399,#065F46);
+    --art-violet:linear-gradient(135deg,#A78BFA,#5B21B6);
+    --art-grey:linear-gradient(135deg,#9CA3AF,#374151);
+    --art-principal:linear-gradient(135deg,#06B0E6,#1E3A8A);
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem; --s-20:5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-gallery); -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .ttl { font-family:var(--font-display); font-weight:400; font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; line-height:1.1; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.625rem 1.125rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--danger { background:var(--notify-error); color:#fff; }
+  .btn--sm { padding:.4375rem .875rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+
+  .tag { display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--sa { background:var(--tint-error); color:var(--on-error); }
+  .tag--ad { background:var(--tint-info); color:var(--on-info); }
+  .tag--mo { background:var(--tint-warn); color:var(--on-warn); }
+  .tag--su { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .status { display:inline-flex; align-items:center; gap:.375rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; }
+  .status .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .status--active { background:var(--tint-live); color:var(--on-live); }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .princ { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .7rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); font-size:var(--text-xs); }
+  .princ .av { width:18px; height:18px; border-radius:50%; background:var(--art-principal); flex:none; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+  .search input { width:100%; min-width:14rem; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.55rem .875rem; font:inherit; font-size:var(--text-base); }
+  .segmented { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:var(--s-1); flex-wrap:wrap; width:max-content; }
+  .segmented button { padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); color:var(--text-secondary); white-space:nowrap; }
+  .segmented button.active { background:var(--text-primary); color:#fff; }
+
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.7rem .875rem; font:inherit; font-size:var(--text-base); }
+  .hint { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.4rem; }
+  .field { margin-bottom:var(--s-5); } .field:last-child { margin-bottom:0; }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .seg { display:inline-flex; border:1px solid var(--border-soft); border-radius:var(--r-pill); overflow:hidden; flex-wrap:wrap; }
+  .seg button { padding:.35rem .8rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .seg button.on { background:var(--text-primary); color:#fff; }
+
+  .matrix { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .matrix th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); background:var(--surface-canvas-alt); }
+  .matrix td { padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .matrix tr:last-child td { border-bottom:0; }
+  .tablewrap { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .ctd { display:flex; align-items:center; gap:.6rem; }
+  .ctd .cav { width:32px; height:32px; border-radius:50%; flex:none; background:var(--art-amber); }
+  .ctd .sb { font-size:var(--text-xs); color:var(--text-secondary); }
+  .row-acts { display:flex; gap:.3rem; justify-content:flex-end; }
+  .icon-btn { width:32px; height:32px; border-radius:var(--r-2); border:1px solid var(--border-soft); background:var(--surface-canvas); color:var(--text-secondary); display:inline-flex; align-items:center; justify-content:center; }
+  .icon-btn--danger:hover { color:var(--notify-error); border-color:var(--notify-error); }
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; } .results-count strong { color:var(--text-primary); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:.0625rem; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--ok { background:var(--tint-live); color:var(--on-live); } .note--ok .ic { color:var(--stage-live); }
+  .note--warn { background:var(--tint-warn); color:var(--on-warn); } .note--warn .ic { color:var(--stage-draft); }
+  .note--err { background:var(--tint-error); color:var(--on-error); } .note--err .ic { color:var(--notify-error); }
+  .note strong { color:inherit; }
+
+  .kvlist { margin-top:var(--s-4); padding-top:var(--s-4); border-top:1px solid var(--border-soft); }
+  .kv { display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:.4rem 0; font-size:var(--text-sm); }
+  .kv .k { color:var(--text-secondary); } .kv .v { font-family:var(--font-emphasis); font-weight:700; }
+  .evt { display:flex; align-items:flex-start; gap:var(--s-3); padding:.65rem 0; border-bottom:1px solid var(--surface-canvas-deep); font-size:var(--text-sm); }
+  .evt:last-child { border-bottom:0; }
+  .evt .en { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); min-width:12rem; }
+  .evt .ed { color:var(--text-secondary); }
+  .evt .et { margin-left:auto; color:var(--text-muted); font-size:var(--text-xs); white-space:nowrap; }
+
+  .stage-wrap { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:480px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+  .mwarn { display:flex; gap:var(--s-3); align-items:flex-start; font-size:var(--text-sm); line-height:1.55; color:var(--text-secondary); text-align:left; }
+  .mwarn .ic { flex:none; margin-top:.0625rem; color:var(--notify-error); }
+  .mwarn strong { color:var(--text-primary); }
+
+  .spec { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-8); }
+  .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .reftable { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .reftable th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.6rem .6rem; border-bottom:1px solid var(--border-frame); }
+  .reftable td { padding:.6rem .6rem; border-bottom:1px solid var(--border-frame); vertical-align:top; }
+  .reftable tr:last-child td { border-bottom:0; }
+  .reftable .obj { font-family:var(--font-emphasis); font-weight:700; }
+  .yes { color:var(--on-live); font-weight:700; text-align:center; } .no { color:var(--text-muted); text-align:center; }
+  .navlist { display:flex; flex-direction:column; gap:var(--s-1); max-width:26rem; }
+  .navitem { display:flex; align-items:center; gap:var(--s-3); padding:.5rem .875rem; border-radius:var(--r-2); font-size:var(--text-sm); color:var(--text-secondary); border:1px solid transparent; }
+  .navitem .ord { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); color:var(--text-muted); min-width:1.25rem; }
+  .navitem.new { background:var(--surface-canvas); border-color:var(--border-frame); color:var(--text-primary); font-family:var(--font-emphasis); font-weight:700; }
+  .navitem .rt { margin-left:auto; }
+  .navcols { display:grid; grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); gap:var(--s-6); }
+  @media (max-width:820px){ .reftable .hide, .matrix .hide { display:none; } }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:82ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .screen { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Toko admin area · Platform authority</span>
+    <h1>Platform authority — states gallery</h1>
+    <p>Who works for Toko and what they may do. A <strong>separate surface outside the studio</strong> — not project admin. Four roles, one capability matrix, and one hard ceiling: platform authority grants <strong>read-only</strong> visibility into projects and <strong>no write path into any of them</strong>.</p>
+    <p>Toko has three permission systems and none grants another: platform authority (here), studio access (the beta gate), and project roles (what a member does inside a project).</p>
+    <div class="navlinks">Spec: <span class="mono">Phase2/Studio Access Admin/platform-authority-design.md</span>. Related: <span class="mono">studio-access-design.md</span> · <span class="mono">Phase1/roles-and-permissions-design.md</span>. Chrome follows <span class="mono">build-mocks/style-guide/page-shell.md</span>.</div>
+  </header>
+
+  <!-- 01 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Staff list · the home surface</span><span class="d">Every account holding a platform role. One role per account — never stackable. Keyed by stable Toko User ID, so a rotated principal never loses or duplicates authority.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Toko admin</a><span class="sep">/</span><span class="here">Platform staff</span></div><div class="actions"><span class="princ"><span class="av"></span><span class="mono">q7w8…3xyz</span></span><button class="btn btn--sm">+ Grant authority</button></div></div>
+      <div class="section">
+        <div class="section-head row">
+          <div><div class="eyebrow">Toko admin · Staff</div><h2>Platform staff.</h2><p class="lede">Who works for Toko, and what each of them may do.</p></div>
+          <div style="display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center"><div class="search"><input placeholder="Search staff…" /></div><div class="segmented"><button class="active">All · 7</button><button>Super Admin · 2</button><button>Admin · 3</button><button>Moderator · 1</button><button>Support · 1</button></div></div>
+        </div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Account</th><th>Role</th><th class="hide">Granted by</th><th class="hide">Granted</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="ctd"><span class="cav"></span><div><div class="ttl">Mara Okafor</div><div class="sb mono">usr_01H8R2K4FM9C</div></div></div></td><td><span class="tag tag--sa">Super Admin</span></td><td class="hide tiny">— founding</td><td class="hide tiny">02 Jan 2026</td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td class="row-acts"><button class="icon-btn" aria-label="View">↗</button></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:var(--art-blue)"></span><div><div class="ttl">Remco Vos</div><div class="sb mono">usr_01H9T6WQ3ZRV</div></div></div></td><td><span class="tag tag--sa">Super Admin</span></td><td class="hide tiny">Mara Okafor</td><td class="hide tiny">14 Feb 2026</td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td class="row-acts"><button class="icon-btn" aria-label="View">↗</button></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:var(--art-green)"></span><div><div class="ttl">Gabriel Reyes</div><div class="sb mono">usr_01HFA8D2MK6P</div></div></div></td><td><span class="tag tag--ad">Admin</span></td><td class="hide tiny">Mara Okafor</td><td class="hide tiny">03 Mar 2026</td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td class="row-acts"><button class="icon-btn" aria-label="Edit">✎</button><button class="icon-btn icon-btn--danger" aria-label="Revoke">🗑</button></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:var(--art-violet)"></span><div><div class="ttl">Ana Silva</div><div class="sb mono">usr_01HKX3B7QSTW</div></div></div></td><td><span class="tag tag--mo">Moderator</span></td><td class="hide tiny">Remco Vos</td><td class="hide tiny">28 Jun 2026</td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td class="row-acts"><button class="icon-btn" aria-label="Edit">✎</button><button class="icon-btn icon-btn--danger" aria-label="Revoke">🗑</button></td></tr>
+              <tr><td><div class="ctd"><span class="cav" style="background:var(--art-grey)"></span><div><div class="ttl">Jon Park</div><div class="sb mono">usr_01HM2P9XR4TC</div></div></div></td><td><span class="tag tag--su">Support</span></td><td class="hide tiny">Gabriel Reyes</td><td class="hide tiny">11 Aug 2026</td><td><span class="status status--active"><span class="dot"></span>Active</span></td><td class="row-acts"><button class="icon-btn" aria-label="Edit">✎</button><button class="icon-btn icon-btn--danger" aria-label="Revoke">🗑</button></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>5</strong> of <strong>7</strong> staff</span><span class="tiny">One role per account · keyed by User ID</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Grant authority · only a Super Admin sees this</span><span class="d">Granting, changing or revoking <strong>platform authority</strong> is Super Admin only. An Admin may revoke a creator's <strong>studio access</strong> but cannot promote, demote or remove staff — two distinct powers, deliberately at different tiers. Identity is looked up, never authored: the account's own profile name and User ID render read-only.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Toko admin</a><span class="sep">/</span><a>Platform staff</a><span class="sep">/</span><span class="here">Grant authority</span></div><div class="actions"><span class="tag tag--sa">You · Super Admin</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Toko admin · Grant</div><h2>Grant platform authority.</h2><p class="lede">Look up the account, choose a role, and record why.</p></div>
+        <div class="showcase">
+          <div class="dcard">
+            <span class="eyebrow">Account</span>
+            <div class="field"><label class="flabel">User ID or principal</label><input class="input mono" value="usr_01HM2P9XR4TC" readonly /><p class="hint">Principal is accepted as a lookup route; the grant is keyed by User ID.</p></div>
+            <div class="dcard" style="background:var(--surface-canvas-alt);padding:var(--s-4)">
+              <div class="ctd"><span class="cav" style="background:var(--art-grey)"></span><div><div class="ttl">Jon Park</div><div class="sb mono">usr_01HM2P9XR4TC · e9f0…3abc</div></div></div>
+            </div>
+            <div class="field" style="margin-top:var(--s-5)"><label class="flabel">Role</label><div class="seg"><button>Super Admin</button><button>Admin</button><button>Moderator</button><button class="on">Support</button></div></div>
+            <div class="field"><label class="flabel">Reason <span class="tiny">· internal, recorded on the event</span></label><input class="input" value="Joined support team, Aug intake" /></div>
+            <div class="dactions"><button class="btn">Grant authority</button><button class="btn btn--ghost">Cancel</button></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">What Support can do</span>
+            <div class="kv"><span class="k">Look up accounts &amp; admin records</span><span class="v">Yes</span></div>
+            <div class="kv"><span class="k">Edit internal notes</span><span class="v">Yes</span></div>
+            <div class="kv"><span class="k">View any project</span><span class="v">Read-only</span></div>
+            <div class="kv"><span class="k">Manage studio access</span><span class="v">No</span></div>
+            <div class="kv"><span class="k">Moderate content</span><span class="v">No</span></div>
+            <div class="kv"><span class="k">Kill switches</span><span class="v">No</span></div>
+            <div class="kv"><span class="k">Change anything in a project</span><span class="v">No</span></div>
+            <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic">i</span><div>This grant does <strong>not</strong> give Jon studio access, and does not add him to any project. Those are separate.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">The capability matrix</span><span class="d">Nine capabilities, four roles. The front end derives every platform check from one mapper that mirrors this — never a second mapper. Two rows are empty across all four roles on purpose, so nobody reads their absence as an oversight.</span></div>
+    <div class="spec">
+      <span class="speclabel">Canonical matrix · platform-authority-design.md</span>
+      <table class="reftable">
+        <thead><tr><th>Capability</th><th style="text-align:center">Super Admin</th><th style="text-align:center">Admin</th><th style="text-align:center">Moderator</th><th style="text-align:center">Support</th></tr></thead>
+        <tbody>
+          <tr><td class="obj">Manage platform authority</td><td class="yes">✓ only</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td class="obj">Manage studio access — grant / revoke / restore</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td class="obj">Moderate content · takedown · review outcomes</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td class="obj">Manage kill switches &amp; feature flags</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td class="obj">Manage vault registry</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td class="obj">Manage the RWA allowlist</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td class="obj">Bypass the studio gate</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td class="obj">View any project — read-only</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td class="obj">Look up an account &amp; view its admin record</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td class="obj">Edit internal notes</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr style="background:var(--tint-error)"><td class="obj">Change anything inside a project</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr style="background:var(--tint-error)"><td class="obj">Withdraw from a project treasury</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        </tbody>
+      </table>
+      <p class="hint" style="margin-top:var(--s-4)"><strong>The two red rows are empty deliberately.</strong> No platform role may change a project, and none may withdraw from a project treasury — withdrawal stays Treasurer-exclusive, where not even the project's own Creator has it. Staff who must act inside a project are added to it as ordinary members. <strong>Moderator has no kill switches</strong> — a takedown removes one thing, a kill switch stops a surface. <strong>Support can edit notes</strong>: they are not a change of access, they are audited, and they are how support records context.</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Read-only is the ceiling on project access</span><span class="d">Staff can see any project in full and change nothing in it. Staff presence is <strong>visible and attributed</strong> — they appear in the project's access view as Toko staff, and every action and view is logged with actor and timestamp. That is what makes the transparency promise real rather than aspirational.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Toko admin</a><span class="sep">/</span><a>Projects</a><span class="sep">/</span><span class="here">Neon District</span></div><div class="actions"><span class="tag tag--ad">Viewing as Toko staff</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Toko admin · Project view</div><h2>Neon District.</h2><p class="lede">Read-only. Nothing on this page can be edited.</p></div>
+        <div class="note note--warn"><span class="ic">!</span><div><strong>Read-only.</strong> You are viewing this project as Toko staff. To change anything here you must be added to the project by its Creator, and you would then act under your project role — not this one.</div></div>
+        <div class="showcase">
+          <div class="dcard">
+            <span class="eyebrow">Project</span>
+            <div class="kv"><span class="k">Creator</span><span class="v">Mara Okafor</span></div>
+            <div class="kv"><span class="k">Collections</span><span class="v">4 · 2 Live</span></div>
+            <div class="kv"><span class="k">Studio access</span><span class="v">Active</span></div>
+            <div class="kv"><span class="k">Cycles runway</span><span class="v">~34 days</span></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Visible to the project</span>
+            <div class="note note--info"><span class="ic">i</span><div>The project's own access view lists you as <strong>Toko staff · read-only</strong>, and this visit appears in its activity log.</div></div>
+            <div class="kvlist">
+              <div class="kv"><span class="k">Treasury</span><span class="v">Not available</span></div>
+              <div class="kv"><span class="k">Edit collections</span><span class="v">Not available</span></div>
+              <div class="kv"><span class="k">Manage members</span><span class="v">Not available</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Revoke authority · and the two guards that stop a lockout</span><span class="d">Canonical red destructive confirm, left-aligned, no character illustration. Two invariants protect the surface: <strong>at least one Super Admin exists at all times</strong> — the last one cannot be demoted or revoked — and <strong>no self-disarm</strong>, so a Super Admin cannot revoke their own authority-management capability.</span></div>
+    <div class="showcase">
+      <div class="stage-wrap">
+        <div class="modal-card">
+          <header><h4>Revoke platform authority · Ana Silva?</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="mwarn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Ana Silva</strong> immediately loses Moderator authority — no moderation queue, no takedowns, no content review. Her Toko account is untouched, and any studio access or project roles she holds are unaffected. <strong>This can't be undone</strong>, but you can grant authority again at any time.</div></div>
+            <div class="field"><label class="flabel">Reason <span class="tiny">· recorded on the event</span></label><input class="input" placeholder="Why is authority being revoked?" /></div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn btn--danger">Revoke authority</button></div>
+        </div>
+      </div>
+      <div class="stage-wrap">
+        <div class="modal-card">
+          <header><h4>Can't revoke · last Super Admin</h4><span class="x">✕</span></header>
+          <div class="mbody">
+            <div class="note note--err"><span class="ic">✕</span><div><strong>Mara Okafor is the only Super Admin.</strong> Revoking her would leave nobody able to manage platform authority. Grant Super Admin to another account first, then try again.</div></div>
+            <div class="kvlist">
+              <div class="kv"><span class="k">Super Admins</span><span class="v">1</span></div>
+              <div class="kv"><span class="k">Minimum required</span><span class="v">1</span></div>
+            </div>
+          </div>
+          <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn">Grant Super Admin</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Audit log · append-only, including views</span><span class="d">Every platform action is recorded, and changes to platform authority are recorded too. <span class="mono">StaffProjectViewed</span> is what makes read-only access accountable — access is still access, and a creator can see that Toko looked.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Toko admin</a><span class="sep">/</span><span class="here">Audit log</span></div><div class="actions"><div class="segmented"><button class="active">All</button><button>Authority</button><button>Studio access</button><button>Views</button></div></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Toko admin · Audit</div><h2>Audit log.</h2><p class="lede">Append-only. Actor, target, timestamp, and the role before and after where it applies.</p></div>
+        <div class="dcard">
+          <div class="evt"><span class="en">PlatformRoleGranted</span><span class="ed">Jon Park → <strong>Support</strong> · by Gabriel Reyes · "Joined support team, Aug intake"</span><span class="et">11 Aug 2026 · 09:14</span></div>
+          <div class="evt"><span class="en">StaffProjectViewed</span><span class="ed">Neon District · by Ana Silva</span><span class="et">18 Aug 2026 · 16:02</span></div>
+          <div class="evt"><span class="en">PlatformRoleChanged</span><span class="ed">Gabriel Reyes · Moderator → <strong>Admin</strong> · by Mara Okafor</span><span class="et">03 Mar 2026 · 11:40</span></div>
+          <div class="evt"><span class="en">NotesEdited</span><span class="ed">Solara Works record · by Jon Park</span><span class="et">18 Aug 2026 · 14:22</span></div>
+          <div class="evt"><span class="en">PlatformRoleRevoked</span><span class="ed">Tomas Berg · <strong>Admin</strong> → none · by Remco Vos · "Left the company"</span><span class="et">02 Aug 2026 · 17:55</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Toko admin area navigation</span><span class="d">A destination list, not a drawn sidebar. The admin area is its own surface, reached outside the studio. Only the first two destinations exist today — the rest arrive with the flows that own them.</span></div>
+    <div class="spec">
+      <span class="speclabel">Admin area destinations · what exists and what is owed</span>
+      <div class="navcols">
+        <div>
+          <div class="navlist">
+            <div class="navitem new"><span class="ord">1</span>Platform staff<span class="rt"><span class="tag tag--ad">this spec</span></span></div>
+            <div class="navitem new"><span class="ord">2</span>Studio access<span class="rt"><span class="tag tag--ad">specified</span></span></div>
+            <div class="navitem"><span class="ord">3</span>Projects — read-only<span class="rt"><span class="tag">this spec</span></span></div>
+            <div class="navitem"><span class="ord">4</span>Moderation queue<span class="rt"><span class="tag">undesigned</span></span></div>
+            <div class="navitem"><span class="ord">5</span>Kill switches &amp; flags<span class="rt"><span class="tag">undesigned</span></span></div>
+            <div class="navitem"><span class="ord">6</span>Vault registry<span class="rt"><span class="tag">Phase 5</span></span></div>
+            <div class="navitem"><span class="ord">7</span>RWA allowlist<span class="rt"><span class="tag">Phase 5</span></span></div>
+            <div class="navitem"><span class="ord">8</span>Audit log<span class="rt"><span class="tag">this spec</span></span></div>
+          </div>
+        </div>
+        <div>
+          <span class="eyebrow" style="display:block;margin-bottom:var(--s-3)">What this spec does and does not settle</span>
+          <p class="tiny" style="margin:0 0 var(--s-3)">It assigns the <strong>authority</strong> for every destination above. The <strong>flows</strong> for moderation, kill switches and observability are undesigned in <span class="mono">beta-readiness-failsafes.md</span> §3.1–§3.3. When they are designed they consume these capabilities rather than inventing their own roles.</p>
+          <p class="tiny" style="margin:0 0 var(--s-3)"><strong>Takedown is the one open boundary.</strong> Platform authority is otherwise read-only on projects, but a moderation takedown must be able to withdraw published work. That spec owes the rule for what a takedown may touch and whether a creator can appeal.</p>
+          <p class="tiny" style="margin:0"><strong>Out of scope entirely:</strong> canister and fleet operations. Those belong to the separate fleet-management system, and platform authority never implies infrastructure authority.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

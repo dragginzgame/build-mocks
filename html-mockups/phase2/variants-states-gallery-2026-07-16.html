@@ -304,7 +304,7 @@
             <div class="var-list">
               <div class="var-row def"><span class="vthumb"></span><div><div class="vname">Dollar Wallet</div><div class="vsub">Original Token · the default · the only one that mints</div></div><span class="vacts"><span class="tag tag--default">Default</span></span></div>
               <div class="var-row"><span class="vthumb vthumb--2"></span><div><div class="vname">Opened Wallet</div><div class="vsub">Reached via <strong>Open</strong> · from Original Token</div></div><span class="vacts"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
-              <div class="var-row"><span class="vthumb vthumb--3"></span><div><div class="vname">Golden Wallet</div><div class="vsub">Reached via <strong>Gild</strong> (reversible) · from Original Token</div></div><span class="vacts"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+              <div class="var-row"><span class="vthumb vthumb--3"></span><div><div class="vname">Golden Wallet</div><div class="vsub">Reached via <strong>Gild</strong> · from Original Token — and <strong>Un-gild</strong> declared back to it</div></div><span class="vacts"><span class="tag tag--default" style="background:var(--tint-live);color:var(--on-live)">2-way</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
             </div>
             <button class="add-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add variant</button>
           </div>
@@ -315,10 +315,10 @@
                 <span class="gnode def">Original Token</span>
                 <div class="stem">
                   <div class="chain"><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Open</span></span></span><span class="gnode">Opened Wallet</span></div>
-                  <div class="chain"><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Gild</span><span class="rev-ic" title="Reversible"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v1a4 4 0 0 1-4 4H3"/></svg></span></span></span><span class="gnode">Golden Wallet</span></div>
+                  <div class="chain"><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Gild</span><span class="rev-ic" title="Two-way — a return transition is declared"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v1a4 4 0 0 1-4 4H3"/></svg></span></span></span><span class="gnode">Golden Wallet</span></div>
                 </div>
               </div>
-              <div class="hint" style="margin-top:.6rem"><span class="rev-ic" style="vertical-align:-2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="width:12px;height:12px;display:inline-block"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v1a4 4 0 0 1-4 4H3"/></svg></span> reversible — a holding can move back to where it came from</div>
+              <div class="hint" style="margin-top:.6rem"><span class="rev-ic" style="vertical-align:-2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="width:12px;height:12px;display:inline-block"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v1a4 4 0 0 1-4 4H3"/></svg></span> two-way — because <strong>Original Token</strong> also declares an incoming transition (<strong>Un-gild</strong>) from Golden Wallet. There is no reversible flag; a return path is a second declared transition, and cycles are legal.</div>
             </div>
           </div>
         </div>
@@ -329,7 +329,7 @@
 
   <!-- 06 · edit variant (major) -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">06</span><span class="t">Edit a variant — name, asset, and its transition</span><span class="d">This is where a variant is actually configured: its <strong>asset</strong> and <strong>name</strong>, and its <strong>transition</strong> — the variant it's reached <strong>from</strong>, and what <strong>triggers</strong> the change into it. Triggering can reuse a shared <strong>action template</strong> (when other tokens follow the same path with the same asset) or be defined as a <strong>one-off</strong> just for this variant — templates are optional. Reversible reverts back to the "from" variant; no separate target field. (The Original Token / default is edited from the token's Details &amp; Assets tabs, like any token — it has no transition of its own to configure.)</span></div>
+    <div class="frame-cap"><span class="num">06</span><span class="t">Edit a variant — name, asset, and its transition</span><span class="d">This is where a variant is actually configured: its <strong>asset</strong> and <strong>name</strong>, and its <strong>transition</strong> — the variant it's reached <strong>from</strong>, and what <strong>triggers</strong> the change into it. Triggering can reuse a shared <strong>action template</strong> (when other tokens follow the same path with the same asset) or be defined as a <strong>one-off</strong> just for this variant — templates are optional. A variant may declare <strong>more than one</strong> incoming transition, and <strong>the Original Token / default may declare them too</strong> — which is how a return path and a full cycle are expressed. (The default is edited from the token's Details &amp; Assets tabs, like any token — it has no transition of its own to configure.)</span></div>
     <div class="stage">
       <div class="modal-card wide">
         <header><h4>Edit variant · Golden Wallet</h4><button class="x" aria-label="Close">✕</button></header>
@@ -344,8 +344,8 @@
             <label class="flabel">Transition</label>
             <div><label class="flabel" style="margin-bottom:.35rem">Reached from</label><select class="input"><option selected>Original Token</option><option>Opened Wallet</option></select></div>
             <div style="margin-top:var(--s-4)"><label class="flabel" style="margin-bottom:.35rem">Triggered by</label><div class="seg seg--full"><button class="active">Reusable template</button><button>One-off for this variant</button></div></div>
-            <div style="margin-top:var(--s-4)"><label class="flabel">Action template</label><select class="input"><option selected>Gild (reversible)</option><option>Open (permanent)</option><option>Forge / Awaken / Ascend</option><option>+ Create a new template…</option></select><div class="hint">Reusable — pick this again for any other token that reaches a variant the same way with the same asset.</div></div>
-            <div class="info-note n-info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>A holding on <strong>Original Token</strong> will show a <strong>Gild</strong> button once this is saved. Gild is reversible, so a holding on <strong>Golden Wallet</strong> shows a way back to Original Token too.</div></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Action template</label><select class="input"><option selected>Gild · v2</option><option>Open · v1</option><option>Forge / Awaken / Ascend · v3</option><option>+ Create a new template…</option></select><div class="hint">Reusable — pick this again for any other token that reaches a variant the same way with the same asset.</div></div>
+            <div class="info-note n-info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>A holding on <strong>Original Token</strong> will show a <strong>Gild</strong> button once this is saved. A holding on <strong>Golden Wallet</strong> shows a way back only because <strong>Original Token</strong> separately declares <strong>Un-gild</strong> from it — declare both directions and you have a two-way pair.</div></div>
           </div>
         </div>
         <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Save variant</button></div>
@@ -366,7 +366,7 @@
             <div style="margin-top:var(--s-4)"><label class="flabel" style="margin-bottom:.35rem">Triggered by</label><div class="seg seg--full"><button>Reusable template</button><button class="active">One-off for this variant</button></div></div>
             <div class="grid2" style="margin-top:var(--s-4)">
               <div><label class="flabel">Button wording</label><input class="input" placeholder="e.g. Water"><div class="hint">What the holder taps.</div></div>
-              <div><label class="flabel">Reversible?</label><div class="seg"><button>Yes</button><button class="active">No</button></div></div>
+              <div><label class="flabel">Version</label><div class="seg"><button class="active">v2 (latest)</button><button>v1</button></div><div class="hint">Pins an exact version. Editing the template later never changes a token already Live.</div></div>
             </div>
             <div style="margin-top:var(--s-4)"><label class="flabel">Warning text (shown to the holder)</label><textarea class="input" placeholder="e.g. Watering this seedling will make it Sprout. This can't be undone."></textarea></div>
             <div class="hint" style="margin-top:var(--s-4)">Later, if another token needs this same path and asset, this can be promoted into a reusable template from the Actions tab.</div>
@@ -404,7 +404,7 @@
 
   <!-- 07 · delete blocked -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">07</span><span class="t">A variant that's someone else's "from" can't be deleted</span><span class="d">Deleting from the Variants tab's row action. Blocked when another variant's transition is reached <strong>from</strong> this one — the exact dependency is named, with a way to jump straight to it.</span></div>
+    <div class="frame-cap"><span class="num">07</span><span class="t">Topology integrity · deletion blocks, and reachability at go-Live</span><span class="d"><strong>Two rules keep the graph sound.</strong> Deletion is blocked while another variant is reached <strong>from</strong> this one — shown below. And at go-<span class="mono">Live</span>, <strong>every non-default variant must be reachable from the default</strong> by following declared transitions: orphans, and closed cycles the default cannot enter, fail with the unreachable variants named. Because cycles are legal, validation walks from the default with a visited set. Deleting from the Variants tab's row action. Blocked when another variant's transition is reached <strong>from</strong> this one — the exact dependency is named, with a way to jump straight to it.</span></div>
     <div class="stage">
       <div class="modal-card">
         <header><h4>Can't remove Forged Relic</h4><button class="x" aria-label="Close">✕</button></header>
@@ -435,12 +435,12 @@
         </div>
         <div class="panel" style="padding:var(--s-5)">
           <table class="itable">
-            <thead><tr><th>Template</th><th>Button wording</th><th>Reversible</th><th>Used by</th><th style="text-align:right">Actions</th></tr></thead>
+            <thead><tr><th>Template</th><th>Button wording</th><th>Version</th><th>Used by</th><th style="text-align:right">Actions</th></tr></thead>
             <tbody>
-              <tr><td><div class="nm">Open (permanent)</div></td><td>Open</td><td>No</td><td>Dollar Wallet <span class="tag tag--live" style="margin-left:4px">Live · locked</span></td><td style="text-align:right"><span class="tiny">Locked</span></td></tr>
-              <tr><td><div class="nm">Forge / Awaken / Ascend</div></td><td>varies</td><td>No</td><td>Relic <span class="tag tag--amber" style="margin-left:4px">Draft</span></td><td><div class="row" style="justify-content:flex-end;gap:.35rem"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></div></td></tr>
-              <tr><td><div class="nm">Gild (reversible)</div></td><td>Gild</td><td>Yes</td><td>Dollar Wallet <span class="tag tag--live" style="margin-left:4px">Live · locked</span></td><td style="text-align:right"><span class="tiny">Locked</span></td></tr>
-              <tr><td><div class="nm">Evolve (reversible)</div></td><td>Evolve</td><td>Yes</td><td><span class="tiny" style="color:var(--text-muted)">Unused</span></td><td><div class="row" style="justify-content:flex-end;gap:.35rem"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></div></td></tr>
+              <tr><td><div class="nm">Open</div></td><td>Open</td><td>v1 · frozen</td><td>Dollar Wallet <span class="tag tag--live" style="margin-left:4px">Live · locked</span></td><td style="text-align:right"><span class="tiny">Locked</span></td></tr>
+              <tr><td><div class="nm">Forge / Awaken / Ascend</div></td><td>varies</td><td>v3 · editable</td><td>Relic <span class="tag tag--amber" style="margin-left:4px">Draft</span></td><td><div class="row" style="justify-content:flex-end;gap:.35rem"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></div></td></tr>
+              <tr><td><div class="nm">Gild</div></td><td>Gild</td><td>v2 · frozen</td><td>Dollar Wallet <span class="tag tag--live" style="margin-left:4px">Live · locked</span></td><td style="text-align:right"><span class="tiny">Locked</span></td></tr>
+              <tr><td><div class="nm">Un-gild</div></td><td>Un-gild</td><td>v1 · editable</td><td><span class="tiny" style="color:var(--text-muted)">Unused</span></td><td><div class="row" style="justify-content:flex-end;gap:.35rem"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -459,7 +459,7 @@
             <div><label class="flabel">Template name</label><input class="input" value="Open (permanent)"><div class="hint">Internal — how you'll find this template in the list.</div></div>
             <div><label class="flabel">Button wording</label><input class="input" value="Open"><div class="hint">What the holder taps.</div></div>
           </div>
-          <div><label class="flabel">Reversible?</label><div class="seg"><button>Yes</button><button class="active">No</button></div><div class="hint">If yes, a holding on the target variant also shows a way back to whichever variant it came from.</div></div>
+          <div><label class="flabel">Version</label><div class="seg"><button class="active">v2 (latest)</button><button>v1</button></div><div class="hint">A variant pins an exact template version. The template stays editable — each edit makes a new version future tokens may pin — and a version pinned by a Live token is frozen.</div></div>
           <div><label class="flabel">Warning text (shown to the holder)</label><textarea class="input">Warning — you're about to Open this token. This change is permanent and can't be undone.</textarea></div>
         </div>
         <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Save template</button></div>
@@ -528,7 +528,7 @@
 
   <!-- 13 · confirm -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">13</span><span class="t">The prompt · in the creator's words</span><span class="d">Before the action runs, the holder sees the creator's warning and confirms. Amber caution — this changes the token, it doesn't delete it. Two examples: a permanent action and a reversible one.</span></div>
+    <div class="frame-cap"><span class="num">13</span><span class="t">The prompt · in the creator's words</span><span class="d">Before the action runs, the holder sees the creator's warning and confirms. Amber caution — this changes the token, it doesn't delete it. Two examples: a one-way step, and one whose target also declares a transition back. The holder is told which, in plain words — the mechanism (a second declared transition) is not their concern. A one-way step, and one whose target declares a transition back.</span></div>
     <div class="stage">
       <div class="modal-card">
         <header><h4>Open this token?</h4><button class="x" aria-label="Close">✕</button></header>
@@ -549,7 +549,7 @@
 
   <!-- 14 · after -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">14</span><span class="t">After the action</span><span class="d">The token now shows the variant's name and asset, plus whatever button that variant's own "from" declarations provide next. Left: a permanent action — the token simply is the new variant now. Right: a reversible action offers the way back to whichever variant it came from.</span></div>
+    <div class="frame-cap"><span class="num">14</span><span class="t">After the action</span><span class="d">The token now shows the variant's name and asset, plus whatever button that variant's own "from" declarations provide next. Left: a one-way step — the token simply is the new variant now. Right: where the source variant declares its own transition back, the holder simply sees a way back.</span></div>
     <div class="hgrid">
       <div class="rarity-frame"><div class="tok-card"><div class="cart cart--2">Opened Wallet</div><div class="meta"><div class="col">Paper Trail</div><div class="top"><h3 class="name">Opened Wallet</h3><span class="issue">#042</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
       <div class="rarity-frame"><div class="tok-card"><div class="cart cart--2">Evolved</div><div class="meta"><div class="col">Paper Trail</div><div class="top"><h3 class="name">Evolved Seedling</h3><span class="issue">#088</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--sm">Revert</button><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
