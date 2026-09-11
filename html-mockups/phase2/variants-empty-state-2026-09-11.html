@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Collection · Variants, empty state</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --border-frame:#CFCFCF;
+    --notify-error:#EF4444; --notify-warn:#F59E0B; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --surface-gallery:#DCDCDC;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020;
+    --art-grey:linear-gradient(135deg,#9CA3AF,#374151);
+    --art-amber:linear-gradient(135deg,#FBBF24,#B45309);
+    --art-mint:linear-gradient(135deg,#6EE7B7,#1E3A8A);
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem; --s-20:5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-gallery); -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4,h5 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.625rem 1.125rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4375rem .875rem; font-size:var(--text-xs); }
+
+  .tag { display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--default { background:var(--tint-info); color:var(--on-info); }
+  .stage-badge { display:inline-flex; align-items:center; gap:.375rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:var(--tint-warn); color:var(--on-warn); }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .crumb .sep { color:var(--text-muted); } .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+
+  .screen { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); overflow:hidden; }
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-3xl); margin-top:.25rem; }
+  .section-head .lede { margin:.5rem 0 0; color:var(--text-secondary); font-size:var(--text-md); width:100%; }
+  .ctabs { display:flex; gap:var(--s-2); border-bottom:1px solid var(--border-soft); }
+  .ctabs button { padding:.5rem .875rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); border-bottom:2px solid transparent; margin-bottom:-1px; }
+  .ctabs button.active { color:var(--text-primary); border-bottom-color:var(--text-primary); }
+
+  /* ---------- empty hero (canonical: centred, max 920) ---------- */
+  .empty-hero { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; text-align:center; max-width:920px; margin-left:auto; margin-right:auto; width:100%; }
+  .empty-hero__img { aspect-ratio:16/6; background:#0A0A0A; }
+  .empty-hero__img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .empty-hero__body { padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; align-items:center; gap:var(--s-3); }
+  .empty-hero__ttl { font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); }
+  .empty-hero__sub { color:var(--text-secondary); font-size:var(--text-md); max-width:56ch; margin:0; }
+  .empty-hero__actions { display:flex; gap:var(--s-3); flex-wrap:wrap; justify-content:center; margin-top:var(--s-2); }
+  @media (max-width:560px){ .empty-hero__img { aspect-ratio:4/3; } }
+
+  /* ---------- explainer row (full content width, under the hero) ---------- */
+  .explainer { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-8) var(--s-6); display:flex; flex-direction:column; gap:var(--s-6); }
+  .explainer__head { text-align:center; display:flex; flex-direction:column; gap:.4rem; align-items:center; }
+  .explainer__head h4 { font-size:var(--text-xl); }
+  .explainer__head p { margin:0; color:var(--text-secondary); font-size:var(--text-sm); max-width:70ch; }
+  .diagram { width:100%; max-width:860px; margin:0 auto; }
+  .rules { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s-5); }
+  .rule { background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-5); display:flex; flex-direction:column; gap:.4rem; }
+  .rule .n { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+  .rule h5 { font-size:var(--text-lg); }
+  .rule p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); }
+  @media (max-width:760px){ .rules { grid-template-columns:1fr; } }
+
+  .note { display:flex; gap:var(--s-3); align-items:flex-start; background:var(--surface-canvas-deep); border-radius:var(--r-3); padding:var(--s-4) var(--s-5); }
+  .note .face { width:34px; flex:0 0 34px; }
+  .note p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); }
+
+  /* ---------- gallery chrome ---------- */
+  .wrap { max-width:1180px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); display:flex; flex-direction:column; gap:var(--s-12); }
+  .pagehead h1 { font-size:var(--text-4xl); }
+  .pagehead .sub { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.5rem; max-width:90ch; }
+  .navlinks { margin-top:.75rem; font-size:var(--text-xs); color:var(--text-secondary); }
+  .frame { display:flex; flex-direction:column; gap:var(--s-4); }
+  .frame-cap { display:flex; gap:.6rem; align-items:baseline; flex-wrap:wrap; font-size:var(--text-xs); color:var(--text-secondary); }
+  .frame-cap .num { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; color:var(--text-primary); text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-2xs); }
+  .frame-cap .d { flex:1 1 320px; }
+  .sectlabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); border-top:1px solid var(--border-frame); padding-top:var(--s-4); }
+  .phone { width:375px; max-width:100%; margin:0 auto; }
+  .copyblock { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); padding:var(--s-6); }
+  .copyblock table { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .copyblock th, .copyblock td { text-align:left; vertical-align:top; padding:.5rem .6rem; border-bottom:1px solid var(--border-soft); }
+  .copyblock th { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="pagehead">
+    <span class="eyebrow">Collection · Variants</span>
+    <h1>Variants — empty state.</h1>
+    <p class="sub">The first-run state of <strong>Collection › Variants</strong> when the collection has no variants on any token. Its job is to explain what a variant is, because most creators will meet the word here first. Source: <span class="mono">Phase2/Composition Template System/token-variant-actions-spec.md</span> (model, Original Token, reached-from topology) and <span class="mono">Phase1/token-system-design.md</span> (variant data model, default-variant gate, V1 mints the default only).</p>
+    <div class="navlinks">Pattern: <span class="mono">style-guide/page-shell.md</span> → Empty states (first-run hero), centred at 920px, explainer row full width beneath. Related: <a href="./variants-states-gallery-2026-07-16.html">Variants states gallery</a>.</div>
+  </div>
+
+  <!-- 01 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Variants tab — nothing created yet</span><span class="d">Hero explains the idea in one sentence; the explainer row underneath carries the diagram and the three rules. <strong>No "create variant" button</strong> — this page is browse-only, and a variant is added on the token, so both CTAs point at the token list.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Collection: Paper Trail</a><span class="sep">/</span><span class="here">Variants</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
+      <div class="section">
+        <div class="section-head">
+          <div class="eyebrow">Collection · Variants</div>
+          <h2>Variants.</h2>
+          <p class="lede">Every variant in this collection, and the optional action templates that trigger them.</p>
+        </div>
+        <div class="ctabs">
+          <button class="active">Variants · 0</button>
+          <button>Actions · 0</button>
+        </div>
+
+        <div class="empty-hero">
+          <div class="empty-hero__img"><img src="../../style-guide/empty-state-hero/no_variants.jpg" alt="Variants — none yet" onerror="this.parentElement.style.display='none'"></div>
+          <div class="empty-hero__body">
+            <h3 class="empty-hero__ttl">No variants yet.</h3>
+            <p class="empty-hero__sub">A variant is another version of a token — a different <strong>name</strong> and a different <strong>asset</strong>. Everything else stays exactly the same: the same token, the same copy, the same issue number, the same rarity.</p>
+            <div class="empty-hero__actions">
+              <button class="btn">Go to tokens</button>
+              <button class="btn btn--ghost">How variants work</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="explainer">
+          <div class="explainer__head">
+            <h4>One token, more than one version.</h4>
+            <p>A sealed wallet that can be opened. A relic that can be forged. The holder still owns the same single copy — it just becomes a different version of itself.</p>
+          </div>
+
+          <!-- diagram -->
+          <svg class="diagram" viewBox="0 0 860 250" role="img" aria-label="Original Token, then two variants reached by an action after mint">
+            <defs>
+              <linearGradient id="gGrey" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9CA3AF"/><stop offset="1" stop-color="#374151"/></linearGradient>
+              <linearGradient id="gMint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#1E3A8A"/></linearGradient>
+              <linearGradient id="gAmber" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBBF24"/><stop offset="1" stop-color="#B45309"/></linearGradient>
+              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/>
+              </marker>
+            </defs>
+
+            <!-- card 1 -->
+            <g>
+              <rect x="14" y="40" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#1D1D1D" stroke-width="2"/>
+              <rect x="26" y="52" width="176" height="84" rx="8" fill="url(#gGrey)"/>
+              <text x="34" y="160" font-family="Anton, sans-serif" font-size="15" fill="#1D1D1D" letter-spacing=".4">DOLLAR WALLET</text>
+              <text x="34" y="177" font-family="Mona Sans, sans-serif" font-size="11" fill="#6B6B6B">Original Token · default</text>
+              <rect x="14" y="14" width="150" height="20" rx="10" fill="rgba(37,99,235,.12)"/>
+              <text x="26" y="28" font-family="Mona Sans, sans-serif" font-weight="700" font-size="10" fill="#1D4ED8" letter-spacing="1">THIS IS WHAT MINTS</text>
+            </g>
+
+            <!-- arrow 1 -->
+            <g>
+              <line x1="226" y1="115" x2="296" y2="115" stroke="#1D1D1D" stroke-width="2" marker-end="url(#arrow)"/>
+              <rect x="222" y="82" width="80" height="20" rx="10" fill="#F2F2F2"/>
+              <text x="262" y="96" text-anchor="middle" font-family="Mona Sans, sans-serif" font-weight="700" font-size="10" fill="#1D1D1D" letter-spacing="1">OPEN</text>
+              <text x="262" y="137" text-anchor="middle" font-family="Mona Sans, sans-serif" font-size="10" fill="#6B6B6B">holder taps</text>
+            </g>
+
+            <!-- card 2 -->
+            <g>
+              <rect x="314" y="40" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+              <rect x="326" y="52" width="176" height="84" rx="8" fill="url(#gMint)"/>
+              <text x="334" y="160" font-family="Anton, sans-serif" font-size="15" fill="#1D1D1D" letter-spacing=".4">OPENED WALLET</text>
+              <text x="334" y="177" font-family="Mona Sans, sans-serif" font-size="11" fill="#6B6B6B">Variant · reached from Dollar Wallet</text>
+            </g>
+
+            <!-- arrow 2 -->
+            <g>
+              <line x1="526" y1="115" x2="596" y2="115" stroke="#1D1D1D" stroke-width="2" marker-end="url(#arrow)"/>
+              <rect x="522" y="82" width="80" height="20" rx="10" fill="#F2F2F2"/>
+              <text x="562" y="96" text-anchor="middle" font-family="Mona Sans, sans-serif" font-weight="700" font-size="10" fill="#1D1D1D" letter-spacing="1">GILD</text>
+              <text x="562" y="137" text-anchor="middle" font-family="Mona Sans, sans-serif" font-size="10" fill="#6B6B6B">holder taps</text>
+            </g>
+
+            <!-- card 3 -->
+            <g>
+              <rect x="614" y="40" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+              <rect x="626" y="52" width="176" height="84" rx="8" fill="url(#gAmber)"/>
+              <text x="634" y="160" font-family="Anton, sans-serif" font-size="15" fill="#1D1D1D" letter-spacing=".4">GOLDEN WALLET</text>
+              <text x="634" y="177" font-family="Mona Sans, sans-serif" font-size="11" fill="#6B6B6B">Variant · reached from Opened Wallet</text>
+            </g>
+
+            <!-- baseline caption -->
+            <line x1="14" y1="214" x2="814" y2="214" stroke="#E5E5E5" stroke-width="1"/>
+            <text x="414" y="235" text-anchor="middle" font-family="Mona Sans, sans-serif" font-size="12" fill="#6B6B6B">Same token · same copy · same issue number · same rarity — all the way across</text>
+          </svg>
+
+          <div class="rules">
+            <div class="rule">
+              <span class="n">01</span>
+              <h5>Every token already has one</h5>
+              <p>The token's own name and asset are its <strong>Original Token</strong> — the default version. Only the Original Token is minted, so a variant never costs extra supply.</p>
+            </div>
+            <div class="rule">
+              <span class="n">02</span>
+              <h5>Variants are reached, not bought</h5>
+              <p>Each variant says which version it is <strong>reached from</strong> and what <strong>triggers</strong> the change. The holder runs it after mint — opening, forging, revealing.</p>
+            </div>
+            <div class="rule">
+              <span class="n">03</span>
+              <h5>Added on the token, listed here</h5>
+              <p>Open any token and use its <strong>Variants</strong> tab to add one. This page then lists every variant in the collection, so you can review them in one place.</p>
+            </div>
+          </div>
+
+          <div class="note">
+            <img class="face" src="../../style-guide/logos/2026-05 - face.svg" alt="" onerror="this.style.display='none'">
+            <p><strong>Variants are optional.</strong> If your tokens stay exactly as they were minted, there is nothing to do here. If you do add them, remember they lock when the token goes Live — a version you might want later has to exist before then.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Actions tab — no templates</span><span class="d">Second tab, its own empty state. Shorter, because Actions only make sense once variants exist — it says so rather than teaching the whole model twice. This one <em>does</em> carry a create CTA: templates are authored at collection level.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Collection: Paper Trail</a><span class="sep">/</span><span class="here">Variants</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
+      <div class="section">
+        <div class="section-head">
+          <div class="eyebrow">Collection · Variants</div>
+          <h2>Variants.</h2>
+          <p class="lede">Every variant in this collection, and the optional action templates that trigger them.</p>
+        </div>
+        <div class="ctabs">
+          <button>Variants · 0</button>
+          <button class="active">Actions · 0</button>
+        </div>
+        <div class="empty-hero">
+          <div class="empty-hero__body">
+            <h3 class="empty-hero__ttl">No action templates.</h3>
+            <p class="empty-hero__sub">An action template is reusable wording for the button a holder taps to change a variant — <span class="mono">Open</span>, <span class="mono">Gild</span>, <span class="mono">Forge</span> — plus the warning shown before it happens. Worth creating when several tokens share the same path; a one-off trigger is fine for a single token.</p>
+            <div class="empty-hero__actions">
+              <button class="btn">New template</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <div class="sectlabel">Mobile · 375px</div>
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Variants tab, empty — 375px</span><span class="d">Hero image switches to 4:3, rules stack to one column, the diagram scales with the viewBox. Same copy, no truncation.</span></div>
+    <div class="phone">
+      <div class="screen">
+        <div class="context-bar" style="padding:var(--s-3) var(--s-4)"><div class="crumb"><span class="here">Variants</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
+        <div class="section" style="padding:var(--s-5)">
+          <div class="section-head">
+            <div class="eyebrow">Collection · Variants</div>
+            <h2 style="font-size:var(--text-2xl)">Variants.</h2>
+            <p class="lede" style="font-size:var(--text-sm)">Every variant in this collection, and the optional action templates that trigger them.</p>
+          </div>
+          <div class="ctabs"><button class="active">Variants · 0</button><button>Actions · 0</button></div>
+          <div class="empty-hero">
+            <div class="empty-hero__img"><img src="../../style-guide/empty-state-hero/no_variants.jpg" alt="" onerror="this.parentElement.style.display='none'"></div>
+            <div class="empty-hero__body" style="padding:var(--s-6) var(--s-4)">
+              <h3 class="empty-hero__ttl" style="font-size:var(--text-xl)">No variants yet.</h3>
+              <p class="empty-hero__sub" style="font-size:var(--text-sm)">A variant is another version of a token — a different name and a different asset. Everything else stays exactly the same: the same token, the same copy, the same issue number, the same rarity.</p>
+              <div class="empty-hero__actions"><button class="btn btn--sm">Go to tokens</button><button class="btn btn--ghost btn--sm">How variants work</button></div>
+            </div>
+          </div>
+          <div class="explainer" style="padding:var(--s-6) var(--s-4)">
+            <div class="explainer__head"><h4 style="font-size:var(--text-lg)">One token, more than one version.</h4></div>
+            <svg class="diagram" viewBox="0 0 240 560" role="img" aria-label="Original Token, then two variants, stacked">
+              <defs>
+                <linearGradient id="mGrey" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9CA3AF"/><stop offset="1" stop-color="#374151"/></linearGradient>
+                <linearGradient id="mMint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#1E3A8A"/></linearGradient>
+                <linearGradient id="mAmber" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBBF24"/><stop offset="1" stop-color="#B45309"/></linearGradient>
+                <marker id="marrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1D1D1D"/></marker>
+              </defs>
+              <g>
+                <rect x="20" y="26" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#1D1D1D" stroke-width="2"/>
+                <rect x="32" y="38" width="176" height="84" rx="8" fill="url(#mGrey)"/>
+                <text x="40" y="146" font-family="Anton, sans-serif" font-size="15" fill="#1D1D1D">DOLLAR WALLET</text>
+                <text x="40" y="163" font-family="Mona Sans, sans-serif" font-size="11" fill="#6B6B6B">Original Token · default</text>
+                <rect x="20" y="0" width="150" height="20" rx="10" fill="rgba(37,99,235,.12)"/>
+                <text x="32" y="14" font-family="Mona Sans, sans-serif" font-weight="700" font-size="10" fill="#1D4ED8" letter-spacing="1">THIS IS WHAT MINTS</text>
+              </g>
+              <g>
+                <line x1="120" y1="188" x2="120" y2="228" stroke="#1D1D1D" stroke-width="2" marker-end="url(#marrow)"/>
+                <rect x="134" y="196" width="70" height="20" rx="10" fill="#F2F2F2"/>
+                <text x="169" y="210" text-anchor="middle" font-family="Mona Sans, sans-serif" font-weight="700" font-size="10" fill="#1D1D1D" letter-spacing="1">OPEN</text>
+              </g>
+              <g>
+                <rect x="20" y="240" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+                <rect x="32" y="252" width="176" height="84" rx="8" fill="url(#mMint)"/>
+                <text x="40" y="360" font-family="Anton, sans-serif" font-size="15" fill="#1D1D1D">OPENED WALLET</text>
+                <text x="40" y="377" font-family="Mona Sans, sans-serif" font-size="11" fill="#6B6B6B">Variant · reached from above</text>
+              </g>
+              <g>
+                <line x1="120" y1="402" x2="120" y2="442" stroke="#1D1D1D" stroke-width="2" marker-end="url(#marrow)"/>
+                <rect x="134" y="410" width="70" height="20" rx="10" fill="#F2F2F2"/>
+                <text x="169" y="424" text-anchor="middle" font-family="Mona Sans, sans-serif" font-weight="700" font-size="10" fill="#1D1D1D" letter-spacing="1">GILD</text>
+              </g>
+              <g>
+                <rect x="20" y="454" width="200" height="90" rx="12" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+                <rect x="32" y="466" width="176" height="40" rx="8" fill="url(#mAmber)"/>
+                <text x="40" y="528" font-family="Anton, sans-serif" font-size="15" fill="#1D1D1D">GOLDEN WALLET</text>
+              </g>
+            </svg>
+            <div class="rules">
+              <div class="rule"><span class="n">01</span><h5>Every token already has one</h5><p>The token's own name and asset are its <strong>Original Token</strong>. Only that version is minted.</p></div>
+              <div class="rule"><span class="n">02</span><h5>Variants are reached, not bought</h5><p>Each one says what it is <strong>reached from</strong> and what <strong>triggers</strong> it. The holder runs it after mint.</p></div>
+              <div class="rule"><span class="n">03</span><h5>Added on the token, listed here</h5><p>Use a token's <strong>Variants</strong> tab to add one. This page lists them all.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <div class="sectlabel">Copy deck</div>
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Every string, and the rule behind it</span><span class="d">For the build ticket. Right column names the spec each line has to stay true to.</span></div>
+    <div class="copyblock">
+      <table>
+        <thead><tr><th style="width:22%">Slot</th><th style="width:46%">Copy</th><th>Why it says that</th></tr></thead>
+        <tbody>
+          <tr><td>Hero title</td><td>No variants yet.</td><td>Plain first-run state; the word "yet" keeps it neutral rather than an error.</td></tr>
+          <tr><td>Hero sub</td><td>A variant is another version of a token — a different name and a different asset. Everything else stays exactly the same: the same token, the same copy, the same issue number, the same rarity.</td><td>A transition changes only <span class="mono">variant</span>, plus the name and asset the holder sees; it never touches token id, ownership, copy identity, issue number or the frozen sale policy. Score and rarity are definition-level.</td></tr>
+          <tr><td>Hero CTA</td><td>Go to tokens · How variants work</td><td>The collection page is <strong>browse-only</strong> — variants are authored on the token. A "Create variant" button here would lead nowhere.</td></tr>
+          <tr><td>Diagram caption</td><td>Same token · same copy · same issue number · same rarity — all the way across</td><td>Same rule as the hero sub, shown rather than claimed.</td></tr>
+          <tr><td>Rule 01</td><td>The token's own name and asset are its Original Token — the default version. Only the Original Token is minted, so a variant never costs extra supply.</td><td>The Original Token is always the <span class="mono">default_variant</span>; V1 mints the default only, and variants share one supply cap — they never fork rarity or add units.</td></tr>
+          <tr><td>Rule 02</td><td>Each variant says which version it is reached from and what triggers the change. The holder runs it after mint — opening, forging, revealing.</td><td>Topology is a property of the target variant: each declares its own <span class="mono">from_variant</span> and trigger. Holder-run, post-mint.</td></tr>
+          <tr><td>Rule 03</td><td>Open any token and use its Variants tab to add one. This page then lists every variant in the collection.</td><td>Authoring lives on the token; this page is the read-only catalog. The Original Token is not listed here — it is the token, not a variant of it.</td></tr>
+          <tr><td>Closing note</td><td>Variants are optional… they lock when the token goes Live — a version you might want later has to exist before then.</td><td>Variant definitions lock at <span class="mono">Live</span>, and the full set is predeclared — nothing can be invented at runtime.</td></tr>
+          <tr><td>Actions tab</td><td>An action template is reusable wording for the button a holder taps… a one-off trigger is fine for a single token.</td><td>Templates carry button wording and warning text only; topology never lives in a project-level preset.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
