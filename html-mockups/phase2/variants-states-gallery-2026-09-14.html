@@ -49,10 +49,13 @@
   .tag--default { background:var(--tint-info); color:var(--on-info); }
   .tag--live { background:var(--tint-live); color:var(--on-live); }
   .tag--amber { background:var(--tint-warn); color:var(--stage-draft); }
-  /* provenance — the three states a variant can be in once profiles exist (frame 15) */
+  /* provenance — source, plus two independent customisation markers (frame 15) */
   .tag--from { background:var(--surface-canvas-deep); color:var(--text-secondary); }
   .tag--drift { background:var(--tint-warn); color:var(--on-warn); }
   .tag--local { background:var(--tint-info); color:var(--on-info); }
+  .tag--topo { background:rgba(99,102,241,.14); color:var(--stage-review); }
+  /* stable id — always shown as an id, never as a position or a count */
+  .vid { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-2xs); color:var(--text-muted); background:var(--surface-canvas-deep); border-radius:var(--r-1); padding:.125rem .375rem; letter-spacing:0; }
   .stage-badge { display:inline-flex; align-items:center; gap:.375rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:var(--tint-warn); color:var(--on-warn); }
   .stage-badge.live { background:var(--tint-live); color:var(--on-live); }
   .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
@@ -232,9 +235,10 @@
     <span class="eyebrow">Tokens · Variants</span>
     <h1>Variants — states gallery</h1>
     <p>Two collection-level surfaces: <strong>Variants</strong> — every variant across every token in the collection, browsable the same way tokens are (card grid or list, filters, pagination) — and <strong>Actions</strong> — the optional, reusable action-template library. The transition itself — which variant a holding is reached from, and what triggers the change — is configured per token, on the variant's own edit panel; it is not a separate graph-building page. A transition can use a shared, reusable template (when more than one token follows the same path with the same asset) or a one-off definition just for that variant — templates are a convenience, not a requirement.</p>
-    <p><strong>Frames 15–20 are new.</strong> They cover <strong>variant profiles</strong> — a named, versioned, project-level variant <em>set</em> that can be applied to many tokens at once. A profile carries the set and never the topology, so applying one seeds the list and the author still declares each transition per token. Applying is <strong>append-only</strong>, and a variant edited locally afterwards stops belonging to the profile.</p>
-    <div class="draftflag newflag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Frames 01–14 unchanged · 15–20 new</div>
-    <div class="navlinks">Source: <span class="mono">Phase2/Composition Template System/token-contract-system-spec.md</span> §4A (variant profiles) · <span class="mono">token-variant-actions-spec.md</span> (transitions, <span class="mono">TVA1</span>–<span class="mono">TVA11</span>) · <span class="mono">state-policy-design.md</span> — all ratified. Extends <span class="mono">Phase1/token-system-design.md</span> (the variant data model, <span class="mono">T1</span>–<span class="mono">T9</span>). Related: <a href="../token-draft-states-gallery-2026-06-29.html">Token draft</a> · <a href="../my-tokens-states-gallery-2026-06-22.html">My Tokens</a> · <a href="../navigation-states-gallery-2026-06-19.html">Collection nav</a>.</div>
+    <p><strong>Frames 15–20</strong> cover <strong>variant profiles</strong> — a named, versioned, project-level variant <em>set</em> that can be applied to many tokens at once. A profile carries the set and never the topology, so applying one seeds the list and the author still declares each transition per token.</p>
+    <p><strong>Frames 21–25 are new, and 15, 16 and 19 are revised.</strong> Variant identity is now a stable <span class="mono">variant_id</span> that never changes and is never reused (<span class="mono">T10</span>), separate from display order — so re-apply can update an uncustomised variant, a profile may place a variant anywhere in the order, and reordering is harmless. Apply, re-apply and detach are <strong><span class="mono">Draft</span> only</strong>; the operation is offered from <span class="mono">Review</span> as one atomic step that returns the token to <span class="mono">Draft</span>. And the State Policy is <strong>resolved into the token's contract</strong> rather than snapshotted onto the token.</p>
+    <div class="draftflag newflag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Frames 01–14 unchanged · 15, 16, 19 revised · 21–25 new</div>
+    <div class="navlinks">Source: <span class="mono">Phase2/Composition Template System/token-contract-system-spec.md</span> §4A (variant profiles) · <span class="mono">token-variant-actions-spec.md</span> (transitions, <span class="mono">TVA1</span>–<span class="mono">TVA11</span>) · <span class="mono">state-policy-design.md</span> — all ratified. Extends <span class="mono">Phase1/token-system-design.md</span> (the variant data model, <span class="mono">T1</span>–<span class="mono">T10</span>). Rulings <span class="mono">R114</span>–<span class="mono">R131</span>. Related: <a href="../token-draft-states-gallery-2026-06-29.html">Token draft</a> · <a href="../my-tokens-states-gallery-2026-06-22.html">My Tokens</a> · <a href="../navigation-states-gallery-2026-06-19.html">Collection nav</a>.</div>
   </header>
 
   <div class="sectlabel">Setup · creator, on the token itself</div>
@@ -575,37 +579,39 @@
 
   <!-- 15 · provenance model -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">15</span><span class="t">Applying a profile — the rules</span><span class="new">New</span><span class="d">Developer reference — not a screen. A <strong>variant profile</strong> is a named, versioned, project-level variant <em>set</em>. Applying one to a token snapshot-copies the set; editing the profile afterwards never reaches a token that already applied it. Because variant <strong>order is identity</strong> and <span class="mono">default_variant</span> is a positional index that locks at Live (<span class="mono">T9</span>), apply is <strong>append-only</strong> — nothing is ever inserted, reordered or renumbered.</span></div>
+    <div class="frame-cap"><span class="num">15</span><span class="t">Applying a profile — the rules</span><span class="new">Revised</span><span class="d">Developer reference — not a screen. A <strong>variant profile</strong> is a named, versioned, project-level variant <em>set</em>. Applying one to a token snapshot-copies the set; editing the profile afterwards never reaches a token that already applied it. Apply is <strong>additive</strong>: it adds variants and updates uncustomised ones, and it never removes, never re-keys, and never overwrites a local edit. See frame 21 for why it is no longer append-<em>only</em>.</span></div>
     <div class="spec">
       <span class="speclabel">Apply and re-apply — every case</span>
       <table class="reftable">
         <thead><tr><th style="width:38%">Case</th><th>What happens</th></tr></thead>
         <tbody>
-          <tr><td><strong>In the profile, not on the token</strong></td><td><strong>Appended</strong> to the end of the list</td></tr>
-          <tr><td><strong>On the token, unchanged since apply</strong></td><td><strong>Untouched</strong></td></tr>
-          <tr><td><strong>On the token, edited locally</strong></td><td><strong>Untouched</strong>, and it stays local — the profile can never reach it again</td></tr>
+          <tr><td><strong>In the profile, not on the token</strong></td><td><strong>Added</strong>, with a fresh <span class="mono">variant_id</span>, at the profile's own place in the order — or at the end once the creator has reordered by hand</td></tr>
+          <tr><td><strong>From the profile, not customised</strong></td><td><strong>Name and asset updated</strong> to the new version. Its <span class="mono">key</span> and <span class="mono">variant_id</span> never change</td></tr>
+          <tr><td><strong>From the profile, customised locally</strong></td><td><strong>Preserved</strong>, and reported as customised — the profile never reaches its content again</td></tr>
           <tr><td><strong>On the token, absent from a newer profile version</strong></td><td><strong>Blocker.</strong> Reported with what references it; never removed for you (frame 18)</td></tr>
-          <tr><td><strong>Profile key collides with an existing variant</strong></td><td><strong>Whole apply rejected</strong>, naming the key and both sources (frame 17)</td></tr>
+          <tr><td><strong>Profile key collides with a locally authored variant</strong></td><td><strong>Whole apply rejected</strong>, naming the key and both sources (frame 17)</td></tr>
           <tr><td><strong>Merged length would exceed 255</strong></td><td><strong>Whole apply rejected</strong> (frame 17)</td></tr>
           <tr><td><strong>The default variant</strong></td><td><strong>Never touched.</strong> A profile carries no default field and cannot set one</td></tr>
         </tbody>
       </table>
-      <span class="speclabel" style="margin-top:var(--s-8)">Three provenance states — every applied variant is in exactly one</span>
+      <div class="hint" style="margin-top:var(--s-5);max-width:94ch">Re-apply matches on the <strong>key each variant was copied from</strong> — never on position, never on the name. So renaming <em>Admitted</em> to <em>Scanned</em> in the profile updates the same variant rather than looking like a new one, and reordering either side matches nothing differently (frame 21).</div>
+      <span class="speclabel" style="margin-top:var(--s-8)">Where it came from · and two independent things that can be true of it</span>
       <table class="reftable">
         <thead><tr><th style="width:30%">Shown as</th><th>Meaning, and what it changes</th></tr></thead>
         <tbody>
-          <tr><td><span class="tag tag--from">Seasonal reskin v3</span></td><td><strong>From the profile, untouched.</strong> A re-apply may update it; a detach removes it</td></tr>
-          <tr><td><span class="tag tag--drift">Seasonal reskin v3 · customised</span></td><td><strong>From the profile, edited locally</strong> — its name, its asset, or a transition declared against it. It is now <strong>local</strong>: re-apply never overwrites it and <strong>detach leaves it behind</strong></td></tr>
+          <tr><td><span class="tag tag--from">Festival ticket v2</span></td><td><strong>From the profile, untouched.</strong> A re-apply updates its name and asset; a detach removes it</td></tr>
+          <tr><td><span class="tag tag--drift">customised</span></td><td><strong>Its name or asset was edited here.</strong> Re-apply never overwrites it, and <strong>detach leaves it behind</strong></td></tr>
+          <tr><td><span class="tag tag--topo">has transitions</span></td><td><strong>A transition or action binding names it.</strong> This blocks <strong>detach only</strong> — its name and asset still update from the profile, because a profile carries the set and never the topology</td></tr>
           <tr><td><span class="tag tag--local">Authored locally</span></td><td><strong>Never came from a profile.</strong> Unaffected by anything a profile does</td></tr>
         </tbody>
       </table>
-      <div class="hint" style="margin-top:var(--s-5);max-width:94ch">Two states would not be enough. Without the middle one, neither the creator nor the system can tell which variants a detach is about to remove — which is why the marker is a requirement rather than a decoration.</div>
+      <div class="hint" style="margin-top:var(--s-5);max-width:94ch">The middle two are <strong>independent</strong>, and a variant can carry both. Treating "has transitions" as a customisation would freeze a variant out of its profile the first time anyone wired it up — and wiring <span class="mono">unused → admitted</span> is the entire point of a ticket profile, so the profile would break on first use.</div>
     </div>
   </section>
 
   <!-- 16 · variants tab with a profile applied -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">16</span><span class="t">Token · Variants tab — a profile applied</span><span class="new">New</span><span class="d">The same tab as frame 05, after <strong>Seasonal reskin v3</strong> was applied. Each row now carries its provenance. <strong>Winter Wallet</strong> came from the profile and is untouched; <strong>Summer Wallet</strong> came from it and has since been renamed, so it reads <em>customised</em> and has gone local; <strong>Golden Wallet</strong> was authored by hand before the profile existed. Topology is still declared per variant — a profile carries the set, never the transitions — so every row still needs its own "reached from" (frame 06). Apply, re-apply and detach are available in <span class="mono">Draft</span> and <span class="mono">Review</span> — acting during <span class="mono">Review</span> returns the token to <span class="mono">Draft</span> first, the same as any other edit (<span class="mono">TVA2</span>). Everything freezes at <span class="mono">Live</span>.</span></div>
+    <div class="frame-cap"><span class="num">16</span><span class="t">Token · Variants tab — a profile applied</span><span class="new">Revised</span><span class="d">The same tab as frame 05, after <strong>Seasonal reskin v3</strong> was applied. Each row carries its stable <span class="mono">variant_id</span> and its source. <strong>Winter Wallet</strong> came from the profile untouched; <strong>Summer Wallet</strong> came from it and has since been renamed, so its content has gone local; <strong>Autumn Wallet</strong> is untouched but has a transition declared against it, which blocks detach without blocking updates; <strong>Golden Wallet</strong> was authored by hand. Topology is still declared per variant — a profile carries the set, never the transitions — so every row still needs its own "reached from" (frame 06). Apply, re-apply and detach are <strong><span class="mono">Draft</span> only</strong>; from <span class="mono">Review</span> the same action is offered as one atomic step that returns the token to <span class="mono">Draft</span> (frame 22). Everything freezes at <span class="mono">Live</span>.</span></div>
     <div class="stage">
       <div class="modal-card wide">
         <header><h4>Edit token · Variants <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
@@ -616,16 +622,16 @@
             <div class="row" style="gap:.35rem"><button class="btn btn--secondary btn--sm">Re-apply</button><button class="btn btn--ghost btn--sm">Detach profile</button></div>
           </div>
           <div class="var-list">
-            <div class="var-row def"><span class="vthumb"></span><div><div class="vname">Dollar Wallet</div><div class="vsub">Original Token · the default · the only one that mints</div></div><span class="vacts"><span class="tag tag--default">Default</span></span></div>
-            <div class="var-row"><span class="vthumb vthumb--2"></span><div><div class="vname">Winter Wallet</div><div class="vsub">Reached via <strong>Chill</strong> · from Original Token</div></div><span class="vacts"><span class="tag tag--from">Seasonal reskin v3</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
-            <div class="var-row"><span class="vthumb vthumb--3"></span><div><div class="vname">Summer Wallet</div><div class="vsub">Not yet reachable</div></div><span class="vacts"><span class="tag tag--drift">v3 · customised</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
-            <div class="var-row"><span class="vthumb"></span><div><div class="vname">Golden Wallet</div><div class="vsub">Reached via <strong>Gild</strong> · from Original Token</div></div><span class="vacts"><span class="tag tag--local">Local</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+            <div class="var-row def"><span class="vthumb"></span><div><div class="vname">Dollar Wallet</div><div class="vsub"><span class="vid">id 0</span> · Original Token · the default · the only one that mints</div></div><span class="vacts"><span class="tag tag--default">Default</span></span></div>
+            <div class="var-row"><span class="vthumb vthumb--2"></span><div><div class="vname">Winter Wallet</div><div class="vsub"><span class="vid">id 3</span> · Reached via <strong>Chill</strong> · from Original Token</div></div><span class="vacts"><span class="tag tag--from">Seasonal reskin v3</span><span class="tag tag--topo">has transitions</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+            <div class="var-row"><span class="vthumb vthumb--3"></span><div><div class="vname">Summer Wallet</div><div class="vsub"><span class="vid">id 7</span> · Not yet reachable</div></div><span class="vacts"><span class="tag tag--from">Seasonal reskin v3</span><span class="tag tag--drift">customised</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+            <div class="var-row"><span class="vthumb"></span><div><div class="vname">Golden Wallet</div><div class="vsub"><span class="vid">id 12</span> · Reached via <strong>Gild</strong> · from Original Token</div></div><span class="vacts"><span class="tag tag--local">Authored locally</span><span class="tag tag--topo">has transitions</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
           </div>
           <div class="row" style="gap:var(--s-3)">
             <button class="add-chip" style="margin-top:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add variant</button>
             <button class="add-chip" style="margin-top:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Apply a profile</button>
           </div>
-          <div class="info-note n-info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong>Summer Wallet was renamed after it was applied</strong>, so it no longer belongs to the profile. Re-applying will not change it, and detaching the profile will leave it here.</div></div>
+          <div class="info-note n-info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong>Summer Wallet was renamed here</strong>, so re-applying will not change its name or asset, and detaching will leave it behind. <strong>Winter Wallet has a transition</strong> — that only blocks detach; its name and asset still update with the profile.</div></div>
         </div>
         <div class="footer-row"><button class="btn btn--secondary">Close</button></div>
       </div>
@@ -681,7 +687,7 @@
 
   <!-- 19 · detach -->
   <section class="frame">
-    <div class="frame-cap"><span class="num">19</span><span class="t">Detach a profile — what goes, what stays</span><span class="new">New</span><span class="d">Detach removes <strong>only</strong> the variants that came from this profile and are still untouched. Anything customised has gone local and stays; anything authored by hand was never the profile's and stays; anything still referenced by a transition or action binding is a blocker; and the default variant is never touched. This is the reason the three-state marker in frame 15 has to exist — without it, a creator cannot predict this screen before opening it.</span></div>
+    <div class="frame-cap"><span class="num">19</span><span class="t">Detach a profile — what goes, what stays</span><span class="new">Revised</span><span class="d">Detach removes <strong>only</strong> the variants that came from this profile and carry neither marker. Anything customised stays; anything authored by hand was never the profile's and stays; anything a transition or action binding names is a blocker; and the default variant is never touched. This is the reason the markers in frame 15 have to exist — without them, a creator cannot predict this screen before opening it.</span></div>
     <div class="stage">
       <div class="modal-card wide">
         <header><h4>Detach Seasonal reskin?</h4><button class="x" aria-label="Close">✕</button></header>
@@ -691,14 +697,14 @@
               <thead><tr><th>Variant</th><th>Source</th><th style="text-align:right">On detach</th></tr></thead>
               <tbody>
                 <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Winter Wallet</div></div></td><td><span class="tiny">From profile, untouched</span></td><td style="text-align:right"><span class="tag" style="background:var(--tint-error);color:var(--on-error)">Removed</span></td></tr>
-                <tr><td><div class="cell"><span class="art" style="background:var(--art-amber)"></span><div class="nm">Summer Wallet</div></div></td><td><span class="tiny">Customised — now local</span></td><td style="text-align:right"><span class="tag tag--live">Kept</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-amber)"></span><div class="nm">Summer Wallet</div></div></td><td><span class="tiny">From profile · name edited here</span></td><td style="text-align:right"><span class="tag tag--live">Kept</span></td></tr>
                 <tr><td><div class="cell"><span class="art"></span><div class="nm">Golden Wallet</div></div></td><td><span class="tiny">Authored locally</span></td><td style="text-align:right"><span class="tag tag--live">Kept</span></td></tr>
-                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Autumn Wallet</div></div></td><td><span class="tiny">From profile · referenced</span></td><td style="text-align:right"><span class="tag tag--amber">Blocked</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Autumn Wallet</div></div></td><td><span class="tiny">From profile · has transitions</span></td><td style="text-align:right"><span class="tag tag--amber">Blocked</span></td></tr>
               </tbody>
             </table>
           </div>
           <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Autumn Wallet can't be removed.</strong> <strong>Winter Wallet</strong> is reached from it. Clear that transition first, or keep the profile attached.</div></div>
-          <div class="tiny">Detach is available in <span class="mono">Draft</span> and <span class="mono">Review</span>. Once the token is Live the variant set is frozen and nothing here can change.</div>
+          <div class="tiny">Detach is <span class="mono">Draft</span> only — from <span class="mono">Review</span> it is offered as a return-to-Draft step first (frame 22). Once the token is Live the variant set is frozen and nothing here can change.</div>
         </div>
         <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary" disabled>Detach</button></div>
       </div>
@@ -722,6 +728,133 @@
           <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Seasonal reskin hasn't been published yet.</strong><div style="margin-top:.4rem">Only published versions can be applied — a draft is still being edited. Publish it in the Templates library and it will appear here.</div></div></div>
         </div>
         <div class="footer-row"><button class="btn btn--secondary">Close</button><button class="btn btn--primary">Go to Templates</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sectlabel">Variant identity · Draft-only apply · contract authority</div>
+
+  <!-- 21 · stable identity vs display order -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">21</span><span class="t">Variant identity — the id, not the position</span><span class="new">New</span><span class="d">Developer reference — not a screen. Every variant gets a <span class="mono">variant_id</span> when it is created, and keeps it for good. Holdings, the default variant, transition endpoints and policy endpoints all name that id. <strong>Where a variant sits in the list carries no meaning</strong>, which is what makes reordering safe and lets a profile place a variant anywhere rather than only at the end.</span></div>
+    <div class="spec">
+      <span class="speclabel">The four rules</span>
+      <div class="rulegrid">
+        <div class="rule"><h5>Assigned once, never changed</h5><p>A variant's id is set at creation and is immutable. Renaming it, moving it, or changing its asset never touches the id.</p></div>
+        <div class="rule"><h5>Never reused</h5><p>Deleting a Draft variant <strong>retires</strong> its id permanently. Nothing later inherits it, so a stale reference can never quietly point at something else.</p></div>
+        <div class="rule"><h5>Ids are gappy, and that is normal</h5><p>Because they are never reused, a token's ids are usually <strong>not consecutive</strong>. Never show an id as a position, a count, or an ordinal — it is a name that happens to be a number.</p></div>
+        <div class="rule"><h5>Order is presentation only</h5><p><span class="mono">display_order</span> is what the creator arranges. It can change at any stage, <strong>including after Live</strong>, because nothing reads meaning from it.</p></div>
+      </div>
+      <span class="speclabel" style="margin-top:var(--s-8)">A festival ticket, after the creator inserted <em>VIP</em> and deleted two drafts along the way</span>
+      <table class="reftable">
+        <thead><tr><th style="width:18%">Shown at</th><th style="width:18%">Stable id</th><th style="width:22%">Key</th><th>What references it</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1st</strong></td><td><span class="vid">id 0</span></td><td><span class="mono">unused</span></td><td>The default variant · 10,000 holdings · the source of <span class="mono">unused → admitted</span></td></tr>
+          <tr><td><strong>2nd</strong></td><td><span class="vid">id 9</span></td><td><span class="mono">vip</span></td><td>Added last, placed second. Its position says nothing about when it arrived</td></tr>
+          <tr><td><strong>3rd</strong></td><td><span class="vid">id 7</span></td><td><span class="mono">admitted</span></td><td>3,000 holdings · the target of <span class="mono">unused → admitted</span></td></tr>
+          <tr><td><strong>4th</strong></td><td><span class="vid">id 8</span></td><td><span class="mono">souvenir</span></td><td>The target of <span class="mono">admitted → souvenir</span></td></tr>
+        </tbody>
+      </table>
+      <div class="hint" style="margin-top:var(--s-5);max-width:94ch">Ids 1–6 were allocated to drafts that were deleted, so they are retired and will never be issued again. If identity were the position instead, inserting <em>VIP</em> second would have silently turned 3,000 scanned-in ticket holders into VIPs — no error, nothing to notice.</div>
+      <span class="speclabel" style="margin-top:var(--s-8)">Before reordering is switched on</span>
+      <div class="hint" style="max-width:94ch;margin-top:calc(-1 * var(--s-2))">Every positional lookup over the variants list has to be found and removed first — including anything that treats the first variant as the Original Token. The Original Token is whichever variant <span class="mono">default_variant</span> names, never whichever one sorts first.</div>
+    </div>
+  </section>
+
+  <!-- 22 · applying from Review -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">22</span><span class="t">Applying from Review — one step, and it costs reservations</span><span class="new">New</span><span class="d">Apply, re-apply and detach are <strong><span class="mono">Draft</span> only</strong>: a token in <span class="mono">Review</span> is locked, and its only moves are going Live or returning to Draft. The action is still offered here, as a <strong>single atomic operation</strong> that returns the token to Draft and applies — never two separate steps, because returning to Draft <strong>releases the issue-number reservation</strong> and that cannot be undone. The tokens stay in Draft afterwards for re-submission: the definition that was approved has to be the definition that was reviewed.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Apply Festival ticket v2 <span class="tag" style="background:var(--tint-warn);color:var(--on-warn)">500 tokens</span></h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>This will return 500 tokens to Draft before applying the update.</strong><div style="margin-top:.4rem"><strong>37 active issue-number reservations will be released</strong> and may be claimed by other tokens. They will not be reserved again automatically — each token re-reserves when you resubmit it for Review.</div></div></div>
+          <div class="panel" style="padding:var(--s-4) var(--s-5)">
+            <div class="eyebrow" style="margin-bottom:.6rem">The 37 numbers at risk</div>
+            <div class="row" style="gap:.35rem">
+              <span class="tag">#0001</span><span class="tag">#0002</span><span class="tag">#0007</span><span class="tag">#0012</span><span class="tag">#0018</span><span class="tag">#0023</span><span class="tag">#0031</span><span class="tag">#0044</span><span class="tag">#0050</span><span class="tag" style="background:transparent;color:var(--text-muted)">+29 more</span>
+            </div>
+            <div class="hint" style="margin-top:.6rem">A count alone is not enough to decide with — the low numbers are usually the ones that matter.</div>
+          </div>
+          <div class="info-note n-muted" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Every token is checked before anything is released. <strong>A token that would fail the apply never leaves Review</strong>, and no reservation is given up for it.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--ghost">Apply to the 463 Draft tokens only</button><button class="btn btn--primary">Return to Draft and apply</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 · batch preview, mixed outcomes -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">23</span><span class="t">Batch preview — atomic per token, mixed outcomes expected</span><span class="new">New</span><span class="d">The preview runs before anything is written and shows every outcome at once. A token either applies <strong>completely or not at all</strong> — but one blocked token never fails the others. This is the same discipline the state-policy batch tool already uses, so there is one rule rather than two.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Apply Festival ticket · v1 → v2</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="panel" style="padding:var(--s-5)">
+            <table class="itable">
+              <thead><tr><th>Token</th><th>Stage</th><th style="text-align:right">Outcome</th></tr></thead>
+              <tbody>
+                <tr><td><div class="cell"><span class="art"></span><div class="nm">Day pass</div></div></td><td><span class="tiny">Draft</span></td><td style="text-align:right"><span class="tag tag--live">Adds 1 · updates 2</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Weekend pass</div></div></td><td><span class="tiny">Draft</span></td><td style="text-align:right"><span class="tag tag--from">Updates 2 · keeps 1 customised</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-amber)"></span><div class="nm">VIP pass</div></div></td><td><span class="tiny">Review · holds #0007</span></td><td style="text-align:right"><span class="tag tag--amber">Returns to Draft first</span></td></tr>
+                <tr><td><div class="cell"><span class="art"></span><div class="nm">Camping add-on</div></div></td><td><span class="tiny">Draft</span></td><td style="text-align:right"><span class="tag" style="background:var(--tint-error);color:var(--on-error)">Blocked · key collision</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Season ticket</div></div></td><td><span class="tiny">Live</span></td><td style="text-align:right"><span class="tag">Skipped · frozen</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-note n-error" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>Camping add-on will be skipped.</strong> Its locally authored variant already uses the key <span class="mono">souvenir</span>. The other four are unaffected — rename it and run this again to include it.</div></div>
+          <div class="tiny">Nothing has been written yet. 3 tokens will change, 1 is blocked, 1 is frozen.</div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Apply to 3 tokens</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 · re-apply updates an uncustomised variant -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">24</span><span class="t">Re-apply — what a new profile version actually changes</span><span class="new">New</span><span class="d">Developer reference — not a screen. A newer version <strong>does</strong> update the variants that came from it and have not been customised here; that is the point of versioning a profile. It matches each one on the <strong>key it was copied from</strong>, so the id, the holdings and the transitions all survive a rename in the profile.</span></div>
+    <div class="spec">
+      <span class="speclabel">Festival ticket v1 → v2 · the profile renamed <em>Admitted</em> to <em>Scanned</em> and added <em>VIP</em></span>
+      <table class="reftable">
+        <thead><tr><th style="width:20%">Variant</th><th style="width:22%">On the token now</th><th style="width:26%">After re-apply</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="vid">id 0</span> <span class="mono">unused</span></td><td>Unused · from v1</td><td><strong>Name and asset updated</strong></td><td>From the profile and never edited here, so v2's content lands on it</td></tr>
+          <tr><td><span class="vid">id 7</span> <span class="mono">admitted</span></td><td>Admitted · from v1</td><td><strong>Renamed to Scanned</strong>, id and holdings untouched</td><td>Matched on the key <span class="mono">admitted</span>, not on the old name — a rename in the profile is not a new variant</td></tr>
+          <tr><td><span class="vid">id 8</span> <span class="mono">souvenir</span></td><td>Keepsake · renamed here</td><td><strong>Left exactly as it is</strong></td><td>Customised locally. The profile never overwrites a creator's own wording</td></tr>
+          <tr><td><span class="vid">id 3</span> <span class="mono">earlybird</span></td><td>Early bird · from v1</td><td><strong>Blocked</strong> — nothing is written</td><td>v2 dropped it, and removing a variant is never something an update does on your behalf (frame 18)</td></tr>
+          <tr><td>—</td><td>Not present</td><td><strong>Added</strong> as <span class="vid">id 9</span></td><td><em>VIP</em> is new in v2. It takes the next free id, and can sit second in the order without disturbing anything</td></tr>
+        </tbody>
+      </table>
+      <div class="hint" style="margin-top:var(--s-5);max-width:94ch">A transition declared against a variant does <strong>not</strong> stop it updating. <span class="mono">unused → admitted</span> being wired up is the normal state of a working ticket, not a customisation — it only blocks <strong>detach</strong>.</div>
+    </div>
+  </section>
+
+  <!-- 25 · State tab reads from the contract -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">25</span><span class="t">Token · State tab — the rules come from the contract</span><span class="new">New</span><span class="d">The State Policy is <strong>resolved into the token's contract version</strong> when that contract is published. The token stores which contract it pins and nothing else, so there is no second copy to drift, edit or reconcile. That makes this tab <strong>read-only by construction</strong> rather than by restraint — there is no attach, re-apply or detach control here because there is no separate object to act on. Changing the rules means a new contract version and an explicit migration, which is a Draft-only batch operation.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit token · State <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="seg"><button>Details</button><button>Token supply</button><button>Attributes</button><button>Variants</button><button class="active">State</button><button>Assets</button></div>
+          <div class="panel" style="padding:var(--s-5)">
+            <div class="row" style="justify-content:space-between;align-items:flex-start">
+              <div><div class="ttl">Festival admission</div><div class="tiny" style="margin-top:.25rem">State policy · v4 — resolved into <strong>Ticket contract v6</strong></div></div>
+              <span class="tag tag--from">From the contract</span>
+            </div>
+            <table class="itable" style="margin-top:var(--s-4)">
+              <thead><tr><th>Field</th><th>Who may write</th><th style="text-align:right">Rule</th></tr></thead>
+              <tbody>
+                <tr><td><span class="mono">variant</span></td><td><span class="tiny">Owner</span></td><td style="text-align:right"><span class="tiny">Transitionable · one-way</span></td></tr>
+                <tr><td><span class="mono">scanned_at</span></td><td><span class="tiny">Approved app</span></td><td style="text-align:right"><span class="tiny">One-time write</span></td></tr>
+                <tr><td><span class="mono">gate</span></td><td><span class="tiny">Approved app</span></td><td style="text-align:right"><span class="tiny">One-time write</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-note n-info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong>To change these rules, publish a contract version carrying the newer policy and migrate this token to it.</strong> Migration is a Draft-only batch operation, and it is validated before it runs. Once the token is Live it does not migrate at all.</div></div>
+          <div class="tiny">Runtime values still move after Live — a ticket can still be scanned. What freezes is the rulebook, not the memory.</div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button></div>
       </div>
     </div>
   </section>
