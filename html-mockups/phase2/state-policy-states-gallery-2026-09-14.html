@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — State policy · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --border-frame:#CFCFCF;
+    --notify-error:#EF4444; --notify-warn:#F59E0B; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --surface-gallery:#DCDCDC;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020;
+    --art-grey:linear-gradient(135deg,#9CA3AF,#374151);
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem; --s-20:5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-gallery); -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  .ttl { font-family:var(--font-display); font-weight:400; font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; line-height:1.1; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.625rem 1.125rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4375rem .875rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+
+  .tag { display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--v { background:var(--tint-info); color:var(--on-info); }
+  .tag--locked { background:var(--tint-live); color:var(--on-live); }
+  .tag--sys { background:var(--tint-warn); color:var(--on-warn); }
+  .tag--err { background:var(--tint-error); color:var(--on-error); }
+  .stage-badge { display:inline-flex; align-items:center; gap:.375rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:var(--tint-warn); color:var(--on-warn); }
+  .stage-badge.live { background:var(--tint-live); color:var(--on-live); }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .context-bar .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .context-bar .crumb .sep { color:var(--text-muted); } .context-bar .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+  .search input { width:100%; min-width:14rem; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.55rem .875rem; font:inherit; font-size:var(--text-base); }
+
+  .dcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+  .dcard > .eyebrow { display:block; margin-bottom:var(--s-4); }
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:block; margin-bottom:.45rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas-alt); border-radius:var(--r-2); padding:.7rem .875rem; font:inherit; font-size:var(--text-base); }
+  .hint { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.4rem; }
+  .dactions { display:flex; gap:var(--s-3); flex-wrap:wrap; margin-top:var(--s-5); padding-top:var(--s-5); border-top:1px solid var(--border-soft); }
+  .field { margin-bottom:var(--s-5); } .field:last-child { margin-bottom:0; }
+  .seg { display:inline-flex; border:1px solid var(--border-soft); border-radius:var(--r-pill); overflow:hidden; }
+  .seg button { padding:.3rem .7rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary); }
+  .seg button.on { background:var(--text-primary); color:#fff; }
+
+  /* field rows */
+  .frow { display:flex; align-items:center; gap:var(--s-3); padding:.7rem .875rem; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); flex-wrap:wrap; }
+  .frow .fk { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-sm); min-width:8rem; }
+  .frow .fmeta { font-size:var(--text-xs); color:var(--text-secondary); }
+  .frow .rt { margin-left:auto; display:flex; align-items:center; gap:var(--s-2); }
+  .frow.sys { background:var(--surface-canvas); border-color:var(--border-frame); }
+  .frow.bad { background:var(--tint-error); border-color:rgba(239,68,68,.35); }
+  .flist { display:flex; flex-direction:column; gap:var(--s-2); }
+  .add-chip { display:inline-flex; align-items:center; gap:.5rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); padding:.5rem 1rem; color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); }
+
+  .matrix { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .matrix th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); background:var(--surface-canvas-alt); }
+  .matrix td { padding:.7rem 1rem; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .matrix tr:last-child td { border-bottom:0; }
+  .matrix .k { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); }
+  .tablewrap { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); overflow:hidden; }
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); border-top:1px solid var(--border-soft); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; } .results-count strong { color:var(--text-primary); }
+
+  .note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .note .ic { flex:none; margin-top:.0625rem; }
+  .note--info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .note--info .ic { color:var(--stage-review); }
+  .note--ok { background:var(--tint-live); color:var(--on-live); } .note--ok .ic { color:var(--stage-live); }
+  .note--warn { background:var(--tint-warn); color:var(--on-warn); } .note--warn .ic { color:var(--stage-draft); }
+  .note--err { background:var(--tint-error); color:var(--on-error); } .note--err .ic { color:var(--notify-error); }
+  .note--muted { background:var(--surface-canvas-alt); color:var(--text-secondary); } .note--muted .ic { color:var(--text-muted); }
+  .note strong { color:inherit; }
+
+  .checkrow { display:flex; align-items:flex-start; gap:var(--s-3); padding:.75rem 0; border-bottom:1px solid var(--surface-canvas-deep); }
+  .checkrow:last-child { border-bottom:0; }
+  .checkrow .ic { flex:none; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; }
+  .checkrow.ok .ic { background:var(--tint-live); color:var(--on-live); }
+  .checkrow.fail .ic { background:var(--tint-error); color:var(--on-error); }
+  .checkrow .nm { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); }
+  .checkrow .ds { color:var(--text-secondary); font-size:var(--text-sm); margin-top:.125rem; }
+
+  .stage-wrap { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-10) var(--s-8); display:flex; justify-content:center; gap:var(--s-6); flex-wrap:wrap; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  .spec { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-8); }
+  .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .reftable { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .reftable th { text-align:left; font-size:var(--text-3xs); text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); padding:.6rem .75rem; border-bottom:1px solid var(--border-frame); }
+  .reftable td { padding:.6rem .75rem; border-bottom:1px solid var(--border-frame); vertical-align:top; }
+  .reftable tr:last-child td { border-bottom:0; }
+  .reftable .obj { font-family:var(--font-emphasis); font-weight:700; }
+  .codeblk { background:var(--surface-canvas); border:1px solid var(--border-frame); border-radius:var(--r-3); padding:var(--s-4); font-family:ui-monospace,Menlo,Consolas,monospace; font-size:var(--text-xs); line-height:1.7; overflow-x:auto; }
+  .ordsteps { counter-reset:st; display:flex; flex-direction:column; gap:var(--s-2); }
+  .ordstep { display:flex; gap:var(--s-3); align-items:flex-start; font-size:var(--text-sm); }
+  .ordstep .n { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); color:var(--text-muted); min-width:1.25rem; }
+  @media (max-width:760px){ .reftable .hide, .matrix .hide { display:none; } }
+
+  .gallery { max-width:1240px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:82ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); }
+  .newflag { display:inline-flex; align-items:center; gap:.375rem; padding:.3125rem var(--s-3); border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; text-transform:uppercase; background:var(--tint-live); color:var(--on-live); margin-top:var(--s-4); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:92ch; }
+  .frame-cap .new { display:inline-flex; align-items:center; padding:.125rem .5rem; border-radius:var(--r-pill); background:var(--tint-live); color:var(--on-live); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; }
+  .screen { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .showcase { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:var(--s-5); }
+  .sectlabel { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); margin-top:var(--s-12); color:var(--text-primary); border-top:2px solid var(--border-strong); padding-top:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Project · State policy</span>
+    <h1>State policy — states gallery</h1>
+    <p>The rulebook for <strong>token memory</strong>: what may change about a token after it is claimed, who may change it, and under what limits. A project-level resource, versioned, attached to many token definitions by batch, <strong>snapshot-copied at attach</strong> and <strong>locked when the token goes Live</strong>.</p>
+    <p><strong>Only the variant machine ships in this step.</strong> General fields, apps and crafting are later steps of the same model — the endpoint and the policy shape do not change to accommodate them, which is why this can ship without anticipating them.</p>
+    <p><strong>Frame 04 is extended and frames 09–11 are new.</strong> Attach, re-apply and detach are <strong>batch-only, at project level</strong> — the token's State tab is a read-only summary with no controls on it, because a policy is attached whole and never customised per token. Selecting one token in the batch tool is a valid batch of one.</p>
+    <div class="newflag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>01–08 unchanged except 04 · 09–11 new</div>
+    <div class="navlinks">Spec: <span class="mono">Phase2/Composition Template System/state-policy-design.md</span> §2 (attach · §2.1 incompatible attach · §2.2 detach), §11 (surfaces). Consumed by <span class="mono">token-variant-actions-spec.md</span> (<span class="mono">TVA8</span>, <span class="mono">TVA9</span>, <span class="mono">TVA11</span>). Companion: <a href="./variants-states-gallery-2026-09-14.html">Variants gallery</a>. Chrome follows <span class="mono">build-mocks/style-guide/page-shell.md</span>.</div>
+  </header>
+
+  <!-- 01 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">Policy library · project level</span><span class="d">Sits in the project library beside asset specs and attribute templates. Each policy is versioned; the list shows how many token definitions hold a snapshot of each version, and how many of those are locked because their token is <span class="mono">Live</span>.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Neon District</a><span class="sep">/</span><a>Templates</a><span class="sep">/</span><span class="here">State policies</span></div><div class="actions"><button class="btn btn--sm">+ New policy</button></div></div>
+      <div class="section">
+        <div class="section-head row">
+          <div><div class="eyebrow">Project · State policies</div><h2>State policies.</h2><p class="lede">Author once, attach to many token definitions. Editing a policy never changes a token that already holds a snapshot.</p></div>
+          <div class="search"><input placeholder="Search policies…" /></div>
+        </div>
+        <div class="tablewrap">
+          <table class="matrix">
+            <thead><tr><th>Policy</th><th>Version</th><th class="hide">Fields</th><th>Attached</th><th>State</th></tr></thead>
+            <tbody>
+              <tr><td><div class="ttl">Reveal only</div><div class="tiny">variant transitions, nothing else writable</div></td><td><span class="tag tag--v">v2</span></td><td class="hide tiny">variant</td><td>18 definitions · <strong>12 locked</strong></td><td><span class="stage-badge live"><span class="dot"></span>Published</span></td></tr>
+              <tr><td><div class="ttl">Garden pet</div><div class="tiny">variant + xp + hunger</div></td><td><span class="tag tag--v">v1</span></td><td class="hide tiny">variant · xp · hunger</td><td>0 definitions</td><td><span class="stage-badge"><span class="dot"></span>Draft</span></td></tr>
+            </tbody>
+          </table>
+          <div class="listbar"><span class="results-count">Showing <strong>2</strong> of <strong>2</strong> policies</span><span class="tiny">A version with a locked attachment cannot be deleted</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Policy editor · fields and their write rules</span><span class="d">Each field carries a type, default, visibility, <span class="mono">mutable_by</span>, write rules, transfer behaviour and marketplace display. <strong>Rolling limits are measured in hours</strong> — rolling N hours from each write, never calendar days, so there is no midnight reset and no timezone question. <strong>Cooldowns are per field only</strong>; there is no shared per-holding pool.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>State policies</a><span class="sep">/</span><span class="here">Garden pet</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Project · State policy</div><h2>Garden pet.</h2><p class="lede">Three fields. Only <span class="mono">variant</span> is required — the rest are this policy's own.</p></div>
+        <div class="dcard">
+          <span class="eyebrow">Fields</span>
+          <div class="flist">
+            <div class="frow sys"><span class="fk">variant</span><span class="fmeta">enum · system-defined</span><span class="rt"><span class="tag tag--sys">system</span><button class="btn btn--sm btn--ghost">Rules</button></span></div>
+            <div class="frow"><span class="fk">xp</span><span class="fmeta">number · default 0 · increase-only · max 999 · rolling limit 50 / 24h</span><span class="rt"><span class="tag">public</span><button class="btn btn--sm btn--ghost">Edit</button></span></div>
+            <div class="frow"><span class="fk">hunger</span><span class="fmeta">number · default 100 · cooldown 6h · marketplace-visible below 20</span><span class="rt"><span class="tag">public</span><button class="btn btn--sm btn--ghost">Edit</button></span></div>
+          </div>
+          <div style="margin-top:var(--s-4)"><button class="add-chip">+ Add a field</button></div>
+          <div class="dactions"><button class="btn">Publish v1</button><button class="btn btn--ghost">Save draft</button></div>
+        </div>
+        <div class="showcase">
+          <div class="dcard">
+            <span class="eyebrow">Field · xp</span>
+            <div class="field"><label class="flabel">Type</label><div class="seg"><button class="on">Number</button><button>Text</button><button>Boolean</button><button>Timestamp</button><button>Enum</button></div><p class="hint">Maps and lists come later. No unlimited blobs, ever.</p></div>
+            <div class="field"><label class="flabel">Write rules</label><div class="seg"><button class="on">Increase-only</button><button>Decrease-only</button><button>One-time</button><button>Append-only</button><button>Derived-only</button></div></div>
+            <div class="field"><label class="flabel">Rolling limit</label><input class="input" value="50 per rolling 24 hours" /><p class="hint">Measured from each write, not from midnight.</p></div>
+            <div class="field"><label class="flabel">Who may write</label><div class="seg"><button>Nobody</button><button class="on">Owner</button><button>Creator</button><button>Approved app</button><button>System</button></div><p class="hint">"Creator" means the project's administrative roles.</p></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Field · xp · continued</span>
+            <div class="field"><label class="flabel">Visibility</label><div class="seg"><button class="on">Public</button><button>Owner only</button><button>App only</button><button>Creator</button></div></div>
+            <div class="field"><label class="flabel">On transfer</label><div class="seg"><button class="on">Persist</button><button>Reset</button><button>Freeze</button><button>Pause</button></div><p class="hint">Owner-scoped app grants always clear on transfer, whatever this is set to.</p></div>
+            <div class="field"><label class="flabel">Marketplace display</label><input class="input" value="Show as “XP 240”" /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">The variant field · three things the author cannot change</span><span class="d"><span class="mono">variant</span> is a system-defined enum, not a policy invention. The policy decides whether it is transitionable, its cooldown, its rolling limit, its <span class="mono">mutable_by</span>, and which per-instance fields a transition may write. It does <strong>not</strong> get to decide the three rules below, and <strong>topology is not here at all</strong> — <span class="mono">from_variant</span> indexes that token's own list, so it lives on the token.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Garden pet</a><span class="sep">/</span><span class="here">Field · variant</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Project · State policy · field</div><h2>Variant.</h2><p class="lede">Transitionable, with a cooldown and a one-way setting. Everything else about it is fixed.</p></div>
+        <div class="showcase">
+          <div class="dcard">
+            <span class="eyebrow">What this policy sets</span>
+            <div class="field"><label class="flabel">Transitionable</label><div class="seg"><button class="on">Yes</button><button>No</button></div><p class="hint">Set to No and a token declaring transitions cannot go Live.</p></div>
+            <div class="field"><label class="flabel">One-way</label><div class="seg"><button>Yes</button><button class="on">No</button></div><p class="hint">One-way rejects a declared return path at authoring time.</p></div>
+            <div class="field"><label class="flabel">Cooldown</label><input class="input" value="None" /></div>
+            <div class="field"><label class="flabel">Writable outcome fields</label><input class="input" value="reveal_seed, revealed_at" /><p class="hint">One-time writes — immutable after the first success.</p></div>
+          </div>
+          <div class="dcard">
+            <span class="eyebrow">Fixed for this field</span>
+            <div class="flist">
+              <div class="frow sys"><span class="fk">On transfer</span><span class="fmeta">never resets — a revealed token stays what it became when sold</span><span class="rt"><span class="tag tag--locked">fixed</span></span></div>
+              <div class="frow sys"><span class="fk">Stack class</span><span class="fmeta">same-variant copies stack, whichever variant</span><span class="rt"><span class="tag tag--locked">fixed</span></span></div>
+              <div class="frow sys"><span class="fk">Rarity &amp; score</span><span class="fmeta">never affected — both are definition-level</span><span class="rt"><span class="tag tag--locked">fixed</span></span></div>
+            </div>
+            <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic">i</span><div>Declare which variant reaches which on the token's <strong>Variants</strong> tab. This page sets what is allowed to happen, not what does.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Batch attach · the four outcomes, previewed</span><span class="new">Extended</span><span class="d"><strong>Batch is the only authoring path</strong> — never one token at a time, and the token's State tab has no attach control on it. The diff lives here, and it reports <strong>all four outcomes at once</strong>: will attach · will re-apply · skipped because Live · blocked with a named reason. <strong>Live definitions are skipped, not failed</strong> — their snapshot is locked, and re-apply is <span class="mono">Draft</span>/<span class="mono">Review</span> only. <strong>A blocked token does not fail the batch</strong>: the compatible ones proceed and the blocked one is named (frame 09).</span></div>
+    <div class="stage-wrap">
+      <div class="modal-card">
+        <header><h4>Attach Reveal only · v2</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <p class="tiny" style="margin:0">Attaching to 7 selected token definitions in <strong>Paper Trail</strong>.</p>
+          <div class="flist">
+            <div class="frow"><span class="fk">#014 Relic</span><span class="fmeta">no policy → v2</span><span class="rt"><span class="tag tag--v">will attach</span></span></div>
+            <div class="frow"><span class="fk">#022 Wallet</span><span class="fmeta">v1 → v2</span><span class="rt"><span class="tag tag--v">will re-apply</span></span></div>
+            <div class="frow"><span class="fk">#031 Wallet</span><span class="fmeta">v2 already</span><span class="rt"><span class="tag">no change</span></span></div>
+            <div class="frow sys"><span class="fk">#042 Slab</span><span class="fmeta">Live — snapshot locked</span><span class="rt"><span class="tag tag--locked">skipped</span></span></div>
+            <div class="frow sys"><span class="fk">#051 Slab</span><span class="fmeta">Live — snapshot locked</span><span class="rt"><span class="tag tag--locked">skipped</span></span></div>
+            <div class="frow bad"><span class="fk">#077 Seedling</span><span class="fmeta">declares a return path · v2 sets <span class="mono">variant</span> one-way</span><span class="rt"><span class="tag tag--err">blocked</span></span></div>
+            <div class="frow"><span class="fk">#063 Relic</span><span class="fmeta">no policy → v2</span><span class="rt"><span class="tag tag--v">will attach</span></span></div>
+          </div>
+          <div class="note note--warn"><span class="ic">!</span><div><strong>Replacing v1 on #022</strong> changes what holders may do once it goes Live. It has no minted copies yet, so nothing existing is affected.</div></div>
+          <div class="note note--err"><span class="ic">✕</span><div><strong>#077 Seedling is blocked.</strong> See what conflicts before attaching — the other six are unaffected.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Attach to 3 · skip 2 · block 1</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Snapshot and lock · the three states a token's policy can be in</span><span class="d">A snapshot is an independent copy. The policy in the library and the snapshot on the token are separate objects from the moment of attach, which is what makes a library edit structurally unable to reach an already-sold copy. <strong>Every control shown here lives in the batch tool</strong> — the token's State tab displays this, it does not operate it.</span></div>
+    <div class="showcase">
+      <div class="dcard">
+        <span class="eyebrow">Token Draft · editable</span>
+        <div class="flist">
+          <div class="frow"><span class="fk">Snapshot</span><span class="fmeta">Reveal only v2</span><span class="rt"><span class="stage-badge"><span class="dot"></span>Draft</span></span></div>
+        </div>
+        <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic">i</span><div>Re-apply and detach are available — from the <strong>project batch tool</strong>, with this token selected. A batch of one is still a batch.</div></div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Token Review · editable, reverts to Draft</span>
+        <div class="flist">
+          <div class="frow"><span class="fk">Snapshot</span><span class="fmeta">Reveal only v2</span><span class="rt"><span class="stage-badge"><span class="dot"></span>Review</span></span></div>
+        </div>
+        <div class="note note--info" style="margin-top:var(--s-4)"><span class="ic">i</span><div>Changing the policy here returns the token to <strong>Draft</strong> first.</div></div>
+      </div>
+      <div class="dcard">
+        <span class="eyebrow">Token Live · locked</span>
+        <div class="flist">
+          <div class="frow sys"><span class="fk">Snapshot</span><span class="fmeta">Reveal only v2 — frozen at go-live</span><span class="rt"><span class="stage-badge live"><span class="dot"></span>Live</span></span></div>
+        </div>
+        <div class="note note--warn" style="margin-top:var(--s-4)"><span class="ic">!</span><div><strong>Locked.</strong> Library edits cannot reach this token, and it cannot be re-applied or detached. Holders keep exactly the rules this copy was sold under.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Go-Live gates · every failure is named</span><span class="d">Three of the gates come from this system. None reports a generic invalid flag, and the authoring UI disables transition controls when the attached policy forbids <span class="mono">variant</span> writes rather than letting an author build something that cannot ship.</span></div>
+    <div class="dcard">
+      <span class="eyebrow">Token · go-Live readiness</span>
+      <div class="checkrow ok"><span class="ic">✓</span><div><span class="nm">Policy attached</span><div class="ds">Reveal only v2 · snapshotted, ready to lock</div></div></div>
+      <div class="checkrow fail"><span class="ic">✕</span><div><span class="nm">Variant writes permitted</span><div class="ds">Token <span class="mono">#014</span> declares transitions, but its policy sets <span class="mono">variant</span> to not transitionable. Attach a policy that permits it, or clear the transitions</div></div></div>
+      <div class="checkrow fail"><span class="ic">✕</span><div><span class="nm">Policy endpoints in range</span><div class="ds">A transition names variant index <strong>7</strong>; this token has 4. Rejected at authoring, surfaced here as a reminder</div></div></div>
+      <div class="checkrow fail"><span class="ic">✕</span><div><span class="nm">Declared outcome fields exist</span><div class="ds">Target <span class="mono">opened</span> declares <span class="mono">reveal_seed</span>, which is not defined on this token. Writing the variant without its payload is an invalid end state, not a partial success</div></div></div>
+      <div class="checkrow ok"><span class="ic">✓</span><div><span class="nm">Listed holdings</span><div class="ds">None — a listed holding rejects all state writes</div></div></div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">One endpoint, six ordered checks</span><span class="d">Not a screen — the reference for the write path. Every state change goes through the same call, variant transitions included. Do not build a bespoke transition endpoint.</span></div>
+    <div class="spec">
+      <span class="speclabel">The update path · state-policy-design.md §5</span>
+      <div class="codeblk">update_token_state(<br>
+&nbsp;&nbsp;holding_id,<br>
+&nbsp;&nbsp;actor,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// owner principal | app_id | system<br>
+&nbsp;&nbsp;changes: [ { field, op, value } ],<br>
+&nbsp;&nbsp;reason,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// lands in the audit event<br>
+&nbsp;&nbsp;operation_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// idempotency key<br>
+)</div>
+      <div class="ordsteps" style="margin-top:var(--s-5)">
+        <div class="ordstep"><span class="n">1</span><span>Actor allowed on <strong>every</strong> touched field</span></div>
+        <div class="ordstep"><span class="n">2</span><span>Ops allowed for those fields</span></div>
+        <div class="ordstep"><span class="n">3</span><span>Limits, cooldowns and rolling windows respected</span></div>
+        <div class="ordstep"><span class="n">4</span><span>Holding eligible — owned, unlocked, <strong>not listed</strong>, Active — via the shared eligibility function</span></div>
+        <div class="ordstep"><span class="n">5</span><span>Apply <strong>atomically</strong></span></div>
+        <div class="ordstep"><span class="n">6</span><span>Emit <strong>one</strong> audit event: copy identity, quantity, every field delta, actor, reason</span></div>
+      </div>
+      <p class="hint" style="margin-top:var(--s-4)"><strong><span class="mono">actor</span> is a static principal</strong> — the Internet Identity principal, or a wallet principal such as Oisy. Never a delegation principal, so a holding's owner stays stable across sessions. <strong>App authorisation reuses Canic delegated-signature auth</strong>: an approved app is a delegated token whose scopes name the project, definitions, fields, ops and limits it may write. Do not build a new ACL store.</p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Outcome selection and build order</span><span class="d">Not a screen — the two reference tables a developer needs beside this. Only the first selection mode is in scope, and only step 1 of the build order ships now.</span></div>
+    <div class="spec">
+      <span class="speclabel">Outcome selection · §6</span>
+      <table class="reftable">
+        <thead><tr><th>Mode</th><th class="hide">Meaning</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="obj">Deterministic mapping</td><td class="hide">The target fixes the outcome; no choice, no roll</td><td><span class="tag tag--locked">V1</span></td></tr>
+          <tr><td class="obj">Owner-selected path</td><td class="hide">The holder picks from a creator-declared set</td><td><span class="tag">Deferred</span></td></tr>
+          <tr><td class="obj">Rule-based selection</td><td class="hide">An automation rule resolves it from project state</td><td><span class="tag">Deferred</span></td></tr>
+          <tr><td class="obj">Oracle / randomness</td><td class="hide">Resolved server-side at execution</td><td><span class="tag">Deferred</span></td></tr>
+        </tbody>
+      </table>
+      <p class="hint" style="margin-top:var(--s-3)">Owner-<em>selected</em> is not owner-<em>executed</em>. Every V1 transition is executed by the holder, but the outcome is fixed by the policy. Whichever mode: the selection is recorded in state, the outcome is immutable after first success, and variant plus outcome plus audit event land atomically.</p>
+      <span class="speclabel" style="margin-top:var(--s-8)">Build order · §12</span>
+      <table class="reftable">
+        <thead><tr><th>Step</th><th class="hide">Scope</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="obj">1 · The variant machine</td><td class="hide">variant as an enum field, per-field cooldowns and rolling limits, policy presets and batch attach, owner-executed transitions, the shared endpoint and its audit events</td><td><span class="tag tag--locked">This ship</span></td></tr>
+          <tr><td class="obj">2 · General fields</td><td class="hide">number · text · boolean · timestamp · enum, with write rules, transfer behaviours, marketplace visibility, freeze-while-listed</td><td><span class="tag">Next</span></td></tr>
+          <tr><td class="obj">3 · Apps and consumables</td><td class="hide">Delegated-auth app writers, charges, same-canister cross-token actions, derived triggers</td><td><span class="tag">Later</span></td></tr>
+          <tr><td class="obj">4 · Crafting and beyond</td><td class="hide">Burn-create recipes, cross-canister sagas, maps and lists, randomness</td><td><span class="tag">Later</span></td></tr>
+        </tbody>
+      </table>
+      <p class="hint" style="margin-top:var(--s-3)">Steps 2–4 only <em>extend</em> the field and action models. Neither the endpoint nor the policy shape changes for them, which is why step 1 ships without anticipating them. Progressive reveal is not a separate step — it is the narrowest policy step 1 can already express.</p>
+    </div>
+  </section>
+
+  <div class="sectlabel">Attach · detach · empty states</div>
+
+  <!-- 09 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Attach blocked · incompatible with declared transitions</span><span class="new">New</span><span class="d">Opened from the blocked row in frame 04. The attach is <strong>rejected</strong> — nothing is stripped and nothing is partially applied. The message names <strong>both</strong> the conflicting policy rule and the specific transitions that violate it, because the creator's next move is either to edit those transitions or pick a different policy, and both need to know which. The same incompatibility is refused at every entry point: editing topology against an attached policy, attaching a policy against existing topology, and the go-Live gate.</span></div>
+    <div class="stage-wrap">
+      <div class="modal-card">
+        <header><h4>Can't attach to #077 Seedling</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--err"><span class="ic">✕</span><div><strong><span class="mono">Reveal only v2</span> sets <span class="mono">variant</span> to one-way.</strong><div style="margin-top:.4rem">This token declares a return path, which a one-way policy cannot permit.</div></div></div>
+          <div>
+            <span class="flabel">The transitions that conflict</span>
+            <div class="flist">
+              <div class="frow bad"><span class="fk">Sprout</span><span class="fmeta">reached from <strong>Seedling</strong></span><span class="rt"><button class="btn btn--sm btn--ghost">Edit</button></span></div>
+              <div class="frow bad"><span class="fk">Seedling</span><span class="fmeta">reached from <strong>Sprout</strong> — the return path</span><span class="rt"><button class="btn btn--sm btn--ghost">Edit</button></span></div>
+            </div>
+          </div>
+          <p class="tiny" style="margin:0">Clear one direction, or attach a policy that leaves <span class="mono">variant</span> two-way. Nothing on this token has changed.</p>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Back to the batch</button><button class="btn">Choose another policy</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Detach · pre-Live only, and blocked where transitions depend on it</span><span class="new">New</span><span class="d">A policy detaches <strong>whole</strong> — there is no partial detach, because a policy is attached whole and never customised per token. Detaching beneath declared transitions would leave the token in exactly the state the go-Live gate exists to prevent, so it is refused on the same terms as an incompatible attach: report what depends on it, change nothing, and let the creator clear the transitions themselves if that is what they want. <span class="mono">Live</span> definitions are never detachable — the snapshot is frozen with everything else.</span></div>
+    <div class="stage-wrap">
+      <div class="modal-card">
+        <header><h4>Detach Reveal only · v2</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <p class="tiny" style="margin:0">Detaching from 4 selected token definitions in <strong>Paper Trail</strong>.</p>
+          <div class="flist">
+            <div class="frow"><span class="fk">#031 Wallet</span><span class="fmeta">no transitions declared</span><span class="rt"><span class="tag tag--v">will detach</span></span></div>
+            <div class="frow"><span class="fk">#063 Relic</span><span class="fmeta">no transitions declared</span><span class="rt"><span class="tag tag--v">will detach</span></span></div>
+            <div class="frow bad"><span class="fk">#014 Relic</span><span class="fmeta">3 transitions depend on it</span><span class="rt"><span class="tag tag--err">blocked</span></span></div>
+            <div class="frow sys"><span class="fk">#042 Slab</span><span class="fmeta">Live — snapshot locked</span><span class="rt"><span class="tag tag--locked">skipped</span></span></div>
+          </div>
+          <div class="note note--warn"><span class="ic">!</span><div><strong>#014 Relic keeps its policy.</strong> <span class="mono">Forge</span>, <span class="mono">Awaken</span> and <span class="mono">Ascend</span> all write <span class="mono">variant</span>, and with no policy attached none of them could run. Clear those transitions first if you want the policy gone.</div></div>
+          <div class="note note--muted"><span class="ic">i</span><div>A token with no policy attached is a valid state — it simply cannot transition. That is why detaching from a token with no transitions is unremarkable, and detaching from one with them is not.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Cancel</button><button class="btn">Detach from 2 · skip 1 · block 1</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">11</span><span class="t">Nothing to attach yet · two different empty states</span><span class="new">New</span><span class="d">These answer different questions and must not be merged. Left: the project has no state policies at all. Right: a policy exists but has never been published — a <span class="mono">Draft</span> template is never appliable, so "nothing here" would actively mislead someone who has just authored one and is looking for it. Both link to the project Templates library, which is also where the library's own empty state points back <em>from</em>.</span></div>
+    <div class="stage-wrap">
+      <div class="modal-card">
+        <header><h4>Attach a state policy</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--muted"><span class="ic">i</span><div><strong>This project doesn't have any state policies.</strong><div style="margin-top:.4rem">A state policy decides what can change about a token after it is claimed — and a token needs one before any variant transition can run. You can author one in the project's Templates library.</div></div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn">Go to Templates</button></div>
+      </div>
+      <div class="modal-card">
+        <header><h4>Attach a state policy</h4><span class="x">✕</span></header>
+        <div class="mbody">
+          <div class="note note--warn"><span class="ic">!</span><div><strong>Garden pet hasn't been published yet.</strong><div style="margin-top:.4rem">Only published versions can be attached — a draft is still being edited, and a half-authored policy must never reach a token. Publish v1 in the Templates library and it will appear here.</div></div></div>
+          <div class="flist">
+            <div class="frow"><span class="fk">Garden pet</span><span class="fmeta">v1 · working copy</span><span class="rt"><span class="stage-badge"><span class="dot"></span>Draft</span></span></div>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--ghost">Close</button><button class="btn">Go to Templates</button></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
