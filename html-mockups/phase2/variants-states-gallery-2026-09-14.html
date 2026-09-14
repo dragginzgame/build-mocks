@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="../../site-nav.js"></script>
+<title>Toko — Variants · states gallery</title>
+<style>
+  @font-face { font-family: "Anton"; src: url("../../fonts/Anton-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "Mona Sans"; src: url("../../fonts/Mona-Sans-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+  :root {
+    --surface-page:#EAEAEA; --surface-canvas:#FFFFFF; --surface-canvas-alt:#FAFAFA; --surface-canvas-deep:#F2F2F2;
+    --text-primary:#1D1D1D; --text-secondary:#6B6B6B; --text-muted:#A0A0A0; --text-inverse:#FFFFFF;
+    --border-soft:#E5E5E5; --border-strong:#1D1D1D; --border-frame:#CFCFCF;
+    --notify-error:#EF4444; --notify-warn:#F59E0B; --info:#2563EB; --brand-cyan:#06B0E6;
+    --stage-draft:#F59E0B; --stage-review:#6366F1; --stage-live:#10B981;
+    --surface-gallery:#DCDCDC;
+    --tint-info:rgba(37,99,235,.12); --tint-live:rgba(16,185,129,.14); --tint-warn:rgba(245,158,11,.14); --tint-error:rgba(239,68,68,.10);
+    --on-info:#1D4ED8; --on-live:#0A6B4F; --on-warn:#92580B; --on-error:#8A2020;
+    --art-grey:linear-gradient(135deg,#9CA3AF,#374151);
+    --art-amber:linear-gradient(135deg,#FBBF24,#B45309);
+    --art-mint:linear-gradient(135deg,#6EE7B7,#1E3A8A);
+    --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.25rem; --s-6:1.5rem; --s-8:2rem; --s-10:2.5rem; --s-12:3rem; --s-20:5rem;
+    --r-1:4px; --r-2:8px; --r-3:12px; --r-4:16px; --r-pill:9999px;
+    --text-3xs:.625rem; --text-2xs:.6875rem; --text-xs:.75rem; --text-sm:.8125rem; --text-base:.875rem; --text-md:.9375rem; --text-lg:1rem; --text-xl:1.125rem; --text-2xl:1.375rem; --text-3xl:2rem; --text-4xl:2.5rem;
+    --font-display:"Anton","Mona Sans",system-ui,sans-serif; --font-emphasis:"Mona Sans","Anton",system-ui,sans-serif; --font-body:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { font-size:100%; } html, body { margin:0; }
+  body { font-family:var(--font-body); font-size:var(--text-md); line-height:1.5; color:var(--text-primary); background:var(--surface-gallery); -webkit-font-smoothing:antialiased; }
+  button { font:inherit; cursor:pointer; border:0; background:transparent; color:inherit; }
+  a { color:inherit; text-decoration:none; } img { max-width:100%; display:block; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:.02em; text-transform:uppercase; line-height:1.05; }
+  /* the one card/panel/node title rule — see style-guide/page-shell.md "Casing".
+     Anton never drops below --text-lg (16px); smaller labels stay in Mona Sans. */
+  .ttl, .var-row .vname, .itable .nm, .vcard .vnm { font-family:var(--font-display); font-weight:400; font-size:var(--text-lg); text-transform:uppercase; letter-spacing:.02em; line-height:1.1; }
+  .eyebrow { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); }
+  .tiny { font-size:var(--text-xs); color:var(--text-secondary); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.625rem 1.125rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; letter-spacing:.04em; font-size:var(--text-sm); border:1px solid transparent; background:var(--text-primary); color:#fff; white-space:nowrap; }
+  .btn--primary { background:var(--text-primary); color:#fff; }
+  .btn--ghost { background:transparent; color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--secondary { background:var(--surface-canvas); color:var(--text-primary); border-color:var(--border-soft); }
+  .btn--sm { padding:.4375rem .875rem; font-size:var(--text-xs); }
+  .btn[disabled] { background:var(--surface-canvas-alt); color:var(--text-muted); border-color:var(--border-soft); cursor:not-allowed; }
+
+  .tag { display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--default { background:var(--tint-info); color:var(--on-info); }
+  .tag--live { background:var(--tint-live); color:var(--on-live); }
+  .tag--amber { background:var(--tint-warn); color:var(--stage-draft); }
+  /* provenance — the three states a variant can be in once profiles exist (frame 15) */
+  .tag--from { background:var(--surface-canvas-deep); color:var(--text-secondary); }
+  .tag--drift { background:var(--tint-warn); color:var(--on-warn); }
+  .tag--local { background:var(--tint-info); color:var(--on-info); }
+  .stage-badge { display:inline-flex; align-items:center; gap:.375rem; padding:.1875rem .625rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; background:var(--tint-warn); color:var(--on-warn); }
+  .stage-badge.live { background:var(--tint-live); color:var(--on-live); }
+  .stage-badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  .context-bar { background:var(--surface-canvas); border-bottom:1px solid var(--border-soft); padding:var(--s-4) var(--s-8); display:flex; align-items:center; gap:var(--s-4); flex-wrap:wrap; }
+  .crumb { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; font-size:var(--text-sm); color:var(--text-secondary); }
+  .crumb .sep { color:var(--text-muted); } .crumb .here { color:var(--text-primary); font-weight:700; font-family:var(--font-emphasis); }
+  .context-bar .actions { margin-left:auto; }
+
+  .section { padding:var(--s-8); display:flex; flex-direction:column; gap:var(--s-6); }
+  .section-head h2 { font-size:var(--text-4xl); } .section-head .lede { color:var(--text-secondary); margin-top:.5rem; font-size:var(--text-base); }
+  .section-head.row { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s-4); flex-wrap:wrap; }
+
+  .flabel { font-family:var(--font-emphasis); font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); font-weight:700; display:inline-flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem; font-family:var(--font-body); font-size:var(--text-base); color:var(--text-primary); }
+  select.input, textarea.input { background:var(--surface-canvas); }
+  textarea.input { resize:vertical; min-height:64px; line-height:1.45; }
+  .hint { font-size:var(--text-xs); color:var(--text-muted); margin-top:.375rem; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-5); }
+  @media (max-width:640px){ .grid2 { grid-template-columns:1fr; } }
+  .row { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+
+  .seg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-pill); padding:var(--s-1); flex-wrap:nowrap; max-width:100%; }
+  .seg button { border:0; background:transparent; padding:.45rem .9rem; border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; color:var(--text-secondary); white-space:nowrap; }
+  .seg button.active { background:var(--text-primary); color:#fff; }
+  .seg--full { display:flex; width:100%; }
+  .seg--full button { flex:1 1 0; text-align:center; white-space:nowrap; }
+
+  /* style-guide image picker — two equal square tiles (Upload / Media library) */
+  .imgpick { display:flex; gap:var(--s-4); flex-wrap:wrap; align-items:flex-start; }
+  .imgpick .tile { aspect-ratio:1/1; width:150px; border:1.5px dashed var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.375rem; color:var(--text-secondary); }
+  .imgpick .tile strong { color:var(--text-primary); font-size:var(--text-sm); }
+  .imgpick .tile span { font-size:var(--text-xs); }
+  .imgpick .tile svg { width:22px; height:22px; }
+
+  .info-note { border-radius:var(--r-3); padding:var(--s-4) var(--s-5); display:flex; gap:var(--s-3); font-size:var(--text-sm); line-height:1.5; align-items:flex-start; }
+  .info-note .ic { flex:none; margin-top:.0625rem; } .info-note svg { width:18px; height:18px; }
+  .n-info { background:rgba(99,102,241,.08); color:var(--text-secondary); } .n-info .ic { color:var(--stage-review); }
+  .n-warn { background:var(--tint-warn); color:var(--on-warn); } .n-warn .ic { color:var(--stage-draft); }
+  .n-error { background:var(--tint-error); color:var(--on-error); } .n-error .ic { color:var(--notify-error); }
+  .n-muted { background:var(--surface-canvas-alt); color:var(--text-secondary); } .n-muted .ic { color:var(--text-muted); }
+
+  /* variant list (token editor) */
+  .var-list { display:flex; flex-direction:column; gap:.5rem; }
+  .var-row { display:flex; align-items:center; gap:var(--s-4); padding:.7rem var(--s-4); border:1px solid var(--border-soft); border-radius:var(--r-3); background:var(--surface-canvas); }
+  .var-row.def { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .var-row .vthumb { width:48px; height:48px; border-radius:var(--r-2); flex:none; background:var(--art-grey); }
+  .var-row .vthumb--2 { background:var(--art-mint); }
+  .var-row .vthumb--3 { background:var(--art-amber); }
+  .var-row .vsub { font-size:var(--text-xs); color:var(--text-secondary); margin-top:.0625rem; }
+  .var-row .vacts { margin-left:auto; display:inline-flex; gap:.35rem; align-items:center; }
+  .icon-btn { width:32px; height:32px; border-radius:var(--r-2); border:1px solid var(--border-soft); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); background:var(--surface-canvas); }
+  .icon-btn:hover { border-color:var(--text-primary); color:var(--text-primary); }
+  .icon-btn svg { width:15px; height:15px; }
+  .icon-btn[disabled] { opacity:.4; cursor:not-allowed; }
+  .add-chip { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem 1.1rem; border:1.5px dashed var(--border-soft); border-radius:var(--r-pill); color:var(--text-muted); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); background:transparent; margin-top:var(--s-4); }
+  .add-chip svg { width:14px; height:14px; }
+
+  /* read-only chain/branch preview (derived, not authored directly) */
+  .chain { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .chain-branch { display:flex; align-items:flex-start; gap:var(--s-3); flex-wrap:wrap; }
+  .chain-branch .stem { display:flex; flex-direction:column; gap:var(--s-3); }
+  /* compact graph node: too small for Anton, so it stays in Mona Sans (page-shell.md "Display type") */
+  .gnode { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .85rem; border:1px solid var(--border-soft); border-radius:var(--r-pill); background:var(--surface-canvas); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; }
+  .gnode.def { border-color:var(--border-strong); box-shadow:0 0 0 1px var(--border-strong); }
+  .gedge { display:inline-flex; align-items:center; gap:.4rem; }
+  .gedge .arrow { color:var(--text-muted); flex:none; } .gedge .arrow svg { width:18px; height:18px; display:block; }
+  .gedge .elabel { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .gedge .elabel .tname { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.04em; text-transform:uppercase; color:var(--text-secondary); }
+  .gedge .elabel .rev-ic { color:var(--stage-review); flex:none; display:inline-flex; }
+  .gedge .elabel .rev-ic svg { width:12px; height:12px; display:block; }
+
+  /* inventory-style table */
+  .itable { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .itable th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); padding:0 var(--s-3) var(--s-3); border-bottom:1px solid var(--border-soft); }
+  .itable td { padding:var(--s-3); border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  .itable tr:last-child td { border-bottom:0; }
+  .itable .art { width:34px; height:34px; border-radius:var(--r-2); background:var(--art-grey); flex:none; }
+  .itable .cell { display:flex; align-items:center; gap:.6rem; }
+
+  /* collection-level page shell with tabs */
+  .ctabs { display:flex; gap:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .ctabs button { border:0; background:0; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-base); color:var(--text-secondary); padding:.5rem 0; border-bottom:3px solid transparent; }
+  .ctabs button.active { color:var(--text-primary); border-color:var(--text-primary); }
+
+  /* variants browse: controls, filter rail, card grid, list view, pagination */
+  .controls { display:flex; align-items:center; gap:var(--s-3); flex-wrap:wrap; }
+  .search { position:relative; flex:1; min-width:200px; }
+  .search svg { position:absolute; left:.7rem; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-muted); }
+  .search input { width:100%; border:1px solid var(--border-soft); background:var(--surface-canvas); border-radius:var(--r-2); padding:.625rem .875rem .625rem 2.1rem; font:inherit; font-size:var(--text-base); }
+  .viewseg { display:inline-flex; background:var(--surface-canvas-alt); border:1px solid var(--border-soft); border-radius:var(--r-2); padding:.1875rem; flex:none; }
+  .viewseg button { border:0; background:transparent; width:34px; height:30px; border-radius:var(--r-1); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .viewseg button.active { background:var(--surface-canvas); color:var(--text-primary); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .viewseg svg { width:16px; height:16px; }
+  .browse { display:grid; grid-template-columns:220px 1fr; gap:var(--s-6); align-items:start; }
+  @media (max-width:820px){ .browse { grid-template-columns:1fr; } .frail { display:none; } }
+  .frail { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-4) var(--s-5); }
+  .fgroup { border-top:1px solid var(--border-soft); padding:var(--s-4) 0; } .fgroup:first-child { border-top:0; padding-top:0; }
+  .fgroup h4 { font-size:var(--text-base); margin-bottom:.6rem; }
+  .chk { display:flex; align-items:center; gap:.5rem; font-size:var(--text-sm); padding:.25rem 0; color:var(--text-secondary); }
+  .chk input { accent-color:var(--text-primary); } .chk .n { margin-left:auto; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+  .vgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:var(--s-4); }
+  .vcard { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-3); overflow:hidden; }
+  .vcard .vart { aspect-ratio:1/1; background:var(--art-grey); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-size:var(--text-lg); letter-spacing:.03em; text-transform:uppercase; text-align:center; padding:var(--s-3); }
+  .vcard .vart--2 { background:var(--art-mint); }
+  .vcard .vart--3 { background:var(--art-amber); }
+  .vcard .vbody { padding:var(--s-3) var(--s-3) var(--s-4); display:flex; flex-direction:column; gap:.1875rem; }
+  .vcard .vparent { font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .vcard .vstatus { margin-top:var(--s-1); }
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:var(--s-4); padding:var(--s-4) var(--s-5); background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); flex-wrap:wrap; }
+  .results-count { font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; } .results-count strong { color:var(--text-primary); }
+  .pg { display:inline-flex; align-items:center; gap:var(--s-1); }
+  .pg button { min-width:36px; height:36px; padding:0 .5rem; border:0; background:transparent; border-radius:var(--r-2); font:inherit; font-weight:500; color:var(--text-secondary); }
+  .pg button[aria-current="page"] { background:var(--text-primary); color:#fff; font-weight:700; } .pg button:disabled { color:var(--text-muted); opacity:.45; } .pg .gap { min-width:22px; text-align:center; color:var(--text-muted); }
+  .perpage { display:inline-flex; align-items:center; gap:var(--s-2); font-size:var(--text-xs); color:var(--text-secondary); } .perpage select { height:34px; border:1px solid var(--border-soft); border-radius:var(--r-2); background:var(--surface-canvas-alt); font:inherit; padding:0 .5rem; }
+
+  .stage { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-8); display:flex; justify-content:center; gap:var(--s-6); flex-wrap:wrap; }
+  .modal-card { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); width:100%; max-width:460px; overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,.3); }
+  .modal-card.wide { max-width:620px; }
+  .modal-card header { display:flex; align-items:center; justify-content:space-between; padding:var(--s-5); border-bottom:1px solid var(--border-soft); }
+  .modal-card header h4 { font-size:var(--text-xl); display:flex; align-items:center; gap:var(--s-3); }
+  .modal-card header .x { width:28px; height:28px; border-radius:50%; background:var(--surface-canvas-alt); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; flex:none; font-size:var(--text-sm); }
+  .modal-card .mbody { padding:var(--s-5); display:flex; flex-direction:column; gap:var(--s-4); }
+  .modal-card .footer-row { display:flex; justify-content:flex-end; gap:var(--s-3); padding:var(--s-5); border-top:1px solid var(--border-soft); }
+
+  /* spec / dev reference (grey) */
+  .spec { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); padding:var(--s-8); }
+  .spec .speclabel { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:var(--s-4); }
+  .rulegrid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6); }
+  @media (max-width:860px){ .rulegrid { grid-template-columns:1fr; } }
+  .rulegrid .rule { border-left:3px solid var(--brand-cyan); padding-left:var(--s-4); }
+  .rulegrid .rule h5 { margin:0 0 .3rem; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); }
+  .rulegrid .rule p { margin:0; font-size:var(--text-sm); color:var(--text-secondary); }
+  /* grey reference table — sits beside the feature it documents, never a white card (page-shell.md) */
+  .reftable { width:100%; border-collapse:collapse; font-size:var(--text-sm); }
+  .reftable th { text-align:left; font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-2xs); letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); padding:0 var(--s-3) var(--s-3); border-bottom:1px solid var(--border-frame); }
+  .reftable td { padding:var(--s-3); border-bottom:1px solid var(--border-frame); vertical-align:top; color:var(--text-secondary); }
+  .reftable tr:last-child td { border-bottom:0; }
+  .reftable td strong { color:var(--text-primary); }
+
+  .panel { background:var(--surface-canvas); border:1px solid var(--border-soft); border-radius:var(--r-4); padding:var(--s-6); }
+
+  .gallery { max-width:1200px; margin:0 auto; padding:var(--s-10) var(--s-6) var(--s-20); }
+  .gallery > header .eyebrow { color:var(--text-secondary); }
+  .gallery > header h1 { font-size:2.75rem; margin-top:.4rem; }
+  .gallery > header p { color:var(--text-secondary); max-width:82ch; margin-top:var(--s-3); }
+  .gallery > header .navlinks { margin-top:var(--s-4); font-size:var(--text-sm); color:var(--text-secondary); } .gallery > header .navlinks .mono { font-size:.85em; }
+  .draftflag { display:inline-flex; align-items:center; gap:.375rem; padding:.3125rem var(--s-3); border-radius:var(--r-pill); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-xs); letter-spacing:.04em; text-transform:uppercase; background:var(--tint-warn); color:var(--on-warn); margin-top:var(--s-4); }
+  .newflag { background:var(--tint-live); color:var(--on-live); }
+  .frame { margin-top:var(--s-10); }
+  .frame-cap { display:flex; align-items:baseline; gap:var(--s-3); margin-bottom:var(--s-3); flex-wrap:wrap; }
+  .frame-cap .num { font-family:var(--font-display); font-size:var(--text-xl); color:var(--text-muted); }
+  .frame-cap .t { font-family:var(--font-emphasis); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:var(--text-base); }
+  .frame-cap .d { color:var(--text-secondary); font-size:var(--text-sm); max-width:94ch; }
+  .frame-cap .new { display:inline-flex; align-items:center; padding:.125rem .5rem; border-radius:var(--r-pill); background:var(--tint-live); color:var(--on-live); font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-3xs); letter-spacing:.08em; text-transform:uppercase; }
+  .screen { background:var(--surface-page); border:1px solid var(--border-frame); border-radius:var(--r-4); overflow:hidden; box-shadow:0 8px 30px -16px rgba(0,0,0,.18); }
+  .sectlabel { font-family:var(--font-display); text-transform:uppercase; letter-spacing:.02em; font-size:var(--text-2xl); margin-top:var(--s-12); color:var(--text-primary); border-top:2px solid var(--border-strong); padding-top:var(--s-5); }
+  /* canonical public/wallet token card (style guide · Public anatomy) */
+  .rarity-frame { display:block; position:relative; padding:var(--s-2); border-radius:14px; background:var(--border-soft); text-align:left; max-width:260px; }
+  .tok-card { background:#fff; border:0; border-radius:8px; overflow:hidden; display:flex; flex-direction:column; }
+  .tok-card .cart { display:flex; align-items:center; justify-content:center; aspect-ratio:1/1; position:relative; background:var(--art-grey); color:#fff; font-family:var(--font-display); font-size:var(--text-2xl); letter-spacing:.04em; text-transform:uppercase; }
+  .tok-card .cart--2 { background:var(--art-mint); }
+  .tok-card .cart--3 { background:var(--art-amber); }
+  .tok-card .meta { padding:var(--s-3) var(--s-4) 0; display:grid; gap:var(--s-1); }
+  .tok-card .col { font-size:var(--text-3xs); letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); font-weight:700; font-family:var(--font-emphasis); }
+  .tok-card .top { display:flex; align-items:center; justify-content:space-between; gap:var(--s-2); }
+  .tok-card .name { font-family:var(--font-display); font-size:var(--text-xl); letter-spacing:.04em; text-transform:uppercase; margin:0; }
+  .tok-card .issue { font-family:var(--font-emphasis); font-weight:700; font-size:var(--text-sm); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .tok-card .meta-row .val-soft { font-size:var(--text-sm); color:var(--text-secondary); font-style:italic; }
+  .tok-card .cacts { display:flex; gap:var(--s-2); padding:var(--s-3) var(--s-4) var(--s-4); flex-wrap:wrap; }
+  .hgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,300px)); gap:var(--s-5); }
+</style>
+</head>
+<body>
+<div class="gallery">
+  <header>
+    <span class="eyebrow">Tokens · Variants</span>
+    <h1>Variants — states gallery</h1>
+    <p>Two collection-level surfaces: <strong>Variants</strong> — every variant across every token in the collection, browsable the same way tokens are (card grid or list, filters, pagination) — and <strong>Actions</strong> — the optional, reusable action-template library. The transition itself — which variant a holding is reached from, and what triggers the change — is configured per token, on the variant's own edit panel; it is not a separate graph-building page. A transition can use a shared, reusable template (when more than one token follows the same path with the same asset) or a one-off definition just for that variant — templates are a convenience, not a requirement.</p>
+    <p><strong>Frames 15–20 are new.</strong> They cover <strong>variant profiles</strong> — a named, versioned, project-level variant <em>set</em> that can be applied to many tokens at once. A profile carries the set and never the topology, so applying one seeds the list and the author still declares each transition per token. Applying is <strong>append-only</strong>, and a variant edited locally afterwards stops belonging to the profile.</p>
+    <div class="draftflag newflag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Frames 01–14 unchanged · 15–20 new</div>
+    <div class="navlinks">Source: <span class="mono">Phase2/Composition Template System/token-contract-system-spec.md</span> §4A (variant profiles) · <span class="mono">token-variant-actions-spec.md</span> (transitions, <span class="mono">TVA1</span>–<span class="mono">TVA11</span>) · <span class="mono">state-policy-design.md</span> — all ratified. Extends <span class="mono">Phase1/token-system-design.md</span> (the variant data model, <span class="mono">T1</span>–<span class="mono">T9</span>). Related: <a href="../token-draft-states-gallery-2026-06-29.html">Token draft</a> · <a href="../my-tokens-states-gallery-2026-06-22.html">My Tokens</a> · <a href="../navigation-states-gallery-2026-06-19.html">Collection nav</a>.</div>
+  </header>
+
+  <div class="sectlabel">Setup · creator, on the token itself</div>
+
+  <!-- 01 · model -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">01</span><span class="t">What a variant is</span><span class="d">Developer reference — not a screen. The model in four rules; every frame below follows them.</span></div>
+    <div class="spec">
+      <span class="speclabel">The model</span>
+      <div class="rulegrid">
+        <div class="rule"><h5>A variant = a different version of the same token</h5><p>It has a different <strong>name</strong> and a different <strong>asset</strong>. Everything else about the token stays the same.</p></div>
+        <div class="rule"><h5>The Original Token is always the default variant</h5><p>The token's name and main asset are the <strong>Original Token</strong> — the default variant. There is never a time when the default isn't set, and <strong>only the default variant can be minted</strong>.</p></div>
+        <div class="rule"><h5>Every other variant declares its own transition</h5><p>On the token itself, each variant's own edit panel says which variant it's <strong>reached from</strong> and what <strong>triggers</strong> the change — a shared, reusable action template, or a one-off action defined just for it. There's no separate graph-building page; the resulting chain or branch is just a preview, derived from what each variant declares.</p></div>
+        <div class="rule"><h5>Coming later (not in the launch candidate)</h5><p>A future version will let an action <strong>require a payment or the burning of another token</strong> before it runs. Recorded in the design docs; not built for launch.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · token supply · stack behaviour is independent of variants -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">02</span><span class="t">Token · Supply — stack behaviour</span><span class="d">Stack behaviour (<strong>Allow stacking</strong> / <strong>Always individual</strong>) is a per-token setting, and it does not gate variants — variants are available either way. With stacking on, each variant is its own separate stack; with it off, the variant just labels each individual copy. Locks when the token goes Live.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Collection: Paper Trail</a><span class="sep">/</span><a>Dollar Wallet</a><span class="sep">/</span><span class="here">Token supply</span></div><div class="actions"><span class="stage-badge"><span class="dot"></span>Draft</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Token · Supply</div><h2>Token supply.</h2><p class="lede">Per-token supply and stack behaviour. Variants (Variants tab) are available in either mode below.</p></div>
+        <div class="panel" style="max-width:640px">
+          <div class="row" style="justify-content:space-between"><div><label class="flabel" style="margin:0">Stack behaviour</label><div class="tiny" style="margin-top:.3rem">For stackable tokens, each variant stacks separately. For always-individual tokens, the variant just labels each copy. Locks when this token goes Live.</div></div><div class="seg"><button>Always individual</button><button class="active">Allow stacking</button></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · variants tab · no variants -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">03</span><span class="t">Token · Variants tab — no variants yet</span><span class="d">A tab on the token editor, so a creator who isn't using variants never sees the options. The tab opens with a plain explanation, shows the Original Token as the default, and — if there are no other variants — a short message and one button.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit token · Variants <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="seg"><button>Details</button><button>Token supply</button><button>Attributes</button><button>Rarity</button><button class="active">Variants</button><button>Assets</button></div>
+          <div class="info-note n-info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>Variants are different versions of this token with a different name and asset. Each one you add here says which variant it's reached from and what triggers the change.</div></div>
+          <div>
+            <label class="flabel">Variants</label>
+            <div class="var-list">
+              <div class="var-row def"><span class="vthumb"></span><div><div class="vname">Dollar Wallet</div><div class="vsub">Original Token · the default · the only one that mints</div></div><span class="vacts"><span class="tag tag--default">Default</span></span></div>
+            </div>
+            <div class="info-note n-muted" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>This token does not have any variants. If you do not wish to add any, there is nothing more to do here.</div></div>
+            <button class="add-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add variant</button>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · add variant -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">04</span><span class="t">Add a variant</span><span class="d">Adding a variant needs just an asset and a name — enough to create it. Its transition (how it's reached, what triggers it) is set up straight after, from Edit (frame 06), so a variant is never left half-configured for more than a moment.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Add variant</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div><label class="flabel">Variant asset</label><div class="imgpick"><button class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><strong>Upload</strong><span>Drop or browse</span></button><button class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><strong>Media library</strong><span>Pick existing</span></button></div></div>
+          <div><label class="flabel">Variant name</label><input class="input" placeholder="e.g. Opened Wallet"></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Add variant</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · variants tab · with variants + preview -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">05</span><span class="t">Token · Variants tab — with variants</span><span class="d">Each row shows its asset, name, and — once configured — a plain summary of its transition ("Reached via Gild · from Original Token"). A variant added but not yet wired up reads "Not yet reachable." Below the list, a read-only <strong>preview</strong> of the resulting chain or branch — it's derived from what each variant declares, not authored here directly.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit token · Variants <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="seg"><button>Details</button><button>Token supply</button><button>Attributes</button><button>Rarity</button><button class="active">Variants</button><button>Assets</button></div>
+          <div>
+            <label class="flabel">Variants</label>
+            <div class="var-list">
+              <div class="var-row def"><span class="vthumb"></span><div><div class="vname">Dollar Wallet</div><div class="vsub">Original Token · the default · the only one that mints</div></div><span class="vacts"><span class="tag tag--default">Default</span></span></div>
+              <div class="var-row"><span class="vthumb vthumb--2"></span><div><div class="vname">Opened Wallet</div><div class="vsub">Reached via <strong>Open</strong> · from Original Token</div></div><span class="vacts"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+              <div class="var-row"><span class="vthumb vthumb--3"></span><div><div class="vname">Golden Wallet</div><div class="vsub">Reached via <strong>Gild</strong> · from Original Token — and <strong>Un-gild</strong> declared back to it</div></div><span class="vacts"><span class="tag tag--default" style="background:var(--tint-live);color:var(--on-live)">2-way</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+            </div>
+            <button class="add-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add variant</button>
+          </div>
+          <div>
+            <label class="flabel">Preview</label>
+            <div class="panel" style="padding:var(--s-5)">
+              <div class="chain-branch">
+                <span class="gnode def">Original Token</span>
+                <div class="stem">
+                  <div class="chain"><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Open</span></span></span><span class="gnode">Opened Wallet</span></div>
+                  <div class="chain"><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Gild</span><span class="rev-ic" title="Two-way — a return transition is declared"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v1a4 4 0 0 1-4 4H3"/></svg></span></span></span><span class="gnode">Golden Wallet</span></div>
+                </div>
+              </div>
+              <div class="hint" style="margin-top:.6rem"><span class="rev-ic" style="vertical-align:-2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="width:12px;height:12px;display:inline-block"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.6v-1a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.4v1a4 4 0 0 1-4 4H3"/></svg></span> two-way — because <strong>Original Token</strong> also declares an incoming transition (<strong>Un-gild</strong>) from Golden Wallet. There is no reversible flag; a return path is a second declared transition, and cycles are legal.</div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · edit variant (major) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06</span><span class="t">Edit a variant — name, asset, and its transition</span><span class="d">This is where a variant is actually configured: its <strong>asset</strong> and <strong>name</strong>, and its <strong>transition</strong> — the variant it's reached <strong>from</strong>, and what <strong>triggers</strong> the change into it. Triggering can reuse a shared <strong>action template</strong> (when other tokens follow the same path with the same asset) or be defined as a <strong>one-off</strong> just for this variant — templates are optional. A variant may declare <strong>more than one</strong> incoming transition, and <strong>the Original Token / default may declare them too</strong> — which is how a return path and a full cycle are expressed. (The default is edited from the token's Details &amp; Assets tabs, like any token — it has no transition of its own to configure.)</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit variant · Golden Wallet</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="grid2">
+            <div><label class="flabel">Current asset</label><span style="display:block;width:120px;height:120px;border-radius:var(--r-3);background:var(--art-amber)"></span></div>
+            <div><label class="flabel">Replace with</label><div class="imgpick"><button class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><strong>Upload</strong><span>Drop or browse</span></button><button class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><strong>Media library</strong><span>Pick existing</span></button></div></div>
+          </div>
+          <div><label class="flabel">Variant name</label><input class="input" value="Golden Wallet"></div>
+
+          <div style="border-top:1px solid var(--border-soft);margin-top:var(--s-2);padding-top:var(--s-4)">
+            <label class="flabel">Transition</label>
+            <div><label class="flabel" style="margin-bottom:.35rem">Reached from</label><select class="input"><option selected>Original Token</option><option>Opened Wallet</option></select></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel" style="margin-bottom:.35rem">Triggered by</label><div class="seg seg--full"><button class="active">Reusable template</button><button>One-off for this variant</button></div></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Action template</label><select class="input"><option selected>Gild · v2</option><option>Open · v1</option><option>Forge / Awaken / Ascend · v3</option><option>+ Create a new template…</option></select><div class="hint">Reusable — pick this again for any other token that reaches a variant the same way with the same asset.</div></div>
+            <div class="info-note n-info" style="margin-top:var(--s-4)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div>A holding on <strong>Original Token</strong> will show a <strong>Gild</strong> button once this is saved. A holding on <strong>Golden Wallet</strong> shows a way back only because <strong>Original Token</strong> separately declares <strong>Un-gild</strong> from it — declare both directions and you have a two-way pair.</div></div>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Save variant</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06b · edit variant, one-off trigger -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06 ·</span><span class="t">One-off trigger — no shared template</span><span class="d">Same modal, "One-off for this variant" chosen instead. The template dropdown is replaced by the wording fields directly — nothing is added to the reusable Actions library. A good fit when only one token ever needs this exact path.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit variant · Sprout</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div style="border-top:0;padding-top:0">
+            <label class="flabel">Transition</label>
+            <div><label class="flabel" style="margin-bottom:.35rem">Reached from</label><select class="input"><option selected>Original Token</option></select></div>
+            <div style="margin-top:var(--s-4)"><label class="flabel" style="margin-bottom:.35rem">Triggered by</label><div class="seg seg--full"><button>Reusable template</button><button class="active">One-off for this variant</button></div></div>
+            <div class="grid2" style="margin-top:var(--s-4)">
+              <div><label class="flabel">Button wording</label><input class="input" placeholder="e.g. Water"><div class="hint">What the holder taps.</div></div>
+              <div><label class="flabel">Version</label><div class="seg"><button class="active">v2 (latest)</button><button>v1</button></div><div class="hint">Pins an exact version. Editing the template later never changes a token already Live.</div></div>
+            </div>
+            <div style="margin-top:var(--s-4)"><label class="flabel">Warning text (shown to the holder)</label><textarea class="input" placeholder="e.g. Watering this seedling will make it Sprout. This can't be undone."></textarea></div>
+            <div class="hint" style="margin-top:var(--s-4)">Later, if another token needs this same path and asset, this can be promoted into a reusable template from the Actions tab.</div>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Save variant</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06c · edit variant, mid-chain step -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">06 ·</span><span class="t">A multi-step chain is just this same form, repeated</span><span class="d">There is no separate "build a chain" flow. A 4-link chain like Relic's (Unforged → Forged → Awakened → Ascended) is three of these single-transition edits, one per non-default variant — each one just points its <strong>Reached from</strong> at whichever variant comes before it. Here, editing <strong>Awakened Relic</strong>: its "Reached from" select lists every other variant on this token — Unforged Relic, Forged Relic, Ascended Relic — and <strong>Forged Relic</strong> is chosen, making this the second link in the chain. Editing <strong>Ascended Relic</strong> the same way, with "Reached from: Awakened Relic," adds the third. Branches work the same way — two variants both pointing "Reached from" at the same predecessor (frame 05's Dollar Wallet example) instead of at each other in sequence.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit variant · Awakened Relic</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div><label class="flabel" style="margin-bottom:.35rem">Reached from</label><select class="input"><option>Unforged Relic</option><option selected>Forged Relic</option><option>Ascended Relic</option></select><div class="hint">Every other variant on this token — pick whichever one this step follows.</div></div>
+          <div style="margin-top:var(--s-4)"><label class="flabel" style="margin-bottom:.35rem">Triggered by</label><div class="seg seg--full"><button class="active">Reusable template</button><button>One-off for this variant</button></div></div>
+          <div style="margin-top:var(--s-4)"><label class="flabel">Action template</label><select class="input"><option selected>Awaken</option><option>Forge</option><option>Ascend</option><option>+ Create a new template…</option></select></div>
+          <div class="panel" style="padding:var(--s-5);margin-top:var(--s-4)">
+            <label class="flabel" style="margin-bottom:.6rem">This token's chain so far</label>
+            <div class="chain">
+              <span class="gnode def">Unforged Relic</span><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Forge</span></span></span>
+              <span class="gnode">Forged Relic</span><span class="gedge"><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span class="elabel"><span class="tname">Awaken</span></span></span>
+              <span class="gnode">Awakened Relic</span>
+            </div>
+            <div class="hint" style="margin-top:.6rem">Ascended Relic has no transition configured yet.</div>
+          </div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Save variant</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · delete blocked -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">07</span><span class="t">Topology integrity · deletion blocks, and reachability at go-Live</span><span class="d"><strong>Two rules keep the graph sound.</strong> Deletion is blocked while another variant is reached <strong>from</strong> this one — shown below. And at go-<span class="mono">Live</span>, <strong>every non-default variant must be reachable from the default</strong> by following declared transitions: orphans, and closed cycles the default cannot enter, fail with the unreachable variants named. Because cycles are legal, validation walks from the default with a visited set. Deleting from the Variants tab's row action. Blocked when another variant's transition is reached <strong>from</strong> this one — the exact dependency is named, with a way to jump straight to it.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Can't remove Forged Relic</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Awakened Relic</strong> is reached from this variant. Change or clear that variant's transition first, then Forged Relic can be deleted.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button><button class="btn btn--primary">Edit Awakened Relic</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sectlabel">Variants &amp; Actions · collection-level, browse only</div>
+
+  <!-- 08 · collection page shell, Actions tab -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">08</span><span class="t">Collection · Variants page — Actions tab</span><span class="d">One collection-level page with two tabs (more may be added as variants grow): <strong>Variants</strong> (frame 10 — browse every variant) and <strong>Actions</strong> (here — the optional, reusable template library). Both stay reachable whatever the collection's own stage; nothing here is edited from this page — editing happens on the token (frames 04–07). A template locks the moment any variant using it belongs to a Live token: <strong>Open</strong> and <strong>Gild</strong> are locked because Dollar Wallet is Live; <strong>Forge / Awaken / Ascend</strong> stays editable because Relic (its only user) is still Draft.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Collection: Paper Trail</a><span class="sep">/</span><span class="here">Variants</span></div><div class="actions"><span class="stage-badge live"><span class="dot"></span>Live</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Collection · Variants</div><h2>Variants.</h2><p class="lede">Every variant in this collection, and the optional action templates that trigger them.</p></div>
+        <div class="ctabs">
+          <button>Variants</button>
+          <button class="active">Actions</button>
+        </div>
+        <div class="row" style="justify-content:space-between">
+          <p class="tiny" style="margin:0">Reusable wording you can apply to any variant's transition — optional, only useful when more than one token shares a path and asset.</p>
+          <button class="btn btn--sm">+ New template</button>
+        </div>
+        <div class="panel" style="padding:var(--s-5)">
+          <table class="itable">
+            <thead><tr><th>Template</th><th>Button wording</th><th>Version</th><th>Used by</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody>
+              <tr><td><div class="nm">Open</div></td><td>Open</td><td>v1 · frozen</td><td>Dollar Wallet <span class="tag tag--live" style="margin-left:4px">Live · locked</span></td><td style="text-align:right"><span class="tiny">Locked</span></td></tr>
+              <tr><td><div class="nm">Forge / Awaken / Ascend</div></td><td>varies</td><td>v3 · editable</td><td>Relic <span class="tag tag--amber" style="margin-left:4px">Draft</span></td><td><div class="row" style="justify-content:flex-end;gap:.35rem"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></div></td></tr>
+              <tr><td><div class="nm">Gild</div></td><td>Gild</td><td>v2 · frozen</td><td>Dollar Wallet <span class="tag tag--live" style="margin-left:4px">Live · locked</span></td><td style="text-align:right"><span class="tiny">Locked</span></td></tr>
+              <tr><td><div class="nm">Un-gild</div></td><td>Un-gild</td><td>v1 · editable</td><td><span class="tiny" style="color:var(--text-muted)">Unused</span></td><td><div class="row" style="justify-content:flex-end;gap:.35rem"><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · action template editor -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">09</span><span class="t">Action template editor</span><span class="d">Opened from "+ New template" or a template's Edit icon. Purely reusable wording and behaviour — which variants it connects is chosen where the template is picked, on each variant's own edit panel (frame 06), not here.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Action template</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="grid2">
+            <div><label class="flabel">Template name</label><input class="input" value="Open (permanent)"><div class="hint">Internal — how you'll find this template in the list.</div></div>
+            <div><label class="flabel">Button wording</label><input class="input" value="Open"><div class="hint">What the holder taps.</div></div>
+          </div>
+          <div><label class="flabel">Version</label><div class="seg"><button class="active">v2 (latest)</button><button>v1</button></div><div class="hint">A variant pins an exact template version. The template stays editable — each edit makes a new version future tokens may pin — and a version pinned by a Live token is frozen.</div></div>
+          <div><label class="flabel">Warning text (shown to the holder)</label><textarea class="input">Warning — you're about to Open this token. This change is permanent and can't be undone.</textarea></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Save template</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · collection Variants tab (browse) -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">10</span><span class="t">Collection · Variants page — Variants tab</span><span class="d">Every variant across every token in the collection, browsed the same way tokens are — card grid or list, search, filters, pagination. Read-only: this is a catalog for finding and reviewing variants, not for editing them (that's frames 04–07, on the token). The Original Token of each token is <strong>not</strong> listed here — it's the token itself, not a variant of it; this catalog only holds the additional variants layered on top.</span></div>
+    <div class="screen">
+      <div class="context-bar"><div class="crumb"><a>Studio</a><span class="sep">/</span><a>Collection: Paper Trail</a><span class="sep">/</span><span class="here">Variants</span></div><div class="actions"><span class="stage-badge live"><span class="dot"></span>Live</span></div></div>
+      <div class="section">
+        <div class="section-head"><div class="eyebrow">Collection · Variants</div><h2>Variants.</h2><p class="lede">Every variant in this collection, and the optional action templates that trigger them.</p></div>
+        <div class="ctabs">
+          <button class="active">Variants</button>
+          <button>Actions</button>
+        </div>
+        <div class="controls">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search variants…"></div>
+          <select class="input" style="width:auto"><option>Newest</option><option>Token, A–Z</option><option>Variant, A–Z</option></select>
+          <div class="viewseg"><button class="active" title="Grid view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button><button title="List view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button></div>
+        </div>
+        <div class="browse">
+          <aside class="frail">
+            <div class="fgroup"><h4>Token</h4><label class="chk"><input type="checkbox" checked> All tokens</label><label class="chk"><input type="checkbox"> Dollar Wallet <span class="n">2</span></label><label class="chk"><input type="checkbox"> Relic <span class="n">3</span></label><label class="chk"><input type="checkbox"> Seedling <span class="n">1</span></label></div>
+            <div class="fgroup"><h4>Status</h4><label class="chk"><input type="checkbox" checked> All</label><label class="chk"><input type="checkbox"> Reachable</label><label class="chk"><input type="checkbox"> Not yet reachable</label></div>
+            <div class="fgroup"><h4>Source</h4><label class="chk"><input type="checkbox" checked> All</label><label class="chk"><input type="checkbox"> From a profile <span class="n">4</span></label><label class="chk"><input type="checkbox"> Customised <span class="n">1</span></label><label class="chk"><input type="checkbox"> Authored locally <span class="n">1</span></label></div>
+          </aside>
+          <div>
+            <div class="vgrid">
+              <div class="vcard"><div class="vart vart--2">Opened Wallet</div><div class="vbody"><div class="vparent">Dollar Wallet</div><div class="vnm">Opened Wallet</div><div class="vstatus"><span class="tag">Via Open</span></div></div></div>
+              <div class="vcard"><div class="vart vart--3">Golden Wallet</div><div class="vbody"><div class="vparent">Dollar Wallet</div><div class="vnm">Golden Wallet</div><div class="vstatus"><span class="tag">Via Gild</span></div></div></div>
+              <div class="vcard"><div class="vart vart--2">Forged Relic</div><div class="vbody"><div class="vparent">Relic</div><div class="vnm">Forged Relic</div><div class="vstatus"><span class="tag">Via Forge</span></div></div></div>
+              <div class="vcard"><div class="vart vart--3">Awakened Relic</div><div class="vbody"><div class="vparent">Relic</div><div class="vnm">Awakened Relic</div><div class="vstatus"><span class="tag">Via Awaken</span></div></div></div>
+              <div class="vcard"><div class="vart">Ascended Relic</div><div class="vbody"><div class="vparent">Relic</div><div class="vnm">Ascended Relic</div><div class="vstatus"><span class="tag">Via Ascend</span></div></div></div>
+              <div class="vcard"><div class="vart vart--2">Bloom</div><div class="vbody"><div class="vparent">Seedling</div><div class="vnm">Bloom</div><div class="vstatus"><span class="tag" style="color:var(--text-muted)">Not yet reachable</span></div></div></div>
+            </div>
+            <div class="listbar" style="margin-top:var(--s-4)"><span class="results-count">Showing <strong>6</strong> of <strong>6</strong></span><div class="pg"><button disabled>‹</button><button aria-current="page">1</button><button disabled>›</button></div><label class="perpage">Per page <select><option>9</option><option>18</option><option>36</option></select></label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sectlabel">Holder · wallet</div>
+
+  <!-- 11 · wallet -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">11</span><span class="t">In your wallet</span><span class="d">A holding shows a button only when it's owned, active, not listed, and its current variant has an incoming... rather, an <strong>outgoing</strong> trigger declared by some other variant that names it as "from". The card shows the token's current name and asset — there's no variant-state label on it. Three points along the Relic chain.</span></div>
+    <div class="hgrid">
+      <div class="rarity-frame"><div class="tok-card"><div class="cart">Unforged Relic</div><div class="meta"><div class="col">Relics</div><div class="top"><h3 class="name">Unforged Relic</h3><span class="issue">#014</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--sm">Forge</button><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
+      <div class="rarity-frame"><div class="tok-card"><div class="cart cart--2">Forged Relic</div><div class="meta"><div class="col">Relics</div><div class="top"><h3 class="name">Forged Relic</h3><span class="issue">#014</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--sm">Awaken</button><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
+      <div class="rarity-frame"><div class="tok-card"><div class="cart cart--3">Ascended Relic</div><div class="meta"><div class="col">Relics</div><div class="top"><h3 class="name">Ascended Relic</h3><span class="issue">#014</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
+    </div>
+    <p class="tiny" style="margin-top:var(--s-3)">Same holding (#014), three points on its journey. Left: at the start, so <strong>Forge</strong> shows. Middle: mid-chain — the same holding after Forge ran, now showing the next step's button, <strong>Awaken</strong>. Right: at Ascended Relic, the end of the chain — no variant names it as "from," so no action button, same as any token with no variants.</p>
+  </section>
+
+  <!-- 12 · branching choice -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">12</span><span class="t">A branch, from the holder's side</span><span class="d">Two variants (Opened Wallet, Golden Wallet) both declare the Original Token as their "from" — so a holding on the Original Token shows both buttons. Both buttons show — the holder picks which action to run, same confirm-then-run flow either way (frame 13).</span></div>
+    <div class="hgrid">
+      <div class="rarity-frame"><div class="tok-card"><div class="cart">Dollar Wallet</div><div class="meta"><div class="col">Paper Trail</div><div class="top"><h3 class="name">Dollar Wallet</h3><span class="issue">#042</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--sm">Open</button><button class="btn btn--sm">Gild</button><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
+    </div>
+    <p class="tiny" style="margin-top:var(--s-3)">Running either one moves this holding off the Original Token — a holding only ever sits on one variant at a time, so taking one branch removes the other's button along with it.</p>
+  </section>
+
+  <!-- 13 · confirm -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">13</span><span class="t">The prompt · in the creator's words</span><span class="d">Before the action runs, the holder sees the creator's warning and confirms. Amber caution — this changes the token, it doesn't delete it. Two examples: a one-way step, and one whose target also declares a transition back. The holder is told which, in plain words — the mechanism (a second declared transition) is not their concern. A one-way step, and one whose target declares a transition back.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Open this token?</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Warning — you're about to Open this token.</strong> This change is permanent and can't be undone.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Open</button></div>
+      </div>
+      <div class="modal-card">
+        <header><h4>Evolve this token?</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Warning — you're about to Evolve this token.</strong> This change is reversible — you can change it back to the Original Token later.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary">Evolve</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · after -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">14</span><span class="t">After the action</span><span class="d">The token now shows the variant's name and asset, plus whatever button that variant's own "from" declarations provide next. Left: a one-way step — the token simply is the new variant now. Right: where the source variant declares its own transition back, the holder simply sees a way back.</span></div>
+    <div class="hgrid">
+      <div class="rarity-frame"><div class="tok-card"><div class="cart cart--2">Opened Wallet</div><div class="meta"><div class="col">Paper Trail</div><div class="top"><h3 class="name">Opened Wallet</h3><span class="issue">#042</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
+      <div class="rarity-frame"><div class="tok-card"><div class="cart cart--2">Evolved</div><div class="meta"><div class="col">Paper Trail</div><div class="top"><h3 class="name">Evolved Seedling</h3><span class="issue">#088</span></div><div class="meta-row"><span class="val-soft">Limited edition</span></div></div><div class="cacts"><button class="btn btn--sm">Revert</button><button class="btn btn--ghost btn--sm">List for sale</button></div></div></div>
+    </div>
+  </section>
+
+  <div class="sectlabel">Variant profiles · applying a shared set</div>
+
+  <!-- 15 · provenance model -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">15</span><span class="t">Applying a profile — the rules</span><span class="new">New</span><span class="d">Developer reference — not a screen. A <strong>variant profile</strong> is a named, versioned, project-level variant <em>set</em>. Applying one to a token snapshot-copies the set; editing the profile afterwards never reaches a token that already applied it. Because variant <strong>order is identity</strong> and <span class="mono">default_variant</span> is a positional index that locks at Live (<span class="mono">T9</span>), apply is <strong>append-only</strong> — nothing is ever inserted, reordered or renumbered.</span></div>
+    <div class="spec">
+      <span class="speclabel">Apply and re-apply — every case</span>
+      <table class="reftable">
+        <thead><tr><th style="width:38%">Case</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td><strong>In the profile, not on the token</strong></td><td><strong>Appended</strong> to the end of the list</td></tr>
+          <tr><td><strong>On the token, unchanged since apply</strong></td><td><strong>Untouched</strong></td></tr>
+          <tr><td><strong>On the token, edited locally</strong></td><td><strong>Untouched</strong>, and it stays local — the profile can never reach it again</td></tr>
+          <tr><td><strong>On the token, absent from a newer profile version</strong></td><td><strong>Blocker.</strong> Reported with what references it; never removed for you (frame 18)</td></tr>
+          <tr><td><strong>Profile key collides with an existing variant</strong></td><td><strong>Whole apply rejected</strong>, naming the key and both sources (frame 17)</td></tr>
+          <tr><td><strong>Merged length would exceed 255</strong></td><td><strong>Whole apply rejected</strong> (frame 17)</td></tr>
+          <tr><td><strong>The default variant</strong></td><td><strong>Never touched.</strong> A profile carries no default field and cannot set one</td></tr>
+        </tbody>
+      </table>
+      <span class="speclabel" style="margin-top:var(--s-8)">Three provenance states — every applied variant is in exactly one</span>
+      <table class="reftable">
+        <thead><tr><th style="width:30%">Shown as</th><th>Meaning, and what it changes</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag--from">Seasonal reskin v3</span></td><td><strong>From the profile, untouched.</strong> A re-apply may update it; a detach removes it</td></tr>
+          <tr><td><span class="tag tag--drift">Seasonal reskin v3 · customised</span></td><td><strong>From the profile, edited locally</strong> — its name, its asset, or a transition declared against it. It is now <strong>local</strong>: re-apply never overwrites it and <strong>detach leaves it behind</strong></td></tr>
+          <tr><td><span class="tag tag--local">Authored locally</span></td><td><strong>Never came from a profile.</strong> Unaffected by anything a profile does</td></tr>
+        </tbody>
+      </table>
+      <div class="hint" style="margin-top:var(--s-5);max-width:94ch">Two states would not be enough. Without the middle one, neither the creator nor the system can tell which variants a detach is about to remove — which is why the marker is a requirement rather than a decoration.</div>
+    </div>
+  </section>
+
+  <!-- 16 · variants tab with a profile applied -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">16</span><span class="t">Token · Variants tab — a profile applied</span><span class="new">New</span><span class="d">The same tab as frame 05, after <strong>Seasonal reskin v3</strong> was applied. Each row now carries its provenance. <strong>Winter Wallet</strong> came from the profile and is untouched; <strong>Summer Wallet</strong> came from it and has since been renamed, so it reads <em>customised</em> and has gone local; <strong>Golden Wallet</strong> was authored by hand before the profile existed. Topology is still declared per variant — a profile carries the set, never the transitions — so every row still needs its own "reached from" (frame 06). Apply is available in <span class="mono">Draft</span> only.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Edit token · Variants <span class="tag tag--amber">Draft</span></h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="seg"><button>Details</button><button>Token supply</button><button>Attributes</button><button>Rarity</button><button class="active">Variants</button><button>Assets</button></div>
+          <div class="row" style="justify-content:space-between">
+            <div><label class="flabel" style="margin:0">Variants</label><div class="tiny" style="margin-top:.3rem">From <strong>Seasonal reskin · v3</strong> — <a style="text-decoration:underline">2 of 3 from this profile</a></div></div>
+            <div class="row" style="gap:.35rem"><button class="btn btn--secondary btn--sm">Re-apply</button><button class="btn btn--ghost btn--sm">Detach profile</button></div>
+          </div>
+          <div class="var-list">
+            <div class="var-row def"><span class="vthumb"></span><div><div class="vname">Dollar Wallet</div><div class="vsub">Original Token · the default · the only one that mints</div></div><span class="vacts"><span class="tag tag--default">Default</span></span></div>
+            <div class="var-row"><span class="vthumb vthumb--2"></span><div><div class="vname">Winter Wallet</div><div class="vsub">Reached via <strong>Chill</strong> · from Original Token</div></div><span class="vacts"><span class="tag tag--from">Seasonal reskin v3</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+            <div class="var-row"><span class="vthumb vthumb--3"></span><div><div class="vname">Summer Wallet</div><div class="vsub">Not yet reachable</div></div><span class="vacts"><span class="tag tag--drift">v3 · customised</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+            <div class="var-row"><span class="vthumb"></span><div><div class="vname">Golden Wallet</div><div class="vsub">Reached via <strong>Gild</strong> · from Original Token</div></div><span class="vacts"><span class="tag tag--local">Local</span><button class="icon-btn" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="icon-btn" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6"/></svg></button></span></div>
+          </div>
+          <div class="row" style="gap:var(--s-3)">
+            <button class="add-chip" style="margin-top:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add variant</button>
+            <button class="add-chip" style="margin-top:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Apply a profile</button>
+          </div>
+          <div class="info-note n-info" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg></span><div><strong>Summer Wallet was renamed after it was applied</strong>, so it no longer belongs to the profile. Re-applying will not change it, and detaching the profile will leave it here.</div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 · apply rejected -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">17</span><span class="t">Apply rejected — nothing partially applied</span><span class="new">New</span><span class="d">Two rejections, and in both cases <strong>no variant is added at all</strong> — a partial apply is never performed. Left: a key already in use. The message names the key <em>and both sources</em>, because "duplicate key" alone leaves the creator guessing which of their variants collided. Right: the merged set would exceed the 255-variant ceiling. Both are the same rule the attribute templates already follow.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Can't apply Seasonal reskin</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-error" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>The key <span class="mono">golden</span> is already in use on this token.</strong><div style="margin-top:.4rem">It belongs to <strong>Golden Wallet</strong>, authored locally. <strong>Seasonal reskin v3</strong> also defines <span class="mono">golden</span>. Rename one of them, then apply again.</div></div></div>
+          <div class="tiny">Nothing was added — the whole profile was rejected, not just the clashing variant.</div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button><button class="btn btn--primary">Edit Golden Wallet</button></div>
+      </div>
+      <div class="modal-card">
+        <header><h4>Can't apply Seasonal reskin</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-error" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><strong>That would take this token to 258 variants.</strong><div style="margin-top:.4rem">A token can hold <strong>255</strong>. It currently has 251, and this profile adds 7. Remove some variants, or apply a smaller profile.</div></div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 · re-apply blocker -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">18</span><span class="t">Re-apply — a variant the new version drops</span><span class="new">New</span><span class="d">The dry-run always runs before anything is written, and it reports all four outcomes at once. Here <strong>v4</strong> of the profile no longer contains <strong>Autumn Wallet</strong> — so re-apply <strong>stops</strong> and says what depends on it. It does not offer to remove it: deleting a variant is a deliberate act the creator performs themselves, never a side effect of accepting a template update.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Re-apply Seasonal reskin · v3 → v4</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="panel" style="padding:var(--s-5)">
+            <table class="itable">
+              <thead><tr><th>Variant</th><th>Source</th><th style="text-align:right">Outcome</th></tr></thead>
+              <tbody>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Spring Wallet</div></div></td><td><span class="tiny">New in v4</span></td><td style="text-align:right"><span class="tag tag--live">Will be added</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Winter Wallet</div></div></td><td><span class="tiny">From profile, untouched</span></td><td style="text-align:right"><span class="tag">Unchanged</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-amber)"></span><div class="nm">Summer Wallet</div></div></td><td><span class="tiny">Customised</span></td><td style="text-align:right"><span class="tag tag--drift">Skipped — customised</span></td></tr>
+                <tr><td><div class="cell"><span class="art"></span><div class="nm">Autumn Wallet</div></div></td><td><span class="tiny">Not in v4</span></td><td style="text-align:right"><span class="tag" style="background:var(--tint-error);color:var(--on-error)">Blocked</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Autumn Wallet isn't in v4, and something still points at it.</strong><div style="margin-top:.4rem"><strong>Winter Wallet</strong> is reached from it, and it uses the <strong>Fall</strong> action template. Change or clear those first if you want it gone — nothing here will remove it for you.</div></div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary" disabled>Re-apply</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 · detach -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">19</span><span class="t">Detach a profile — what goes, what stays</span><span class="new">New</span><span class="d">Detach removes <strong>only</strong> the variants that came from this profile and are still untouched. Anything customised has gone local and stays; anything authored by hand was never the profile's and stays; anything still referenced by a transition or action binding is a blocker; and the default variant is never touched. This is the reason the three-state marker in frame 15 has to exist — without it, a creator cannot predict this screen before opening it.</span></div>
+    <div class="stage">
+      <div class="modal-card wide">
+        <header><h4>Detach Seasonal reskin?</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="panel" style="padding:var(--s-5)">
+            <table class="itable">
+              <thead><tr><th>Variant</th><th>Source</th><th style="text-align:right">On detach</th></tr></thead>
+              <tbody>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Winter Wallet</div></div></td><td><span class="tiny">From profile, untouched</span></td><td style="text-align:right"><span class="tag" style="background:var(--tint-error);color:var(--on-error)">Removed</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-amber)"></span><div class="nm">Summer Wallet</div></div></td><td><span class="tiny">Customised — now local</span></td><td style="text-align:right"><span class="tag tag--live">Kept</span></td></tr>
+                <tr><td><div class="cell"><span class="art"></span><div class="nm">Golden Wallet</div></div></td><td><span class="tiny">Authored locally</span></td><td style="text-align:right"><span class="tag tag--live">Kept</span></td></tr>
+                <tr><td><div class="cell"><span class="art" style="background:var(--art-mint)"></span><div class="nm">Autumn Wallet</div></div></td><td><span class="tiny">From profile · referenced</span></td><td style="text-align:right"><span class="tag tag--amber">Blocked</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Autumn Wallet can't be removed.</strong> <strong>Winter Wallet</strong> is reached from it. Clear that transition first, or keep the profile attached.</div></div>
+          <div class="tiny">Detach is available in <span class="mono">Draft</span> and <span class="mono">Review</span>. Once the token is Live the variant set is frozen and nothing here can change.</div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Cancel</button><button class="btn btn--primary" disabled>Detach</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 · empty states -->
+  <section class="frame">
+    <div class="frame-cap"><span class="num">20</span><span class="t">Nothing to apply yet — two different empty states</span><span class="new">New</span><span class="d">These say different things and must not be merged. Left: the project has no variant profiles at all, so the creator is pointed at the Templates library to make one. Right: a profile exists but its working copy has never been published — a <span class="mono">Draft</span> template is never appliable, so "nothing here" would be actively misleading to someone who has just authored one and is looking for it.</span></div>
+    <div class="stage">
+      <div class="modal-card">
+        <header><h4>Apply a variant profile</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-muted" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><div><strong>This project doesn't have any variant profiles.</strong><div style="margin-top:.4rem">A profile is a named set of variants you can apply to many tokens at once — useful when several tokens share the same set. You can make one in the project's Templates library.</div></div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button><button class="btn btn--primary">Go to Templates</button></div>
+      </div>
+      <div class="modal-card">
+        <header><h4>Apply a variant profile</h4><button class="x" aria-label="Close">✕</button></header>
+        <div class="mbody">
+          <div class="info-note n-warn" style="margin:0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 18H2z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><strong>Seasonal reskin hasn't been published yet.</strong><div style="margin-top:.4rem">Only published versions can be applied — a draft is still being edited. Publish it in the Templates library and it will appear here.</div></div></div>
+        </div>
+        <div class="footer-row"><button class="btn btn--secondary">Close</button><button class="btn btn--primary">Go to Templates</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
